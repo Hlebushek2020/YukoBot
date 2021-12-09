@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YukoClient", "YukoClient\YukoClient.csproj", "{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YukoBot", "YukoBot\YukoBot.csproj", "{E118542A-C6A7-40E4-B077-61A84C9372A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Debug|x64.ActiveCfg = Debug|x64
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Debug|x64.Build.0 = Debug|x64
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Release|x64.ActiveCfg = Release|x64
+		{A67B05D3-3B57-4600-9A31-AB7EBCF5A465}.Release|x64.Build.0 = Release|x64
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Debug|x64.Build.0 = Debug|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Release|x64.ActiveCfg = Release|Any CPU
+		{E118542A-C6A7-40E4-B077-61A84C9372A6}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {972A6BA3-453C-4C55-A956-9B19AD1887B5}
+	EndGlobalSection
+EndGlobal

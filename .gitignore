@@ -1,0 +1,7 @@
+/.vs
+/packages
+/YukoBot/bin
+/YukoBot/obj
+/YukoClient/VS_Output
+*Thumbs.db
+*.user
