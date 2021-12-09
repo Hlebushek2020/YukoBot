@@ -34,7 +34,7 @@ namespace YukoClient.Models.Progress
                         int blockCounter = 1;
                         do
                         {
-                            dispatcher.Invoke((Action<int>)((int block) => State = "Получение данных (Блок: )"), blockCounter);
+                            dispatcher.Invoke((Action<int>)((int _block) => State = $"Получение данных (Блок: {_block})"), blockCounter);
                             blockCounter++;
                             response = provider.ReadBlock();
                             if (string.IsNullOrEmpty(response.ErrorMessage))
