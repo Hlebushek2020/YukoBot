@@ -75,6 +75,7 @@ namespace YukoBot
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
+            commands.RegisterCommands<ExperimentalCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
 

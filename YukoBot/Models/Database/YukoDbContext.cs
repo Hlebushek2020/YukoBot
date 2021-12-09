@@ -7,6 +7,8 @@ namespace YukoBot.Models.Database
     {
         public DbSet<DbUser> Users { get; set; }
         public DbSet<DbBan> Bans { get; set; }
+        public DbSet<DbCollection> Collections { get; set; }
+        public DbSet<DbCollectionItem> CollectionItems { get; set; }
 
         public YukoDbContext()
         {
