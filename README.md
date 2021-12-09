@@ -19,6 +19,7 @@ ban-reason|reason|Причина бана на текущем сервере|:he
 member-ban-reason|m-reason|Причина бана участника сервера|:heavy_check_mark:|:heavy_check_mark:|:x:
 password-reset|password|Сброс пароля|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 register|reg|Регистрация|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
+set-app|-|Устанавливает новую ссылку для команды: app|:heavy_check_mark:|:x:|:x:
 settings|-|Данные для подключения|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 shutdown|sd|Выключить бота|:heavy_check_mark:|:x:|:x:
 unban|-|Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))|:heavy_check_mark:|:heavy_check_mark:|:x:

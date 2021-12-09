@@ -78,5 +78,13 @@ namespace YukoBot.Commands
         //        await commandContext.RespondAsync("Такой таблицы не существует");
         //    }
         //}
+
+        [Command("set-app")]
+        [Description("Устанавливает новую ссылку для команды: app")]
+        public async Task SetApp(CommandContext commandContext, string newlink)
+        {
+            YukoSettings.Current.ClientActualApp = newlink;
+            await commandContext.RespondAsync("Ok");
+        }
     }
 }

@@ -7,8 +7,10 @@ namespace YukoBot
 {
     public class YukoSettings
     {
-        [JsonIgnore]
+        #region Fields
         private static YukoSettings settings;
+        private string clientActualApp = null;
+        #endregion
 
         #region Propirties
         public string DatabaseHost { get; set; }
@@ -19,7 +21,19 @@ namespace YukoBot
         public string ServerAddress { get; set; }
         public string ServerInternalAddress { get; set; }
         public int ServerPort { get; set; }
-        public string ClientActualApp { get; set; }
+        public string ClientActualApp
+        {
+            get { return clientActualApp; }
+            set
+            {
+                clientActualApp = value;
+                string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+                using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
+                {
+                    streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
+                }
+            }
+        }
         public int DiscordMessageLimit { get; set; } = 100;
         public int DiscordMessageLimitSleepMs { get; set; } = 1000;
         [JsonIgnore]
