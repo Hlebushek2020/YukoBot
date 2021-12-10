@@ -88,7 +88,7 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" Margin="10,5,0,5" Width="60" Height="60" HorizontalAlignment="Left">
                 <Ellipse RenderOptions.BitmapScalingMode="HighQuality" Fill="{Binding Avatar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Style="{StaticResource RoundButtonStyle}" Margin="0,0,-2,-2" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Style="{StaticResource RoundButtonStyle}" Margin="0,0,-2,-2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding UpdateAvatarCommand}">
                     <Image Source="/YukoClient;component/Resources/menu-refresh-32.png"/>
                 </Button>
             </Grid>
