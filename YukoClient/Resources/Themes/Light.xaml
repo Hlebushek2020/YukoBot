@@ -115,4 +115,6 @@
     <SolidColorBrush x:Key="MainWindow.Head.Background" Color="LightGray"/>
     <!--FocusVisual -->
     <SolidColorBrush x:Key="FocusVisual.Border" Color="#FF3C7FB1"/>
+    <!--RoundButton-->
+    <SolidColorBrush x:Key="RoundButton.Pressed.Background" Color="#FF26A0DA"/>
 </ResourceDictionary>
