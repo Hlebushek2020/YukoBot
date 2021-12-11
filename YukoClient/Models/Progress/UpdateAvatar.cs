@@ -6,7 +6,7 @@ using YukoClient.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
-    public class UpdateAvatar : Base
+    public class UpdateAvatar : UpdateBase
     {
         public override void Run(Dispatcher dispatcher)
         {
@@ -19,6 +19,7 @@ namespace YukoClient.Models.Progress
                 {
                     Storage.Current.AvatarUri = updateAvatarResponse.AvatarUri;
                 }
+                base.Run(dispatcher);
             }
             else
             {

@@ -104,6 +104,7 @@
     <Compile Include="Interfaces\ViewModel\ITitle.cs" />
     <Compile Include="Models\Progress\StorageInitialization.cs" />
     <Compile Include="Models\Progress\UpdateAvatar.cs" />
+    <Compile Include="Models\Progress\UpdateBase.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
     <Compile Include="Models\Web\Requests\BaseRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />
