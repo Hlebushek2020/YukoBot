@@ -6,7 +6,6 @@
         GetClientData = 1,
         UpdateServer = 2,
         UpdateServerList = 3,
-        ExecuteScripts = 4,
-        UpdateAvatar = 5
+        ExecuteScripts = 4
     }
 }
