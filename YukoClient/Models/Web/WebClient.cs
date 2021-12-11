@@ -68,44 +68,6 @@ namespace YukoClient.Models.Web
             return response;
         }
 
-        public static UpdateAvatarResponse UpdateAvatar()
-        {
-            UpdateAvatarResponse response = null;
-            TcpClient tcpClient = new TcpClient
-            {
-                SendTimeout = 30000,
-                ReceiveTimeout = 30000
-            };
-            try
-            {
-                tcpClient.Connect(Settings.Current.Host, Settings.Current.Port);
-                NetworkStream stream = tcpClient.GetStream();
-                BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
-                BinaryWriter writter = new BinaryWriter(stream, Encoding.UTF8);
-                // request
-                BaseRequest request = new BaseRequest
-                {
-                    Type = RequestType.UpdateAvatar,
-                    Token = token
-                };
-                writter.Write(request.ToString());
-                // response
-                response = UpdateAvatarResponse.FromJson(reader.ReadString());
-            }
-            catch (Exception ex)
-            {
-                response = new UpdateAvatarResponse
-                {
-                    ErrorMessage = ex.Message
-                };
-            }
-            finally
-            {
-                tcpClient.Dispose();
-            }
-            return response;
-        }
-
         public static ClientDataResponse GetClientData()
         {
             ClientDataResponse response = null;

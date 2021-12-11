@@ -65,17 +65,8 @@ namespace YukoBot
                             case RequestType.ExecuteScripts:
                                 await TC_ExecuteScripts(requestString, db, dbUser, binaryReader, binaryWriter);
                                 break;
-                            case RequestType.UpdateAvatar:
-                                await TC_UpdateAvatar(dbUser, binaryWriter);
-                                break;
-                            default:
-                                Response baseResponse = new Response
-                                {
-                                    ErrorMessage = "Некорректный запрос",
-                                };
-                                binaryWriter.Write(baseResponse.ToString());
-                                break;
                         }
+
                     }
                 }
             }
@@ -125,16 +116,6 @@ namespace YukoBot
                 dbUser.LoginTime = DateTime.Now;
                 db.SaveChanges();
             }
-        }
-
-        private async Task TC_UpdateAvatar(DbUser dbUser, BinaryWriter writer)
-        {
-            DiscordUser user = await discordClient.GetUserAsync(dbUser.Id);
-            UpdateAvatarResponse response = new UpdateAvatarResponse
-            {
-                AvatarUri = user.AvatarUrl
-            };
-            writer.Write(response.ToString());
         }
 
         private async Task TC_GetClientData(DbUser dbUser, BinaryWriter writer)
