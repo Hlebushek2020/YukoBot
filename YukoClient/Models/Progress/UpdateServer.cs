@@ -7,7 +7,7 @@ using YukoClient.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
-    public class UpdateServer : Base
+    public class UpdateServer : UpdateBase
     {
         private readonly Server server;
 
@@ -27,6 +27,7 @@ namespace YukoClient.Models.Progress
                     server.IconUri = serverResponse.IconUri;
                 }
                 server.Channels = new ObservableCollection<Channel>(serverResponse.Channels);
+                base.Run(dispatcher);
             }
             else
             {
