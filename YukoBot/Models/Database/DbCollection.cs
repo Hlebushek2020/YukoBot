@@ -9,10 +9,14 @@ namespace YukoBot.Models.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong Id { get; set; }
+
         [ForeignKey("User")]
         public ulong UserId { get; set; }
+
+        [Required]
         [MaxLength(256)]
         public string Name { get; set; }
+
         public List<DbCollectionItem> CollectionItems { get; set; }
 
     }

@@ -140,5 +140,31 @@ namespace YukoBot.Commands
                 .WithDescription($"Участник {discordMember.DisplayName} не забанен. ≧◡≦");
             await commandContext.RespondAsync(discordEmbed);
         }
+
+        [Command("set-art-channel")]
+        [Description("Устанавливает канал для поиска сообщений при использовании комманд категории \"Управление коллекциями\"")]
+        public async Task SetArtChannel(CommandContext commandContext, DiscordChannel discordChannel)
+        {
+            YukoDbContext db = new YukoDbContext();
+            DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
+            if (guildArtChannel != null)
+            {
+                guildArtChannel.ChannelId = discordChannel.Id;
+            }
+            else
+            {
+                db.GuildArtChannels.Add(new DbGuildArtChannel
+                {
+                    Id = commandContext.Guild.Id,
+                    ChannelId = discordChannel.Id
+                });
+            }
+            await db.SaveChangesAsync();
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+               .WithTitle($"{commandContext.Member.DisplayName}")
+               .WithColor(DiscordColor.Orange)
+               .WithDescription("Канал успешно установлен! ≧◡≦");
+            await commandContext.RespondAsync(discordEmbed);
+        }
     }
 }

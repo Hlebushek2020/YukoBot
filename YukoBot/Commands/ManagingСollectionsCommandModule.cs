@@ -3,10 +3,12 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System.Linq;
 using System.Threading.Tasks;
+using YukoBot.Commands.Attribute;
 using YukoBot.Models.Database;
 
 namespace YukoBot.Commands
 {
+    [RequireRegisteredAndNoBan]
     public class ManagingСollectionsCommandModule : CommandModule
     {
         private const string DefaultCollection = "Default";
@@ -18,63 +20,55 @@ namespace YukoBot.Commands
 
         #region Command: add
         [Command("add")]
-        [Description("Добавляет изображения из сообщения в дефолтную коллекцию")]
+        [Description("Добавляет сообщение в коллекцию по умолчанию")]
         public async Task AddToCollection(CommandContext commandContext)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{commandContext.Member.DisplayName}");
             DiscordMessage message = commandContext.Message.Reference.Message;
-            ulong memberId = commandContext.Member.Id;
-            YukoDbContext db = new YukoDbContext();
-            if (db.Users.Find(memberId) == null)
+            bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
+            if (isAttacments)
             {
-                discordEmbed
-                   .WithColor(DiscordColor.Red)
-                   .WithDescription("Команда доступна зарегистрированным участникам!");
-            }
-            else
-            {
-                bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
-                if (isAttacments)
+                YukoDbContext db = new YukoDbContext();
+                ulong memberId = commandContext.Member.Id;
+                DbCollection dbCollection = db.Collections.Where(x => x.UserId == memberId).FirstOrDefault();
+                if (dbCollection == null)
                 {
-                    DbCollection dbCollection = db.Collections.Where(x => x.UserId == memberId).FirstOrDefault();
-                    if (dbCollection == null)
+                    dbCollection = new DbCollection
                     {
-                        dbCollection = new DbCollection
-                        {
-                            UserId = memberId,
-                            Name = DefaultCollection
-                        };
-                        db.Collections.Add(dbCollection);
-                        await db.SaveChangesAsync();
-                    }
-                    DbCollectionItem dbCollectionItem = db.CollectionItems.Where(x => x.CollectionId == dbCollection.Id && x.MessageId == message.Id).FirstOrDefault();
-                    if (dbCollectionItem != null)
-                    {
-                        discordEmbed
-                            .WithColor(DiscordColor.Red)
-                            .WithDescription("Уже добавлено!");
-                    }
-                    else
-                    {
-                        dbCollectionItem = new DbCollectionItem
-                        {
-                            MessageId = message.Id,
-                            CollectionId = dbCollection.Id
-                        };
-                        db.CollectionItems.Add(dbCollectionItem);
-                        await db.SaveChangesAsync();
-                        discordEmbed
-                            .WithColor(DiscordColor.Orange)
-                            .WithDescription("Добавлено! ≧◡≦");
-                    }
+                        UserId = memberId,
+                        Name = DefaultCollection
+                    };
+                    db.Collections.Add(dbCollection);
+                    await db.SaveChangesAsync();
                 }
-                else
+                DbCollectionItem dbCollectionItem = db.CollectionItems.Where(x => x.CollectionId == dbCollection.Id && x.MessageId == message.Id).FirstOrDefault();
+                if (dbCollectionItem != null)
                 {
                     discordEmbed
                         .WithColor(DiscordColor.Red)
-                        .WithDescription("Нельзя добавлять сообщения в коллекцию, если нет вложений!");
+                        .WithDescription("Уже добавлено!");
                 }
+                else
+                {
+                    dbCollectionItem = new DbCollectionItem
+                    {
+                        MessageId = message.Id,
+                        ChannelId = message.Channel.Id,
+                        CollectionId = dbCollection.Id
+                    };
+                    db.CollectionItems.Add(dbCollectionItem);
+                    await db.SaveChangesAsync();
+                    discordEmbed
+                        .WithColor(DiscordColor.Orange)
+                        .WithDescription("Добавлено! ≧◡≦");
+                }
+            }
+            else
+            {
+                discordEmbed
+                    .WithColor(DiscordColor.Red)
+                    .WithDescription("Нельзя добавлять сообщения в коллекцию, если нет вложений!");
             }
             await commandContext.RespondAsync(discordEmbed);
         }
@@ -94,13 +88,59 @@ namespace YukoBot.Commands
         //}
         #endregion
 
-        //#region Command: add-by-id
-        //[Command("add-by-id")]
-        //[Description("Добавляет изображения из указанного сообщения в дефолтную коллекцию")]
-        //public async Task AddToCollectionById(CommandContext commandContext, ulong messageId)
-        //{
-        //    await commandContext.RespondAsync("InProgress");
-        //}
+        #region Command: add-by-id
+        [Command("add-by-id")]
+        [Description("Добавляет сообщение в коллекцию по умолчанию")]
+        public async Task AddToCollectionById(CommandContext commandContext, ulong messageId)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithTitle($"{commandContext.Member.DisplayName}");
+            DiscordMessage message = await commandContext.Channel.GetMessageAsync(messageId);
+            bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
+            if (isAttacments)
+            {
+                YukoDbContext db = new YukoDbContext();
+                ulong memberId = commandContext.Member.Id;
+                DbCollection dbCollection = db.Collections.Where(x => x.UserId == memberId).FirstOrDefault();
+                if (dbCollection == null)
+                {
+                    dbCollection = new DbCollection
+                    {
+                        UserId = memberId,
+                        Name = DefaultCollection
+                    };
+                    db.Collections.Add(dbCollection);
+                    await db.SaveChangesAsync();
+                }
+                DbCollectionItem dbCollectionItem = db.CollectionItems.Where(x => x.CollectionId == dbCollection.Id && x.MessageId == message.Id).FirstOrDefault();
+                if (dbCollectionItem != null)
+                {
+                    discordEmbed
+                        .WithColor(DiscordColor.Red)
+                        .WithDescription("Уже добавлено!");
+                }
+                else
+                {
+                    dbCollectionItem = new DbCollectionItem
+                    {
+                        MessageId = message.Id,
+                        CollectionId = dbCollection.Id
+                    };
+                    db.CollectionItems.Add(dbCollectionItem);
+                    await db.SaveChangesAsync();
+                    discordEmbed
+                        .WithColor(DiscordColor.Orange)
+                        .WithDescription("Добавлено! ≧◡≦");
+                }
+            }
+            else
+            {
+                discordEmbed
+                    .WithColor(DiscordColor.Red)
+                    .WithDescription("Нельзя добавлять сообщения в коллекцию, если нет вложений!");
+            }
+            await commandContext.RespondAsync(discordEmbed);
+        }
 
         //[Command("add-by-id")]
         //[Description("Добавляет изображения из указанного сообщения в дефолтную коллекцию")]
@@ -115,7 +155,7 @@ namespace YukoBot.Commands
         //{
         //    await commandContext.RespondAsync("InProgress");
         //}
-        //#endregion
+        #endregion
 
         //#region Command: delete
         //[Command("delete")]
@@ -147,7 +187,7 @@ namespace YukoBot.Commands
         //{
         //    await commandContext.RespondAsync("InProgress");
         //}
-        
+
         //[Command("delete-collection")]
         //[Description("delete-collection")]
         //public async Task DeleteCollection(CommandContext commandContext, string collectionName)
