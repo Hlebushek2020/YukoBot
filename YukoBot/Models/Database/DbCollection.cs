@@ -13,6 +13,8 @@ namespace YukoBot.Models.Database
         [ForeignKey("User")]
         public ulong UserId { get; set; }
 
+        public DbUser User { get; set; }
+
         [Required]
         [MaxLength(256)]
         public string Name { get; set; }

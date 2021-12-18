@@ -9,8 +9,10 @@ namespace YukoBot.Models.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong Id { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("Collection")]
         public ulong CollectionId { get; set; }
+
+        public DbCollection Collection { get; set; }
 
         [Required]
         public ulong ChannelId { get; set; }
