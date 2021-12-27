@@ -30,11 +30,7 @@ namespace YukoBot.Commands.Formatter
 
             StringBuilder sb = new StringBuilder();
 
-            bool countOverloads = false;
-            if (command.Overloads.Count > 1)
-            {
-                countOverloads = true;
-            }
+            bool countOverloads = command.Overloads.Count > 1;
 
             for (int i = 0; i < command.Overloads.Count; i++)
             {
