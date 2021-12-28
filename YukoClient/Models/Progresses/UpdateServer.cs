@@ -30,7 +30,7 @@ namespace YukoClient.Models.Progress
             }
             else
             {
-                dispatcher.Invoke((Action<string>)((string errorMessage) => UIC.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
+                dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
             }
         }
     }

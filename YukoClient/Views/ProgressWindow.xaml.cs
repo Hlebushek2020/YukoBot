@@ -35,7 +35,7 @@ namespace YukoClient
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        UIC.MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                        Models.Dialogs.MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                     });
                 }
                 Dispatcher.Invoke(() =>

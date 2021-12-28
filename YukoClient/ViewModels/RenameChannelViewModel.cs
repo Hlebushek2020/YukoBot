@@ -51,7 +51,7 @@ namespace YukoClient.ViewModels
             {
                 if (string.IsNullOrEmpty(newChannelName))
                 {
-                    UIC.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {

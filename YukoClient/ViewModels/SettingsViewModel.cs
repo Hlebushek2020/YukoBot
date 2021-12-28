@@ -42,26 +42,26 @@ namespace YukoClient.ViewModels
             {
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port))
                 {
-                    UIC.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 if (!IPAddress.TryParse(Host, out _))
                 {
-                    UIC.MessageBox.Show("Некорректный адрес хоста!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Некорректный адрес хоста!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 if (!int.TryParse(Port, out int port))
                 {
-                    UIC.MessageBox.Show("Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 else
                 {
                     if (port < 1024 || port > 65535)
                     {
-                        UIC.MessageBox.Show("Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Models.Dialogs.MessageBox.Show("Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }

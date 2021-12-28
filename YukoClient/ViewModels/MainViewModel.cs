@@ -83,7 +83,7 @@ namespace YukoClient.ViewModels
             // Server Commands
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = UIC.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
                     ProgressWindow progress = new ProgressWindow(new UpdateServerList(messageResult == MessageBoxResult.Yes));
@@ -94,7 +94,7 @@ namespace YukoClient.ViewModels
             {
                 if (selectedServer != null)
                 {
-                    if (UIC.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Storage.Current.Servers.Remove(selectedServer);
                     }
@@ -110,28 +110,28 @@ namespace YukoClient.ViewModels
                 }
                 else
                 {
-                    UIC.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             });
             RemoveScriptCommand = new DelegateCommand(() =>
             {
                 if (SelectedScript != null)
                 {
-                    if (UIC.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Scripts.Remove(SelectedScript);
                     }
                 }
                 else
                 {
-                    UIC.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             });
             ClearScriptsCommand = new DelegateCommand(() =>
             {
                 if (selectedServer != null && selectedServer.Scripts.Count > 0)
                 {
-                    if (UIC.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Scripts.Clear();
                     }
@@ -169,7 +169,7 @@ namespace YukoClient.ViewModels
                         {
                             if (selectedServer.Scripts.Count > 0)
                             {
-                                if (UIC.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (Models.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedServer.Scripts.Clear();
                                 }
@@ -193,7 +193,7 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedUrl != null)
                 {
-                    if (UIC.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Urls.Remove(SelectedUrl);
                     }
@@ -203,7 +203,7 @@ namespace YukoClient.ViewModels
             {
                 if (selectedServer != null && selectedServer.Urls.Count > 0)
                 {
-                    if (UIC.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Urls.Clear();
                     }
@@ -241,7 +241,7 @@ namespace YukoClient.ViewModels
                         {
                             if (selectedServer.Scripts.Count > 0)
                             {
-                                if (UIC.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (Models.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedServer.Urls.Clear();
                                 }

@@ -99,7 +99,6 @@
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
-    <Compile Include="Interfaces\Model\IRequestType.cs" />
     <Compile Include="Interfaces\Model\IToken.cs" />
     <Compile Include="Interfaces\ViewModel\ITitle.cs" />
     <Compile Include="Models\Progresses\StorageInitialization.cs" />
@@ -147,7 +146,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIC\MessageBoxWindow.xaml">
+    <Page Include="Views\Dialogs\MessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -194,8 +193,8 @@
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIC\MessageBox.cs" />
-    <Compile Include="UIC\MessageBoxWindow.xaml.cs">
+    <Compile Include="Models\Dialogs\MessageBox.cs" />
+    <Compile Include="Views\Dialogs\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
@@ -285,5 +284,12 @@
   <ItemGroup>
     <Resource Include="icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YukoClientBase\YukoClientBase.csproj">
+      <Project>{1b6cb967-f823-43f4-99f7-f9e53b0da362}</Project>
+      <Name>YukoClientBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

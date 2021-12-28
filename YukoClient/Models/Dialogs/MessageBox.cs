@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace YukoClient.UIC
+namespace YukoClient.Models.Dialogs
 {
     public sealed class MessageBox
     {

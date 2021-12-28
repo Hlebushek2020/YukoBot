@@ -29,18 +29,18 @@ namespace YukoClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    UIC.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password()))
                 {
-                    UIC.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 AuthorizationResponse response = WebClient.Authorization(Login, Password());
                 if (!string.IsNullOrEmpty(response.ErrorMessage))
                 {
-                    UIC.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Models.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
