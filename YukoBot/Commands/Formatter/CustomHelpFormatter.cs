@@ -55,35 +55,36 @@ namespace YukoBot.Commands.Formatter
                     sb.AppendLine();
                 }
 
-                StringBuilder sbArgValues = new StringBuilder();
+                //StringBuilder sbArgValues = new StringBuilder();
 
                 if (commandOverload.Arguments.Count != 0)
                 {
                     sb.AppendLine("**Аргументы:**");
-                    foreach (var c in commandOverload.Arguments)
+                    foreach (CommandArgument argument in commandOverload.Arguments)
                     {
-                        sb.AppendLine($"`{c.Name}`: {c.Description}");
-                        foreach (System.Attribute attribute in c.CustomAttributes)
-                        {
-                            if (attribute is ArgumentValuesAttribute)
-                            {
-                                sbArgValues.Append($"{c.Name}: ");
-                                foreach (string value in ((ArgumentValuesAttribute)attribute).ArgumentValues)
-                                {
-                                    sbArgValues.Append($"`{value}` ");
-                                }
-                                sbArgValues.AppendLine();
-                            }
-                        }
+                        string defaultValue = (argument.DefaultValue != null) ? $" (По умолчанию: {argument.DefaultValue})" : string.Empty;
+                        sb.AppendLine($"`{argument.Name}`: {argument.Description}{defaultValue}");
+                        //foreach (System.Attribute attribute in c.CustomAttributes)
+                        //{
+                        //    if (attribute is ArgumentValuesAttribute)
+                        //    {
+                        //        sbArgValues.Append($"{c.Name}: ");
+                        //        foreach (string value in ((ArgumentValuesAttribute)attribute).ArgumentValues)
+                        //        {
+                        //            sbArgValues.Append($"`{value}` ");
+                        //        }
+                        //        sbArgValues.AppendLine();
+                        //    }
+                        //}
                     }
                     sb.AppendLine();
 
-                    if (sbArgValues.Length != 0)
-                    {
-                        sb.AppendLine("**Допустимые значения**");
-                        sb.Append(sbArgValues);
-                        sb.AppendLine();
-                    }
+                    //if (sbArgValues.Length != 0)
+                    //{
+                    //    sb.AppendLine("**Допустимые значения**");
+                    //    sb.Append(sbArgValues);
+                    //    sb.AppendLine();
+                    //}
                 }
             }
 

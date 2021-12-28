@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,38 +22,26 @@ namespace YukoBot.Commands
 
         #region Command: add (Message)
         [Command("add")]
-        [Description("Добавляет сообщение в коллекцию по умолчанию")]
-        public async Task AddToCollection(CommandContext commandContext)
-        {
-            DiscordMessage message = commandContext.Message.ReferencedMessage;
-            if (message != null)
-            {
-                await AddToCollection(commandContext, new YukoDbContext(), message);
-            }
-            else
-            {
-                DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                    .WithTitle($"{commandContext.Member.DisplayName}")
-                    .WithColor(DiscordColor.Red)
-                    .WithDescription("Нет вложенного сообщения!");
-                await commandContext.RespondAsync(discordEmbed);
-            }
-        }
-
-        [Command("add")]
-        [Description("Добавляет сообщение в указанную коллекцию")]
+        [Description("Добавляет вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
         public async Task AddToCollection(CommandContext commandContext,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId)
+            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
         {
             DiscordMessage message = commandContext.Message.ReferencedMessage;
             if (message != null)
             {
-                await AddToCollection(commandContext, new YukoDbContext(), commandContext.Message.ReferencedMessage, nameOrId);
+                if (DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase))
+                {
+                    await AddToCollection(commandContext, new YukoDbContext(), message);
+                }
+                else
+                {
+                    await AddToCollection(commandContext, new YukoDbContext(), message, nameOrId);
+                }
             }
             else
             {
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                    .WithTitle($"{commandContext.Member.DisplayName}")
+                    .WithTitle(commandContext.Member.DisplayName)
                     .WithColor(DiscordColor.Red)
                     .WithDescription("Нет вложенного сообщения!");
                 await commandContext.RespondAsync(discordEmbed);
@@ -62,46 +51,39 @@ namespace YukoBot.Commands
 
         #region Command: add-by-id (Message)
         [Command("add-by-id")]
-        [Description("Добавляет сообщение в коллекцию по умолчанию")]
-        public async Task AddToCollectionById(CommandContext commandContext,
-            [Description("Id сообщения")] ulong messageId)
-        {
-            YukoDbContext db = new YukoDbContext();
-            DbGuildArtChannel dbGuildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
-            DiscordChannel discordChannel = commandContext.Channel;
-            if (dbGuildArtChannel != null && dbGuildArtChannel.ChannelId != discordChannel.Id)
-            {
-                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId);
-                DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                await AddToCollection(commandContext, db, message);
-            }
-            else
-            {
-                DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                await AddToCollection(commandContext, db, message);
-            }
-        }
-
-        [Command("add-by-id")]
-        [Description("Добавляет сообщение в указанную коллекцию")]
+        [Description("Добавляет сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
         public async Task AddToCollectionById(CommandContext commandContext,
             [Description("Id сообщения")] ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId)
+            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
         {
             YukoDbContext db = new YukoDbContext();
             DbGuildArtChannel dbGuildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
             DiscordChannel discordChannel = commandContext.Channel;
+            bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
             if (dbGuildArtChannel != null && dbGuildArtChannel.ChannelId != discordChannel.Id)
             {
-
                 discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId);
                 DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                await AddToCollection(commandContext, db, message, nameOrId);
+                if (useDefaultCollection)
+                {
+                    await AddToCollection(commandContext, db, message);
+                }
+                else
+                {
+                    await AddToCollection(commandContext, db, message, nameOrId);
+                }
             }
             else
             {
                 DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                await AddToCollection(commandContext, db, message, nameOrId);
+                if (useDefaultCollection)
+                {
+                    await AddToCollection(commandContext, db, message);
+                }
+                else
+                {
+                    await AddToCollection(commandContext, db, message, nameOrId);
+                }
             }
         }
         #endregion
@@ -113,7 +95,7 @@ namespace YukoBot.Commands
             [Description("Название коллекции"), RemainingText] string collectionName)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             if (string.IsNullOrEmpty(collectionName))
             {
                 discordEmbed
@@ -150,12 +132,13 @@ namespace YukoBot.Commands
 
         #region Command: remove-collection/item
         [Command("remove-collection")]
+        [Aliases("rm-collection")]
         [Description("Удаляет коллекцию")]
         public async Task DeleteFromCollection(CommandContext commandContext,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             YukoDbContext dbContext = new YukoDbContext();
             ulong memberId = commandContext.Member.Id;
             DbCollection dbCollection;
@@ -185,6 +168,7 @@ namespace YukoBot.Commands
         }
 
         [Command("remove-item")]
+        [Aliases("rm-item")]
         [Description("Удалить сообщение из коллекции")]
         public async Task DeleteFromCollection(CommandContext commandContext,
             [Description("Id сообщения")] ulong messageId,
@@ -192,7 +176,7 @@ namespace YukoBot.Commands
         {
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             YukoDbContext dbContext = new YukoDbContext();
             ulong memberId = commandContext.Member.Id;
             DbCollection dbCollection;
@@ -223,6 +207,52 @@ namespace YukoBot.Commands
         }
         #endregion
 
+        #region Command: clear-collection
+        [Command("clear-collection")]
+        [Description("Удаляет все сообщения из коллекции")]
+        public async Task ClearCollection(CommandContext commandContext,
+            [Description("Название или Id коллекции"), RemainingText] string nameOrId)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithTitle(commandContext.Member.DisplayName);
+            if (string.IsNullOrEmpty(nameOrId))
+            {
+                discordEmbed
+                   .WithColor(DiscordColor.Red)
+                   .WithDescription("Название или id коллекции не может быть пустым!");
+            }
+            else
+            {
+                YukoDbContext db = new YukoDbContext();
+                DbCollection collection;
+                if (ulong.TryParse(nameOrId, out ulong id))
+                {
+                    collection = db.Collections.Find(id);
+                }
+                else
+                {
+                    collection = db.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId)).FirstOrDefault();
+                }
+                if (collection != null && collection.UserId == commandContext.Member.Id)
+                {
+                    IQueryable<DbCollectionItem> items = db.CollectionItems.Where(x => x.CollectionId == collection.Id);
+                    db.CollectionItems.RemoveRange(items);
+                    await db.SaveChangesAsync();
+                    discordEmbed
+                        .WithColor(DiscordColor.Orange)
+                        .WithDescription($"Коллекция \"{collection.Name}\" очищена! ≧◡≦");
+                }
+                else
+                {
+                    discordEmbed
+                        .WithColor(DiscordColor.Red)
+                        .WithDescription("Такой коллекции нет!");
+                }
+            }
+            await commandContext.RespondAsync(discordEmbed);
+        }
+        #endregion
+
         #region Command: show-collections/items
         [Command("show-collections")]
         [Aliases("collections")]
@@ -237,7 +267,7 @@ namespace YukoBot.Commands
                 stringBuilder.AppendLine($"{collection.Id}. {collection.Name}");
             }
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}")
+                .WithTitle(commandContext.Member.DisplayName)
                 .WithColor(DiscordColor.Orange)
                 .WithDescription(stringBuilder.ToString());
             await commandContext.RespondAsync(discordEmbed);
@@ -250,7 +280,7 @@ namespace YukoBot.Commands
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             if (string.IsNullOrEmpty(nameOrId))
             {
                 discordEmbed
@@ -296,7 +326,7 @@ namespace YukoBot.Commands
         private async Task AddToCollection(CommandContext commandContext, YukoDbContext dbContext, DiscordMessage message)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             // TODO: Eсть прикол с Url содержащими параметры
             bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
             if (isAttacments)
@@ -347,7 +377,7 @@ namespace YukoBot.Commands
         private async Task AddToCollection(CommandContext commandContext, YukoDbContext dbContext, DiscordMessage message, string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle(commandContext.Member.DisplayName);
             // TODO: Eсть прикол с Url содержащими параметры
             bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
             if (isAttacments)
