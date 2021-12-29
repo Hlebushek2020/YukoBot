@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Responses
 {

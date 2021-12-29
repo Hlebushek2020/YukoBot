@@ -2,13 +2,13 @@
 using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class ServerSettingsViewModel : BindableBase, ITitle
+    public class ServerSettingsViewModel : BindableBase, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }

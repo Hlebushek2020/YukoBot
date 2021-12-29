@@ -100,7 +100,6 @@
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
     <Compile Include="Interfaces\Model\IToken.cs" />
-    <Compile Include="Interfaces\ViewModel\ITitle.cs" />
     <Compile Include="Models\Progresses\StorageInitialization.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
     <Compile Include="Models\Web\Requests\BaseRequest.cs" />
@@ -198,7 +197,6 @@
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
-    <Compile Include="Interfaces\ViewModel\ICloseableView.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\AuthorizationWindow.xaml.cs">
       <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
@@ -214,8 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
-    <Compile Include="Models\Web\Responses\AuthorizationResponse.cs" />
-    <Compile Include="Models\Web\Responses\Response.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -7,6 +7,7 @@ using YukoClient.Enums;
 using YukoClient.Models.Web.Providers;
 using YukoClient.Models.Web.Requests;
 using YukoClient.Models.Web.Responses;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web
 {

@@ -3,12 +3,12 @@ using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class AddScriptViewModel : BindableBase, ICloseableView, ITitle
+    public class AddScriptViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
         private Models.ScriptMode selectedMode;

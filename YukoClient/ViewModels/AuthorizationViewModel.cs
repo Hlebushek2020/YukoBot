@@ -2,14 +2,14 @@
 using Prism.Mvvm;
 using System;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
 using YukoClient.Models.Web;
-using YukoClient.Models.Web.Responses;
+using YukoClientBase.Interfaces;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.ViewModels
 {
-    public class AuthorizationViewModel : BindableBase, ICloseableView, ITitle
+    public class AuthorizationViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }

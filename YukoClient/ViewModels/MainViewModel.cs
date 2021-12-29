@@ -5,13 +5,14 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using YukoClient.Interfaces.ViewModel;
+
 using YukoClient.Models;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class MainViewModel : BindableBase, ICloseableView, ITitle
+    public class MainViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
         private Server selectedServer;

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace YukoClient.Models.Web.Responses
+namespace YukoClientBase.Models.Web.Responses
 {
     public class Response<T>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YukoClient.Interfaces.ViewModel
+namespace YukoClientBase.Interfaces
 {
     public interface ICloseableView
     {

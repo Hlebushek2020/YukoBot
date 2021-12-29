@@ -4,12 +4,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class SettingsViewModel : BindableBase, ICloseableView, ITitle
+    public class SettingsViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }
