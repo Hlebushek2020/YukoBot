@@ -2,9 +2,9 @@
 using Prism.Mvvm;
 using System;
 using System.Windows;
-using YukoClient.Models;
 using YukoClient.Models.Web;
 using YukoClientBase.Interfaces;
+using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.ViewModels
@@ -37,7 +37,7 @@ namespace YukoClient.ViewModels
                     Models.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                AuthorizationResponse response = WebClient.Authorization(Login, Password());
+                AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
                 if (!string.IsNullOrEmpty(response.ErrorMessage))
                 {
                     Models.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);

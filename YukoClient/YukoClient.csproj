@@ -96,14 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
-    <Compile Include="Interfaces\Model\IToken.cs" />
     <Compile Include="Models\Progresses\StorageInitialization.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
-    <Compile Include="Models\Web\Requests\BaseRequest.cs" />
-    <Compile Include="Models\Web\Requests\Request.cs" />
     <Compile Include="Models\Web\Requests\ExecuteScriptRequest.cs" />
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />
     <Compile Include="Models\Web\Responses\ExecuteScriptResponse.cs" />
@@ -212,7 +208,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
-    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -225,6 +220,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -234,21 +230,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-error-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-information-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-question-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-warning-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\settings-48.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\menu-refresh-32.png" />

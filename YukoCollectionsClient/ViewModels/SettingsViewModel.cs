@@ -7,7 +7,7 @@ using System.Windows;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 
-namespace YukoClient.ViewModels
+namespace YukoCollectionsClient.ViewModels
 {
     public class SettingsViewModel : BindableBase, ICloseableView, IViewTitle
     {

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using YukoCollectionsClient.ViewModels;
 
 namespace YukoCollectionsClient
 {
@@ -10,11 +12,11 @@ namespace YukoCollectionsClient
         public AuthorizationWindow()
         {
             InitializeComponent();
-            //DataContext = new AuthorizationViewModel
-            //{
-            //    Close = new Action(Close),
-            //    Password = () => passwordBox_Password.Password
-            //};
+            DataContext = new AuthorizationViewModel
+            {
+                Close = new Action(Close),
+                Password = () => passwordBox_Password.Password
+            };
         }
     }
 }

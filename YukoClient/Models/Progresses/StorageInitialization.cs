@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
+using YukoClientBase.Models;
 
 namespace YukoClient.Models.Progress
 {
@@ -28,7 +29,7 @@ namespace YukoClient.Models.Progress
             else
             {
                 dispatcher.Invoke(() => State = "Получение данных");
-                ClientDataResponse response = WebClient.GetClientData();
+                ClientDataResponse response = WebClient.Current.GetClientData();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
                     Storage.Current.Id = response.Id;

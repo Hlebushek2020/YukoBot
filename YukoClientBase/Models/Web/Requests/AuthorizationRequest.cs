@@ -1,6 +1,4 @@
-﻿using YukoClientBase.Models.Web.Requests;
-
-namespace YukoClient.Models.Web.Requests
+﻿namespace YukoClientBase.Models.Web.Requests
 {
     public class AuthorizationRequest : BaseRequest
     {

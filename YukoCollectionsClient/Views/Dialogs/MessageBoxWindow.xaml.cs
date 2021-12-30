@@ -41,16 +41,16 @@ namespace YukoCollectionsClient
             switch (icon)
             {
                 case MessageBoxImage.Error:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-error-64.png"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/YukoClientBase;component/Resources/dialog-error-64.png"));
                     break;
                 case MessageBoxImage.Information:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-information-64.png"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/YukoClientBase;component/Resources/dialog-information-64.png"));
                     break;
                 case MessageBoxImage.Question:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-question-64.png"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/YukoClientBase;component/Resources/dialog-question-64.png"));
                     break;
                 case MessageBoxImage.Warning:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-warning-64.png"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/YukoClientBase;component/Resources/dialog-warning-64.png"));
                     break;
             }
         }

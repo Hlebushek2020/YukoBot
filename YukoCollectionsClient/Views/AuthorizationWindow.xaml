@@ -21,7 +21,7 @@
             <Button Content="Войти" Height="30" HorizontalAlignment="Center" Style="{StaticResource ButtonStyle}" Command="{Binding LoginCommand}" Margin="0,124,0,0" VerticalAlignment="Top" Width="120"/>
         </Grid>
         <Button HorizontalAlignment="Right" Margin="0,0,10,10" BorderThickness="0" Padding="2" Style="{StaticResource IconButtonStyle}" Command="{Binding SettingsCommand}" VerticalAlignment="Bottom" Height="34" Width="34" >
-            <Image Source="/Resources/settings-48.png"/>
+            <Image Source="pack://application:,,,/YukoClientBase;component/Resources/settings-48.png"/>
         </Button>
     </Grid>
 </Window>

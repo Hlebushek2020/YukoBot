@@ -3,7 +3,7 @@ using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Responses
 {
-    public class ClientDataResponse : Response<ClientDataResponse>
+    public class ClientDataResponse : Response
     {
         public ulong Id { get; set; }
         public string AvatarUri { get; set; }

@@ -20,7 +20,7 @@ namespace YukoClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (ExecuteScriptProvider provider = WebClient.ExecuteScripts(server.Id, server.Scripts.Count))
+            using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(server.Id, server.Scripts.Count))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
                 ExecuteScriptResponse response = provider.ReadBlock();

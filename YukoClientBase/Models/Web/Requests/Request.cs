@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace YukoClient.Models.Web.Requests
+namespace YukoClientBase.Models.Web.Requests
 {
     public class Request
     {

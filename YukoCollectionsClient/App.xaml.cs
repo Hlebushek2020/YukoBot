@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
-using YukoCollectionsClient.Models;
+using YukoClientBase.Models;
 
 namespace YukoCollectionsClient
 {
@@ -12,9 +13,17 @@ namespace YukoCollectionsClient
     {
         public static string Name { get; } = Assembly.GetExecutingAssembly().GetName().Name;
 
+        private static Mutex yukoClientMutex;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             SetTheme();
+            yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
+            if (!createdNew)
+            {
+                Models.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Shutdown();
+            }
             MainWindow = new MainWindow();
             MainWindow.Show();
         }

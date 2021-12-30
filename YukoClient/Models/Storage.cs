@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using YukoClientBase.Models;
 
 namespace YukoClient.Models
 {

@@ -3,11 +3,13 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace YukoCollectionsClient.Models
+namespace YukoClientBase.Models
 {
     public class Settings
     {
-        #region Json Ignore
+        public const string YukoClientMutexName = "YukoClientMutex";
+
+        #region Instance
         private static Settings settings;
 
         [JsonIgnore]
@@ -31,14 +33,14 @@ namespace YukoCollectionsClient.Models
                 return settings;
             }
         }
+        #endregion
 
         [JsonIgnore]
         public static string ProgramResourceFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SergeyGovorunov", "YukoClient(DFLC)");
-        #endregion
 
         public string Theme { get; set; } = "Light";
-        public string Host { get; set; } = string.Empty;
-        public int Port { get; set; } = 0;
+        public string Host { get; set; } = "127.0.0.1";
+        public int Port { get; set; } = 10000;
         public int MaxDownloadThreads { get; set; } = 4;
 
         public void Save()
@@ -52,14 +54,7 @@ namespace YukoCollectionsClient.Models
 
         public static bool Availability()
         {
-            string settingsPath = Path.Combine(ProgramResourceFolder, "settings.json");
-
-            if (File.Exists(settingsPath))
-            {
-                return true;
-            }
-
-            return false;
+            return File.Exists(Path.Combine(ProgramResourceFolder, "settings.json"));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace YukoClient.Enums
+﻿namespace YukoClientBase.Enums
 {
     public enum RequestType
     {

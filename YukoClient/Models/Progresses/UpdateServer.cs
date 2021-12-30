@@ -19,7 +19,7 @@ namespace YukoClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Получение данных о сервере");
-            ServerResponse serverResponse = WebClient.UpdateServer(server.Id);
+            ServerResponse serverResponse = WebClient.Current.UpdateServer(server.Id);
             if (string.IsNullOrEmpty(serverResponse.ErrorMessage))
             {
                 if (!serverResponse.IconUri.Equals(server.IconUri))
