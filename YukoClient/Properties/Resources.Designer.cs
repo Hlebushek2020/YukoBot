@@ -73,36 +73,6 @@ namespace YukoClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap menu_clear_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_clear_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap menu_delete_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_delete_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap menu_download_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_download_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap menu_edit_32 {
             get {
                 object obj = ResourceManager.GetObject("menu_edit_32", resourceCulture);
@@ -113,39 +83,9 @@ namespace YukoClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap menu_export_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_export_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap menu_import_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_import_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap menu_refresh_32 {
             get {
                 object obj = ResourceManager.GetObject("menu_refresh_32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap menu_start_32 {
-            get {
-                object obj = ResourceManager.GetObject("menu_start_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -108,6 +108,11 @@
     <Compile Include="Models\Progresses\ExecuteScripts.cs" />
     <Compile Include="Models\Progresses\UpdateServerList.cs" />
     <Compile Include="Models\Progresses\UpdateServer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="Views\RenameChannelWindow.xaml.cs">
       <DependentUpon>RenameChannelWindow.xaml</DependentUpon>
@@ -172,11 +177,6 @@
     <Compile Include="Models\Server.cs" />
     <Compile Include="Models\Web\Responses\ClientDataResponse.cs" />
     <Compile Include="Models\Storage.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\AddScriptViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\AddScriptWindow.xaml.cs">
@@ -219,8 +219,8 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -238,25 +238,7 @@
     <Resource Include="Resources\menu-add-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\menu-clear-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-delete-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-download-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-edit-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-export-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-import-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-start-32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
