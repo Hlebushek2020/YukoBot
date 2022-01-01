@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows.Threading;
 using YukoClientBase.Models;
 
-namespace YukoClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progress
 {
     public class Download : Base
     {

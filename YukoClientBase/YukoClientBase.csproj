@@ -66,6 +66,7 @@
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Interfaces\ICloseableView.cs" />
     <Compile Include="Interfaces\IViewTitle.cs" />
+    <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\BaseRequest.cs" />

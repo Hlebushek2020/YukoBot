@@ -166,7 +166,6 @@
     <Compile Include="Attributes\Enum\TitleAttribute.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ScriptMode.cs" />
-    <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\Progresses\Download.cs" />
     <Compile Include="Models\Progresses\ExportUrls.cs" />
     <Compile Include="Models\Progresses\ImportUrls.cs" />

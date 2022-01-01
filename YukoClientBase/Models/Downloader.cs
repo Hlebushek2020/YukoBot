@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using YukoClientBase.Models;
 
-namespace YukoClient.Models
+namespace YukoClientBase.Models
 {
     public class Downloader
     {

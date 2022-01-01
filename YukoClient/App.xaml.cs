@@ -14,7 +14,7 @@ namespace YukoClient
     {
         public const int BinaryFileVersion = 20211009;
 
-        public static string Name { get; } = Assembly.GetExecutingAssembly().GetName().Name;
+        public static string Name { get; } = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
         private static Mutex yukoClientMutex;
 

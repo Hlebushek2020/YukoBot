@@ -11,7 +11,7 @@ namespace YukoCollectionsClient
     /// </summary>
     public partial class App : Application
     {
-        public static string Name { get; } = Assembly.GetExecutingAssembly().GetName().Name;
+        public static string Name { get; } = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
         private static Mutex yukoClientMutex;
 

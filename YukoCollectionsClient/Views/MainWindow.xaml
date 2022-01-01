@@ -12,7 +12,7 @@
         FontSize="14"
         WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
-        <KeyBinding Key="F5" Command="{Binding UpdateServerCollectionCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding UpdateMessageCollectionsCommand}"/>
     </Window.InputBindings>
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded">
@@ -67,10 +67,10 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <ListBox Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding Servers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedServer, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
+                <ListBox Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding MessageCollections, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollection, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
                     <ListBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Обновить список" InputGestureText="F5" Command="{Binding UpdateServerCollectionCommand}"/>
+                            <MenuItem Header="Обновить список" InputGestureText="F5" Command="{Binding UpdateMessageCollectionsCommand}"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
@@ -85,20 +85,23 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать правила" Command="{Binding ExportScriptsCommand}">
+                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить" Command="{Binding RemoveMessageCollectionItemCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
+                        </Button>
+                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список" Command="{Binding ExportMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-export-32.png"/>
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать правилa" Command="{Binding ImportScriptsCommand}">
+                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список" Command="{Binding ImportMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-import-32.png"/>
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Выполнить правила" Command="{Binding RunScriptsCommand}">
+                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Получить ссылки" Command="{Binding GetUrlsFromMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-start-32.png"/>
                         </Button>
                     </StackPanel>
-                    <ListView Margin="0,26,0,0" SelectionMode="Single" ItemsSource="{Binding Scripts, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedScript, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView Margin="0,26,0,0" SelectionMode="Single" ItemsSource="{Binding MessageCollectionItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollectionItem, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Канал" DisplayMemberBinding="{Binding Channel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <GridViewColumn Header="Канал" DisplayMemberBinding="{Binding ChannelId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <GridViewColumn Header="Сообщение" DisplayMemberBinding="{Binding MessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </GridView>
                         </ListView.View>

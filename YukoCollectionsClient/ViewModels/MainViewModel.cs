@@ -2,19 +2,18 @@
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using YukoClient.Models;
-using YukoClient.Models.Progress;
 using YukoClientBase.Interfaces;
+using YukoCollectionsClient.Models;
+using YukoCollectionsClient.Models.Progress;
 
-namespace YukoClient.ViewModels
+namespace YukoCollectionsClient.ViewModels
 {
     public class MainViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
-        private Server selectedServer;
+        private MessageCollection selectedMessageCollection;
         #endregion
 
         #region Propirties
@@ -23,23 +22,23 @@ namespace YukoClient.ViewModels
         public ImageBrush Avatar { get { return Storage.Current.Avatar; } }
         public string Nikname { get { return Storage.Current.Nikname; } }
         public string Id { get { return Storage.Current.Id.ToString(); } }
-        public ObservableCollection<Server> Servers { get { return Storage.Current.Servers; } }
-        public Server SelectedServer
+        public ObservableCollection<MessageCollection> MessageCollections { get { return Storage.Current.MessageCollections; } }
+        public MessageCollection SelectedMessageCollection
         {
-            get { return selectedServer; }
+            get { return selectedMessageCollection; }
             set
             {
-                selectedServer = value;
-                if (selectedServer != null)
+                if (value != null)
                 {
-                    RaisePropertyChanged("Scripts");
+                    selectedMessageCollection = value;
+                    RaisePropertyChanged("MessageCollectionItems");
                     RaisePropertyChanged("Urls");
                 }
             }
         }
-        public ObservableCollection<Script> Scripts { get { return selectedServer?.Scripts; } }
-        public Script SelectedScript { get; set; }
-        public ObservableCollection<string> Urls { get { return selectedServer?.Urls; } }
+        public ObservableCollection<MessageCollectionItem> MessageCollectionItems { get { return selectedMessageCollection?.Items; } }
+        public MessageCollectionItem SelectedMessageCollectionItem { get; set; }
+        public ObservableCollection<string> Urls { get { return selectedMessageCollection?.Urls; } }
         public string SelectedUrl { get; set; }
         #endregion
 
@@ -47,17 +46,13 @@ namespace YukoClient.ViewModels
         public DelegateCommand WindowLoadedCommand { get; }
         // User Commands
         public DelegateCommand AppSettingsCommand { get; }
-        // Server Commands
-        public DelegateCommand ServerSettingsCommand { get; }
-        public DelegateCommand RemoveServerCommand { get; }
-        public DelegateCommand UpdateServerCollectionCommand { get; }
-        // Script Commands
-        public DelegateCommand AddScriptCommand { get; }
-        public DelegateCommand RemoveScriptCommand { get; }
-        public DelegateCommand ClearScriptsCommand { get; }
-        public DelegateCommand ExportScriptsCommand { get; }
-        public DelegateCommand ImportScriptsCommand { get; }
-        public DelegateCommand RunScriptsCommand { get; }
+        // Message Collections Commands
+        public DelegateCommand UpdateMessageCollectionsCommand { get; }
+        // Message Collection Commands
+        public DelegateCommand RemoveMessageCollectionItemCommand { get; }
+        public DelegateCommand ExportMessageCollectionCommand { get; }
+        public DelegateCommand ImportMessageCollectionCommand { get; }
+        public DelegateCommand GetUrlsFromMessageCollectionCommand { get; }
         // Url Command
         public DelegateCommand RemoveUrlCommand { get; }
         public DelegateCommand ClearUrlsCommand { get; }
@@ -69,19 +64,19 @@ namespace YukoClient.ViewModels
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
-            WindowLoadedCommand = new DelegateCommand(() =>
+            /*WindowLoadedCommand = new DelegateCommand(() =>
             {
                 ProgressWindow progress = new ProgressWindow(new StorageInitialization());
                 progress.ShowDialog();
-            });
+            });*/
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
                 SettingsWindow settingsWindow = new SettingsWindow();
                 settingsWindow.ShowDialog();
             });
-            // Server Commands
-            UpdateServerCollectionCommand = new DelegateCommand(() =>
+            // Message Collections Commands
+            /*UpdateMessageCollectionsCommand = new DelegateCommand(() =>
             {
                 MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
@@ -89,67 +84,21 @@ namespace YukoClient.ViewModels
                     ProgressWindow progress = new ProgressWindow(new UpdateServerList(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
-            });
-            RemoveServerCommand = new DelegateCommand(() =>
+            });*/
+            // Message Collection Commands
+            RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (SelectedMessageCollectionItem != null)
                 {
-                    if (Models.Dialogs.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show($"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        Storage.Current.Servers.Remove(selectedServer);
+                        selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }
                 }
             });
-            ServerSettingsCommand = new DelegateCommand(() =>
+            ExportMessageCollectionCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
-                {
-                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(selectedServer);
-                    serverSettings.ShowDialog();
-                    // save data
-                    Task.Run(() => Storage.Current.Save());
-                }
-            });
-            // Script Commands
-            AddScriptCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
-                {
-                    AddScriptWindow addScript = new AddScriptWindow(selectedServer);
-                    addScript.ShowDialog();
-                }
-                else
-                {
-                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            });
-            RemoveScriptCommand = new DelegateCommand(() =>
-            {
-                if (SelectedScript != null)
-                {
-                    if (Models.Dialogs.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        selectedServer.Scripts.Remove(SelectedScript);
-                    }
-                }
-                else
-                {
-                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            });
-            ClearScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
-                {
-                    if (Models.Dialogs.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        selectedServer.Scripts.Clear();
-                    }
-                }
-            });
-            ExportScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (selectedMessageCollection != null && selectedMessageCollection.Items.Count > 0)
                 {
                     using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
                     {
@@ -159,15 +108,16 @@ namespace YukoClient.ViewModels
                     {
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            ProgressWindow progressWindow = new ProgressWindow(new ExportScripts(selectedServer.Scripts, selectedServer.Id, saveFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(
+                                new ExportMessageCollection(selectedMessageCollection.Items, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
                 }
             });
-            ImportScriptsCommand = new DelegateCommand(() =>
+            ImportMessageCollectionCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (selectedMessageCollection != null)
                 {
                     using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
                     {
@@ -177,27 +127,28 @@ namespace YukoClient.ViewModels
                     {
                         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            if (selectedServer.Scripts.Count > 0)
+                            if (selectedMessageCollection.Items.Count > 0)
                             {
                                 if (Models.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
-                                    selectedServer.Scripts.Clear();
+                                    selectedMessageCollection.Items.Clear();
                                 }
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(new ImportScripts(selectedServer.Scripts, selectedServer.Id, openFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(
+                                new ImportMessageCollection(selectedMessageCollection.Items, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
                 }
             });
-            RunScriptsCommand = new DelegateCommand(() =>
+            /*GetUrlsFromMessageCollectionCommand = new DelegateCommand(() =>
             {
                 if (selectedServer != null && selectedServer.Scripts.Count > 0)
                 {
                     ProgressWindow progress = new ProgressWindow(new ExecuteScripts(selectedServer));
                     progress.ShowDialog();
                 }
-            });
+            });*/
             // Url Command
             RemoveUrlCommand = new DelegateCommand(() =>
             {
@@ -205,23 +156,23 @@ namespace YukoClient.ViewModels
                 {
                     if (Models.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Urls.Remove(SelectedUrl);
+                        selectedMessageCollection.Urls.Remove(SelectedUrl);
                     }
                 }
             });
             ClearUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (selectedMessageCollection != null && selectedMessageCollection.Urls.Count > 0)
                 {
                     if (Models.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Urls.Clear();
+                        selectedMessageCollection.Urls.Clear();
                     }
                 }
             });
             ExportUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (selectedMessageCollection != null && selectedMessageCollection.Urls.Count > 0)
                 {
                     using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
                     {
@@ -231,7 +182,7 @@ namespace YukoClient.ViewModels
                     {
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            ProgressWindow progressWindow = new ProgressWindow(new ExportUrls(selectedServer.Urls, saveFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(new ExportUrls(selectedMessageCollection.Urls, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -239,7 +190,7 @@ namespace YukoClient.ViewModels
             });
             ImportUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (selectedMessageCollection != null)
                 {
                     using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
                     {
@@ -249,14 +200,14 @@ namespace YukoClient.ViewModels
                     {
                         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            if (selectedServer.Urls.Count > 0)
+                            if (selectedMessageCollection.Urls.Count > 0)
                             {
                                 if (Models.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
-                                    selectedServer.Urls.Clear();
+                                    selectedMessageCollection.Urls.Clear();
                                 }
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(new ImportUrls(selectedServer.Urls, openFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(new ImportUrls(selectedMessageCollection.Urls, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -264,13 +215,13 @@ namespace YukoClient.ViewModels
             });
             DownloadFilesCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (selectedMessageCollection != null && selectedMessageCollection.Urls.Count > 0)
                 {
                     System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         ProgressWindow progressWindow = new ProgressWindow(
-                            new Download(selectedServer.Urls, folderBrowserDialog.SelectedPath));
+                            new Download(selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath));
                         progressWindow.ShowDialog();
                     }
                 }
