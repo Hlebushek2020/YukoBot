@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\RequestType.cs" />
+    <Compile Include="Interfaces\IClientData.cs" />
     <Compile Include="Interfaces\ICloseableView.cs" />
     <Compile Include="Interfaces\IViewTitle.cs" />
     <Compile Include="Models\Downloader.cs" />

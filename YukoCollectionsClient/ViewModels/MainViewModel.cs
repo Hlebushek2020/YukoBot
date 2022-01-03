@@ -64,11 +64,11 @@ namespace YukoCollectionsClient.ViewModels
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
-            /*WindowLoadedCommand = new DelegateCommand(() =>
+            WindowLoadedCommand = new DelegateCommand(() =>
             {
                 ProgressWindow progress = new ProgressWindow(new StorageInitialization());
                 progress.ShowDialog();
-            });*/
+            });
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
@@ -76,15 +76,15 @@ namespace YukoCollectionsClient.ViewModels
                 settingsWindow.ShowDialog();
             });
             // Message Collections Commands
-            /*UpdateMessageCollectionsCommand = new DelegateCommand(() =>
+            UpdateMessageCollectionsCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateServerList(messageResult == MessageBoxResult.Yes));
+                    ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
-            });*/
+            });
             // Message Collection Commands
             RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
             {
@@ -102,8 +102,8 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
                     {
-                        Filter = "Yuko Script|*.yukoscript",
-                        DefaultExt = "yukoscript"
+                        Filter = "JavaScript Object Notation|*.json",
+                        DefaultExt = "json"
                     })
                     {
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -121,8 +121,8 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
                     {
-                        Filter = "Yuko Script|*.yukoscript",
-                        DefaultExt = "yukoscript"
+                        Filter = "JavaScript Object Notation|*.json",
+                        DefaultExt = "json"
                     })
                     {
                         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -141,14 +141,14 @@ namespace YukoCollectionsClient.ViewModels
                     }
                 }
             });
-            /*GetUrlsFromMessageCollectionCommand = new DelegateCommand(() =>
+            GetUrlsFromMessageCollectionCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (selectedMessageCollection != null && selectedMessageCollection.Items.Count > 0)
                 {
-                    ProgressWindow progress = new ProgressWindow(new ExecuteScripts(selectedServer));
+                    ProgressWindow progress = new ProgressWindow(new GetUrlsFromMessageCollection(selectedMessageCollection));
                     progress.ShowDialog();
                 }
-            });*/
+            });
             // Url Command
             RemoveUrlCommand = new DelegateCommand(() =>
             {

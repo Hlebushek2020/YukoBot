@@ -129,9 +129,17 @@
     <Compile Include="Models\Progresses\Download.cs" />
     <Compile Include="Models\Progresses\ExportMessageCollection.cs" />
     <Compile Include="Models\Progresses\ExportUrls.cs" />
+    <Compile Include="Models\Progresses\GetUrlsFromMessageCollection.cs" />
     <Compile Include="Models\Progresses\ImportMessageCollection.cs" />
     <Compile Include="Models\Progresses\ImportUrls.cs" />
+    <Compile Include="Models\Progresses\StorageInitialization.cs" />
+    <Compile Include="Models\Progresses\UpdateMessageCollections.cs" />
     <Compile Include="Models\Storage.cs" />
+    <Compile Include="Models\Web\Providers\GetUrlsProvider.cs" />
+    <Compile Include="Models\Web\Requests\GetUrlsRequest.cs" />
+    <Compile Include="Models\Web\Responses\ClientDataResponse.cs" />
+    <Compile Include="Models\Web\Responses\GetUrlsResponse.cs" />
+    <Compile Include="Models\Web\Responses\MessageCollectionsResponse.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="Views\ProgressWindow.xaml.cs">

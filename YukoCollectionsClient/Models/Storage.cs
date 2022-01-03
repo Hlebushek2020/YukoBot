@@ -6,11 +6,12 @@ using System.IO;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 
 namespace YukoCollectionsClient.Models
 {
-    public class Storage : BindableBase
+    public class Storage : BindableBase, IClientData
     {
         #region Fields
         private ulong id;
