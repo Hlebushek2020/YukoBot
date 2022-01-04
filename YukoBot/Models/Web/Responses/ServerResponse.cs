@@ -6,7 +6,7 @@ namespace YukoBot.Models.Web.Responses
     {
         public string IconUri { get; set; }
         public string Name { get; set; }
-        public List<ChannelWeb> Channels { get; set; }
+        public List<ChannelWeb> Channels { get; set; } = new List<ChannelWeb>();
 
         public static ServerResponse FromServerWeb(ServerWeb serverWeb)
         {
