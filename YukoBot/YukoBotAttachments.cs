@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
 

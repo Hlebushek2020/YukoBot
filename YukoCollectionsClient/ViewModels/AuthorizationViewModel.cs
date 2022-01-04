@@ -5,6 +5,7 @@ using System.Windows;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
+using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient.ViewModels
@@ -44,6 +45,9 @@ namespace YukoCollectionsClient.ViewModels
                 }
                 else
                 {
+                    Storage.Current.AvatarUri = response.AvatarUri;
+                    Storage.Current.Id = response.Id;
+                    Storage.Current.Nikname = response.Nikname;
                     Close();
                 }
             });

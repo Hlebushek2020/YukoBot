@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using YukoBot.Enums;
 using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
+using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
 
@@ -34,7 +36,8 @@ namespace YukoBot
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
-                    TC_Authorization(requestString, binaryWriter);
+                    AuthorizationResponse response = await ClientAuthorization(requestString);
+                    binaryWriter.Write(response.ToString());
                 }
                 else
                 {
@@ -50,23 +53,22 @@ namespace YukoBot
                     }
                     else
                     {
-
                         switch (baseRequest.Type)
                         {
-                            case RequestType.GetClientData:
-                                await TC_GetClientData(dbUser, binaryWriter);
+                            case RequestType.GetServer:
+                                await ClientGetServer(requestString, dbUser, binaryWriter);
                                 break;
-                            case RequestType.UpdateServer:
-                                await TC_UpdateServer(requestString, dbUser, binaryWriter);
-                                break;
-                            case RequestType.UpdateServerList:
-                                await TC_UpdateServerList(dbUser, binaryWriter);
+                            case RequestType.GetServers:
+                                await ClientGetServers(dbUser, binaryWriter);
                                 break;
                             case RequestType.ExecuteScripts:
-                                await TC_ExecuteScripts(requestString, db, dbUser, binaryReader, binaryWriter);
+                                await ClientExecuteScripts(requestString, db, dbUser, binaryReader, binaryWriter);
+                                break;
+                            case RequestType.GetMessageCollections:
+                                break;
+                            case RequestType.GetUrls:
                                 break;
                         }
-
                     }
                 }
             }
@@ -83,7 +85,7 @@ namespace YukoBot
             }
         }
 
-        private void TC_Authorization(string json, BinaryWriter writer)
+        private async Task<AuthorizationResponse> ClientAuthorization(string json)
         {
             AuthorizationRequest request = AuthorizationRequest.FromJson(json);
             YukoDbContext db = new YukoDbContext();
@@ -97,79 +99,51 @@ namespace YukoBot
             }
             if (dbUser == null || !dbUser.Password.Equals(request.Password))
             {
-                AuthorizationResponse response = new AuthorizationResponse
+                return new AuthorizationResponse
                 {
                     ErrorMessage = "Неверный логин или пароль!",
                     Token = null
                 };
-                writer.Write(response.ToString());
             }
-            else
+            // save db
+            dbUser.Token = Guid.NewGuid().ToString();
+            dbUser.LoginTime = DateTime.Now;
+            db.SaveChanges();
+            // response build
+            DiscordUser discordUser = await discordClient.GetUserAsync(dbUser.Id);
+            return new AuthorizationResponse
             {
-                AuthorizationResponse response = new AuthorizationResponse
-                {
-                    Token = Guid.NewGuid().ToString()
-                };
-                writer.Write(response.ToString());
-                // save db
-                dbUser.Token = response.Token;
-                dbUser.LoginTime = DateTime.Now;
-                db.SaveChanges();
-            }
-        }
-
-        private async Task TC_GetClientData(DbUser dbUser, BinaryWriter writer)
-        {
-            DiscordUser user = await discordClient.GetUserAsync(dbUser.Id);
-            ClientDataResponse response = new ClientDataResponse
-            {
-                AvatarUri = user.AvatarUrl,
-                Nikname = dbUser.Nikname,
-                Id = dbUser.Id
+                Id = discordUser.Id,
+                Nikname = discordUser.Username + "#" + discordUser.Discriminator,
+                AvatarUri = discordUser.AvatarUrl,
+                Token = dbUser.Token
             };
-            foreach (KeyValuePair<ulong, DiscordGuild> guild in discordClient.Guilds)
-            {
-                ServerResponse serverResponse = await TC_S_GetServer(dbUser, guild.Value);
-                if (serverResponse != null)
-                {
-                    response.Servers.Add(serverResponse);
-                }
-            }
-            writer.Write(response.ToString());
         }
 
-        private async Task TC_UpdateServer(string json, DbUser dbUser, BinaryWriter writer)
+        private async Task ClientGetServer(string json, DbUser dbUser, BinaryWriter writer)
         {
             ServerRequest request = ServerRequest.FromJson(json);
             DiscordGuild guild = await discordClient.GetGuildAsync(request.Id);
-            DiscordMember isContainsMember = await guild.GetMemberAsync(dbUser.Id);
-            ServerResponse response = new ServerResponse
-            {
-                ErrorMessage = "Вас нет на этом сервере!"
-            };
-            ServerResponse serverResponse = await TC_S_GetServer(dbUser, guild);
-            if (serverResponse != null)
-            {
-                response = serverResponse;
-            }
+            ServerResponse response = ServerResponse.FromServerWeb(
+                await TC_S_GetServer(dbUser, guild));
             writer.Write(response.ToString());
         }
 
-        private async Task TC_UpdateServerList(DbUser dbUser, BinaryWriter writer)
+        private async Task ClientGetServers(DbUser dbUser, BinaryWriter writer)
         {
-            ServerListResponse response = new ServerListResponse();
+            ServersResponse response = new ServersResponse();
             foreach (KeyValuePair<ulong, DiscordGuild> guild in discordClient.Guilds)
             {
-                ServerResponse serverResponse = await TC_S_GetServer(dbUser, guild.Value);
-                if (serverResponse != null)
+                ServerWeb server = await TC_S_GetServer(dbUser, guild.Value);
+                if (server != null)
                 {
-                    response.Servers.Add(serverResponse);
+                    response.Servers.Add(server);
                 }
             }
             writer.Write(response.ToString());
         }
 
-        private async Task TC_ExecuteScripts(string json, YukoDbContext db, DbUser dbUser, BinaryReader reader, BinaryWriter writer)
+        private async Task ClientExecuteScripts(string json, YukoDbContext db, DbUser dbUser, BinaryReader reader, BinaryWriter writer)
         {
             ServerRequest serverRequest = ServerRequest.FromJson(json);
             DbBan ban = db.Bans.Where(x => x.UserId == dbUser.Id && x.ServerId == serverRequest.Id).FirstOrDefault();
@@ -240,12 +214,12 @@ namespace YukoBot
         #endregion
 
         #region Tcp Sub
-        private async Task<ServerResponse> TC_S_GetServer(DbUser dbUser, DiscordGuild guild)
+        private async Task<ServerWeb> TC_S_GetServer(DbUser dbUser, DiscordGuild guild)
         {
             DiscordMember isContainsMember = await guild.GetMemberAsync(dbUser.Id);
             if (isContainsMember != null)
             {
-                ServerResponse serverResponse = new ServerResponse
+                ServerWeb serverResponse = new ServerWeb
                 {
                     Id = guild.Id,
                     Name = guild.Name,
@@ -259,7 +233,7 @@ namespace YukoBot
                         Permissions userPermission = channel.PermissionsFor(isContainsMember);
                         if (userPermission.HasPermission(Permissions.AccessChannels | Permissions.ReadMessageHistory))
                         {
-                            ChannelResponse channelResponse = new ChannelResponse
+                            ChannelWeb channelResponse = new ChannelWeb
                             {
                                 Id = channel.Id,
                                 Name = channel.Name

@@ -11,7 +11,7 @@ using YukoClientBase.Models;
 
 namespace YukoCollectionsClient.Models
 {
-    public class Storage : BindableBase, IClientData
+    public class Storage : BindableBase, IUser
     {
         #region Fields
         private ulong id;

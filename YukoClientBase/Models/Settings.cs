@@ -8,6 +8,7 @@ namespace YukoClientBase.Models
     public class Settings
     {
         public const string YukoClientMutexName = "YukoClientMutex";
+        public const string ServersCacheFile = "servers.json";
 
         #region Instance
         private static Settings settings;

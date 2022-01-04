@@ -11,7 +11,7 @@ using YukoCollectionsClient.Models.Web.Responses;
 
 namespace YukoCollectionsClient.Models.Web.Providers
 {
-    public class GetUrlsProvider : IDisposable
+    public class UrlsProvider : IDisposable
     {
         private bool disposed = false;
 
@@ -19,7 +19,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
         private readonly BinaryReader clientReader;
         private readonly BinaryWriter clientWriter;
 
-        public GetUrlsProvider(string token, IReadOnlyCollection<MessageCollectionItem> messageCollectionItems)
+        public UrlsProvider(string token, IReadOnlyCollection<MessageCollectionItem> messageCollectionItems)
         {
             client = new TcpClient
             {
@@ -31,7 +31,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
             clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
-            GetUrlsRequest request = new GetUrlsRequest
+            UrlsRequest request = new UrlsRequest
             {
                 Type = RequestType.GetUrls,
                 Token = token,
@@ -40,9 +40,9 @@ namespace YukoCollectionsClient.Models.Web.Providers
             clientWriter.Write(request.ToString());
         }
 
-        public GetUrlsResponse ReadBlock()
+        public UrlsResponse ReadBlock()
         {
-            return JsonConvert.DeserializeObject<GetUrlsResponse>(clientReader.ReadString());
+            return JsonConvert.DeserializeObject<UrlsResponse>(clientReader.ReadString());
         }
 
         public void Dispose()

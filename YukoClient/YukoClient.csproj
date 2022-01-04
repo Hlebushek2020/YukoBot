@@ -104,9 +104,9 @@
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />
     <Compile Include="Models\Web\Responses\ExecuteScriptResponse.cs" />
     <Compile Include="Models\Web\Responses\ServerResponse.cs" />
-    <Compile Include="Models\Web\Responses\ServerListResponse.cs" />
+    <Compile Include="Models\Web\Responses\ServersResponse.cs" />
     <Compile Include="Models\Progresses\ExecuteScripts.cs" />
-    <Compile Include="Models\Progresses\UpdateServerList.cs" />
+    <Compile Include="Models\Progresses\UpdateServers.cs" />
     <Compile Include="Models\Progresses\UpdateServer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -174,7 +174,6 @@
     <Compile Include="Models\Progresses\Base.cs" />
     <Compile Include="Models\Script.cs" />
     <Compile Include="Models\Server.cs" />
-    <Compile Include="Models\Web\Responses\ClientDataResponse.cs" />
     <Compile Include="Models\Storage.cs" />
     <Compile Include="ViewModels\AddScriptViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -206,7 +205,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

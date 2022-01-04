@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Models.Database
 {

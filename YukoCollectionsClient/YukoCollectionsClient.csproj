@@ -132,13 +132,11 @@
     <Compile Include="Models\Progresses\GetUrlsFromMessageCollection.cs" />
     <Compile Include="Models\Progresses\ImportMessageCollection.cs" />
     <Compile Include="Models\Progresses\ImportUrls.cs" />
-    <Compile Include="Models\Progresses\StorageInitialization.cs" />
     <Compile Include="Models\Progresses\UpdateMessageCollections.cs" />
     <Compile Include="Models\Storage.cs" />
-    <Compile Include="Models\Web\Providers\GetUrlsProvider.cs" />
-    <Compile Include="Models\Web\Requests\GetUrlsRequest.cs" />
-    <Compile Include="Models\Web\Responses\ClientDataResponse.cs" />
-    <Compile Include="Models\Web\Responses\GetUrlsResponse.cs" />
+    <Compile Include="Models\Web\Providers\UrlsProvider.cs" />
+    <Compile Include="Models\Web\Requests\UrlsRequest.cs" />
+    <Compile Include="Models\Web\Responses\UrlsResponse.cs" />
     <Compile Include="Models\Web\Responses\MessageCollectionsResponse.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />

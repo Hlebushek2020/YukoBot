@@ -2,9 +2,9 @@
 
 namespace YukoBot.Models.Web.Responses
 {
-    public class ExecuteScriptResponse : Response
+    public class UrlsResponse : Response
     {
+        public List<string> Urls { get; set; }
         public bool Next { get; set; }
-        public List<string> Urls { get; set; } = new List<string>();
     }
 }

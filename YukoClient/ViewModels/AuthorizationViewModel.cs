@@ -2,6 +2,7 @@
 using Prism.Mvvm;
 using System;
 using System.Windows;
+using YukoClient.Models;
 using YukoClient.Models.Web;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
@@ -44,6 +45,9 @@ namespace YukoClient.ViewModels
                 }
                 else
                 {
+                    Storage.Current.AvatarUri = response.AvatarUri;
+                    Storage.Current.Id = response.Id;
+                    Storage.Current.Nikname = response.Nikname;
                     Close();
                 }
             });

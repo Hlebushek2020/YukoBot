@@ -3,7 +3,7 @@ using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Responses
 {
-    public class ServerListResponse : Response
+    public class ServersResponse : Response
     {
         public List<Server> Servers { get; set; }
     }

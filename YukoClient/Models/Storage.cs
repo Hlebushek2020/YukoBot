@@ -11,7 +11,7 @@ using YukoClientBase.Models;
 
 namespace YukoClient.Models
 {
-    public class Storage : BindableBase, IClientData
+    public class Storage : BindableBase, IUser
     {
         #region Fields
         private ulong id;
@@ -43,7 +43,6 @@ namespace YukoClient.Models
             }
         }
 
-        [JsonIgnore]
         public ImageBrush Avatar
         {
             get
@@ -83,11 +82,11 @@ namespace YukoClient.Models
 
         public void Save()
         {
-            string profileFile = Path.Combine(Settings.ProgramResourceFolder, "profile.json");
+            string profileFile = Path.Combine(Settings.ProgramResourceFolder, Settings.ServersCacheFile);
             Directory.CreateDirectory(Settings.ProgramResourceFolder);
             using (StreamWriter streamWriter = new StreamWriter(profileFile, false, Encoding.UTF8))
             {
-                streamWriter.Write(JsonConvert.SerializeObject(this));
+                streamWriter.Write(JsonConvert.SerializeObject(Servers));
             }
         }
     }

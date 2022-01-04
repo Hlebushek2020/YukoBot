@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attribute;
 using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Commands
 {

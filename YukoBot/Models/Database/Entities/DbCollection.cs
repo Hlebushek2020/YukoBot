@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace YukoBot.Models.Database
+namespace YukoBot.Models.Database.Entities
 {
     public class DbCollection
     {

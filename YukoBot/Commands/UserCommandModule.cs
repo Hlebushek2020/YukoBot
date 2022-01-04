@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Commands
 {

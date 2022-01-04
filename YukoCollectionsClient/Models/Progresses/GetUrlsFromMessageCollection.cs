@@ -20,10 +20,10 @@ namespace YukoCollectionsClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (GetUrlsProvider provider = WebClient.Current.GetUrls(messageCollection.Items))
+            using (UrlsProvider provider = WebClient.Current.GetUrls(messageCollection.Items))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
-                GetUrlsResponse response = provider.ReadBlock();
+                UrlsResponse response = provider.ReadBlock();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
                     StringBuilder errorMessages = new StringBuilder();

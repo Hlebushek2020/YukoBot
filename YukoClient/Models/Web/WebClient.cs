@@ -14,29 +14,13 @@ namespace YukoClient.Models.Web
         public static WebClient Current { get; } = new WebClient();
         #endregion
 
-        public ClientDataResponse GetClientData()
-        {
-            try
-            {
-                return Request<ClientDataResponse>(new BaseRequest
-                {
-                    Type = RequestType.GetClientData,
-                    Token = token
-                });
-            }
-            catch (Exception ex)
-            {
-                return new ClientDataResponse { ErrorMessage = ex.Message };
-            }
-        }
-
-        public ServerResponse UpdateServer(ulong serverId)
+        public ServerResponse GetServer(ulong serverId)
         {
             try
             {
                 return Request<ServerResponse>(new ServerRequest
                 {
-                    Type = RequestType.UpdateServer,
+                    Type = RequestType.GetServer,
                     Token = token,
                     Id = serverId
                 });
@@ -47,19 +31,19 @@ namespace YukoClient.Models.Web
             }
         }
 
-        public ServerListResponse UpdateServerList()
+        public ServersResponse GetServers()
         {
             try
             {
-                return Request<ServerListResponse>(new BaseRequest
+                return Request<ServersResponse>(new BaseRequest
                 {
-                    Type = RequestType.UpdateServerList,
+                    Type = RequestType.GetServers,
                     Token = token
                 });
             }
             catch (Exception ex)
             {
-                return new ServerListResponse { ErrorMessage = ex.Message };
+                return new ServersResponse { ErrorMessage = ex.Message };
             }
         }
 

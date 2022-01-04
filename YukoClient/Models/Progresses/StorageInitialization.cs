@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -15,28 +16,20 @@ namespace YukoClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Поиск сохраненных данных");
-            string profileFile = Path.Combine(Settings.ProgramResourceFolder, "profile.json");
-            if (File.Exists(profileFile))
+            string serversCacheFilePath = Path.Combine(Settings.ProgramResourceFolder, Settings.ServersCacheFile);
+            if (File.Exists(serversCacheFilePath))
             {
                 dispatcher.Invoke(() => State = "Загрузка данных");
-                string json = File.ReadAllText(profileFile, Encoding.UTF8);
-                Storage newStore = JsonConvert.DeserializeObject<Storage>(json);
-                Storage.Current.Id = newStore.Id;
-                Storage.Current.AvatarUri = newStore.AvatarUri;
-                Storage.Current.Nikname = newStore.Nikname;
-                Storage.Current.Servers = newStore.Servers;
+                string json = File.ReadAllText(serversCacheFilePath, Encoding.UTF8);
+                Storage.Current.Servers = JsonConvert.DeserializeObject<ObservableCollection<Server>>(json);
             }
             else
             {
                 dispatcher.Invoke(() => State = "Получение данных");
-                ClientDataResponse response = WebClient.Current.GetClientData();
+                ServersResponse response = WebClient.Current.GetServers();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
-                    Storage.Current.Id = response.Id;
-                    Storage.Current.AvatarUri = response.AvatarUri;
-                    Storage.Current.Nikname = response.Nikname;
-                    Storage.Current.Servers = response.Servers;
-                    Storage.Current.Save();
+                    Storage.Current.Servers = new ObservableCollection<Server>(response.Servers);
                 }
                 else
                 {

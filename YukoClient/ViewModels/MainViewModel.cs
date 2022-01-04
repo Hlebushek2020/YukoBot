@@ -71,6 +71,7 @@ namespace YukoClient.ViewModels
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             WindowLoadedCommand = new DelegateCommand(() =>
             {
+                // TODO: Update servers (oerride)
                 ProgressWindow progress = new ProgressWindow(new StorageInitialization());
                 progress.ShowDialog();
             });
@@ -86,7 +87,7 @@ namespace YukoClient.ViewModels
                 MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateServerList(messageResult == MessageBoxResult.Yes));
+                    ProgressWindow progress = new ProgressWindow(new UpdateServers(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
             });

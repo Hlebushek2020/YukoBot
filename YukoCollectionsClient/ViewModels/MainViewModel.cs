@@ -66,7 +66,7 @@ namespace YukoCollectionsClient.ViewModels
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                ProgressWindow progress = new ProgressWindow(new StorageInitialization());
+                ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(true));
                 progress.ShowDialog();
             });
             // User Commands

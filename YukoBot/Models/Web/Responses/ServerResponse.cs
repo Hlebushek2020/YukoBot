@@ -4,9 +4,22 @@ namespace YukoBot.Models.Web.Responses
 {
     public class ServerResponse : Response
     {
-        public ulong Id { get; set; }
         public string IconUri { get; set; }
         public string Name { get; set; }
-        public List<ChannelResponse> Channels { get; set; } = new List<ChannelResponse>();
+        public List<ChannelWeb> Channels { get; set; }
+
+        public static ServerResponse FromServerWeb(ServerWeb serverWeb)
+        {
+            if (serverWeb == null)
+            {
+                return new ServerResponse { ErrorMessage = "Вас нет на этом сервере!" };
+            }
+            return new ServerResponse
+            {
+                IconUri = serverWeb.IconUri,
+                Name = serverWeb.Name,
+                Channels = serverWeb.Channels
+            };
+        }
     }
 }

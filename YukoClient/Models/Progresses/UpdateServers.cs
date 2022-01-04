@@ -7,22 +7,22 @@ using YukoClient.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
-    public class UpdateServerList : Base
+    public class UpdateServers : Base
     {
-        private readonly bool fullUpdate;
+        private readonly bool overrideServers;
 
-        public UpdateServerList(bool fullUpdate)
+        public UpdateServers(bool overrideServers)
         {
-            this.fullUpdate = fullUpdate;
+            this.overrideServers = overrideServers;
         }
 
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Получение данных о серверах");
-            ServerListResponse serverList = WebClient.Current.UpdateServerList();
+            ServersResponse serverList = WebClient.Current.GetServers();
             if (string.IsNullOrEmpty(serverList.ErrorMessage))
             {
-                if (fullUpdate)
+                if (overrideServers)
                 {
                     dispatcher.Invoke(() => State = "Обновление списка серверов");
                     Storage.Current.Servers = new ObservableCollection<Server>(serverList.Servers);
