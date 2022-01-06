@@ -41,33 +41,38 @@ namespace YukoBot
                 }
                 else
                 {
-                    YukoDbContext db = new YukoDbContext();
-                    DbUser dbUser = db.Users.Where(x => x.Token == baseRequest.Token).FirstOrDefault();
-                    if (dbUser == null || baseRequest.Token == null)
+                    using (YukoDbContext db = new YukoDbContext())
                     {
-                        Response baseResponse = new Response
+                        DbUser dbUser = db.Users.Where(x => x.Token == baseRequest.Token).FirstOrDefault();
+                        if (dbUser == null || baseRequest.Token == null)
                         {
-                            ErrorMessage = "Вы не авторизованы!",
-                        };
-                        binaryWriter.Write(baseResponse.ToString());
-                    }
-                    else
-                    {
-                        switch (baseRequest.Type)
+                            Response baseResponse = new Response
+                            {
+                                ErrorMessage = "Вы не авторизованы!",
+                            };
+                            binaryWriter.Write(baseResponse.ToString());
+                        }
+                        else
                         {
-                            case RequestType.GetServer:
-                                await ClientGetServer(requestString, dbUser, binaryWriter);
-                                break;
-                            case RequestType.GetServers:
-                                await ClientGetServers(dbUser, binaryWriter);
-                                break;
-                            case RequestType.ExecuteScripts:
-                                await ClientExecuteScripts(requestString, db, dbUser, binaryReader, binaryWriter);
-                                break;
-                            case RequestType.GetMessageCollections:
-                                break;
-                            case RequestType.GetUrls:
-                                break;
+                            switch (baseRequest.Type)
+                            {
+                                case RequestType.GetServer:
+                                    await ClientGetServer(requestString, dbUser, binaryWriter);
+                                    break;
+                                case RequestType.GetServers:
+                                    await ClientGetServers(dbUser, binaryWriter);
+                                    break;
+                                case RequestType.ExecuteScripts:
+                                    await ClientExecuteScripts(requestString, db, dbUser, binaryReader, binaryWriter);
+                                    break;
+                                case RequestType.GetMessageCollections:
+                                    MessageCollectionsResponse response = ClientGetMessageCollections(db, dbUser);
+                                    binaryWriter.Write(response.ToString());
+                                    break;
+                                case RequestType.GetUrls:
+                                    await ClientGetUrls(requestString, binaryWriter);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -209,6 +214,53 @@ namespace YukoBot
                     ErrorMessage = $"Вы забанены на этом сервере, для разбана обратитесь к админу сервера.{reason}"
                 };
                 writer.Write(response.ToString());
+            }
+        }
+
+        private MessageCollectionsResponse ClientGetMessageCollections(YukoDbContext dbContext, DbUser dbUser)
+        {
+            IQueryable<DbCollection> dbCollections = dbContext.Collections.Where(x => x.UserId == dbUser.Id);
+            MessageCollectionsResponse response = new MessageCollectionsResponse();
+            foreach (DbCollection dbCollection in dbCollections)
+            {
+                MessageCollectionWeb collection = new MessageCollectionWeb
+                {
+                    Name = dbCollection.Name
+                };
+                foreach (DbCollectionItem dbCollectionItem in dbCollection.CollectionItems)
+                {
+                    collection.Items.Add(new MessageCollectionItemWeb
+                    {
+                        ChannelId = dbCollectionItem.ChannelId,
+                        MessageId = dbCollectionItem.MessageId
+                    });
+                }
+                response.MessageCollections.Add(collection);
+            }
+            return response;
+        }
+
+        private async Task ClientGetUrls(string requestString, BinaryWriter binaryWriter)
+        {
+            UrlsRequest request = UrlsRequest.FromJson(requestString);
+            IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator = request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
+            bool hasNextGroup;
+            while (hasNextGroup = groupEnumerator.MoveNext())
+            {
+                DiscordChannel discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
+                IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
+                bool hasHextGroupItem;
+                while (hasHextGroupItem = groupItemEnumerator.MoveNext())
+                {
+                    DiscordMessage discordMessage = await discordChannel.GetMessageAsync(groupItemEnumerator.Current.MessageId);
+                    UrlsResponse response = new UrlsResponse
+                    {
+                        Next = hasNextGroup || hasHextGroupItem
+                    };
+                    response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
+                    response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    binaryWriter.Write(response.ToString());
+                }
             }
         }
         #endregion
