@@ -1,11 +1,13 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Enums;
 using YukoBot.Models.Database;
@@ -242,25 +244,64 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString, BinaryWriter binaryWriter)
         {
+            UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
+            List<ulong> channelNotFound = new List<ulong>();
+            List<ulong> messageNotFound = new List<ulong>();
             IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator = request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
             bool hasNextGroup;
             while (hasNextGroup = groupEnumerator.MoveNext())
             {
-                DiscordChannel discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
-                IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
-                bool hasHextGroupItem;
-                while (hasHextGroupItem = groupItemEnumerator.MoveNext())
+                try
                 {
-                    DiscordMessage discordMessage = await discordChannel.GetMessageAsync(groupItemEnumerator.Current.MessageId);
-                    UrlsResponse response = new UrlsResponse
+                    DiscordChannel discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
+                    IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
+                    bool hasHextGroupItem;
+                    while (hasHextGroupItem = groupItemEnumerator.MoveNext())
                     {
-                        Next = hasNextGroup || hasHextGroupItem
-                    };
-                    response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
-                    response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
-                    binaryWriter.Write(response.ToString());
+                        try
+                        {
+                            DiscordMessage discordMessage = await discordChannel.GetMessageAsync(groupItemEnumerator.Current.MessageId);
+                            response = new UrlsResponse
+                            {
+                                Next = hasNextGroup || hasHextGroupItem || channelNotFound.Count > 0 || messageNotFound.Count > 0
+                            };
+                            response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
+                            response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                            binaryWriter.Write(response.ToString());
+                        }
+                        catch (NotFoundException)
+                        {
+                            messageNotFound.Add(groupItemEnumerator.Current.MessageId);
+                        }
+                        Thread.Sleep(YukoSettings.Current.DiscordMessageLimitSleepMs / 20);
+                    }
                 }
+                catch (NotFoundException)
+                {
+                    channelNotFound.Add(groupEnumerator.Current.Key);
+                }
+            }
+            if (channelNotFound.Count > 0 || messageNotFound.Count > 0)
+            {
+                response = new UrlsResponse
+                {
+                    Next = false,
+                    ErrorMessage = string.Empty
+                };
+                if (channelNotFound.Count > 0)
+                {
+                    response.ErrorMessage += $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
+                }
+                if (messageNotFound.Count > 0)
+                {
+                    if (response.ErrorMessage.Length > 0)
+                    {
+                        response.ErrorMessage += '\n';
+                    }
+                    response.ErrorMessage += $"Следующие сообщения были не найдены: {string.Join(',', messageNotFound)}.";
+                }
+                binaryWriter.Write(response.ToString());
             }
         }
         #endregion
