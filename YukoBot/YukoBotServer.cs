@@ -170,7 +170,7 @@ namespace YukoBot
                             switch (scriptRequest.Mode)
                             {
                                 case ScriptMode.One:
-                                    await GetAttachment(dbUser, scriptRequest, writer);
+                                    await GetAttachment(scriptRequest, writer);
                                     break;
                                 case ScriptMode.After:
                                     await GetAttachmentsAfter(dbUser, scriptRequest, writer);
@@ -221,7 +221,7 @@ namespace YukoBot
 
         private MessageCollectionsResponse ClientGetMessageCollections(YukoDbContext dbContext, DbUser dbUser)
         {
-            IQueryable<DbCollection> dbCollections = dbContext.Collections.Where(x => x.UserId == dbUser.Id);
+            List<DbCollection> dbCollections = new List<DbCollection>(dbContext.Collections.Where(x => x.UserId == dbUser.Id));
             MessageCollectionsResponse response = new MessageCollectionsResponse();
             foreach (DbCollection dbCollection in dbCollections)
             {
@@ -229,7 +229,8 @@ namespace YukoBot
                 {
                     Name = dbCollection.Name
                 };
-                foreach (DbCollectionItem dbCollectionItem in dbCollection.CollectionItems)
+                IQueryable<DbCollectionItem> dbCollectionItems = dbContext.CollectionItems.Where(x => x.CollectionId == dbCollection.Id);
+                foreach (DbCollectionItem dbCollectionItem in dbCollectionItems)
                 {
                     collection.Items.Add(new MessageCollectionItemWeb
                     {
@@ -249,22 +250,21 @@ namespace YukoBot
             List<ulong> channelNotFound = new List<ulong>();
             List<ulong> messageNotFound = new List<ulong>();
             IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator = request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
-            bool hasNextGroup;
-            while (hasNextGroup = groupEnumerator.MoveNext())
+            binaryWriter.Write(new Response().ToString());
+            while (groupEnumerator.MoveNext())
             {
                 try
                 {
                     DiscordChannel discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
                     IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
-                    bool hasHextGroupItem;
-                    while (hasHextGroupItem = groupItemEnumerator.MoveNext())
+                    while (groupItemEnumerator.MoveNext())
                     {
                         try
                         {
                             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(groupItemEnumerator.Current.MessageId);
                             response = new UrlsResponse
                             {
-                                Next = hasNextGroup || hasHextGroupItem || channelNotFound.Count > 0 || messageNotFound.Count > 0
+                                Next = true
                             };
                             response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
                             response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
@@ -282,13 +282,13 @@ namespace YukoBot
                     channelNotFound.Add(groupEnumerator.Current.Key);
                 }
             }
+            response = new UrlsResponse
+            {
+                Next = false,
+                ErrorMessage = string.Empty
+            };
             if (channelNotFound.Count > 0 || messageNotFound.Count > 0)
             {
-                response = new UrlsResponse
-                {
-                    Next = false,
-                    ErrorMessage = string.Empty
-                };
                 if (channelNotFound.Count > 0)
                 {
                     response.ErrorMessage += $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
@@ -301,8 +301,8 @@ namespace YukoBot
                     }
                     response.ErrorMessage += $"Следующие сообщения были не найдены: {string.Join(',', messageNotFound)}.";
                 }
-                binaryWriter.Write(response.ToString());
             }
+            binaryWriter.Write(response.ToString());
         }
         #endregion
 

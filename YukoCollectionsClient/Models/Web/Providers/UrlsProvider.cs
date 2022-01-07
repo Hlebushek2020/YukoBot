@@ -6,8 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Requests;
-using YukoCollectionsClient.Models.Web.Responses;
 
 namespace YukoCollectionsClient.Models.Web.Providers
 {

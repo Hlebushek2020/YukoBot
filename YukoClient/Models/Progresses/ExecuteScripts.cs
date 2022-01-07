@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Providers;
-using YukoClient.Models.Web.Responses;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
@@ -23,7 +23,7 @@ namespace YukoClient.Models.Progress
             using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(server.Id, server.Scripts.Count))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
-                ExecuteScriptResponse response = provider.ReadBlock();
+                UrlsResponse response = provider.ReadBlock();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
                     StringBuilder errorMessages = new StringBuilder();

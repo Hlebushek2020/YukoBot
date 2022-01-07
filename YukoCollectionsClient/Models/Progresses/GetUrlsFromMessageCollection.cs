@@ -2,9 +2,9 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
-using YukoCollectionsClient.Models.Web.Responses;
 
 namespace YukoCollectionsClient.Models.Progress
 {
@@ -26,6 +26,7 @@ namespace YukoCollectionsClient.Models.Progress
                 UrlsResponse response = provider.ReadBlock();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
+                    dispatcher.Invoke(() => State = "Обработка");
                     StringBuilder errorMessages = new StringBuilder();
                     do
                     {
@@ -34,7 +35,7 @@ namespace YukoCollectionsClient.Models.Progress
                         {
                             foreach (string url in response.Urls)
                             {
-                                messageCollection.Urls.Add(url);
+                                dispatcher.Invoke(() => messageCollection.Urls.Add(url));
                             }
                         }
                         else

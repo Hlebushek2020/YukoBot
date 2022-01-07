@@ -74,6 +74,7 @@
     <Compile Include="Models\Web\Requests\Request.cs" />
     <Compile Include="Models\Web\Responces\AuthorizationResponse.cs" />
     <Compile Include="Models\Web\Responces\Response.cs" />
+    <Compile Include="Models\Web\Responces\UrlsResponse.cs" />
     <Compile Include="Models\Web\WebClientBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

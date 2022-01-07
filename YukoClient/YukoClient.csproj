@@ -102,7 +102,6 @@
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
     <Compile Include="Models\Web\Requests\ExecuteScriptRequest.cs" />
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />
-    <Compile Include="Models\Web\Responses\ExecuteScriptResponse.cs" />
     <Compile Include="Models\Web\Responses\ServerResponse.cs" />
     <Compile Include="Models\Web\Responses\ServersResponse.cs" />
     <Compile Include="Models\Progresses\ExecuteScripts.cs" />

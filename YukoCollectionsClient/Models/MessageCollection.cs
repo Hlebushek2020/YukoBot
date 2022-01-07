@@ -8,8 +8,8 @@ namespace YukoCollectionsClient.Models
     {
         #region Fields
         private string name;
-        private ObservableCollection<MessageCollectionItem> items;
-        private ObservableCollection<string> urls;
+        private ObservableCollection<MessageCollectionItem> items = new ObservableCollection<MessageCollectionItem>();
+        private ObservableCollection<string> urls = new ObservableCollection<string>();
         #endregion
 
         #region Propirties

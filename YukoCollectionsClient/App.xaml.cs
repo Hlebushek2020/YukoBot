@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using YukoClientBase.Models;
+using YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient
 {
@@ -25,7 +26,16 @@ namespace YukoCollectionsClient
                 Shutdown();
             }
             MainWindow = new MainWindow();
-            MainWindow.Show();
+            AuthorizationWindow authorization = new AuthorizationWindow();
+            authorization.ShowDialog();
+            if (!WebClient.Current.TokenAvailability)
+            {
+                Shutdown();
+            }
+            else
+            {
+                MainWindow.Show();
+            }
         }
 
         public static void SetTheme()

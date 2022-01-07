@@ -136,7 +136,6 @@
     <Compile Include="Models\Storage.cs" />
     <Compile Include="Models\Web\Providers\UrlsProvider.cs" />
     <Compile Include="Models\Web\Requests\UrlsRequest.cs" />
-    <Compile Include="Models\Web\Responses\UrlsResponse.cs" />
     <Compile Include="Models\Web\Responses\MessageCollectionsResponse.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />

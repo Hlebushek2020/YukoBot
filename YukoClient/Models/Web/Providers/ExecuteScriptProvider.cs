@@ -5,9 +5,9 @@ using System.Net.Sockets;
 using System.Text;
 using YukoClient.Exceptions;
 using YukoClient.Models.Web.Requests;
-using YukoClient.Models.Web.Responses;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Providers
 {
@@ -62,9 +62,9 @@ namespace YukoClient.Models.Web.Providers
             clientWriter.Write(request.ToString());
         }
 
-        public ExecuteScriptResponse ReadBlock()
+        public UrlsResponse ReadBlock()
         {
-            return JsonConvert.DeserializeObject<ExecuteScriptResponse>(clientReader.ReadString());
+            return JsonConvert.DeserializeObject<UrlsResponse>(clientReader.ReadString());
         }
 
         public void Dispose()

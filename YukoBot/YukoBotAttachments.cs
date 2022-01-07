@@ -13,11 +13,11 @@ namespace YukoBot
 {
     public partial class YukoBot : IDisposable
     {
-        private async Task GetAttachment(DbUser dbUser, ExecuteScriptRequest request, BinaryWriter writer)
+        private async Task GetAttachment(ExecuteScriptRequest request, BinaryWriter writer)
         {
             DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
-            ExecuteScriptResponse response = new ExecuteScriptResponse();
+            UrlsResponse response = new UrlsResponse();
             response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
             response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
             writer.Write(response.ToString());
@@ -48,7 +48,7 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
                     response.Urls.AddRange(message.Attachments.Select(x => x.Url));
@@ -89,7 +89,7 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
                     response.Urls.AddRange(message.Attachments.Select(x => x.Url));
@@ -123,7 +123,7 @@ namespace YukoBot
 
             IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAsync(limit);
 
-            ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+            UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
             foreach (DiscordMessage message in messages)
             {
                 response.Urls.AddRange(message.Attachments.Select(x => x.Url));
@@ -158,7 +158,7 @@ namespace YukoBot
                     endId = messages.Last().Id;
                 }
 
-                response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
                     response.Urls.AddRange(message.Attachments.Select(x => x.Url));
