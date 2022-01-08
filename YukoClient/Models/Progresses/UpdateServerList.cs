@@ -7,7 +7,7 @@ using YukoClient.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
-    public class UpdateServerList : UpdateBase
+    public class UpdateServerList : Base
     {
         private readonly bool fullUpdate;
 
@@ -58,7 +58,7 @@ namespace YukoClient.Models.Progress
                         }
                     }
                 }
-                base.Run(dispatcher);
+                Storage.Current.Save();
             }
             else
             {

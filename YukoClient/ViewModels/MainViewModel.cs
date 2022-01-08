@@ -46,7 +46,6 @@ namespace YukoClient.ViewModels
         #region Commands
         public DelegateCommand WindowLoadedCommand { get; }
         // User Commands
-        public DelegateCommand UpdateAvatarCommand { get; }
         public DelegateCommand AppSettingsCommand { get; }
         // Server Commands
         public DelegateCommand ServerSettingsCommand { get; }
@@ -76,11 +75,6 @@ namespace YukoClient.ViewModels
                 progress.ShowDialog();
             });
             // User Commands
-            UpdateAvatarCommand = new DelegateCommand(() =>
-            {
-                ProgressWindow progress = new ProgressWindow(new UpdateAvatar());
-                progress.ShowDialog();
-            });
             AppSettingsCommand = new DelegateCommand(() =>
             {
                 SettingsWindow settingsWindow = new SettingsWindow();
