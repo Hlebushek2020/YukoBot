@@ -855,8 +855,13 @@
         <!-- Windows Styles -->
         <Style x:Key="WindowsBaseStyle" TargetType="{x:Type Window}">
             <Setter Property="Background" Value="{DynamicResource Base.Grid.Background}"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
+        <Style TargetType="local:AuthorizationWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
         <Style TargetType="local:MainWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:ProgressWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:SettingsWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:MessageBoxWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
         <!--ListView-->
         <Style TargetType="{x:Type ListView}">
             <Setter Property="Background" Value="{DynamicResource ListView.Background}"/>

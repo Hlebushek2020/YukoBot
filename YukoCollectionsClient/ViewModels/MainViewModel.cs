@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 using YukoClientBase.Interfaces;
 using YukoCollectionsClient.Models;
@@ -14,6 +15,7 @@ namespace YukoCollectionsClient.ViewModels
     {
         #region Fields
         private MessageCollection selectedMessageCollection;
+        private string searchCollections;
         #endregion
 
         #region Propirties
@@ -34,6 +36,15 @@ namespace YukoCollectionsClient.ViewModels
                     RaisePropertyChanged("MessageCollectionItems");
                     RaisePropertyChanged("Urls");
                 }
+            }
+        }
+        public string SearchCollections
+        {
+            get { return searchCollections; }
+            set
+            {
+                searchCollections = value.ToLower();
+                CollectionViewSource.GetDefaultView(MessageCollections).Refresh();
             }
         }
         public ObservableCollection<MessageCollectionItem> MessageCollectionItems { get { return selectedMessageCollection?.Items; } }
@@ -68,6 +79,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(true));
                 progress.ShowDialog();
+                CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
             });
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
@@ -81,8 +93,13 @@ namespace YukoCollectionsClient.ViewModels
                 MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(messageResult == MessageBoxResult.Yes));
+                    bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
+                    ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(overrideMessageCollections));
                     progress.ShowDialog();
+                    if (overrideMessageCollections)
+                    {
+                        CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
+                    }
                 }
             });
             // Message Collection Commands
@@ -226,6 +243,12 @@ namespace YukoCollectionsClient.ViewModels
                     }
                 }
             });
+        }
+
+        private bool MessageCollectionsFilter(object item)
+        {
+            return string.IsNullOrEmpty(searchCollections) ||
+                ((MessageCollection)item).Name.ToLower().Contains(searchCollections);
         }
     }
 }

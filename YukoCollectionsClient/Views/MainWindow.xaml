@@ -67,14 +67,14 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <ListBox Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding MessageCollections, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollection, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
+                <ListBox Grid.Row="0" SelectionMode="Single" DisplayMemberPath="Name" ItemsSource="{Binding MessageCollections, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollection, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
                     <ListBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Обновить список" InputGestureText="F5" Command="{Binding UpdateMessageCollectionsCommand}"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
-                <TextBox Grid.Row="1" Margin="0,5,0,0" TextWrapping="NoWrap" VerticalAlignment="Top"/>
+                <TextBox Grid.Row="1" Margin="0,5,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Text="{Binding SearchCollections, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="3" Margin="5,0" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
             <Grid Grid.Column="2">
