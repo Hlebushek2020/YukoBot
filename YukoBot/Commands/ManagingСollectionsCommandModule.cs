@@ -90,8 +90,8 @@ namespace YukoBot.Commands
         }
         #endregion
 
-        #region Command: add-range
-        /*[Command("add-range")]
+        /*#region Command: add-range
+        [Command("add-range")]
         [Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
         public async Task AddRange(CommandContext commandContext,
             [Description("Id начального сообщения (не входит в промежуток)")] ulong messageStartId,
@@ -109,8 +109,8 @@ namespace YukoBot.Commands
             [Description("Количество сообщений")] int messageCount,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
         {
-        }*/
-        #endregion
+        }
+        #endregion*/
 
         #region Command: add (Collection)
         [Command("add-collection")]

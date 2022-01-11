@@ -12,11 +12,14 @@ namespace YukoBot.Models.Database.Entities
         public ulong Id { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string Nikname { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string Password { get; set; }
 
+        [MaxLength(36)]
         public string Token { get; set; }
 
         public DateTime LoginTime { get; set; }

@@ -17,7 +17,7 @@ namespace YukoBot.Models.Database.Entities
         [Required]
         public ulong ServerId { get; set; }
 
-        [MaxLength(200)]
+        [MaxLength(256)]
         public string Reason { get; set; }
     }
 }
