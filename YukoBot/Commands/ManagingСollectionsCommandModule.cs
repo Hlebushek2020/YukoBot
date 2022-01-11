@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attribute;
+using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 
@@ -87,6 +88,28 @@ namespace YukoBot.Commands
                 }
             }
         }
+        #endregion
+
+        #region Command: add-range
+        /*[Command("add-range")]
+        [Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
+        public async Task AddRange(CommandContext commandContext,
+            [Description("Id начального сообщения (не входит в промежуток)")] ulong messageStartId,
+            [Description("Id конечного сообщения (входит в промежуток)")] ulong messageEndId,
+            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+        {
+        }
+        #endregion
+
+        #region Command: add-range-by-count
+        [Command("add-range-by-count")]
+        [Description("Добавляет сообщения (имеющие вложения) из заданного количеством сообщений промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
+        public async Task AddRangeByCount(CommandContext commandContext,
+            [Description("Id начального сообщения (не входит в промежуток)")] ulong messageId,
+            [Description("Количество сообщений")] int messageCount,
+            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+        {
+        }*/
         #endregion
 
         #region Command: add (Collection)
@@ -328,9 +351,7 @@ namespace YukoBot.Commands
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(commandContext.Member.DisplayName);
-            // TODO: Eсть прикол с Url содержащими параметры
-            bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
-            if (isAttacments)
+            if (message.HasImages())
             {
                 ulong memberId = commandContext.Member.Id;
                 DbCollection dbCollection = dbContext.Collections.Where(x => x.UserId == memberId && x.Name == DefaultCollection).FirstOrDefault();
@@ -379,9 +400,7 @@ namespace YukoBot.Commands
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(commandContext.Member.DisplayName);
-            // TODO: Eсть прикол с Url содержащими параметры
-            bool isAttacments = (message.Attachments.Count > 0) || message.Embeds.Any(x => x.Url.IsFile);
-            if (isAttacments)
+            if (message.HasImages())
             {
                 ulong memberId = commandContext.Member.Id;
                 DbCollection dbCollection;
