@@ -42,17 +42,14 @@ namespace YukoBot
 
         private readonly TcpListener tcpListener;
 
-        private readonly int messageLimit;
-        private readonly int messageLimitSleepMs;
+        private readonly int messageLimit = YukoSettings.Current.DiscordMessageLimit;
+        private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
         private YukoBot()
         {
             Console.WriteLine("Initialization Discord Api ...");
 
             YukoSettings settings = YukoSettings.Current;
-
-            messageLimit = settings.DiscordMessageLimit;
-            messageLimitSleepMs = settings.DiscordMessageLimitSleepMs;
 
             discordClient = new DiscordClient(new DiscordConfiguration
             {
