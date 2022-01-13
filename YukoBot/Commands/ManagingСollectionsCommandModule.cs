@@ -69,34 +69,22 @@ namespace YukoBot.Commands
             if (dbGuildArtChannel != null && dbGuildArtChannel.ChannelId != discordChannel.Id)
             {
                 discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId);
-                DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                if (useDefaultCollection)
-                {
-                    await AddToCollection(commandContext, db, message);
-                }
-                else
-                {
-                    await AddToCollection(commandContext, db, message, nameOrId);
-                }
+            }
+            DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
+            if (useDefaultCollection)
+            {
+                await AddToCollection(commandContext, db, message);
             }
             else
             {
-                DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
-                if (useDefaultCollection)
-                {
-                    await AddToCollection(commandContext, db, message);
-                }
-                else
-                {
-                    await AddToCollection(commandContext, db, message, nameOrId);
-                }
+                await AddToCollection(commandContext, db, message, nameOrId);
             }
         }
         #endregion
 
         #region Command: add-range (Message)
         [Command("add-range")]
-        [Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
+        [Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
         public async Task AddRange(CommandContext commandContext,
             [Description("Id начального сообщения (не входит в промежуток)")] ulong messageStartId,
             [Description("Id конечного сообщения (входит в промежуток)")] ulong messageEndId,
