@@ -67,7 +67,8 @@ namespace YukoBot.Commands
 
         [Command("unban")]
         [Description("Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))")]
-        public async Task UnBan(CommandContext commandContext, [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
+        public async Task UnBan(CommandContext commandContext,
+            [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{commandContext.Member.DisplayName}");
@@ -102,7 +103,8 @@ namespace YukoBot.Commands
         [Command("member-ban-reason")]
         [Aliases("m-reason")]
         [Description("Причина бана участника сервера")]
-        public async Task MemberBanReason(CommandContext commandContext, [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
+        public async Task MemberBanReason(CommandContext commandContext,
+            [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                  .WithTitle($"{commandContext.Member.DisplayName}");
@@ -144,7 +146,8 @@ namespace YukoBot.Commands
 
         [Command("set-art-channel")]
         [Description("Устанавливает канал для поиска сообщений при использовании комманд категории \"Управление коллекциями\"")]
-        public async Task SetArtChannel(CommandContext commandContext, DiscordChannel discordChannel)
+        public async Task SetArtChannel(CommandContext commandContext,
+            [Description("Канал для поиска сообщений")] DiscordChannel discordChannel)
         {
             YukoDbContext db = new YukoDbContext();
             DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
