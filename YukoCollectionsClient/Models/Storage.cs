@@ -17,7 +17,7 @@ namespace YukoCollectionsClient.Models
         private ulong id;
         private string avatarUri;
         private string nikname;
-        private ObservableCollection<MessageCollection> messageCollections;
+        private ObservableCollection<MessageCollection> messageCollections = new ObservableCollection<MessageCollection>();
         #endregion
 
         #region Propirties

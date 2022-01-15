@@ -134,7 +134,7 @@ namespace YukoBot.Commands
                 {
                     IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAfterAsync(messageStartId, limit);
                     isCompleted = messages.Count < limit;
-                    for (int numMessage = 0; numMessage < messages.Count; numMessage++)
+                    for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
                     {
                         DiscordMessage message = messages[numMessage];
                         if (message.HasImages() && !collectionItems.Contains(message.Id))
@@ -148,7 +148,7 @@ namespace YukoBot.Commands
                         }
                         if (message.Id == messageEndId)
                         {
-                            numMessage = messages.Count;
+                            numMessage = -1;
                             isCompleted = true;
                         }
                     }
