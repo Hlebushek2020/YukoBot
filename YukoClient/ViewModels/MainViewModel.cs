@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class MainViewModel : BindableBase, ICloseableView, ITitle
+    public class MainViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
         private Server selectedServer;
@@ -71,6 +71,7 @@ namespace YukoClient.ViewModels
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             WindowLoadedCommand = new DelegateCommand(() =>
             {
+                // TODO: Update servers (oerride)
                 ProgressWindow progress = new ProgressWindow(new StorageInitialization());
                 progress.ShowDialog();
             });
@@ -83,10 +84,10 @@ namespace YukoClient.ViewModels
             // Server Commands
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = UIC.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateServerList(messageResult == MessageBoxResult.Yes));
+                    ProgressWindow progress = new ProgressWindow(new UpdateServers(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
             });
@@ -94,10 +95,20 @@ namespace YukoClient.ViewModels
             {
                 if (selectedServer != null)
                 {
-                    if (UIC.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Storage.Current.Servers.Remove(selectedServer);
                     }
+                }
+            });
+            ServerSettingsCommand = new DelegateCommand(() =>
+            {
+                if (selectedServer != null)
+                {
+                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(selectedServer);
+                    serverSettings.ShowDialog();
+                    // save data
+                    Task.Run(() => Storage.Current.Save());
                 }
             });
             // Script Commands
@@ -110,28 +121,28 @@ namespace YukoClient.ViewModels
                 }
                 else
                 {
-                    UIC.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             });
             RemoveScriptCommand = new DelegateCommand(() =>
             {
                 if (SelectedScript != null)
                 {
-                    if (UIC.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Scripts.Remove(SelectedScript);
                     }
                 }
                 else
                 {
-                    UIC.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                    Models.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             });
             ClearScriptsCommand = new DelegateCommand(() =>
             {
                 if (selectedServer != null && selectedServer.Scripts.Count > 0)
                 {
-                    if (UIC.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Scripts.Clear();
                     }
@@ -169,7 +180,7 @@ namespace YukoClient.ViewModels
                         {
                             if (selectedServer.Scripts.Count > 0)
                             {
-                                if (UIC.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (Models.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedServer.Scripts.Clear();
                                 }
@@ -193,7 +204,7 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedUrl != null)
                 {
-                    if (UIC.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Urls.Remove(SelectedUrl);
                     }
@@ -203,7 +214,7 @@ namespace YukoClient.ViewModels
             {
                 if (selectedServer != null && selectedServer.Urls.Count > 0)
                 {
-                    if (UIC.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedServer.Urls.Clear();
                     }
@@ -211,7 +222,7 @@ namespace YukoClient.ViewModels
             });
             ExportUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (selectedServer != null && selectedServer.Urls.Count > 0)
                 {
                     using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
                     {
@@ -239,9 +250,9 @@ namespace YukoClient.ViewModels
                     {
                         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            if (selectedServer.Scripts.Count > 0)
+                            if (selectedServer.Urls.Count > 0)
                             {
-                                if (UIC.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (Models.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedServer.Urls.Clear();
                                 }
@@ -263,16 +274,6 @@ namespace YukoClient.ViewModels
                             new Download(selectedServer.Urls, folderBrowserDialog.SelectedPath));
                         progressWindow.ShowDialog();
                     }
-                }
-            });
-            ServerSettingsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
-                {
-                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(selectedServer);
-                    serverSettings.ShowDialog();
-                    // save data
-                    Task.Run(() => Storage.Current.Save());
                 }
             });
         }

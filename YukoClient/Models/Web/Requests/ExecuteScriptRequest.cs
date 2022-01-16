@@ -1,4 +1,6 @@
-﻿namespace YukoClient.Models.Web.Requests
+﻿using YukoClientBase.Models.Web.Requests;
+
+namespace YukoClient.Models.Web.Requests
 {
     public class ExecuteScriptRequest : Request
     {

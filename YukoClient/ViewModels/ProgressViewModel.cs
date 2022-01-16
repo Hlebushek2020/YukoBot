@@ -1,10 +1,10 @@
 ﻿using Prism.Mvvm;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class ProgressViewModel : BindableBase, ITitle
+    public class ProgressViewModel : BindableBase, IViewTitle
     {
         #region Fields
         private Base model;

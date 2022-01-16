@@ -2,10 +2,11 @@
 {
     public enum RequestType
     {
-        Authorization = 0,
-        GetClientData = 1,
-        UpdateServer = 2,
-        UpdateServerList = 3,
-        ExecuteScripts = 4
+        Authorization = 1,
+        GetServer = 2,
+        GetServers = 4,
+        ExecuteScripts = 8,
+        GetMessageCollections = 16,
+        GetUrls = 32
     }
 }

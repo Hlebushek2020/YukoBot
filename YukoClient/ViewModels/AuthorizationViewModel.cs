@@ -2,14 +2,15 @@
 using Prism.Mvvm;
 using System;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
 using YukoClient.Models.Web;
-using YukoClient.Models.Web.Responses;
+using YukoClientBase.Interfaces;
+using YukoClientBase.Models;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.ViewModels
 {
-    public class AuthorizationViewModel : BindableBase, ICloseableView, ITitle
+    public class AuthorizationViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }
@@ -29,21 +30,24 @@ namespace YukoClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    UIC.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password()))
                 {
-                    UIC.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                AuthorizationResponse response = WebClient.Authorization(Login, Password());
+                AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
                 if (!string.IsNullOrEmpty(response.ErrorMessage))
                 {
-                    UIC.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Models.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {
+                    Storage.Current.AvatarUri = response.AvatarUri;
+                    Storage.Current.Id = response.Id;
+                    Storage.Current.Nikname = response.Nikname;
                     Close();
                 }
             });

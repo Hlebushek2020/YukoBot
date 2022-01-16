@@ -19,7 +19,7 @@ namespace YukoClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Получение данных о сервере");
-            ServerResponse serverResponse = WebClient.UpdateServer(server.Id);
+            ServerResponse serverResponse = WebClient.Current.GetServer(server.Id);
             if (string.IsNullOrEmpty(serverResponse.ErrorMessage))
             {
                 if (!serverResponse.IconUri.Equals(server.IconUri))
@@ -30,7 +30,7 @@ namespace YukoClient.Models.Progress
             }
             else
             {
-                dispatcher.Invoke((Action<string>)((string errorMessage) => UIC.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
+                dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
             }
         }
     }

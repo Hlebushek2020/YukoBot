@@ -3,12 +3,12 @@ using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class AddScriptViewModel : BindableBase, ICloseableView, ITitle
+    public class AddScriptViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
         private Models.ScriptMode selectedMode;
@@ -90,12 +90,12 @@ namespace YukoClient.ViewModels
                 {
                     if (string.IsNullOrEmpty(MessageId))
                     {
-                        UIC.MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Models.Dialogs.MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     if (!ulong.TryParse(MessageId, out messageId))
                     {
-                        UIC.MessageBox.Show("В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Models.Dialogs.MessageBox.Show("В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }
@@ -104,12 +104,12 @@ namespace YukoClient.ViewModels
                 {
                     if (string.IsNullOrEmpty(MessageCount))
                     {
-                        UIC.MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Models.Dialogs.MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     if (!int.TryParse(MessageCount, out messageCount))
                     {
-                        UIC.MessageBox.Show("В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " + int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Models.Dialogs.MessageBox.Show("В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " + int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }

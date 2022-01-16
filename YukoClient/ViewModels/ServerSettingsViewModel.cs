@@ -2,13 +2,13 @@
 using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class ServerSettingsViewModel : BindableBase, ITitle
+    public class ServerSettingsViewModel : BindableBase, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }
@@ -41,7 +41,7 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedChannels.Count != 0)
                 {
-                    if (UIC.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         foreach (Channel channel in SelectedChannels)
                         {
@@ -54,7 +54,7 @@ namespace YukoClient.ViewModels
             {
                 if (Server.Channels.Count != 0)
                 {
-                    if (UIC.MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (Models.Dialogs.MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Server.Channels.Clear();
                     }
@@ -62,7 +62,7 @@ namespace YukoClient.ViewModels
             });
             UpdateChannelListCommand = new DelegateCommand(() =>
             {
-                if (UIC.MessageBox.Show("ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (Models.Dialogs.MessageBox.Show("ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     ProgressWindow progress = new ProgressWindow(new UpdateServer(server));
                     progress.ShowDialog();

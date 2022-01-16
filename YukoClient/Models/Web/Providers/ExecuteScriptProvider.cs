@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using YukoClient.Enums;
 using YukoClient.Exceptions;
 using YukoClient.Models.Web.Requests;
-using YukoClient.Models.Web.Responses;
+using YukoClientBase.Enums;
+using YukoClientBase.Models;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Providers
 {
@@ -25,8 +27,8 @@ namespace YukoClient.Models.Web.Providers
             countScripts = scriptsCount;
             client = new TcpClient
             {
-                SendTimeout = 30000,
-                ReceiveTimeout = 30000
+                SendTimeout = WebClient.SendTimeout,
+                ReceiveTimeout = WebClient.ReceiveTimeout
             };
             client.Connect(Settings.Current.Host, Settings.Current.Port);
             NetworkStream networkStream = client.GetStream();
@@ -60,9 +62,9 @@ namespace YukoClient.Models.Web.Providers
             clientWriter.Write(request.ToString());
         }
 
-        public ExecuteScriptResponse ReadBlock()
+        public UrlsResponse ReadBlock()
         {
-            return ExecuteScriptResponse.FromJson(clientReader.ReadString());
+            return JsonConvert.DeserializeObject<UrlsResponse>(clientReader.ReadString());
         }
 
         public void Dispose()

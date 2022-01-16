@@ -12,11 +12,10 @@ namespace YukoClient
         public MainWindow()
         {
             InitializeComponent();
-            MainViewModel mvm = new MainViewModel
+            DataContext = new MainViewModel
             {
                 Close = new Action(Close)
             };
-            DataContext = mvm;
         }
     }
 }

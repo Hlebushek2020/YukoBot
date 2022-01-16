@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models;
 
 namespace YukoClient.Models.Progress
 {

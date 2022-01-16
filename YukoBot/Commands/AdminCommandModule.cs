@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attribute;
 using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Commands
 {
@@ -66,7 +67,8 @@ namespace YukoBot.Commands
 
         [Command("unban")]
         [Description("Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))")]
-        public async Task UnBan(CommandContext commandContext, [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
+        public async Task UnBan(CommandContext commandContext,
+            [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{commandContext.Member.DisplayName}");
@@ -101,7 +103,8 @@ namespace YukoBot.Commands
         [Command("member-ban-reason")]
         [Aliases("m-reason")]
         [Description("Причина бана участника сервера")]
-        public async Task MemberBanReason(CommandContext commandContext, [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
+        public async Task MemberBanReason(CommandContext commandContext,
+            [Description("Участник сервера (гильдии)")] DiscordMember discordMember)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                  .WithTitle($"{commandContext.Member.DisplayName}");
@@ -138,6 +141,33 @@ namespace YukoBot.Commands
             discordEmbed
                 .WithColor(DiscordColor.Orange)
                 .WithDescription($"Участник {discordMember.DisplayName} не забанен. ≧◡≦");
+            await commandContext.RespondAsync(discordEmbed);
+        }
+
+        [Command("set-art-channel")]
+        [Description("Устанавливает канал для поиска сообщений при использовании комманд категории \"Управление коллекциями\"")]
+        public async Task SetArtChannel(CommandContext commandContext,
+            [Description("Канал для поиска сообщений")] DiscordChannel discordChannel)
+        {
+            YukoDbContext db = new YukoDbContext();
+            DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
+            if (guildArtChannel != null)
+            {
+                guildArtChannel.ChannelId = discordChannel.Id;
+            }
+            else
+            {
+                db.GuildArtChannels.Add(new DbGuildArtChannel
+                {
+                    Id = commandContext.Guild.Id,
+                    ChannelId = discordChannel.Id
+                });
+            }
+            await db.SaveChangesAsync();
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+               .WithTitle($"{commandContext.Member.DisplayName}")
+               .WithColor(DiscordColor.Orange)
+               .WithDescription("Канал успешно установлен! ≧◡≦");
             await commandContext.RespondAsync(discordEmbed);
         }
     }

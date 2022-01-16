@@ -23,10 +23,10 @@
                 <Image Source="/Resources/menu-edit-32.png"/>
             </Button>
             <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить" Command="{Binding RemoveSelectedChannelsCommand}">
-                <Image Source="/Resources/menu-delete-32.png"/>
+                <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
             </Button>
             <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearChannelListCommand}">
-                <Image Source="/Resources/menu-clear-32.png"/>
+                <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
             </Button>
             <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить" Command="{Binding UpdateChannelListCommand}">
                 <Image Source="/Resources/menu-refresh-32.png"/>

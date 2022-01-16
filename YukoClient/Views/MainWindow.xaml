@@ -53,7 +53,7 @@
                 <!-- PROGRESS ITEMS -->
             </Grid>
             <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5,0,10,0" BorderThickness="0" Padding="2" Style="{StaticResource IconButtonStyle}" Command="{Binding AppSettingsCommand}" VerticalAlignment="Center" Height="34" Width="34" >
-                <Image Source="/YukoClient;component/Resources/settings-48.png"/>
+                <Image Source="/YukoClientBase;component/Resources/settings-48.png"/>
             </Button>
         </Grid>
         <Grid Grid.Row="1" Margin="10,5,10,10">
@@ -104,19 +104,19 @@
                             <Image Source="/Resources/menu-add-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить правило" Command="{Binding RemoveScriptCommand}">
-                            <Image Source="/Resources/menu-delete-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearScriptsCommand}">
-                            <Image Source="/Resources/menu-clear-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать правила" Command="{Binding ExportScriptsCommand}">
-                            <Image Source="/Resources/menu-export-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать правилa" Command="{Binding ImportScriptsCommand}">
-                            <Image Source="/Resources/menu-import-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Выполнить правила" Command="{Binding RunScriptsCommand}">
-                            <Image Source="/Resources/menu-start-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-start-32.png"/>
                         </Button>
                     </StackPanel>
                     <ListView Margin="0,26,0,0" SelectionMode="Single" ItemsSource="{Binding Scripts, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedScript, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
@@ -134,19 +134,19 @@
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить" Command="{Binding RemoveUrlCommand}">
-                            <Image Source="/Resources/menu-delete-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearUrlsCommand}">
-                            <Image Source="/Resources/menu-clear-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список" Command="{Binding ExportUrlsCommand}">
-                            <Image Source="/Resources/menu-export-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список" Command="{Binding ImportUrlsCommand}">
-                            <Image Source="/Resources/menu-import-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png"/>
                         </Button>
                         <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать" Command="{Binding DownloadFilesCommand}">
-                            <Image Source="/Resources/menu-download-32.png"/>
+                            <Image Source="/YukoClientBase;component/Resources/menu-download-32.png"/>
                         </Button>
                     </StackPanel>
                     <ListBox SelectionMode="Single" Margin="0,26,0,0" ItemsSource="{Binding Urls, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedUrl, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>

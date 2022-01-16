@@ -42,17 +42,14 @@ namespace YukoBot
 
         private readonly TcpListener tcpListener;
 
-        private readonly int messageLimit;
-        private readonly int messageLimitSleepMs;
+        private readonly int messageLimit = YukoSettings.Current.DiscordMessageLimit;
+        private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
         private YukoBot()
         {
             Console.WriteLine("Initialization Discord Api ...");
 
             YukoSettings settings = YukoSettings.Current;
-
-            messageLimit = settings.DiscordMessageLimit;
-            messageLimitSleepMs = settings.DiscordMessageLimitSleepMs;
 
             discordClient = new DiscordClient(new DiscordConfiguration
             {
@@ -75,6 +72,7 @@ namespace YukoBot
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
+            commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
 
@@ -116,13 +114,38 @@ namespace YukoBot
                 return Task.CompletedTask;
             }
 
-            DiscordEmbed embed = new DiscordEmbedBuilder()
-                .WithTitle("ERROR")
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
+
+            if (e.Exception is ChecksFailedException)
+            {
+                embed.WithTitle($"{e.Context.Member.DisplayName}")
+                    .WithColor(DiscordColor.Red);
+                Type moduleType = e.Command.Module.ModuleType;
+                if (moduleType.Equals(typeof(ManagingСollectionsCommandModule)))
+                {
+                    embed.WithDescription("Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!");
+                }
+                else if (moduleType.Equals(typeof(OwnerCommandModule)))
+                {
+                    embed.WithDescription("Эта команда доступна только владельцу бота!");
+                }
+                else if (moduleType.Equals(typeof(AdminCommandModule)))
+                {
+                    embed.WithDescription("Эта команда доступна админу гильдии (сервера) и владельцу бота!");
+                }
+                else
+                {
+                    return Task.CompletedTask;
+                }
+                e.Context.RespondAsync(embed);
+                return Task.CompletedTask;
+            }
+
+            embed.WithTitle("ERROR")
                 .WithColor(DiscordColor.Red)
                 .AddField("Exception Message", e.Exception.Message)
                 .AddField("Exception Type", e.Exception.GetType().Name)
-                .AddField("Command", e.Command?.Name ?? "Unknown")
-                .Build();
+                .AddField("Command", e.Command?.Name ?? "Unknown");
             e.Context.RespondAsync(embed);
 
             return Task.CompletedTask;

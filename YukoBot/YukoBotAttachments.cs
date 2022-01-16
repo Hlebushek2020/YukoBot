@@ -5,7 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using YukoBot.Models.Database;
+using YukoBot.Extensions;
+using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
 
@@ -13,13 +14,14 @@ namespace YukoBot
 {
     public partial class YukoBot : IDisposable
     {
-        private async Task GetAttachment(DbUser dbUser, ExecuteScriptRequest request, BinaryWriter writer)
+        private async Task GetAttachment(ExecuteScriptRequest request, BinaryWriter writer)
         {
             DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
-            ExecuteScriptResponse response = new ExecuteScriptResponse();
-            response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
-            response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+            UrlsResponse response = new UrlsResponse();
+            //response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
+            //response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+            response.Urls.AddRange(discordMessage.GetImages());
             writer.Write(response.ToString());
         }
 
@@ -48,11 +50,12 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.Attachments.Select(x => x.Url));
-                    response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    //response.Urls.AddRange(message.Attachments.Select(x => x.Url));
+                    //response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    response.Urls.AddRange(message.GetImages());
                 }
                 writer.Write(response.ToString());
 
@@ -89,11 +92,12 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.Attachments.Select(x => x.Url));
-                    response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    //response.Urls.AddRange(message.Attachments.Select(x => x.Url));
+                    //response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    response.Urls.AddRange(message.GetImages());
                 }
                 writer.Write(response.ToString());
 
@@ -123,11 +127,12 @@ namespace YukoBot
 
             IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAsync(limit);
 
-            ExecuteScriptResponse response = new ExecuteScriptResponse { Next = request.Count > 0 };
+            UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
             foreach (DiscordMessage message in messages)
             {
-                response.Urls.AddRange(message.Attachments.Select(x => x.Url));
-                response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                //response.Urls.AddRange(message.Attachments.Select(x => x.Url));
+                //response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                response.Urls.AddRange(message.GetImages());
             }
             writer.Write(response.ToString());
 
@@ -158,11 +163,12 @@ namespace YukoBot
                     endId = messages.Last().Id;
                 }
 
-                response = new ExecuteScriptResponse { Next = request.Count > 0 };
+                response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.Attachments.Select(x => x.Url));
-                    response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    //response.Urls.AddRange(message.Attachments.Select(x => x.Url));
+                    //response.Urls.AddRange(message.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                    response.Urls.AddRange(message.GetImages());
                 }
                 writer.Write(response.ToString());
             }

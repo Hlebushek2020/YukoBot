@@ -96,24 +96,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
-    <Compile Include="Interfaces\Model\IRequestType.cs" />
-    <Compile Include="Interfaces\Model\IToken.cs" />
-    <Compile Include="Interfaces\ViewModel\ITitle.cs" />
     <Compile Include="Models\Progresses\StorageInitialization.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
-    <Compile Include="Models\Web\Requests\BaseRequest.cs" />
-    <Compile Include="Models\Web\Requests\Request.cs" />
     <Compile Include="Models\Web\Requests\ExecuteScriptRequest.cs" />
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />
-    <Compile Include="Models\Web\Responses\ExecuteScriptResponse.cs" />
     <Compile Include="Models\Web\Responses\ServerResponse.cs" />
-    <Compile Include="Models\Web\Responses\ServerListResponse.cs" />
+    <Compile Include="Models\Web\Responses\ServersResponse.cs" />
     <Compile Include="Models\Progresses\ExecuteScripts.cs" />
-    <Compile Include="Models\Progresses\UpdateServerList.cs" />
+    <Compile Include="Models\Progresses\UpdateServers.cs" />
     <Compile Include="Models\Progresses\UpdateServer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="Views\RenameChannelWindow.xaml.cs">
       <DependentUpon>RenameChannelWindow.xaml</DependentUpon>
@@ -147,7 +145,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIC\MessageBoxWindow.xaml">
+    <Page Include="Views\Dialogs\MessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -167,7 +165,6 @@
     <Compile Include="Attributes\Enum\TitleAttribute.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ScriptMode.cs" />
-    <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\Progresses\Download.cs" />
     <Compile Include="Models\Progresses\ExportUrls.cs" />
     <Compile Include="Models\Progresses\ImportUrls.cs" />
@@ -176,13 +173,7 @@
     <Compile Include="Models\Progresses\Base.cs" />
     <Compile Include="Models\Script.cs" />
     <Compile Include="Models\Server.cs" />
-    <Compile Include="Models\Web\Responses\ClientDataResponse.cs" />
     <Compile Include="Models\Storage.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\AddScriptViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\AddScriptWindow.xaml.cs">
@@ -194,12 +185,11 @@
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIC\MessageBox.cs" />
-    <Compile Include="UIC\MessageBoxWindow.xaml.cs">
+    <Compile Include="Models\Dialogs\MessageBox.cs" />
+    <Compile Include="Views\Dialogs\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
-    <Compile Include="Interfaces\ViewModel\ICloseableView.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\AuthorizationWindow.xaml.cs">
       <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
@@ -214,10 +204,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
-    <Compile Include="Models\Web\Responses\AuthorizationResponse.cs" />
-    <Compile Include="Models\Web\Responses\Response.cs" />
-    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Web\WebClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -229,6 +215,7 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -241,49 +228,23 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dialog-error-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-information-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-question-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\dialog-warning-64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\settings-48.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-refresh-32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\menu-add-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\menu-clear-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-delete-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-download-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-edit-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-export-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-import-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-start-32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YukoClientBase\YukoClientBase.csproj">
+      <Project>{1b6cb967-f823-43f4-99f7-f9e53b0da362}</Project>
+      <Name>YukoClientBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

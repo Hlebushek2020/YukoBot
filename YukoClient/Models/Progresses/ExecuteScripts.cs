@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Providers;
-using YukoClient.Models.Web.Responses;
+using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Progress
 {
@@ -20,10 +20,10 @@ namespace YukoClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (ExecuteScriptProvider provider = WebClient.ExecuteScripts(server.Id, server.Scripts.Count))
+            using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(server.Id, server.Scripts.Count))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
-                ExecuteScriptResponse response = provider.ReadBlock();
+                UrlsResponse response = provider.ReadBlock();
                 if (string.IsNullOrEmpty(response.ErrorMessage))
                 {
                     StringBuilder errorMessages = new StringBuilder();
@@ -52,12 +52,12 @@ namespace YukoClient.Models.Progress
                     }
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => UIC.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => UIC.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
                 }
             }
         }

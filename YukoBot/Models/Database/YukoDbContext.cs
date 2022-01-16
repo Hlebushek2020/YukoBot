@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Models.Database
 {
@@ -7,6 +8,9 @@ namespace YukoBot.Models.Database
     {
         public DbSet<DbUser> Users { get; set; }
         public DbSet<DbBan> Bans { get; set; }
+        public DbSet<DbCollection> Collections { get; set; }
+        public DbSet<DbCollectionItem> CollectionItems { get; set; }
+        public DbSet<DbGuildArtChannel> GuildArtChannels { get; set; }
 
         public YukoDbContext()
         {

@@ -64,12 +64,12 @@ namespace YukoClient.Models.Progress
                         }
                         else
                         {
-                            dispatcher.Invoke(() => UIC.MessageBox.Show("Выбран некорректный сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
+                            dispatcher.Invoke(() => Dialogs.MessageBox.Show("Выбран некорректный сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                         }
                     }
                     else
                     {
-                        dispatcher.Invoke(() => UIC.MessageBox.Show("Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
+                        dispatcher.Invoke(() => Dialogs.MessageBox.Show("Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                     }
                 }
             }

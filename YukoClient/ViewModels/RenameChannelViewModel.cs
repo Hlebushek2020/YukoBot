@@ -2,12 +2,12 @@
 using Prism.Mvvm;
 using System;
 using System.Windows;
-using YukoClient.Interfaces.ViewModel;
 using YukoClient.Models;
+using YukoClientBase.Interfaces;
 
 namespace YukoClient.ViewModels
 {
-    public class RenameChannelViewModel : BindableBase, ICloseableView, ITitle
+    public class RenameChannelViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Fields
         private string newChannelName;
@@ -51,7 +51,7 @@ namespace YukoClient.ViewModels
             {
                 if (string.IsNullOrEmpty(newChannelName))
                 {
-                    UIC.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Models.Dialogs.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
