@@ -10,7 +10,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
-using YukoBot.Commands.Formatter;
 
 namespace YukoBot
 {
@@ -64,10 +63,9 @@ namespace YukoBot
 
             CommandsNextExtension commands = discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = new[] { ">yuko" }
+                StringPrefixes = new[] { settings.BotPrefix },
+                EnableDefaultHelp = false
             });
-
-            commands.SetHelpFormatter<HelpFormatter>();
 
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
@@ -152,7 +150,7 @@ namespace YukoBot
         }
 
         private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            sender.UpdateStatusAsync(new DiscordActivity("на тебя (≧◡≦) | >yuko help", ActivityType.Watching));
+            sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {

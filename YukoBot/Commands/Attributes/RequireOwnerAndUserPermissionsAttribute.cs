@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace YukoBot.Commands.Attribute
+namespace YukoBot.Commands.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class RequireOwnerAndUserPermissionsAttribute : CheckBaseAttribute

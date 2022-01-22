@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using YukoBot.Commands.Attribute;
+using YukoBot.Commands.Attributes;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
@@ -17,14 +17,11 @@ namespace YukoBot.Commands
     [RequireRegisteredAndNoBan]
     public class ManagingСollectionsCommandModule : CommandModule
     {
+        public ManagingСollectionsCommandModule() : base(CollectionManagement) { }
+
         private const string DefaultCollection = "Default";
 
         private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
-
-        public ManagingСollectionsCommandModule()
-        {
-            ModuleName = "Управление коллекциями";
-        }
 
         #region Command: add (Message)
         [Command("add")]

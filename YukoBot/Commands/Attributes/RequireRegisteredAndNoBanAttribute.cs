@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 
-namespace YukoBot.Commands.Attribute
+namespace YukoBot.Commands.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class RequireRegisteredAndNoBanAttribute : CheckBaseAttribute
