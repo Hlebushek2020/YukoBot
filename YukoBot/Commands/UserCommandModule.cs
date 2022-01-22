@@ -270,7 +270,7 @@ namespace YukoBot.Commands
                     Command command = commandContext.CommandsNext.FindCommand(moduleOrCommand, out string args);
 
                     if (command == null)
-                        throw new CommandNotFoundException(command.Name);
+                        throw new CommandNotFoundException(moduleOrCommand);
 
                     IEnumerable<CheckBaseAttribute> failedChecks = await command.RunChecksAsync(commandContext, true);
                     if (failedChecks.Any())
