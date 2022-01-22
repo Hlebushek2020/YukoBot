@@ -299,7 +299,7 @@ namespace YukoBot.Commands
                             sb.AppendLine($"**__Вариант {i + 1}__**");
                         }
 
-                        sb.AppendLine($"```\n>yuko {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{ x.Name}]").ToList())}```{command.Description}");
+                        sb.AppendLine($"```\n{botPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{ x.Name}]").ToList())}```{command.Description}");
                         sb.AppendLine();
 
                         if (command.Aliases?.Count != 0)
