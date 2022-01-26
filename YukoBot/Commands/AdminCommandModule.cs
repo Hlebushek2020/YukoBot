@@ -5,7 +5,7 @@ using DSharpPlus.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YukoBot.Commands.Attribute;
+using YukoBot.Commands.Attributes;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 
@@ -14,10 +14,7 @@ namespace YukoBot.Commands
     [RequireOwnerAndUserPermissions(Permissions.Administrator)]
     public class AdminCommandModule : CommandModule
     {
-        public AdminCommandModule()
-        {
-            ModuleName = "Команды управления";
-        }
+        public AdminCommandModule() : base(Management) { }
 
         [Command("ban")]
         [Description("Запрещает пользователю скачивать с этого сервера (гильдии)")]

@@ -18,6 +18,7 @@ namespace YukoBot
         public string DatabasePassword { get; set; }
         public int[] DatabaseVersion { get; set; }
         public string BotToken { get; set; }
+        public string BotPrefix { get; set; } = ">yuko";
         public string ServerAddress { get; set; }
         public string ServerInternalAddress { get; set; }
         public int ServerPort { get; set; }

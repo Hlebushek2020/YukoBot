@@ -10,7 +10,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
-using YukoBot.Commands.Formatter;
 
 namespace YukoBot
 {
@@ -64,10 +63,9 @@ namespace YukoBot
 
             CommandsNextExtension commands = discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = new[] { ">yuko" }
+                StringPrefixes = new[] { settings.BotPrefix },
+                EnableDefaultHelp = false
             });
-
-            commands.SetHelpFormatter<HelpFormatter>();
 
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
@@ -102,24 +100,22 @@ namespace YukoBot
 
         private Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
+            DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
+            {
+                Title = e.Context.Member.DisplayName,
+                Color = DiscordColor.Red
+            };
+
             if (e.Exception is ArgumentException)
             {
-                e.Context.RespondAsync($"Простите, в команде ошибка (\\*^.^*)");
-                return Task.CompletedTask;
+                embed.WithDescription($"Простите, в команде {e.Command.Name} ошибка (\\*^.^*)");
             }
-
-            if (e.Exception is CommandNotFoundException)
+            else if (e.Exception is CommandNotFoundException)
             {
-                e.Context.RespondAsync($"Я не знаю такой команды (\\*^.^*)");
-                return Task.CompletedTask;
+                embed.WithDescription($"Простите, я не знаю команды {((CommandNotFoundException)e.Exception).CommandName} (\\*^.^*)");
             }
-
-            DiscordEmbedBuilder embed = new DiscordEmbedBuilder();
-
-            if (e.Exception is ChecksFailedException)
+            else if (e.Exception is ChecksFailedException)
             {
-                embed.WithTitle($"{e.Context.Member.DisplayName}")
-                    .WithColor(DiscordColor.Red);
                 Type moduleType = e.Command.Module.ModuleType;
                 if (moduleType.Equals(typeof(ManagingСollectionsCommandModule)))
                 {
@@ -137,22 +133,23 @@ namespace YukoBot
                 {
                     return Task.CompletedTask;
                 }
-                e.Context.RespondAsync(embed);
-                return Task.CompletedTask;
+            }
+            else
+            {
+                embed.WithTitle("ERROR")
+                    .WithColor(DiscordColor.Red)
+                    .AddField("Exception Message", e.Exception.Message)
+                    .AddField("Exception Type", e.Exception.GetType().Name)
+                    .AddField("Command", e.Command?.Name ?? "Unknown");
             }
 
-            embed.WithTitle("ERROR")
-                .WithColor(DiscordColor.Red)
-                .AddField("Exception Message", e.Exception.Message)
-                .AddField("Exception Type", e.Exception.GetType().Name)
-                .AddField("Command", e.Command?.Name ?? "Unknown");
             e.Context.RespondAsync(embed);
 
             return Task.CompletedTask;
         }
 
         private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            sender.UpdateStatusAsync(new DiscordActivity("на тебя (≧◡≦) | >yuko help", ActivityType.Watching));
+            sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {

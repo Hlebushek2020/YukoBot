@@ -35,6 +35,7 @@ member-ban-reason|m-reason|Причина бана участника серве
 password-reset|password|Сброс пароля|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 register|reg|Регистрация|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 set-app|-|Устанавливает новую ссылку для команды: app|:heavy_check_mark:|:x:|:x:
+set-art-channel|-|Устанавливает канал для поиска сообщений при использовании комманд категории "Управление коллекциями"|:heavy_check_mark:|:heavy_check_mark:|:x:
 settings|-|Данные для подключения|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 shutdown|sd|Выключить бота|:heavy_check_mark:|:x:|:x:
 unban|-|Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))|:heavy_check_mark:|:heavy_check_mark:|:x:
