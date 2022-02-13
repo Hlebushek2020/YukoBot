@@ -8,7 +8,7 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
-        public OwnerCommandModule() : base(Management) { }
+        public OwnerCommandModule() : base(Models.Category.Management) { }
 
         [Command("shutdown")]
         [Aliases("sd")]
@@ -24,7 +24,7 @@ namespace YukoBot.Commands
         public async Task ActiveTime(CommandContext commandContext)
         {
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
-            await commandContext.RespondAsync($"{timeSpan.Days}:{timeSpan.Hours}:{timeSpan.Minutes}:{timeSpan.Seconds}");
+            await commandContext.RespondAsync($"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
         }
 
         [Command("set-app")]

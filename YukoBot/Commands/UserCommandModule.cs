@@ -18,7 +18,7 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
-        public UserCommandModule() : base(User) { }
+        public UserCommandModule() : base(Category.User) { }
 
         [Command("register")]
         [Aliases("reg")]

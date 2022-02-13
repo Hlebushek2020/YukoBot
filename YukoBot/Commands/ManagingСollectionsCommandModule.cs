@@ -17,7 +17,7 @@ namespace YukoBot.Commands
     [RequireRegisteredAndNoBan]
     public class ManagingСollectionsCommandModule : CommandModule
     {
-        public ManagingСollectionsCommandModule() : base(CollectionManagement) { }
+        public ManagingСollectionsCommandModule() : base(Models.Category.CollectionManagement) { }
 
         private const string DefaultCollection = "Default";
 
@@ -65,7 +65,7 @@ namespace YukoBot.Commands
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
             if (dbGuildArtChannel != null && dbGuildArtChannel.ChannelId != discordChannel.Id)
             {
-                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId);
+                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId.Value);
             }
             DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
             if (useDefaultCollection)
@@ -94,7 +94,7 @@ namespace YukoBot.Commands
             DbGuildArtChannel dbGuildArtChannel = dbContext.GuildArtChannels.Find(commandContext.Guild.Id);
             if (dbGuildArtChannel != null && dbGuildArtChannel.ChannelId != discordChannel.Id)
             {
-                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId);
+                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ChannelId.Value);
             }
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
             ulong memberId = commandContext.Member.Id;

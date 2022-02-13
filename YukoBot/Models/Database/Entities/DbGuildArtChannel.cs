@@ -5,13 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YukoBot.Models.Database.Entities
 {
-    [Index(nameof(ChannelId), IsUnique = true)]
     public class DbGuildArtChannel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }
 
-        public ulong ChannelId { get; set; }
+        public ulong? ChannelId { get; set; }
+
+        public bool? AddCommandResponse { get; set; }
     }
 }

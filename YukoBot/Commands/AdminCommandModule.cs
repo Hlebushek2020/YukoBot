@@ -14,7 +14,7 @@ namespace YukoBot.Commands
     [RequireOwnerAndUserPermissions(Permissions.Administrator)]
     public class AdminCommandModule : CommandModule
     {
-        public AdminCommandModule() : base(Management) { }
+        public AdminCommandModule() : base(Models.Category.Management) { }
 
         [Command("ban")]
         [Description("Запрещает пользователю скачивать с этого сервера (гильдии)")]
@@ -157,7 +157,8 @@ namespace YukoBot.Commands
                 db.GuildArtChannels.Add(new DbGuildArtChannel
                 {
                     Id = commandContext.Guild.Id,
-                    ChannelId = discordChannel.Id
+                    ChannelId = discordChannel.Id,
+                    AddCommandResponse = true
                 });
             }
             await db.SaveChangesAsync();
@@ -165,6 +166,43 @@ namespace YukoBot.Commands
                .WithTitle($"{commandContext.Member.DisplayName}")
                .WithColor(DiscordColor.Orange)
                .WithDescription("Канал успешно установлен! ≧◡≦");
+            await commandContext.RespondAsync(discordEmbed);
+        }
+
+        [Command("add-command-response")]
+        [Aliases("add-response")]
+        [Description("Отключает сообщение об успешности выполнения команды add на сервере, взамен сообщение будет приходить в ЛС")]
+        public async Task AddCommandResponse(CommandContext commandContext,
+            [Description("true - включить / false - отключить"), RemainingText] string value)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithTitle(commandContext.Member.DisplayName);
+
+            YukoDbContext db = new YukoDbContext();
+            if (bool.TryParse(value.ToLower(), out bool addCommandResponse))
+            {
+                DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
+                if (guildArtChannel != null)
+                {
+                    guildArtChannel.AddCommandResponse = addCommandResponse;
+                }
+                else
+                {
+                    db.GuildArtChannels.Add(new DbGuildArtChannel
+                    {
+                        Id = commandContext.Guild.Id,
+                        AddCommandResponse = addCommandResponse
+                    });
+                }
+                await db.SaveChangesAsync();
+                discordEmbed.WithColor(DiscordColor.Orange)
+                    .WithDescription($"{(addCommandResponse ? "Включено" : "Отключено")}! ≧◡≦");
+            }
+            else
+            {
+                discordEmbed.WithColor(DiscordColor.Red)
+                    .WithDescription("Недопустимое значение параметра `value` (допустимые: `true` / `false`)");
+            }
             await commandContext.RespondAsync(discordEmbed);
         }
     }
