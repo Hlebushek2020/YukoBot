@@ -147,17 +147,17 @@ namespace YukoBot.Commands
             [Description("Канал для поиска сообщений")] DiscordChannel discordChannel)
         {
             YukoDbContext db = new YukoDbContext();
-            DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
+            DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
             if (guildArtChannel != null)
             {
-                guildArtChannel.ChannelId = discordChannel.Id;
+                guildArtChannel.ArtChannelId = discordChannel.Id;
             }
             else
             {
-                db.GuildArtChannels.Add(new DbGuildArtChannel
+                db.GuildsSettings.Add(new DbGuildSettings
                 {
                     Id = commandContext.Guild.Id,
-                    ChannelId = discordChannel.Id,
+                    ArtChannelId = discordChannel.Id,
                     AddCommandResponse = true
                 });
             }
@@ -181,14 +181,14 @@ namespace YukoBot.Commands
             YukoDbContext db = new YukoDbContext();
             if (bool.TryParse(value.ToLower(), out bool addCommandResponse))
             {
-                DbGuildArtChannel guildArtChannel = db.GuildArtChannels.Find(commandContext.Guild.Id);
+                DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
                 if (guildArtChannel != null)
                 {
                     guildArtChannel.AddCommandResponse = addCommandResponse;
                 }
                 else
                 {
-                    db.GuildArtChannels.Add(new DbGuildArtChannel
+                    db.GuildsSettings.Add(new DbGuildSettings
                     {
                         Id = commandContext.Guild.Id,
                         AddCommandResponse = addCommandResponse
