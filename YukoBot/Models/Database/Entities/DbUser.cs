@@ -24,6 +24,8 @@ namespace YukoBot.Models.Database.Entities
 
         public DateTime LoginTime { get; set; }
 
-        public List<DbBan> Bans { get; set; }
+        //public List<DbBan> Bans { get; set; }
+
+        //public List<DbCollection> Collections { get; set; }
     }
 }

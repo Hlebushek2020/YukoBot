@@ -19,6 +19,6 @@ namespace YukoBot.Models.Database.Entities
         [MaxLength(256)]
         public string Name { get; set; }
 
-        public List<DbCollectionItem> CollectionItems { get; set; }
+        //public List<DbCollectionItem> CollectionItems { get; set; }
     }
 }
