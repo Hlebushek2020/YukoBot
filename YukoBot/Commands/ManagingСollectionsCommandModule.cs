@@ -72,12 +72,12 @@ namespace YukoBot.Commands
             [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
         {
             YukoDbContext db = new YukoDbContext();
-            DbGuildSettings dbGuildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
+            DbGuildSettings guildSettings = db.GuildsSettings.Find(commandContext.Guild.Id);
             DiscordChannel discordChannel = commandContext.Channel;
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
-            if (dbGuildArtChannel != null && discordChannel.Id != dbGuildArtChannel.ArtChannelId)
+            if (guildSettings != null && discordChannel.Id != guildSettings.ArtChannelId)
             {
-                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ArtChannelId.Value);
+                discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
             }
             DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
             DiscordEmbedBuilder discordEmbed;
@@ -106,10 +106,10 @@ namespace YukoBot.Commands
 
             DiscordChannel discordChannel = commandContext.Channel;
             YukoDbContext dbContext = new YukoDbContext();
-            DbGuildSettings dbGuildArtChannel = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
-            if (dbGuildArtChannel != null && discordChannel.Id != dbGuildArtChannel.ArtChannelId)
+            DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
+            if (guildSettings != null && discordChannel.Id != guildSettings.ArtChannelId)
             {
-                discordChannel = await commandContext.Client.GetChannelAsync(dbGuildArtChannel.ArtChannelId.Value);
+                discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
             }
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
             ulong memberId = commandContext.Member.Id;
