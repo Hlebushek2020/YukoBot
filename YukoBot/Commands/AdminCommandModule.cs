@@ -173,36 +173,29 @@ namespace YukoBot.Commands
         [Aliases("add-response")]
         [Description("Отключает сообщение об успешности выполнения команды add на сервере, взамен сообщение будет приходить в ЛС")]
         public async Task AddCommandResponse(CommandContext commandContext,
-            [Description("true - включить / false - отключить"), RemainingText] string value)
+            [Description("true - включить / false - отключить")] bool isEnabled)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(commandContext.Member.DisplayName);
 
             YukoDbContext db = new YukoDbContext();
-            if (bool.TryParse(value.ToLower(), out bool addCommandResponse))
+            DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
+            if (guildArtChannel != null)
             {
-                DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
-                if (guildArtChannel != null)
-                {
-                    guildArtChannel.AddCommandResponse = addCommandResponse;
-                }
-                else
-                {
-                    db.GuildsSettings.Add(new DbGuildSettings
-                    {
-                        Id = commandContext.Guild.Id,
-                        AddCommandResponse = addCommandResponse
-                    });
-                }
-                await db.SaveChangesAsync();
-                discordEmbed.WithColor(DiscordColor.Orange)
-                    .WithDescription($"{(addCommandResponse ? "Включено" : "Отключено")}! ≧◡≦");
+                guildArtChannel.AddCommandResponse = isEnabled;
             }
             else
             {
-                discordEmbed.WithColor(DiscordColor.Red)
-                    .WithDescription("Недопустимое значение параметра `value` (допустимые: `true` / `false`)");
+                db.GuildsSettings.Add(new DbGuildSettings
+                {
+                    Id = commandContext.Guild.Id,
+                    AddCommandResponse = isEnabled
+                });
             }
+            await db.SaveChangesAsync();
+            discordEmbed.WithColor(DiscordColor.Orange)
+                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+
             await commandContext.RespondAsync(discordEmbed);
         }
     }

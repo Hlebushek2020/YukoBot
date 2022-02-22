@@ -384,5 +384,12 @@ namespace YukoBot.Commands
                 await commandContext.RespondAsync(embed);
             }
         }
+
+        //[Command("info-message-pm")]
+        //[Description("Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды add)")]
+        //public async Task InfoMessagesInPM(CommandContext commandContext,
+        //    [Description("true - включить / false - отключить")] bool isEnabled)
+        //{
+        //}
     }
 }
