@@ -14,7 +14,10 @@ namespace YukoBot.Commands
     [RequireOwnerAndUserPermissions(Permissions.Administrator)]
     public class AdminCommandModule : CommandModule
     {
-        public AdminCommandModule() : base(Models.Category.Management) { }
+        public AdminCommandModule() : base(Models.Category.Management)
+        {
+            CommandAccessError = "Эта команда доступна админу гильдии (сервера) и владельцу бота!";
+        }
 
         [Command("ban")]
         [Description("Запрещает пользователю скачивать с этого сервера (гильдии)")]

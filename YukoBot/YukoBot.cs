@@ -1,5 +1,6 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -70,6 +71,7 @@ namespace YukoBot
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
+            commands.RegisterCommands<RegisteredUserCommandModule>();
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
@@ -116,23 +118,12 @@ namespace YukoBot
             }
             else if (e.Exception is ChecksFailedException)
             {
-                Type moduleType = e.Command.Module.ModuleType;
-                if (moduleType.Equals(typeof(ManagingСollectionsCommandModule)))
-                {
-                    embed.WithDescription("Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!");
-                }
-                else if (moduleType.Equals(typeof(OwnerCommandModule)))
-                {
-                    embed.WithDescription("Эта команда доступна только владельцу бота!");
-                }
-                else if (moduleType.Equals(typeof(AdminCommandModule)))
-                {
-                    embed.WithDescription("Эта команда доступна админу гильдии (сервера) и владельцу бота!");
-                }
-                else
+                CommandModule yukoModule = (e.Command.Module as SingletonCommandModule).Instance as CommandModule;
+                if (string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
                     return Task.CompletedTask;
                 }
+                embed.WithDescription(yukoModule.CommandAccessError);
             }
             else
             {

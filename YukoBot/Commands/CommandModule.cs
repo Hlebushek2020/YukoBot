@@ -11,6 +11,7 @@ namespace YukoBot.Commands
         public static IReadOnlyCollection<Category> Categories { get => _categoryies.Values; }
 
         public Category Category { get; }
+        public string CommandAccessError { get; protected set; }
 
         public CommandModule(Category category)
         {

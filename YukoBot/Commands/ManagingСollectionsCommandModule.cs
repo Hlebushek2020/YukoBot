@@ -17,7 +17,10 @@ namespace YukoBot.Commands
     [RequireRegisteredAndNoBan]
     public class ManagingСollectionsCommandModule : CommandModule
     {
-        public ManagingСollectionsCommandModule() : base(Models.Category.CollectionManagement) { }
+        public ManagingСollectionsCommandModule() : base(Models.Category.CollectionManagement)
+        {
+            CommandAccessError = "Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
+        }
 
         private const string DefaultCollection = "Default";
 
