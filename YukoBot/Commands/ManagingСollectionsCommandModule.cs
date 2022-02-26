@@ -83,8 +83,8 @@ namespace YukoBot.Commands
             [Description("Id сообщения")] ulong messageId,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
         {
-            YukoDbContext db = new YukoDbContext();
-            DbGuildSettings guildSettings = db.GuildsSettings.Find(commandContext.Guild.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             DiscordChannel discordChannel = commandContext.Channel;
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
             if (guildSettings != null && discordChannel.Id != guildSettings.ArtChannelId)
@@ -95,11 +95,11 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed;
             if (useDefaultCollection)
             {
-                discordEmbed = await AddToCollection(commandContext, db, message);
+                discordEmbed = await AddToCollection(commandContext, dbContext, message);
             }
             else
             {
-                discordEmbed = await AddToCollection(commandContext, db, message, nameOrId);
+                discordEmbed = await AddToCollection(commandContext, dbContext, message, nameOrId);
             }
             await commandContext.RespondAsync(discordEmbed);
         }
@@ -210,8 +210,8 @@ namespace YukoBot.Commands
             }
             else
             {
-                YukoDbContext db = new YukoDbContext();
-                DbCollection collection = db.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(collectionName)).FirstOrDefault();
+                YukoDbContext dbContext = new YukoDbContext();
+                DbCollection collection = dbContext.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(collectionName)).FirstOrDefault();
                 if (collection == null)
                 {
                     collection = new DbCollection
@@ -219,8 +219,8 @@ namespace YukoBot.Commands
                         Name = collectionName,
                         UserId = commandContext.Member.Id
                     };
-                    db.Collections.Add(collection);
-                    await db.SaveChangesAsync();
+                    dbContext.Collections.Add(collection);
+                    await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
                         .WithDescription($"Коллекция создана! (Id: {collection.Id}) ≧◡≦");
@@ -353,21 +353,21 @@ namespace YukoBot.Commands
             }
             else
             {
-                YukoDbContext db = new YukoDbContext();
+                YukoDbContext dbContext = new YukoDbContext();
                 DbCollection collection;
                 if (ulong.TryParse(nameOrId, out ulong id))
                 {
-                    collection = db.Collections.Find(id);
+                    collection = dbContext.Collections.Find(id);
                 }
                 else
                 {
-                    collection = db.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId)).FirstOrDefault();
+                    collection = dbContext.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId)).FirstOrDefault();
                 }
                 if (collection != null && collection.UserId == commandContext.Member.Id)
                 {
-                    IQueryable<DbCollectionItem> items = db.CollectionItems.Where(x => x.CollectionId == collection.Id);
-                    db.CollectionItems.RemoveRange(items);
-                    await db.SaveChangesAsync();
+                    IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id);
+                    dbContext.CollectionItems.RemoveRange(items);
+                    await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
                         .WithDescription($"Коллекция \"{collection.Name}\" очищена! ≧◡≦");
@@ -389,8 +389,8 @@ namespace YukoBot.Commands
         [Description("Показывает список коллекций")]
         public async Task ShowCollections(CommandContext commandContext)
         {
-            YukoDbContext db = new YukoDbContext();
-            IQueryable<DbCollection> collections = db.Collections.Where(x => x.UserId == commandContext.Member.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            IQueryable<DbCollection> collections = dbContext.Collections.Where(x => x.UserId == commandContext.Member.Id);
             StringBuilder stringBuilder = new StringBuilder();
             foreach (DbCollection collection in collections)
             {
@@ -419,19 +419,19 @@ namespace YukoBot.Commands
             }
             else
             {
-                YukoDbContext db = new YukoDbContext();
+                YukoDbContext dbContext = new YukoDbContext();
                 DbCollection collection;
                 if (ulong.TryParse(nameOrId, out ulong id))
                 {
-                    collection = db.Collections.Find(id);
+                    collection = dbContext.Collections.Find(id);
                 }
                 else
                 {
-                    collection = db.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId)).FirstOrDefault();
+                    collection = dbContext.Collections.Where(x => x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId)).FirstOrDefault();
                 }
                 if (collection != null && collection.UserId == commandContext.Member.Id)
                 {
-                    IQueryable<DbCollectionItem> items = db.CollectionItems.Where(x => x.CollectionId == collection.Id);
+                    IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id);
                     StringBuilder stringBuilder = new StringBuilder();
                     foreach (DbCollectionItem item in items)
                     {

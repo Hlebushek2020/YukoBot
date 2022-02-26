@@ -55,8 +55,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                  .WithTitle($"{commandContext.Member.DisplayName}");
 
-            YukoDbContext database = new YukoDbContext();
-            List<DbBan> currentBans = database.Bans.Where(x => x.ServerId == commandContext.Guild.Id && x.UserId == commandContext.Member.Id).ToList();
+            YukoDbContext dbContext = new YukoDbContext();
+            List<DbBan> currentBans = dbContext.Bans.Where(x => x.ServerId == commandContext.Guild.Id && x.UserId == commandContext.Member.Id).ToList();
             if (currentBans.Count > 0)
             {
                 discordEmbed.WithColor(DiscordColor.Orange);
@@ -88,8 +88,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                  .WithTitle($"{commandContext.Member.DisplayName}");
 
-            YukoDbContext database = new YukoDbContext();
-            DbUser dbUser = database.Users.Find(commandContext.Member.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
 
             string password = "";
             Random random = new Random();
@@ -109,7 +109,7 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            await database.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             DiscordDmChannel userChat = await commandContext.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()

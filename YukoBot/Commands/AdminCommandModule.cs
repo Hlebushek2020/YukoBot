@@ -28,8 +28,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{commandContext.Member.DisplayName}");
 
-            YukoDbContext database = new YukoDbContext();
-            DbUser dbUser = database.Users.Find(discordMember.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(discordMember.Id);
             if (dbUser == null)
             {
                 discordEmbed
@@ -39,7 +39,7 @@ namespace YukoBot.Commands
                 return;
             }
 
-            int isBanned = database.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).Count();
+            int isBanned = dbContext.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).Count();
             if (isBanned > 0)
             {
                 discordEmbed
@@ -56,8 +56,8 @@ namespace YukoBot.Commands
                 Reason = reason
             };
 
-            database.Bans.Add(dbBan);
-            await database.SaveChangesAsync();
+            dbContext.Bans.Add(dbBan);
+            await dbContext.SaveChangesAsync();
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
@@ -73,8 +73,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{commandContext.Member.DisplayName}");
 
-            YukoDbContext database = new YukoDbContext();
-            DbUser dbUser = database.Users.Find(discordMember.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(discordMember.Id);
             if (dbUser == null)
             {
                 discordEmbed
@@ -84,14 +84,14 @@ namespace YukoBot.Commands
                 return;
             }
 
-            List<DbBan> currentBans = database.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).ToList();
+            List<DbBan> currentBans = dbContext.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).ToList();
             if (currentBans.Count > 0)
             {
                 foreach (DbBan dbBan in currentBans)
                 {
-                    database.Bans.Remove(dbBan);
+                    dbContext.Bans.Remove(dbBan);
                 }
-                await database.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
             }
 
             discordEmbed
@@ -109,8 +109,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                  .WithTitle($"{commandContext.Member.DisplayName}");
 
-            YukoDbContext database = new YukoDbContext();
-            DbUser dbUser = database.Users.Find(discordMember.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(discordMember.Id);
             if (dbUser == null)
             {
                 discordEmbed
@@ -120,7 +120,7 @@ namespace YukoBot.Commands
                 return;
             }
 
-            List<DbBan> currentBans = database.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).ToList();
+            List<DbBan> currentBans = dbContext.Bans.Where(x => x.ServerId == discordMember.Guild.Id && x.UserId == discordMember.Id).ToList();
             if (currentBans.Count > 0)
             {
                 discordEmbed.WithColor(DiscordColor.Orange);
@@ -149,22 +149,22 @@ namespace YukoBot.Commands
         public async Task SetArtChannel(CommandContext commandContext,
             [Description("Канал для поиска сообщений")] DiscordChannel discordChannel)
         {
-            YukoDbContext db = new YukoDbContext();
-            DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbGuildSettings guildArtChannel = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             if (guildArtChannel != null)
             {
                 guildArtChannel.ArtChannelId = discordChannel.Id;
             }
             else
             {
-                db.GuildsSettings.Add(new DbGuildSettings
+                dbContext.GuildsSettings.Add(new DbGuildSettings
                 {
                     Id = commandContext.Guild.Id,
                     ArtChannelId = discordChannel.Id,
                     AddCommandResponse = true
                 });
             }
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                .WithTitle($"{commandContext.Member.DisplayName}")
                .WithColor(DiscordColor.Orange)
@@ -181,21 +181,21 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(commandContext.Member.DisplayName);
 
-            YukoDbContext db = new YukoDbContext();
-            DbGuildSettings guildArtChannel = db.GuildsSettings.Find(commandContext.Guild.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbGuildSettings guildArtChannel = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             if (guildArtChannel != null)
             {
                 guildArtChannel.AddCommandResponse = isEnabled;
             }
             else
             {
-                db.GuildsSettings.Add(new DbGuildSettings
+                dbContext.GuildsSettings.Add(new DbGuildSettings
                 {
                     Id = commandContext.Guild.Id,
                     AddCommandResponse = isEnabled
                 });
             }
-            await db.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             discordEmbed.WithColor(DiscordColor.Orange)
                 .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
 

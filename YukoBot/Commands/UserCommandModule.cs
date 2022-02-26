@@ -30,8 +30,8 @@ namespace YukoBot.Commands
 
             DiscordMember user = commandContext.Member;
 
-            YukoDbContext database = new YukoDbContext();
-            DbUser dbUser = database.Users.Find(user.Id);
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(user.Id);
             if (dbUser != null)
             {
                 discordEmbed
@@ -64,8 +64,8 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            database.Users.Add(dbUser);
-            await database.SaveChangesAsync();
+            dbContext.Users.Add(dbUser);
+            await dbContext.SaveChangesAsync();
 
             DiscordDmChannel userChat = await user.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
