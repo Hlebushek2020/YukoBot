@@ -124,11 +124,27 @@ namespace YukoBot.Commands
             await commandContext.RespondAsync(discordEmbed);
         }
 
-        //[Command("info-message-pm")]
-        //[Description("Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды add)")]
-        //public async Task InfoMessagesInPM(CommandContext commandContext,
-        //    [Description("true - включить / false - отключить")] bool isEnabled)
-        //{
-        //}
+        [Command("info-message-pm")]
+        [Description("Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды add)")]
+        public async Task InfoMessagesInPM(CommandContext commandContext,
+            [Description("true - включить / false - отключить")] bool isEnabled)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithTitle(commandContext.Member.DisplayName);
+
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
+
+            if (dbUser.InfoMessages != isEnabled)
+            {
+                dbUser.InfoMessages = isEnabled;
+                await dbContext.SaveChangesAsync();
+            }
+
+            discordEmbed.WithColor(DiscordColor.Orange)
+                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+
+            await commandContext.RespondAsync(discordEmbed);
+        }
     }
 }

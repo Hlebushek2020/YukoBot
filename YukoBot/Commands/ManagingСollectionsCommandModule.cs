@@ -57,8 +57,17 @@ namespace YukoBot.Commands
             await commandContext.Message.DeleteAsync();
             if (guildSettings != null && !guildSettings.AddCommandResponse.Value)
             {
-                DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
-                await dmChannel.SendMessageAsync(discordEmbed);
+                bool send = discordEmbed.Color.Value.Value == DiscordColor.Red.Value;
+                if (!send)
+                {
+                    DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
+                    send = dbUser.InfoMessages;
+                }
+                if (send)
+                {
+                    DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
+                    await dmChannel.SendMessageAsync(discordEmbed);
+                }
             }
             else
             {
