@@ -140,7 +140,7 @@ namespace YukoBot
             }
 
             bool sendToCurrentChannel = true;
-            if (command != null && command.Name.Equals("add", StringComparison.CurrentCultureIgnoreCase))
+            if (command != null && command.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
             {
                 YukoDbContext dbContext = new YukoDbContext();
                 DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
