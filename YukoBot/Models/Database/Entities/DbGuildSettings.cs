@@ -11,6 +11,6 @@ namespace YukoBot.Models.Database.Entities
 
         public ulong? ArtChannelId { get; set; }
 
-        public bool? AddCommandResponse { get; set; }
+        public bool AddCommandResponse { get; set; } = true;
     }
 }

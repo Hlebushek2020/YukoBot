@@ -11,6 +11,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
+using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot
 {
@@ -100,30 +102,28 @@ namespace YukoBot
 
         ~YukoBot() => Dispose(false);
 
-        private Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
+        private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
                 Title = e.Context.Member.DisplayName,
                 Color = DiscordColor.Red
             };
-
             if (e.Exception is ArgumentException)
             {
                 embed.WithDescription($"Простите, в команде {e.Command.Name} ошибка (\\*^.^*)");
             }
-            else if (e.Exception is CommandNotFoundException)
+            else if (e.Exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды {((CommandNotFoundException)e.Exception).CommandName} (\\*^.^*)");
+                embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
             }
             else if (e.Exception is ChecksFailedException)
             {
                 CommandModule yukoModule = (e.Command.Module as SingletonCommandModule).Instance as CommandModule;
-                if (string.IsNullOrEmpty(yukoModule.CommandAccessError))
+                if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
-                    return Task.CompletedTask;
+                    embed.WithDescription(yukoModule.CommandAccessError);
                 }
-                embed.WithDescription(yukoModule.CommandAccessError);
             }
             else
             {
@@ -134,9 +134,26 @@ namespace YukoBot
                     .AddField("Command", e.Command?.Name ?? "Unknown");
             }
 
-            e.Context.RespondAsync(embed);
+            bool sendToCurrentChannel = true;
+            if (e.Command.Name.Equals("add", StringComparison.CurrentCultureIgnoreCase))
+            {
+                YukoDbContext dbContext = new YukoDbContext();
+                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(e.Context.Guild);
+                if (dbGuildSettings != null)
+                {
+                    sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
+                }
+            }
 
-            return Task.CompletedTask;
+            if (sendToCurrentChannel)
+            {
+                await e.Context.RespondAsync(embed);
+            }
+            else
+            {
+                DiscordDmChannel discordDmChannel = await e.Context.Member.CreateDmChannelAsync();
+                await discordDmChannel.SendMessageAsync(embed);
+            }
         }
 
         private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>

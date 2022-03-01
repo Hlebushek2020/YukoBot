@@ -55,7 +55,7 @@ namespace YukoBot.Commands
             }
             DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             await commandContext.Message.DeleteAsync();
-            if (guildSettings != null && !guildSettings.AddCommandResponse.Value)
+            if (guildSettings != null && !guildSettings.AddCommandResponse)
             {
                 bool send = discordEmbed.Color.Value.Value == DiscordColor.Red.Value;
                 if (!send)

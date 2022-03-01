@@ -160,8 +160,7 @@ namespace YukoBot.Commands
                 dbContext.GuildsSettings.Add(new DbGuildSettings
                 {
                     Id = commandContext.Guild.Id,
-                    ArtChannelId = discordChannel.Id,
-                    AddCommandResponse = true
+                    ArtChannelId = discordChannel.Id
                 });
             }
             await dbContext.SaveChangesAsync();
