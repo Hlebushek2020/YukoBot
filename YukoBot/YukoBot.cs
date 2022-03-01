@@ -104,22 +104,27 @@ namespace YukoBot
 
         private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
+            CommandContext context = e.Context;
+            Exception exception = e.Exception;
+            Command command = e.Command;
+
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
                 Title = e.Context.Member.DisplayName,
                 Color = DiscordColor.Red
             };
-            if (e.Exception is ArgumentException)
+
+            if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде {e.Command.Name} ошибка (\\*^.^*)");
+                embed.WithDescription($"Простите, в команде {command.Name} ошибка (\\*^.^*)");
             }
-            else if (e.Exception is CommandNotFoundException commandNotFoundEx)
+            else if (exception is CommandNotFoundException commandNotFoundEx)
             {
                 embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
             }
-            else if (e.Exception is ChecksFailedException)
+            else if (exception is ChecksFailedException)
             {
-                CommandModule yukoModule = (e.Command.Module as SingletonCommandModule).Instance as CommandModule;
+                CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
                 if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
@@ -129,16 +134,16 @@ namespace YukoBot
             {
                 embed.WithTitle("ERROR")
                     .WithColor(DiscordColor.Red)
-                    .AddField("Exception Message", e.Exception.Message)
-                    .AddField("Exception Type", e.Exception.GetType().Name)
-                    .AddField("Command", e.Command?.Name ?? "Unknown");
+                    .AddField("Exception Message", exception.Message)
+                    .AddField("Exception Type", exception.GetType().Name)
+                    .AddField("Command", command?.Name ?? "Unknown");
             }
 
             bool sendToCurrentChannel = true;
-            if (e.Command.Name.Equals("add", StringComparison.CurrentCultureIgnoreCase))
+            if (command.Name.Equals("add", StringComparison.CurrentCultureIgnoreCase))
             {
                 YukoDbContext dbContext = new YukoDbContext();
-                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(e.Context.Guild);
+                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
                 if (dbGuildSettings != null)
                 {
                     sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
@@ -147,11 +152,11 @@ namespace YukoBot
 
             if (sendToCurrentChannel)
             {
-                await e.Context.RespondAsync(embed);
+                await context.RespondAsync(embed);
             }
             else
             {
-                DiscordDmChannel discordDmChannel = await e.Context.Member.CreateDmChannelAsync();
+                DiscordDmChannel discordDmChannel = await context.Member.CreateDmChannelAsync();
                 await discordDmChannel.SendMessageAsync(embed);
             }
         }
