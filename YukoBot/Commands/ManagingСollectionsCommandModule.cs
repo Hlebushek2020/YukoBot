@@ -87,7 +87,7 @@ namespace YukoBot.Commands
             DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             DiscordChannel discordChannel = commandContext.Channel;
             bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
-            if (guildSettings != null && discordChannel.Id != guildSettings.ArtChannelId)
+            if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
             {
                 discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
             }
@@ -119,7 +119,7 @@ namespace YukoBot.Commands
             DiscordChannel discordChannel = commandContext.Channel;
             YukoDbContext dbContext = new YukoDbContext();
             DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
-            if (guildSettings != null && discordChannel.Id != guildSettings.ArtChannelId)
+            if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
             {
                 discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
             }
