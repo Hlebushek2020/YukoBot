@@ -82,22 +82,16 @@ namespace YukoBot
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
         }
 
-        private Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
+        private async Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
         {
-            if (e.Channel != null && !e.Channel.IsPrivate)
+            if (e.Guild == null)
             {
-                return Task.CompletedTask;
+                DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
+                if (e.Emoji.Equals(emoji))
+                {
+                    await e.Message.DeleteAsync();
+                }
             }
-            if ((e.Message.Author != null) && (e.Message.Author.Id != sender.CurrentUser.Id))
-            {
-                return Task.CompletedTask;
-            }
-            DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
-            if (!e.Emoji.Equals(emoji))
-            {
-                return Task.CompletedTask;
-            }
-            return e.Message.DeleteAsync();
         }
 
         ~YukoBot() => Dispose(false);
