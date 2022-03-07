@@ -10,7 +10,7 @@ namespace YukoBot.Models.Database
         public DbSet<DbBan> Bans { get; set; }
         public DbSet<DbCollection> Collections { get; set; }
         public DbSet<DbCollectionItem> CollectionItems { get; set; }
-        public DbSet<DbGuildArtChannel> GuildArtChannels { get; set; }
+        public DbSet<DbGuildSettings> GuildsSettings { get; set; }
 
         public YukoDbContext()
         {

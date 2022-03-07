@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:YukoClient">
+                    xmlns:local="clr-namespace:YukoCollectionsClient">
     <!--Base-->
     <SolidColorBrush x:Key="Base.Foreground" Color="#ffc8c8c8"/>
     <SolidColorBrush x:Key="Base.NotEnabled.Foreground" Color="Gray"/>

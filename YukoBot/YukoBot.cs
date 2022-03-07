@@ -1,5 +1,6 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -10,6 +11,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
+using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot
 {
@@ -70,6 +73,7 @@ namespace YukoBot
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
+            commands.RegisterCommands<RegisteredUserCommandModule>();
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
@@ -78,74 +82,77 @@ namespace YukoBot
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
         }
 
-        private Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
+        private async Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
         {
-            if (e.Channel != null && !e.Channel.IsPrivate)
+            if (e.Guild == null)
             {
-                return Task.CompletedTask;
+                DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
+                if (e.Emoji.Equals(emoji))
+                {
+                    await e.Message.DeleteAsync();
+                }
             }
-            if ((e.Message.Author != null) && (e.Message.Author.Id != sender.CurrentUser.Id))
-            {
-                return Task.CompletedTask;
-            }
-            DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
-            if (!e.Emoji.Equals(emoji))
-            {
-                return Task.CompletedTask;
-            }
-            return e.Message.DeleteAsync();
         }
 
         ~YukoBot() => Dispose(false);
 
-        private Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
+        private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
+            CommandContext context = e.Context;
+            Exception exception = e.Exception;
+            Command command = e.Command;
+
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
                 Title = e.Context.Member.DisplayName,
                 Color = DiscordColor.Red
             };
 
-            if (e.Exception is ArgumentException)
+            if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде {e.Command.Name} ошибка (\\*^.^*)");
+                embed.WithDescription($"Простите, в команде {command.Name} ошибка (\\*^.^*)");
             }
-            else if (e.Exception is CommandNotFoundException)
+            else if (exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды {((CommandNotFoundException)e.Exception).CommandName} (\\*^.^*)");
+                embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
             }
-            else if (e.Exception is ChecksFailedException)
+            else if (exception is ChecksFailedException)
             {
-                Type moduleType = e.Command.Module.ModuleType;
-                if (moduleType.Equals(typeof(ManagingСollectionsCommandModule)))
+                CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
+                if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
-                    embed.WithDescription("Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!");
-                }
-                else if (moduleType.Equals(typeof(OwnerCommandModule)))
-                {
-                    embed.WithDescription("Эта команда доступна только владельцу бота!");
-                }
-                else if (moduleType.Equals(typeof(AdminCommandModule)))
-                {
-                    embed.WithDescription("Эта команда доступна админу гильдии (сервера) и владельцу бота!");
-                }
-                else
-                {
-                    return Task.CompletedTask;
+                    embed.WithDescription(yukoModule.CommandAccessError);
                 }
             }
             else
             {
                 embed.WithTitle("ERROR")
                     .WithColor(DiscordColor.Red)
-                    .AddField("Exception Message", e.Exception.Message)
-                    .AddField("Exception Type", e.Exception.GetType().Name)
-                    .AddField("Command", e.Command?.Name ?? "Unknown");
+                    .AddField("Exception Message", exception.Message)
+                    .AddField("Exception Type", exception.GetType().Name)
+                    .AddField("Command", command?.Name ?? "Unknown");
             }
 
-            e.Context.RespondAsync(embed);
+            bool sendToCurrentChannel = true;
+            if (command != null && command.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
+            {
+                YukoDbContext dbContext = new YukoDbContext();
+                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
+                if (dbGuildSettings != null)
+                {
+                    sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
+                }
+            }
 
-            return Task.CompletedTask;
+            if (sendToCurrentChannel)
+            {
+                await context.RespondAsync(embed);
+            }
+            else
+            {
+                DiscordDmChannel discordDmChannel = await context.Member.CreateDmChannelAsync();
+                await discordDmChannel.SendMessageAsync(embed);
+            }
         }
 
         private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
