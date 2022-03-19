@@ -7,12 +7,13 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="YukoClient.AddScriptWindow"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}" 
+        Background="{DynamicResource Base.Grid.Background}"
+        SnapsToDevicePixels="True"
         Width="600"
         FontSize="14"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
-        SizeToContent="Height"
-        SnapsToDevicePixels="True">
+        SizeToContent="Height">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

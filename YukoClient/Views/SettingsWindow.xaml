@@ -6,6 +6,8 @@
         x:Class="YukoClient.SettingsWindow"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}" 
+        Background="{DynamicResource Base.Grid.Background}"
+        SnapsToDevicePixels="True"
         Height="300" 
         Width="600"
         FontSize="14"

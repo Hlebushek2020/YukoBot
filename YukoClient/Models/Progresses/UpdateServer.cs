@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
@@ -30,7 +31,7 @@ namespace YukoClient.Models.Progress
             }
             else
             {
-                dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
+                dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(serverResponse.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), serverResponse.ErrorMessage);
             }
         }
     }

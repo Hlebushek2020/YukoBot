@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Providers;
 using YukoClientBase.Models.Web.Responses;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
@@ -52,12 +53,12 @@ namespace YukoClient.Models.Progress
                     }
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
                 }
             }
         }

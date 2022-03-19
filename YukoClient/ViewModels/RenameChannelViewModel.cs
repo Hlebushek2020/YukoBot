@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using YukoClient.Models;
 using YukoClientBase.Interfaces;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
 {
@@ -51,7 +52,7 @@ namespace YukoClient.ViewModels
             {
                 if (string.IsNullOrEmpty(newChannelName))
                 {
-                    Models.Dialogs.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SUI.Dialogs.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {

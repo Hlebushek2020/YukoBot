@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using YukoClient.Models;
 using YukoClientBase.Interfaces;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
 {
@@ -90,12 +91,12 @@ namespace YukoClient.ViewModels
                 {
                     if (string.IsNullOrEmpty(MessageId))
                     {
-                        Models.Dialogs.MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        SUI.Dialogs.MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     if (!ulong.TryParse(MessageId, out messageId))
                     {
-                        Models.Dialogs.MessageBox.Show("В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        SUI.Dialogs.MessageBox.Show("В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }
@@ -104,12 +105,12 @@ namespace YukoClient.ViewModels
                 {
                     if (string.IsNullOrEmpty(MessageCount))
                     {
-                        Models.Dialogs.MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        SUI.Dialogs.MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     if (!int.TryParse(MessageCount, out messageCount))
                     {
-                        Models.Dialogs.MessageBox.Show("В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " + int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        SUI.Dialogs.MessageBox.Show("В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " + int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }

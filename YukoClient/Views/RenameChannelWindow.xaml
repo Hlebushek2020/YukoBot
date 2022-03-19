@@ -8,9 +8,10 @@
         Width="600"
         FontSize="14"
         Title="{Binding Title, Mode=OneWay}"
+        Background="{DynamicResource Base.Grid.Background}"
+        SnapsToDevicePixels="True"
         ResizeMode="CanMinimize"
         SizeToContent="Height"
-        SnapsToDevicePixels="True"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}">
