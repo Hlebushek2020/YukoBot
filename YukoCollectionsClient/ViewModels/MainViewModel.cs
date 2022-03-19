@@ -8,6 +8,7 @@ using System.Windows.Media;
 using YukoClientBase.Interfaces;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progress;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.ViewModels
 {
@@ -90,7 +91,7 @@ namespace YukoCollectionsClient.ViewModels
             // Message Collections Commands
             UpdateMessageCollectionsCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult messageResult = SUI.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
@@ -107,7 +108,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (SelectedMessageCollectionItem != null)
                 {
-                    if (Models.Dialogs.MessageBox.Show($"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show($"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }
@@ -146,7 +147,7 @@ namespace YukoCollectionsClient.ViewModels
                         {
                             if (selectedMessageCollection.Items.Count > 0)
                             {
-                                if (Models.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (SUI.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedMessageCollection.Items.Clear();
                                 }
@@ -171,7 +172,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (SelectedUrl != null)
                 {
-                    if (Models.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Urls.Remove(SelectedUrl);
                     }
@@ -181,7 +182,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (selectedMessageCollection != null && selectedMessageCollection.Urls.Count > 0)
                 {
-                    if (Models.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Urls.Clear();
                     }
@@ -219,7 +220,7 @@ namespace YukoCollectionsClient.ViewModels
                         {
                             if (selectedMessageCollection.Urls.Count > 0)
                             {
-                                if (Models.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (SUI.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedMessageCollection.Urls.Clear();
                                 }

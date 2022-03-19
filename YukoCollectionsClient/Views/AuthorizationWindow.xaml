@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:YukoCollectionsClient"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}"
+        Background="{DynamicResource Base.Grid.Background}"
+        SnapsToDevicePixels="True"
         Height="450" 
         MinHeight="300"
         Width="800"

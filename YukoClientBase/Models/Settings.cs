@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Sergey.UI.Extension.Themes;
 using System;
 using System.IO;
 using System.Text;
@@ -39,7 +40,7 @@ namespace YukoClientBase.Models
         [JsonIgnore]
         public static string ProgramResourceFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SergeyGovorunov", "YukoClient(DFLC)");
 
-        public string Theme { get; set; } = "Light";
+        public Theme Theme { get; set; } = Theme.Light;
         public string Host { get; set; } = "127.0.0.1";
         public int Port { get; set; } = 10000;
         public int MaxDownloadThreads { get; set; } = 4;

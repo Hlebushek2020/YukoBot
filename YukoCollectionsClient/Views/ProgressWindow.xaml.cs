@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using YukoCollectionsClient.Models.Progress;
 using YukoCollectionsClient.ViewModels;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient
 {
@@ -35,7 +36,7 @@ namespace YukoCollectionsClient
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        Models.Dialogs.MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                        SUI.Dialogs.MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                     });
                 }
                 Dispatcher.Invoke(() =>
