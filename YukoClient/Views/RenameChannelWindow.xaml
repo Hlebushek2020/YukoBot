@@ -8,8 +8,7 @@
         Width="600"
         FontSize="14"
         Title="{Binding Title, Mode=OneWay}"
-        Background="{DynamicResource Base.Grid.Background}"
-        SnapsToDevicePixels="True"
+        Style="{StaticResource WindowStyle}"
         ResizeMode="CanMinimize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
