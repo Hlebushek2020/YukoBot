@@ -65,17 +65,26 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <ListBox Grid.Row="0" SelectionMode="Single" DisplayMemberPath="Name" ItemsSource="{Binding MessageCollections, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollection, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
+                <TextBox Grid.Row="0" Margin="0,0,0,5" TextWrapping="NoWrap" VerticalAlignment="Top" Text="{Binding SearchCollections, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Height="22" VerticalAlignment="Top" Margin="0,0,0,5">
+                    <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить" Command="{Binding UpdateMessageCollectionsCommand}">
+                        <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png"/>
+                    </Button>
+                    <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать" Command="{Binding DownloadAllCollectionsCommand}">
+                        <Image Source="/YukoClientBase;component/Resources/menu-download-32.png"/>
+                    </Button>
+                </StackPanel>
+                <ListBox Grid.Row="2" SelectionMode="Single" DisplayMemberPath="Name" ItemsSource="{Binding MessageCollections, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMessageCollection, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0">
                     <ListBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Обновить список" InputGestureText="F5" Command="{Binding UpdateMessageCollectionsCommand}"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
-                <TextBox Grid.Row="1" Margin="0,5,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Text="{Binding SearchCollections, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="3" Margin="5,0" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
             <Grid Grid.Column="2">

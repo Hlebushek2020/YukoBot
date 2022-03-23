@@ -216,9 +216,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\menu-refresh-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-add-32.png" />
   </ItemGroup>
   <ItemGroup>

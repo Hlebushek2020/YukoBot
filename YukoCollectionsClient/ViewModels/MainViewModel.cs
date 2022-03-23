@@ -60,6 +60,7 @@ namespace YukoCollectionsClient.ViewModels
         public DelegateCommand AppSettingsCommand { get; }
         // Message Collections Commands
         public DelegateCommand UpdateMessageCollectionsCommand { get; }
+        public DelegateCommand DownloadAllCollectionsCommand { get; }
         // Message Collection Commands
         public DelegateCommand RemoveMessageCollectionItemCommand { get; }
         public DelegateCommand ExportMessageCollectionCommand { get; }
@@ -102,6 +103,10 @@ namespace YukoCollectionsClient.ViewModels
                         CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
                     }
                 }
+            });
+            DownloadAllCollectionsCommand = new DelegateCommand(() =>
+            {
+                throw new NotImplementedException();
             });
             // Message Collection Commands
             RemoveMessageCollectionItemCommand = new DelegateCommand(() =>

@@ -99,5 +99,8 @@
   <ItemGroup>
     <Resource Include="Resources\menu-clear-32.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\menu-refresh-32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
