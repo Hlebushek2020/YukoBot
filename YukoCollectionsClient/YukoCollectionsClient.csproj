@@ -120,6 +120,7 @@
     <Compile Include="Models\MessageCollectionItem.cs" />
     <Compile Include="Models\Progresses\Base.cs" />
     <Compile Include="Models\Progresses\Download.cs" />
+    <Compile Include="Models\Progresses\DownloadAll.cs" />
     <Compile Include="Models\Progresses\ExportMessageCollection.cs" />
     <Compile Include="Models\Progresses\ExportUrls.cs" />
     <Compile Include="Models\Progresses\GetUrlsFromMessageCollection.cs" />

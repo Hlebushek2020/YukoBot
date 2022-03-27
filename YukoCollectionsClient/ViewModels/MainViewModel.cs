@@ -106,7 +106,17 @@ namespace YukoCollectionsClient.ViewModels
             });
             DownloadAllCollectionsCommand = new DelegateCommand(() =>
             {
-                throw new NotImplementedException();
+                if (MessageCollections != null && MessageCollections.Count != 0)
+                {
+                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
+                    if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        MessageBoxResult messageBoxResult = SUI.Dialogs.MessageBox.Show("Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        ProgressWindow progressWindow = new ProgressWindow(
+                            new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath, messageBoxResult == MessageBoxResult.Yes));
+                        progressWindow.ShowDialog();
+                    }
+                }
             });
             // Message Collection Commands
             RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
@@ -168,6 +178,10 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (selectedMessageCollection != null && selectedMessageCollection.Items.Count > 0)
                 {
+                    if (selectedMessageCollection.Urls.Count != 0 && SUI.Dialogs.MessageBox.Show("Очистить список ссылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        selectedMessageCollection.Urls.Clear();
+                    }
                     ProgressWindow progress = new ProgressWindow(new GetUrlsFromMessageCollection(selectedMessageCollection));
                     progress.ShowDialog();
                 }

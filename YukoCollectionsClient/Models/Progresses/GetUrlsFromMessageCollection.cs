@@ -41,13 +41,13 @@ namespace YukoCollectionsClient.Models.Progress
                         }
                         else
                         {
-                            errorMessages.AppendLine();
+                            errorMessages.AppendLine(response.ErrorMessage);
                         }
 
                     } while (response.Next);
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
