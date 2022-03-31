@@ -2,6 +2,7 @@
 using Prism.Mvvm;
 using Sergey.UI.Extension.Themes;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Windows;
@@ -16,7 +17,7 @@ namespace YukoClient.ViewModels
         #region Propirties
         public string Title { get => App.Name; }
         public Action Close { get; set; }
-        public ObservableCollection<DisplayTheme> Themes { get; }
+        public List<DisplayTheme> Themes { get; }
         public DisplayTheme SelectTheme { get; set; }
         public ObservableCollection<int> MaxDownloadThreads { get; }
         public int SelectMaxDownloadThreads { get; set; }
@@ -32,12 +33,9 @@ namespace YukoClient.ViewModels
         public SettingsViewModel()
         {
             // fields
-            Themes = new ObservableCollection<DisplayTheme> {
-                new DisplayTheme(Theme.Light),
-                new DisplayTheme(Theme.Dark)
-            };
+            Themes = DisplayTheme.GetThemes();
             SelectTheme = new DisplayTheme(Settings.Current.Theme);
-            MaxDownloadThreads = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            MaxDownloadThreads = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             SelectMaxDownloadThreads = Settings.Current.MaxDownloadThreads;
             Host = Settings.Current.Host;
             Port = Settings.Current.Port.ToString();
