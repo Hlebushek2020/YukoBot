@@ -33,7 +33,7 @@ namespace YukoCollectionsClient.ViewModels
         public SettingsViewModel()
         {
             // fields
-            Themes = DisplayTheme.GetThemes();
+            Themes = DisplayTheme.GetList();
             SelectTheme = new DisplayTheme(Settings.Current.Theme);
             MaxDownloadThreads = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             SelectMaxDownloadThreads = Settings.Current.MaxDownloadThreads;

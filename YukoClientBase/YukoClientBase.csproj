@@ -72,6 +72,7 @@
     <Compile Include="Interfaces\IViewTitle.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\Utils.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\BaseRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />
