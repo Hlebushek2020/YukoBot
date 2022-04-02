@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Sergey.UI.Extension.Themes;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -57,6 +58,16 @@ namespace YukoClientBase.Models
         public static bool Availability()
         {
             return File.Exists(Path.Combine(ProgramResourceFolder, "settings.json"));
+        }
+
+        public static List<int> GetListAllowedNumberDownloadThreads()
+        {
+            List<int> result = new List<int>();
+            for (int number = 1; number <= 15; number++)
+            {
+                result.Add(number);
+            }
+            return result;
         }
     }
 }

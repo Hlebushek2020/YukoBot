@@ -12,14 +12,14 @@ using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
 {
-    public class SettingsViewModel : BindableBase, ICloseableView, IViewTitle
+    public class SettingsViewModel : ICloseableView, IViewTitle
     {
         #region Propirties
         public string Title { get => App.Name; }
         public Action Close { get; set; }
         public List<DisplayTheme> Themes { get; }
         public DisplayTheme SelectTheme { get; set; }
-        public ObservableCollection<int> MaxDownloadThreads { get; }
+        public List<int> MaxDownloadThreads { get; }
         public int SelectMaxDownloadThreads { get; set; }
         public string Host { get; set; }
         public string Port { get; set; }
@@ -35,7 +35,7 @@ namespace YukoClient.ViewModels
             // fields
             Themes = DisplayTheme.GetList();
             SelectTheme = new DisplayTheme(Settings.Current.Theme);
-            MaxDownloadThreads = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+            MaxDownloadThreads = Settings.GetListAllowedNumberDownloadThreads();
             SelectMaxDownloadThreads = Settings.Current.MaxDownloadThreads;
             Host = Settings.Current.Host;
             Port = Settings.Current.Port.ToString();
