@@ -7,12 +7,12 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}"
+        Style="{StaticResource WindowStyle}"
         Width="620"
         FontSize="14"
         ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
-        Topmost="True"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
     <Grid Margin="10">

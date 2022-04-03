@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Sergey.UI.Extension.Themes;
+using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using YukoClientBase.Models;
 using YukoCollectionsClient.Models.Web;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient
 {
@@ -18,11 +20,11 @@ namespace YukoCollectionsClient
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SetTheme();
+            SwitchTheme(null);
             yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                Models.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
             MainWindow = new MainWindow();
@@ -38,12 +40,21 @@ namespace YukoCollectionsClient
             }
         }
 
-        public static void SetTheme()
+        public static void SwitchTheme(Theme? theme)
         {
-            Uri uri = new Uri($"Resources/Themes/{Settings.Current.Theme}.xaml", UriKind.Relative);
-            ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
-            Current.Resources.MergedDictionaries.Clear();
-            Current.Resources.MergedDictionaries.Add(resource);
+            Settings settings = Settings.Current;
+            if (!theme.HasValue || settings.Theme != theme.Value)
+            {
+                Uri uri = ThemeUri.Get(settings.Theme);
+                if (theme.HasValue)
+                {
+                    settings.Theme = theme.Value;
+                    uri = ThemeUri.Get(theme.Value);
+                }
+                ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
+                Current.Resources.MergedDictionaries.Clear();
+                Current.Resources.MergedDictionaries.Add(resource);
+            }
         }
     }
 }

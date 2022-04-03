@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:YukoClient"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="{Binding Title, Mode=OneWay}" 
+        Title="{Binding Title, Mode=OneWay}"
+        Style="{StaticResource WindowStyle}"
         Height="450" 
         Width="800"
         WindowStartupLocation="CenterScreen"
@@ -29,7 +30,7 @@
                 <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
             </Button>
             <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить" Command="{Binding UpdateChannelListCommand}">
-                <Image Source="/Resources/menu-refresh-32.png"/>
+                <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png"/>
             </Button>
         </StackPanel>
         <ListView Margin="0,26,0,0" SelectionMode="Extended" ItemsSource="{Binding Server.Channels, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedChannel, Mode=OneWayToSource}" SelectionChanged="ListView_SelectionChanged">

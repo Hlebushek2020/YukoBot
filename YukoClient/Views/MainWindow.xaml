@@ -7,6 +7,7 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}" 
+        Style="{StaticResource WindowStyle}"
         Height="450" 
         Width="800"
         FontSize="14"

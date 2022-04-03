@@ -6,6 +6,7 @@
         x:Class="YukoClient.SettingsWindow"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}" 
+        Style="{StaticResource WindowStyle}"
         Height="300" 
         Width="600"
         FontSize="14"
@@ -15,7 +16,7 @@
         <GroupBox Header="Основное" FontWeight="Medium" Height="95" Margin="10,10,10,0" VerticalAlignment="Top" Background="Transparent">
             <Grid>
                 <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left" Margin="4,8,0,0" TextWrapping="NoWrap" Text="Тема:" VerticalAlignment="Top"/>
-                <ComboBox FontWeight="Normal" Margin="44,4,4,0" VerticalAlignment="Top" ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox FontWeight="Normal" Margin="44,4,4,0" VerticalAlignment="Top" ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Display"/>
                 <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left" Margin="4,40,0,0" TextWrapping="NoWrap" Text="Количество одновременных скачиваний:" VerticalAlignment="Top"/>
                 <ComboBox FontWeight="Normal" Margin="275,36,4,0" VerticalAlignment="Top" ItemsSource="{Binding MaxDownloadThreads}" SelectedItem="{Binding SelectMaxDownloadThreads, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>

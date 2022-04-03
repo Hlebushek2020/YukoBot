@@ -8,9 +8,9 @@
         Width="600"
         FontSize="14"
         Title="{Binding Title, Mode=OneWay}"
+        Style="{StaticResource WindowStyle}"
         ResizeMode="CanMinimize"
         SizeToContent="Height"
-        SnapsToDevicePixels="True"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}">

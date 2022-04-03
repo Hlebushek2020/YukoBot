@@ -8,6 +8,7 @@ using System.Windows.Media;
 using YukoClientBase.Interfaces;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progress;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.ViewModels
 {
@@ -59,6 +60,7 @@ namespace YukoCollectionsClient.ViewModels
         public DelegateCommand AppSettingsCommand { get; }
         // Message Collections Commands
         public DelegateCommand UpdateMessageCollectionsCommand { get; }
+        public DelegateCommand DownloadAllCollectionsCommand { get; }
         // Message Collection Commands
         public DelegateCommand RemoveMessageCollectionItemCommand { get; }
         public DelegateCommand ExportMessageCollectionCommand { get; }
@@ -90,7 +92,7 @@ namespace YukoCollectionsClient.ViewModels
             // Message Collections Commands
             UpdateMessageCollectionsCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = Models.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                MessageBoxResult messageResult = SUI.Dialogs.MessageBox.Show("Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.", App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
@@ -102,12 +104,26 @@ namespace YukoCollectionsClient.ViewModels
                     }
                 }
             });
+            DownloadAllCollectionsCommand = new DelegateCommand(() =>
+            {
+                if (MessageCollections != null && MessageCollections.Count != 0)
+                {
+                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
+                    if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        MessageBoxResult messageBoxResult = SUI.Dialogs.MessageBox.Show("Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        ProgressWindow progressWindow = new ProgressWindow(
+                            new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath, messageBoxResult == MessageBoxResult.Yes));
+                        progressWindow.ShowDialog();
+                    }
+                }
+            });
             // Message Collection Commands
             RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
             {
                 if (SelectedMessageCollectionItem != null)
                 {
-                    if (Models.Dialogs.MessageBox.Show($"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show($"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }
@@ -146,7 +162,7 @@ namespace YukoCollectionsClient.ViewModels
                         {
                             if (selectedMessageCollection.Items.Count > 0)
                             {
-                                if (Models.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (SUI.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedMessageCollection.Items.Clear();
                                 }
@@ -162,6 +178,10 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (selectedMessageCollection != null && selectedMessageCollection.Items.Count > 0)
                 {
+                    if (selectedMessageCollection.Urls.Count != 0 && SUI.Dialogs.MessageBox.Show("Очистить список ссылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        selectedMessageCollection.Urls.Clear();
+                    }
                     ProgressWindow progress = new ProgressWindow(new GetUrlsFromMessageCollection(selectedMessageCollection));
                     progress.ShowDialog();
                 }
@@ -171,7 +191,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (SelectedUrl != null)
                 {
-                    if (Models.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Urls.Remove(SelectedUrl);
                     }
@@ -181,7 +201,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (selectedMessageCollection != null && selectedMessageCollection.Urls.Count > 0)
                 {
-                    if (Models.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         selectedMessageCollection.Urls.Clear();
                     }
@@ -219,7 +239,7 @@ namespace YukoCollectionsClient.ViewModels
                         {
                             if (selectedMessageCollection.Urls.Count > 0)
                             {
-                                if (Models.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                if (SUI.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
                                     selectedMessageCollection.Urls.Clear();
                                 }

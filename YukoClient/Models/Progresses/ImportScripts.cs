@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
@@ -64,12 +65,12 @@ namespace YukoClient.Models.Progress
                         }
                         else
                         {
-                            dispatcher.Invoke(() => Dialogs.MessageBox.Show("Выбран некорректный сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
+                            dispatcher.Invoke(() => SUI.Dialogs.MessageBox.Show("Выбран некорректный сервер!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                         }
                     }
                     else
                     {
-                        dispatcher.Invoke(() => Dialogs.MessageBox.Show("Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
+                        dispatcher.Invoke(() => SUI.Dialogs.MessageBox.Show("Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                     }
                 }
             }

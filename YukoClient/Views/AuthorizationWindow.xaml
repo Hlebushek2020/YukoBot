@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:YukoClient"
         mc:Ignorable="d"
         Title="{Binding Title, Mode=OneWay}"
+        Style="{StaticResource WindowStyle}"
         Height="450" 
         MinHeight="300"
         Width="800"

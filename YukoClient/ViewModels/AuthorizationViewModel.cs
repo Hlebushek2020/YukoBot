@@ -7,6 +7,7 @@ using YukoClient.Models.Web;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
 {
@@ -30,18 +31,18 @@ namespace YukoClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    Models.Dialogs.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SUI.Dialogs.MessageBox.Show("Сначало настройте программу! Значек в правом нижнем углу.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password()))
                 {
-                    Models.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SUI.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
                 if (!string.IsNullOrEmpty(response.ErrorMessage))
                 {
-                    Models.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                    SUI.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
                 {

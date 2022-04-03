@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
+using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.Models.Progress
 {
@@ -40,18 +41,18 @@ namespace YukoCollectionsClient.Models.Progress
                         }
                         else
                         {
-                            errorMessages.AppendLine();
+                            errorMessages.AppendLine(response.ErrorMessage);
                         }
 
                     } while (response.Next);
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
                 }
             }
         }
