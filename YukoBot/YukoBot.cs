@@ -155,8 +155,8 @@ namespace YukoBot
             }
         }
 
-        private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
+        private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
+            await sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {

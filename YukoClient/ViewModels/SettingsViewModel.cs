@@ -1,9 +1,7 @@
 ﻿using Prism.Commands;
-using Prism.Mvvm;
 using Sergey.UI.Extension.Themes;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Net;
 using System.Windows;
 using YukoClientBase.Interfaces;

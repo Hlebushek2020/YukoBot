@@ -405,7 +405,7 @@ namespace YukoBot.Commands
 
         [Command("show-items")]
         [Aliases("items")]
-        [Description("Показывает список сообщений в коллекции")]
+        [Description("Показывает последние 25 сообщений коллекции")]
         public async Task ShowItems(CommandContext commandContext,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
@@ -431,7 +431,7 @@ namespace YukoBot.Commands
                 }
                 if (collection != null && collection.UserId == commandContext.Member.Id)
                 {
-                    IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id);
+                    IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id).TakeLast(25);
                     StringBuilder stringBuilder = new StringBuilder();
                     foreach (DbCollectionItem item in items)
                     {
@@ -439,7 +439,7 @@ namespace YukoBot.Commands
                     }
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
-                        .WithDescription(stringBuilder.ToString());
+                        .WithDescription(stringBuilder.Length != 0 ? stringBuilder.ToString() : "Ой, эта коллекция пустая!");
                 }
                 else
                 {
