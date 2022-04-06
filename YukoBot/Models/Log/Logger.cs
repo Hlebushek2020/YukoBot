@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace YukoBot.Models.Log
 {
@@ -10,44 +11,38 @@ namespace YukoBot.Models.Log
 
         private static readonly string _logDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "logs");
 
-        private static DateTime _nextLog = DateTime.Now.Date.AddDays(1);
-        private static LogWriter _serverLog;
-        private static LogWriter _commandLog;
+        private static StreamWriter _serverLogWriter;
+        private static object _serverLogLocker = new object();
+        private static StreamWriter _commandLogWriter;
+        private static object _commandLogLocker = new object();
 
         static Logger()
         {
             Directory.CreateDirectory(_logDirectory);
             string currentDate = DateTime.Now.ToString(FileNameFormat);
-            _serverLog = new LogWriter(Path.Combine(_logDirectory, currentDate + "_server.txt"));
-            Console.SetOut(_serverLog);
-            _commandLog = new LogWriter(Path.Combine(_logDirectory, currentDate + "_command.txt"));
+            _serverLogWriter = new StreamWriter(Path.Combine(_logDirectory, currentDate + "_server.txt"), true, Encoding.UTF8) { AutoFlush = true };
+            _commandLogWriter = new StreamWriter(Path.Combine(_logDirectory, currentDate + "_command.txt"), true, Encoding.UTF8) { AutoFlush = true };
         }
 
         public static void WriteCommandLog(string value)
         {
-            CheckActualLogFile();
-            _commandLog.WriteLine(value);
+            string logLine = $"[{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}] {value}";
+            Console.WriteLine(logLine);
+            lock (_commandLogLocker)
+            {
+                _commandLogWriter.WriteLine(logLine);
+            }
         }
 
         public static void WriteServerLog(string value)
         {
-            CheckActualLogFile();
-            _serverLog.WriteLine(value);
-        }
-
-        private static void CheckActualLogFile()
-        {
-            if (_nextLog >= DateTime.Now)
+            string logLine = $"[{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}] {value}";
+            Console.WriteLine(logLine);
+            lock (_serverLogLocker)
             {
-                //lock??
-                string currentDate = DateTime.Now.ToString(FileNameFormat);
-                _serverLog.Dispose();
-                _serverLog = new LogWriter(Path.Combine(_logDirectory, currentDate + "_server.txt"));
-                //Console.SetOut(_serverLog);
-                _commandLog.Dispose();
-                _commandLog = new LogWriter(Path.Combine(_logDirectory, currentDate + "_command.txt"));
-                _nextLog = DateTime.Now.Date.AddDays(1);
+                _serverLogWriter.WriteLine(logLine);
             }
         }
+
     }
 }
