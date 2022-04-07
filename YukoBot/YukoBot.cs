@@ -78,9 +78,17 @@ namespace YukoBot
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
+            commands.CommandExecuted += Commands_CommandExecuted;
 
             Logger.WriteServerLog("Initialization Server ...");
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
+        }
+
+        private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
+        {
+            DiscordUser dUser = e.Context.User;
+            Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; SUCCESS; {e.Command.Name}");
+            return Task.CompletedTask;
         }
 
         private async Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)

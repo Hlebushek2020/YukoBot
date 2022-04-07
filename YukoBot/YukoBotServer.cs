@@ -173,17 +173,17 @@ namespace YukoBot
                                     await GetAttachment(scriptRequest, writer);
                                     break;
                                 case ScriptMode.After:
-                                    await GetAttachmentsAfter(dbUser, scriptRequest, writer);
+                                    await GetAttachmentsAfter(scriptRequest, writer);
                                     break;
                                 case ScriptMode.Before:
-                                    await GetAttacmentsBefore(dbUser, scriptRequest, writer);
+                                    await GetAttacmentsBefore(scriptRequest, writer);
                                     break;
                                 case ScriptMode.End:
-                                    await GetAttachments(dbUser, scriptRequest, writer);
+                                    await GetAttachments(scriptRequest, writer);
                                     break;
                                 case ScriptMode.All:
                                     scriptRequest.Count = int.MaxValue;
-                                    await GetAttachments(dbUser, scriptRequest, writer);
+                                    await GetAttachments(scriptRequest, writer);
                                     break;
                             }
                         }
