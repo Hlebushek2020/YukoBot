@@ -113,8 +113,8 @@ namespace YukoBot
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
-                Color = DiscordColor.Red,
-                Title = dMember?.DisplayName
+                Title = dMember?.DisplayName,
+                Color = DiscordColor.Red
             };
 
             if (exception is ArgumentException)
