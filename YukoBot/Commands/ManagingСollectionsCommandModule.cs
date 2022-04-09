@@ -431,7 +431,7 @@ namespace YukoBot.Commands
                 }
                 if (collection != null && collection.UserId == commandContext.Member.Id)
                 {
-                    IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id).TakeLast(25);
+                    IEnumerable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id).AsEnumerable().TakeLast(25);
                     StringBuilder stringBuilder = new StringBuilder();
                     foreach (DbCollectionItem item in items)
                     {
