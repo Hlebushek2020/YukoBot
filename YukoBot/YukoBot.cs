@@ -176,7 +176,7 @@ namespace YukoBot
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
-            Logger.WriteServerLog($"[CRIT ERROR] {e.Exception.Message}");
+            Logger.WriteServerLog($"[Discord Api] [CRIT ERROR] {e.Exception.Message}");
             Environment.Exit(1);
             return Task.CompletedTask;
         }

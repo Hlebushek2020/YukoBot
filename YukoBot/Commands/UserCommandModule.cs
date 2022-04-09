@@ -25,10 +25,11 @@ namespace YukoBot.Commands
         [Description("Регистрация")]
         public async Task Register(CommandContext commandContext)
         {
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{commandContext.Member.DisplayName}");
+            DiscordMember member = commandContext.Member;
+            DiscordUser user = commandContext.User;
 
-            DiscordMember user = commandContext.Member;
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithTitle($"{member.DisplayName}");
 
             YukoDbContext dbContext = new YukoDbContext();
             DbUser dbUser = dbContext.Users.Find(user.Id);
@@ -67,7 +68,7 @@ namespace YukoBot.Commands
             dbContext.Users.Add(dbUser);
             await dbContext.SaveChangesAsync();
 
-            DiscordDmChannel userChat = await user.CreateDmChannelAsync();
+            DiscordDmChannel userChat = await member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Orange)
                 .WithTitle("Регистрация прошла успешно!");
