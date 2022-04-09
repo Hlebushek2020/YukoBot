@@ -138,11 +138,7 @@ namespace YukoBot
             }
             else
             {
-                embed.WithTitle("ERROR")
-                    .WithColor(DiscordColor.Red)
-                    .AddField("Exception Message", exception.Message)
-                    .AddField("Exception Type", exception.GetType().Name)
-                    .AddField("Command", command?.Name ?? "Unknown");
+                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (\\*^.^*), попробуйте обратиться к моему создателю");
                 Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; {exception.GetType().Name}; {command?.Name ?? "Unknown"}");
             }
 
