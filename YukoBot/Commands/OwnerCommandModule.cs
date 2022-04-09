@@ -1,6 +1,9 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace YukoBot.Commands
@@ -22,12 +25,21 @@ namespace YukoBot.Commands
             YukoBot.Current.Shutdown();
         }
 
-        [Command("active-time")]
-        [Description("Время работы бота")]
-        public async Task ActiveTime(CommandContext commandContext)
+        [Command("status")]
+        [Description("Сведения о боте")]
+        public async Task Status(CommandContext commandContext)
         {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+            {
+                Color = DiscordColor.DarkGray
+            };
+
+            discordEmbed.AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location).ToShortDateString()} .net {Environment.Version}");
+            discordEmbed.AddField("Дата запуска", $"{YukoBot.Current.StartDateTime.ToShortDateString()} {YukoBot.Current.StartDateTime.ToShortTimeString()}");
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
-            await commandContext.RespondAsync($"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
+            discordEmbed.AddField("Время работы", $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
+
+            await commandContext.RespondAsync(discordEmbed);
         }
 
         [Command("set-app")]
