@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Enums;
+using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
@@ -267,15 +268,14 @@ namespace YukoBot
                             {
                                 Next = true
                             };
-                            response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
-                            response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                            response.Urls.AddRange(discordMessage.GetImages());
                             binaryWriter.Write(response.ToString());
                         }
                         catch (NotFoundException)
                         {
                             messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                         }
-                        Thread.Sleep(YukoSettings.Current.DiscordMessageLimitSleepMs / 20);
+                        Thread.Sleep(messageLimitSleepMs / 20);
                     }
                 }
                 catch (NotFoundException)
