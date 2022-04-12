@@ -39,7 +39,7 @@ set-app|-|Устанавливает новую ссылку для команд
 set-art-channel|-|Устанавливает канал для поиска сообщений при использовании комманд категории "Управление коллекциями"|:heavy_check_mark:|:heavy_check_mark:|:x:
 settings|-|Данные для подключения|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 shutdown|sd|Выключить бота|:heavy_check_mark:|:x:|:x:
-status|-|Сведения о боте|:heavy_check_mark:|:x:|:x:
+status|-|Отображает сборку, дату запуска и время работы бота|:heavy_check_mark:|:x:|:x:
 unban|-|Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))|:heavy_check_mark:|:heavy_check_mark:|:x:
 ## Дополнительные сведения
 1) Для удаления сообщения бота в ЛС поставьте реакцию ` :negative_squared_cross_mark: ` на это сообщение
