@@ -10,8 +10,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Enums;
+using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Models.Log;
 using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
@@ -25,7 +27,7 @@ namespace YukoBot
         {
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
-            Console.WriteLine($"[Server] [{endPoint}] Connected");
+            Logger.WriteServerLog($"[Server] [{endPoint}] Connected");
             BinaryReader binaryReader = null;
             BinaryWriter binaryWriter = null;
             try
@@ -34,7 +36,7 @@ namespace YukoBot
                 binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = binaryReader.ReadString();
-                Console.WriteLine($"[Server] [{endPoint}] Request: {requestString}");
+                Logger.WriteServerLog($"[Server] [{endPoint}] Request: {requestString}");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -81,14 +83,14 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
             }
             finally
             {
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
-                Console.WriteLine($"[Server] [{endPoint}] Disconnected");
+                Logger.WriteServerLog($"[Server] [{endPoint}] Disconnected");
             }
         }
 
@@ -173,17 +175,17 @@ namespace YukoBot
                                     await GetAttachment(scriptRequest, writer);
                                     break;
                                 case ScriptMode.After:
-                                    await GetAttachmentsAfter(dbUser, scriptRequest, writer);
+                                    await GetAttachmentsAfter(scriptRequest, writer);
                                     break;
                                 case ScriptMode.Before:
-                                    await GetAttacmentsBefore(dbUser, scriptRequest, writer);
+                                    await GetAttacmentsBefore(scriptRequest, writer);
                                     break;
                                 case ScriptMode.End:
-                                    await GetAttachments(dbUser, scriptRequest, writer);
+                                    await GetAttachments(scriptRequest, writer);
                                     break;
                                 case ScriptMode.All:
                                     scriptRequest.Count = int.MaxValue;
-                                    await GetAttachments(dbUser, scriptRequest, writer);
+                                    await GetAttachments(scriptRequest, writer);
                                     break;
                             }
                         }
@@ -194,7 +196,7 @@ namespace YukoBot
                                 ErrorMessage = ex.Message
                             };
                             writer.Write(response.ToString());
-                            Console.WriteLine($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                            Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
                         }
                     } while (scriptRequest.HasNext);
 
@@ -266,15 +268,14 @@ namespace YukoBot
                             {
                                 Next = true
                             };
-                            response.Urls.AddRange(discordMessage.Attachments.Select(x => x.Url));
-                            response.Urls.AddRange(discordMessage.Embeds.Where(x => x.Image != null).Select(x => x.Image.Url.ToString()));
+                            response.Urls.AddRange(discordMessage.GetImages());
                             binaryWriter.Write(response.ToString());
                         }
                         catch (NotFoundException)
                         {
                             messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                         }
-                        Thread.Sleep(YukoSettings.Current.DiscordMessageLimitSleepMs / 20);
+                        Thread.Sleep(messageLimitSleepMs / 20);
                     }
                 }
                 catch (NotFoundException)

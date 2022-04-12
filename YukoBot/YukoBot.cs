@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using YukoBot.Commands;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Models.Log;
 
 namespace YukoBot
 {
@@ -49,7 +50,7 @@ namespace YukoBot
 
         private YukoBot()
         {
-            Console.WriteLine("Initialization Discord Api ...");
+            Logger.WriteServerLog("Initialization Discord Api ...");
 
             YukoSettings settings = YukoSettings.Current;
 
@@ -77,9 +78,17 @@ namespace YukoBot
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             commands.CommandErrored += Commands_CommandErrored;
+            commands.CommandExecuted += Commands_CommandExecuted;
 
-            Console.WriteLine("Initialization Server ...");
+            Logger.WriteServerLog("Initialization Server ...");
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
+        }
+
+        private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
+        {
+            DiscordUser dUser = e.Context.User;
+            Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; SUCCESS; {e.Command.Name}");
+            return Task.CompletedTask;
         }
 
         private async Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
@@ -94,27 +103,29 @@ namespace YukoBot
             }
         }
 
-        ~YukoBot() => Dispose(false);
-
         private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
             CommandContext context = e.Context;
             Exception exception = e.Exception;
             Command command = e.Command;
+            DiscordMember dMember = context.Member;
+            DiscordUser dUser = context.User;
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
             {
-                Title = e.Context.Member.DisplayName,
+                Title = dMember?.DisplayName,
                 Color = DiscordColor.Red
             };
 
             if (exception is ArgumentException)
             {
                 embed.WithDescription($"Простите, в команде {command.Name} ошибка (\\*^.^*)");
+                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; ArgumentException; {command.Name}");
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
                 embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
+                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; CommandNotFoundException; {commandNotFoundEx.CommandName}");
             }
             else if (exception is ChecksFailedException)
             {
@@ -123,44 +134,45 @@ namespace YukoBot
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
                 }
+                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; ChecksFailedException; {command.Name}");
             }
             else
             {
-                embed.WithTitle("ERROR")
-                    .WithColor(DiscordColor.Red)
-                    .AddField("Exception Message", exception.Message)
-                    .AddField("Exception Type", exception.GetType().Name)
-                    .AddField("Command", command?.Name ?? "Unknown");
+                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (\\*^.^*), попробуйте обратиться к моему создателю");
+                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; {exception.GetType().Name}; {command?.Name ?? "Unknown"}");
             }
 
-            bool sendToCurrentChannel = true;
-            if (command != null && command.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
+            if (dMember != null)
             {
-                YukoDbContext dbContext = new YukoDbContext();
-                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
-                if (dbGuildSettings != null)
+                bool sendToCurrentChannel = true;
+                if (command != null && command.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
                 {
-                    sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
+                    YukoDbContext dbContext = new YukoDbContext();
+                    DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
+                    if (dbGuildSettings != null)
+                    {
+                        sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
+                    }
                 }
-            }
 
-            if (sendToCurrentChannel)
-            {
-                await context.RespondAsync(embed);
-            }
-            else
-            {
-                DiscordDmChannel discordDmChannel = await context.Member.CreateDmChannelAsync();
-                await discordDmChannel.SendMessageAsync(embed);
+                if (sendToCurrentChannel)
+                {
+                    await context.RespondAsync(embed);
+                }
+                else
+                {
+                    DiscordDmChannel discordDmChannel = await dMember.CreateDmChannelAsync();
+                    await discordDmChannel.SendMessageAsync(embed);
+                }
             }
         }
 
-        private Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
+        private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
+            await sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
-            Console.WriteLine($"[CRIT ERROR] {e.Exception.Message}");
+            Logger.WriteServerLog($"[Discord Api] [CRIT ERROR] {e.Exception.Message}");
             Environment.Exit(1);
             return Task.CompletedTask;
         }
@@ -180,7 +192,7 @@ namespace YukoBot
 
             isRuning = true;
 
-            Console.WriteLine("[Discord Api] Authorization ...");
+            Logger.WriteServerLog("[Discord Api] Authorization ...");
             await discordClient.ConnectAsync();
 
             StartDateTime = DateTime.Now;
@@ -201,11 +213,11 @@ namespace YukoBot
 
         public void Shutdown()
         {
-            Console.WriteLine("Shutdown ...");
+            Logger.WriteServerLog("Shutdown ...");
 
             isRuning = false;
 
-            Console.WriteLine("[Server] Stopping the listener ...");
+            Logger.WriteServerLog("[Server] Stopping the listener ...");
             if (tcpListener != null)
             {
                 tcpListener.Stop();
@@ -216,7 +228,7 @@ namespace YukoBot
                 processTask.Wait();
             }
 
-            Console.WriteLine("[Discord Api] Disconnect ...");
+            Logger.WriteServerLog("[Discord Api] Disconnect ...");
             if (discordClient != null)
             {
                 discordClient.DisconnectAsync().Wait();

@@ -13,8 +13,6 @@ namespace YukoBot
                 return;
             }
 
-            Console.SetOut(new MultiLog(Console.Out));
-
             using (YukoBot yukoBot = YukoBot.Current)
             {
                 yukoBot.RunAsync().GetAwaiter().GetResult();
