@@ -19,6 +19,7 @@ namespace YukoBot
         public int[] DatabaseVersion { get; set; }
         public string BotToken { get; set; }
         public string BotPrefix { get; set; } = ">yuko";
+        public string BotDescription { get; set; } = "Бот предназначен для скачивания вложений(я) из сообщений(я). Больше информации тут: https://github.com/Hlebushek2020/YukoBot";
         public string ServerAddress { get; set; }
         public string ServerInternalAddress { get; set; }
         public int ServerPort { get; set; }

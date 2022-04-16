@@ -13,7 +13,6 @@ using YukoBot.Enums;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Models.Log;
 using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
@@ -27,7 +26,7 @@ namespace YukoBot
         {
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
-            Logger.WriteServerLog($"[Server] [{endPoint}] Connected");
+            serverLogger.Log($"[Server] [{endPoint}] Connected");
             BinaryReader binaryReader = null;
             BinaryWriter binaryWriter = null;
             try
@@ -36,7 +35,7 @@ namespace YukoBot
                 binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = binaryReader.ReadString();
-                Logger.WriteServerLog($"[Server] [{endPoint}] Request: {requestString}");
+                serverLogger.Log($"[Server] [{endPoint}] Request: {requestString}");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -83,14 +82,14 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                serverLogger.Log($"[ERROR] [{ex.GetType()}] {ex.Message}");
             }
             finally
             {
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
-                Logger.WriteServerLog($"[Server] [{endPoint}] Disconnected");
+                serverLogger.Log($"[Server] [{endPoint}] Disconnected");
             }
         }
 
@@ -196,7 +195,7 @@ namespace YukoBot
                                 ErrorMessage = ex.Message
                             };
                             writer.Write(response.ToString());
-                            Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                            serverLogger.Log($"[ERROR] [{ex.GetType()}] {ex.Message}");
                         }
                     } while (scriptRequest.HasNext);
 
