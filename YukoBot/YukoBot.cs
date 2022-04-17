@@ -37,6 +37,7 @@ namespace YukoBot
 
         public bool IsDisposed { get; private set; } = false;
         public DateTime StartDateTime { get; private set; }
+        public bool IsRuning { get => isRuning; }
 
         private readonly DiscordClient discordClient;
 
@@ -45,7 +46,7 @@ namespace YukoBot
 
         private readonly TcpListener tcpListener;
         private readonly ServerLogger serverLogger;
-        private readonly CommandLoger commandLoger;
+        private readonly CommandLogger commandLoger;
 
         private readonly int messageLimit = YukoSettings.Current.DiscordMessageLimit;
         private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
@@ -54,9 +55,9 @@ namespace YukoBot
         {
             YukoLoggerFactory loggerFactory = new YukoLoggerFactory(LogLevel.Error);
             serverLogger = loggerFactory.CreateLogger<ServerLogger>();
-            commandLoger = loggerFactory.CreateLogger<CommandLoger>();
+            commandLoger = loggerFactory.CreateLogger<CommandLogger>();
 
-            serverLogger.Log("Initialization Discord Api ...");
+            serverLogger.Log(LogLevel.Information, "Initialization Discord Api");
 
             YukoSettings settings = YukoSettings.Current;
 
@@ -87,7 +88,8 @@ namespace YukoBot
             commands.CommandErrored += Commands_CommandErrored;
             commands.CommandExecuted += Commands_CommandExecuted;
 
-            serverLogger.Log("Initialization Server ...");
+            serverLogger.Log(LogLevel.Information, "Initialization Server");
+
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
         }
 
@@ -179,7 +181,7 @@ namespace YukoBot
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
-            serverLogger.Log($"[Discord Api] [CRIT ERROR] {e.Exception.Message}");
+            serverLogger.Log(LogLevel.Critical, "Discord Api", e);
             Environment.Exit(1);
             return Task.CompletedTask;
         }
@@ -199,12 +201,15 @@ namespace YukoBot
 
             isRuning = true;
 
-            serverLogger.Log("[Discord Api] Authorization ...");
+            serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
+
             await discordClient.ConnectAsync();
 
             StartDateTime = DateTime.Now;
 
             tcpListener.Start();
+
+            serverLogger.Log(LogLevel.Information, "Server Listening");
 
             while (isRuning)
             {
@@ -220,11 +225,12 @@ namespace YukoBot
 
         public void Shutdown()
         {
-            serverLogger.Log("Shutdown ...");
+            serverLogger.Log(LogLevel.Information, "Shutdown");
 
             isRuning = false;
 
-            serverLogger.Log("[Server] Stopping the listener ...");
+            serverLogger.Log(LogLevel.Information, "Server stopping listener");
+
             if (tcpListener != null)
             {
                 tcpListener.Stop();
@@ -235,7 +241,8 @@ namespace YukoBot
                 processTask.Wait();
             }
 
-            serverLogger.Log("[Discord Api] Disconnect ...");
+            serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
+
             if (discordClient != null)
             {
                 discordClient.DisconnectAsync().Wait();

@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ namespace YukoBot
         {
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
-            serverLogger.Log($"[Server] [{endPoint}] Connected");
+            serverLogger.Log(LogLevel.Information, $"Client connected:{endPoint}");
             BinaryReader binaryReader = null;
             BinaryWriter binaryWriter = null;
             try
@@ -35,7 +36,7 @@ namespace YukoBot
                 binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = binaryReader.ReadString();
-                serverLogger.Log($"[Server] [{endPoint}] Request: {requestString}");
+                serverLogger.Log(LogLevel.Information, $"Client request:{endPoint}({requestString})");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -82,14 +83,14 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                serverLogger.Log($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                serverLogger.Log(LogLevel.Error, $"Client request:{endPoint}", ex);
             }
             finally
             {
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
-                serverLogger.Log($"[Server] [{endPoint}] Disconnected");
+                serverLogger.Log(LogLevel.Information, $"Client disconnected:{endPoint}");
             }
         }
 
@@ -195,7 +196,7 @@ namespace YukoBot
                                 ErrorMessage = ex.Message
                             };
                             writer.Write(response.ToString());
-                            serverLogger.Log($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                            serverLogger.Log(LogLevel.Error, $"Client execute scripts:{dbUser.Id}", ex);
                         }
                     } while (scriptRequest.HasNext);
 

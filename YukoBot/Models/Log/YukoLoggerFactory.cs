@@ -17,7 +17,7 @@ namespace YukoBot.Models.Log
         {
             string logDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "logs");
             _loggers.Add(typeof(ServerLogger).Name, new ServerLogger(logDirectory, discordLogLevel));
-            _loggers.Add(typeof(CommandLoger).Name, new CommandLoger(logDirectory));
+            _loggers.Add(typeof(CommandLogger).Name, new CommandLogger(logDirectory));
         }
 
         [Obsolete]

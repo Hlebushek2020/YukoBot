@@ -6,13 +6,13 @@ using System.Text;
 
 namespace YukoBot.Models.Log
 {
-    internal class CommandLoger : ILogger
+    internal class CommandLogger : ILogger
     {
         private static object _fileLocker = new object();
 
         private readonly StreamWriter _file;
 
-        public CommandLoger(string logDirectory)
+        public CommandLogger(string logDirectory)
         {
             _file = new StreamWriter(Path.Combine(logDirectory, $"{DateTime.Now.ToString(YukoLoggerFactory.FileNameFormat)}_command.log"), true, Encoding.UTF8) { AutoFlush = true };
         }
@@ -37,13 +37,14 @@ namespace YukoBot.Models.Log
             lock (_fileLocker)
             {
                 _file.WriteLine(log);
-                Console.WriteLine(log);
                 if (ex != null && printStackTrace)
-                {
                     _file.WriteLine(ex.StackTrace);
-                    Console.WriteLine(log);
-                }
             }
+
+            if (printStackTrace)
+                SynchronizedConsole.WriteLine(log, ConsoleColor.Red);
+            else
+                SynchronizedConsole.WriteLine(log);
         }
     }
 }

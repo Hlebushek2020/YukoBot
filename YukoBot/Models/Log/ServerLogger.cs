@@ -28,65 +28,31 @@ namespace YukoBot.Models.Log
             if (!IsEnabled(logLevel))
                 return;
 
-            lock (_fileLock)
-            {
-                var ename = eventId.Name;
-                ename = ename?.Length > 12 ? ename?.Substring(0, 12) : ename;
-                Console.Write($"[{DateTimeOffset.Now.ToString(YukoLoggerFactory.LogDateTimeFormatter)}] [{eventId.Id,-4}/{ename,-12}] ");
-
-                switch (logLevel)
-                {
-                    case LogLevel.Trace:
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        break;
-
-                    case LogLevel.Debug:
-                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                        break;
-
-                    case LogLevel.Information:
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        break;
-
-                    case LogLevel.Warning:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-
-                    case LogLevel.Error:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-
-                    case LogLevel.Critical:
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        break;
-                }
-                Console.Write(logLevel switch
-                {
-                    LogLevel.Trace => "[Trace] ",
-                    LogLevel.Debug => "[Debug] ",
-                    LogLevel.Information => "[Info ] ",
-                    LogLevel.Warning => "[Warn ] ",
-                    LogLevel.Error => "[Error] ",
-                    LogLevel.Critical => "[Crit ]",
-                    LogLevel.None => "[None ] ",
-                    _ => "[?????] "
-                });
-                Console.ResetColor();
-
-                //The foreground color is off.
-                if (logLevel == LogLevel.Critical)
-                    Console.Write(" ");
-
-                var message = formatter(state, exception);
-                Console.WriteLine(message);
-                if (exception != null)
-                    Console.WriteLine(exception);
-            }
+            Log(logLevel, eventId.Name, exception);
         }
 
-        public void Log(string message)
+        public void Log(LogLevel logLevel, string eventName, Exception exception = null)
         {
+            string log = $"[{DateTime.Now.ToString(YukoLoggerFactory.LogDateTimeFormatter)}] {logLevel.ToString().ToUpper()}; {eventName}";
+
+            if (exception != null)
+            {
+                log += $"; {exception.GetType().Name}; {exception.Message}";
+            }
+
+            lock (_fileLock)
+            {
+                _file.WriteLine(log);
+                if (exception != null)
+                    _file.WriteLine(exception.StackTrace);
+            }
+
+            if (logLevel == LogLevel.Warning)
+                SynchronizedConsole.WriteLine(log, ConsoleColor.Yellow);
+            else if (logLevel >= LogLevel.Error)
+                SynchronizedConsole.WriteLine(log, ConsoleColor.Red);
+            else
+                SynchronizedConsole.WriteLine(log);
         }
     }
 }
