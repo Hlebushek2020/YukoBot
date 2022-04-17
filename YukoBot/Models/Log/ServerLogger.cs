@@ -15,7 +15,7 @@ namespace YukoBot.Models.Log
         public ServerLogger(string logDirectory, LogLevel minimumLogLevel)
         {
             _minimumLogLevel = minimumLogLevel;
-            _file = new StreamWriter(Path.Combine(logDirectory, $"{DateTime.Now.ToString(YukoLoggerFactory.FileNameFormat)}_server.log"), true, Encoding.UTF8) { AutoFlush = true };
+            _file = new StreamWriter(Path.Combine(logDirectory, $"{DateTime.Now.ToString(YukoLoggerFactory.FileNameFormat)}_server.txt"), true, Encoding.UTF8) { AutoFlush = true };
         }
 
         [Obsolete]

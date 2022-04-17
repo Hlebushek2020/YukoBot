@@ -14,7 +14,7 @@ namespace YukoBot.Models.Log
 
         public CommandLogger(string logDirectory)
         {
-            _file = new StreamWriter(Path.Combine(logDirectory, $"{DateTime.Now.ToString(YukoLoggerFactory.FileNameFormat)}_command.log"), true, Encoding.UTF8) { AutoFlush = true };
+            _file = new StreamWriter(Path.Combine(logDirectory, $"{DateTime.Now.ToString(YukoLoggerFactory.FileNameFormat)}_command.txt"), true, Encoding.UTF8) { AutoFlush = true };
         }
 
         [Obsolete]
