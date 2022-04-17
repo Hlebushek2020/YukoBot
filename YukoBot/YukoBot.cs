@@ -37,7 +37,6 @@ namespace YukoBot
 
         public bool IsDisposed { get; private set; } = false;
         public DateTime StartDateTime { get; private set; }
-        public bool IsRuning { get => isRuning; }
 
         private readonly DiscordClient discordClient;
 
