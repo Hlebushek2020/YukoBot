@@ -9,7 +9,7 @@ namespace YukoBot.Models.Log
     internal class YukoLoggerFactory : ILoggerFactory
     {
         public const string FileNameFormat = "yyyyMMdd";
-        public const string LogDateTimeFormatter = "dd.MM.yyyy hh:mm:ss";
+        public const string LogDateTimeFormatter = "dd.MM.yyyy HH:mm:ss";
 
         private Dictionary<string, ILogger> _loggers = new Dictionary<string, ILogger>();
 
