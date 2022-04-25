@@ -3,7 +3,9 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -143,6 +145,54 @@ namespace YukoBot.Commands
 
             discordEmbed.WithColor(DiscordColor.Orange)
                 .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+
+            await commandContext.RespondAsync(discordEmbed);
+        }
+
+        [Command("bug-report")]
+        [Description("Позволяет сообщить об ошибке")]
+        public async Task BugReport(CommandContext commandContext,
+            [Description("Описание ошибки (Необязательно)"), RemainingText] string description = "")
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                  .WithTitle(commandContext.Member.DisplayName);
+
+            YukoSettings settings = YukoSettings.Current;
+            if (settings.BugReport)
+            {
+                DiscordMessage discordMessage = commandContext.Message;
+
+                Dictionary<string, Stream> files = new Dictionary<string, Stream>();
+                foreach (DiscordAttachment attachment in discordMessage.Attachments)
+                {
+                    WebClient webClient = new WebClient();
+                    MemoryStream memoryStream = new MemoryStream(webClient.DownloadData(attachment.Url));
+                    files.Add(attachment.FileName + files.Count, memoryStream);
+                }
+
+                DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
+                    .WithColor(DiscordColor.Orange)
+                    .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator, true)
+                    .AddField("Description", description, true)
+                    .AddField("Date", discordMessage.CreationTimestamp.ToString("dd.MM.yyyy HH:mm:ss"), true);
+
+                DiscordMessageBuilder reportMessage = new DiscordMessageBuilder()
+                    .WithFiles(files)
+                    .WithEmbed(reportEmbed);
+
+                DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(settings.BugReportServer);
+                DiscordChannel reportChannel = reportGuild.GetChannel(settings.BugReportChannel);
+
+                await reportChannel.SendMessageAsync(reportMessage);
+
+                discordEmbed.WithColor(DiscordColor.Orange)
+                    .WithDescription("Баг-репорт успешно отправлен! ≧◡≦");
+            }
+            else
+            {
+                discordEmbed.WithColor(DiscordColor.Red)
+                    .WithDescription("Ой, эта команда отключена (⋟﹏⋞)");
+            }
 
             await commandContext.RespondAsync(discordEmbed);
         }
