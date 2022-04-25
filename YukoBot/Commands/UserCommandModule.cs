@@ -88,6 +88,7 @@ namespace YukoBot.Commands
             [Description("Модуль или команда")] string moduleOrCommand = null)
         {
             string botPrefix = YukoSettings.Current.BotPrefix;
+            string botDescription = YukoSettings.Current.BotDescription;
             if (moduleOrCommand != null)
             {
                 if (CheckHelpCategoryCommand(moduleOrCommand))
@@ -125,7 +126,7 @@ namespace YukoBot.Commands
                             {
                                 Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
                             },
-                            Description = "Бот предназначен для скачивания вложений(я) из сообщений(я). Больше информации тут: https://github.com/Hlebushek2020/YukoBot"
+                            Description = botDescription
                         };
 
                         embed.AddField(category.Name, new string('=', category.Name.Length));
@@ -245,7 +246,7 @@ namespace YukoBot.Commands
                     {
                         Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
                     },
-                    Description = "Бот предназначен для скачивания вложений(я) из сообщений(я). Больше информации тут: https://github.com/Hlebushek2020/YukoBot"
+                    Description = botDescription
                 };
 
                 foreach (Category mInfo in Categories)

@@ -44,13 +44,19 @@ namespace YukoBot
         private volatile bool isRuning = false;
 
         private readonly TcpListener tcpListener;
+        private readonly ServerLogger serverLogger;
+        private readonly CommandLogger commandLoger;
 
         private readonly int messageLimit = YukoSettings.Current.DiscordMessageLimit;
         private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
         private YukoBot()
         {
-            Logger.WriteServerLog("Initialization Discord Api ...");
+            YukoLoggerFactory loggerFactory = new YukoLoggerFactory(LogLevel.Error);
+            serverLogger = loggerFactory.CreateLogger<ServerLogger>();
+            commandLoger = loggerFactory.CreateLogger<CommandLogger>();
+
+            serverLogger.Log(LogLevel.Information, "Initialization Discord Api");
 
             YukoSettings settings = YukoSettings.Current;
 
@@ -58,7 +64,8 @@ namespace YukoBot
             {
                 Token = settings.BotToken,
                 TokenType = TokenType.Bot,
-                MinimumLogLevel = LogLevel.Error
+                MinimumLogLevel = LogLevel.Error,
+                LoggerFactory = loggerFactory
             });
 
             discordClient.Ready += DiscordClient_Ready;
@@ -80,14 +87,15 @@ namespace YukoBot
             commands.CommandErrored += Commands_CommandErrored;
             commands.CommandExecuted += Commands_CommandExecuted;
 
-            Logger.WriteServerLog("Initialization Server ...");
+            serverLogger.Log(LogLevel.Information, "Initialization Server");
+
             tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
         }
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
             DiscordUser dUser = e.Context.User;
-            Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; SUCCESS; {e.Command.Name}");
+            commandLoger.Log(dUser, "SUCCESS", null, e.Command.Name);
             return Task.CompletedTask;
         }
 
@@ -120,12 +128,12 @@ namespace YukoBot
             if (exception is ArgumentException)
             {
                 embed.WithDescription($"Простите, в команде {command.Name} ошибка (\\*^.^*)");
-                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; ArgumentException; {command.Name}");
+                commandLoger.Log(dUser, "ERROR", exception, command.Name);
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
                 embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
-                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; CommandNotFoundException; {commandNotFoundEx.CommandName}");
+                commandLoger.Log(dUser, "ERROR", exception, commandNotFoundEx.CommandName);
             }
             else if (exception is ChecksFailedException)
             {
@@ -134,12 +142,12 @@ namespace YukoBot
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
                 }
-                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; ChecksFailedException; {command.Name}");
+                commandLoger.Log(dUser, "ERROR", exception, command.Name);
             }
             else
             {
                 embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (\\*^.^*), попробуйте обратиться к моему создателю");
-                Logger.WriteCommandLog($"{dUser.Username}#{dUser.Discriminator}; {dUser.Id}; ERROR; {exception.GetType().Name}; {command?.Name ?? "Unknown"}");
+                commandLoger.Log(dUser, "ERROR", exception, command?.Name ?? "Unknown", true);
             }
 
             if (dMember != null)
@@ -172,7 +180,7 @@ namespace YukoBot
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
-            Logger.WriteServerLog($"[Discord Api] [CRIT ERROR] {e.Exception.Message}");
+            serverLogger.Log(LogLevel.Critical, "Discord Api", e);
             Environment.Exit(1);
             return Task.CompletedTask;
         }
@@ -192,12 +200,15 @@ namespace YukoBot
 
             isRuning = true;
 
-            Logger.WriteServerLog("[Discord Api] Authorization ...");
+            serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
+
             await discordClient.ConnectAsync();
 
             StartDateTime = DateTime.Now;
 
             tcpListener.Start();
+
+            serverLogger.Log(LogLevel.Information, "Server Listening");
 
             while (isRuning)
             {
@@ -213,11 +224,12 @@ namespace YukoBot
 
         public void Shutdown()
         {
-            Logger.WriteServerLog("Shutdown ...");
+            serverLogger.Log(LogLevel.Information, "Shutdown");
 
             isRuning = false;
 
-            Logger.WriteServerLog("[Server] Stopping the listener ...");
+            serverLogger.Log(LogLevel.Information, "Server stopping listener");
+
             if (tcpListener != null)
             {
                 tcpListener.Stop();
@@ -228,7 +240,8 @@ namespace YukoBot
                 processTask.Wait();
             }
 
-            Logger.WriteServerLog("[Discord Api] Disconnect ...");
+            serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
+
             if (discordClient != null)
             {
                 discordClient.DisconnectAsync().Wait();

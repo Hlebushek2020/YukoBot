@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,6 @@ using YukoBot.Enums;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Models.Log;
 using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
@@ -27,7 +27,7 @@ namespace YukoBot
         {
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
-            Logger.WriteServerLog($"[Server] [{endPoint}] Connected");
+            serverLogger.Log(LogLevel.Information, $"Client connected:{endPoint}");
             BinaryReader binaryReader = null;
             BinaryWriter binaryWriter = null;
             try
@@ -36,7 +36,7 @@ namespace YukoBot
                 binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = binaryReader.ReadString();
-                Logger.WriteServerLog($"[Server] [{endPoint}] Request: {requestString}");
+                serverLogger.Log(LogLevel.Information, $"Client request:{endPoint}({requestString})");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -83,14 +83,14 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                serverLogger.Log(LogLevel.Error, $"Client request:{endPoint}", ex);
             }
             finally
             {
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
-                Logger.WriteServerLog($"[Server] [{endPoint}] Disconnected");
+                serverLogger.Log(LogLevel.Information, $"Client disconnected:{endPoint}");
             }
         }
 
@@ -196,7 +196,7 @@ namespace YukoBot
                                 ErrorMessage = ex.Message
                             };
                             writer.Write(response.ToString());
-                            Logger.WriteServerLog($"[ERROR] [{ex.GetType()}] {ex.Message}");
+                            serverLogger.Log(LogLevel.Error, $"Client execute scripts:{dbUser.Id}", ex);
                         }
                     } while (scriptRequest.HasNext);
 
