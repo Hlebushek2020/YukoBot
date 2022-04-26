@@ -44,7 +44,7 @@ namespace YukoBot.Commands
             {
                 discordEmbed
                     .WithColor(DiscordColor.Red)
-                    .WithDescription("Участник уже забанен. ≧◡≦");
+                    .WithDescription("Участник уже забанен. (≧◡≦)");
                 await commandContext.RespondAsync(discordEmbed);
                 return;
             }
@@ -96,7 +96,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Участник успешно разбанен. ≧◡≦");
+                .WithDescription("Участник успешно разбанен. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -140,7 +140,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription($"Участник {discordMember.DisplayName} не забанен. ≧◡≦");
+                .WithDescription($"Участник {discordMember.DisplayName} не забанен. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -167,7 +167,7 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                .WithTitle($"{commandContext.Member.DisplayName}")
                .WithColor(DiscordColor.Orange)
-               .WithDescription("Канал успешно установлен! ≧◡≦");
+               .WithDescription("Канал успешно установлен! (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -196,7 +196,7 @@ namespace YukoBot.Commands
             }
             await dbContext.SaveChangesAsync();
             discordEmbed.WithColor(DiscordColor.Orange)
-                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
 
             await commandContext.RespondAsync(discordEmbed);
         }

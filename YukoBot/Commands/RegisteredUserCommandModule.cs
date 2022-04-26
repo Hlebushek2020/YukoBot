@@ -78,7 +78,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Вы не забанены. ≧◡≦");
+                .WithDescription("Вы не забанены. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -122,7 +122,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. ≧◡≦");
+                .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -144,7 +144,7 @@ namespace YukoBot.Commands
             }
 
             discordEmbed.WithColor(DiscordColor.Orange)
-                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
 
             await commandContext.RespondAsync(discordEmbed);
         }
@@ -152,7 +152,7 @@ namespace YukoBot.Commands
         [Command("bug-report")]
         [Description("Позволяет сообщить об ошибке")]
         public async Task BugReport(CommandContext commandContext,
-            [Description("Описание ошибки (Необязательно)"), RemainingText] string description = "")
+            [Description("Описание ошибки"), RemainingText] string description)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                   .WithTitle(commandContext.Member.DisplayName);
@@ -167,18 +167,19 @@ namespace YukoBot.Commands
                 {
                     WebClient webClient = new WebClient();
                     MemoryStream memoryStream = new MemoryStream(webClient.DownloadData(attachment.Url));
-                    files.Add(attachment.FileName + files.Count, memoryStream);
+                    files.Add(files.Count + attachment.FileName, memoryStream);
                 }
 
                 DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
                     .WithColor(DiscordColor.Orange)
-                    .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator, true)
-                    .AddField("Description", description, true)
-                    .AddField("Date", discordMessage.CreationTimestamp.ToString("dd.MM.yyyy HH:mm:ss"), true);
+                    .WithTitle("Bug-Report")
+                    .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator)
+                    .AddField("Description", description)
+                    .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
                 DiscordMessageBuilder reportMessage = new DiscordMessageBuilder()
-                    .WithFiles(files)
-                    .WithEmbed(reportEmbed);
+                    .WithEmbed(reportEmbed)
+                    .WithFiles(files);
 
                 DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(settings.BugReportServer);
                 DiscordChannel reportChannel = reportGuild.GetChannel(settings.BugReportChannel);
@@ -186,7 +187,7 @@ namespace YukoBot.Commands
                 await reportChannel.SendMessageAsync(reportMessage);
 
                 discordEmbed.WithColor(DiscordColor.Orange)
-                    .WithDescription("Баг-репорт успешно отправлен! ≧◡≦");
+                    .WithDescription("Баг-репорт успешно отправлен! (≧◡≦)");
             }
             else
             {

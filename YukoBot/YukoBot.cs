@@ -135,9 +135,9 @@ namespace YukoBot
                 embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (⋟﹏⋞)");
                 commandLoger.Log(dUser, "ERROR", exception, commandNotFoundEx.CommandName);
             }
-            else if (exception is ChecksFailedException)
+            else if (exception is ChecksFailedException checksFailedEx)
             {
-                CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
+                CommandModule yukoModule = (checksFailedEx.Command.Module as SingletonCommandModule).Instance as CommandModule;
                 if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
