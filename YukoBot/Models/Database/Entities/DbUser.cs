@@ -21,7 +21,7 @@ namespace YukoBot.Models.Database.Entities
         [MaxLength(36)]
         public string Token { get; set; }
 
-        public DateTime LoginTime { get; set; }
+        public DateTime? LoginTime { get; set; }
 
         public bool InfoMessages { get; set; } = true;
 
