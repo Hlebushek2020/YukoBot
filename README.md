@@ -31,6 +31,7 @@ add-command-response|add-response|Отключает сообщение об у�
 app|-|Ссылка на скачивание актуальной версии клиента|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 ban|-|Запрещает пользователю скачивать с этого сервера (гильдии)|:heavy_check_mark:|:heavy_check_mark:|:x:
 ban-reason|reason|Причина бана на текущем сервере|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
+bag-report|-|Позволяет сообщить об ошибке|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 info-message-pm|-|Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды [add](#команды-для-работы-с-сообщениями-и-коллекциями))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 member-ban-reason|m-reason|Причина бана участника сервера|:heavy_check_mark:|:heavy_check_mark:|:x:
 password-reset|password|Сброс пароля|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:

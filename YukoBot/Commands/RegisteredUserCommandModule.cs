@@ -3,7 +3,9 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,7 +78,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Вы не забанены. ≧◡≦");
+                .WithDescription("Вы не забанены. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -120,7 +122,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. ≧◡≦");
+                .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -142,7 +144,56 @@ namespace YukoBot.Commands
             }
 
             discordEmbed.WithColor(DiscordColor.Orange)
-                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! ≧◡≦");
+                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
+
+            await commandContext.RespondAsync(discordEmbed);
+        }
+
+        [Command("bug-report")]
+        [Description("Позволяет сообщить об ошибке")]
+        public async Task BugReport(CommandContext commandContext,
+            [Description("Описание ошибки"), RemainingText] string description)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                  .WithTitle(commandContext.Member.DisplayName);
+
+            YukoSettings settings = YukoSettings.Current;
+            if (settings.BugReport)
+            {
+                DiscordMessage discordMessage = commandContext.Message;
+
+                Dictionary<string, Stream> files = new Dictionary<string, Stream>();
+                foreach (DiscordAttachment attachment in discordMessage.Attachments)
+                {
+                    WebClient webClient = new WebClient();
+                    MemoryStream memoryStream = new MemoryStream(webClient.DownloadData(attachment.Url));
+                    files.Add(files.Count + attachment.FileName, memoryStream);
+                }
+
+                DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
+                    .WithColor(DiscordColor.Orange)
+                    .WithTitle("Bug-Report")
+                    .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator)
+                    .AddField("Description", description)
+                    .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+
+                DiscordMessageBuilder reportMessage = new DiscordMessageBuilder()
+                    .WithEmbed(reportEmbed)
+                    .WithFiles(files);
+
+                DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(settings.BugReportServer);
+                DiscordChannel reportChannel = reportGuild.GetChannel(settings.BugReportChannel);
+
+                await reportChannel.SendMessageAsync(reportMessage);
+
+                discordEmbed.WithColor(DiscordColor.Orange)
+                    .WithDescription("Баг-репорт успешно отправлен! (≧◡≦)");
+            }
+            else
+            {
+                discordEmbed.WithColor(DiscordColor.Red)
+                    .WithDescription("Ой, эта команда отключена (⋟﹏⋞)");
+            }
 
             await commandContext.RespondAsync(discordEmbed);
         }

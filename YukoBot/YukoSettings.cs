@@ -7,11 +7,6 @@ namespace YukoBot
 {
     public class YukoSettings
     {
-        #region Fields
-        private static YukoSettings settings;
-        private string clientActualApp = null;
-        #endregion
-
         #region Propirties
         public string DatabaseHost { get; set; }
         public string DatabaseUser { get; set; }
@@ -20,24 +15,20 @@ namespace YukoBot
         public string BotToken { get; set; }
         public string BotPrefix { get; set; } = ">yuko";
         public string BotDescription { get; set; } = "Бот предназначен для скачивания вложений(я) из сообщений(я)";
+        public bool BugReport { get; set; } = false;
+        public ulong BugReportChannel { get; set; }
+        public ulong BugReportServer { get; set; }
         public string ServerAddress { get; set; }
         public string ServerInternalAddress { get; set; }
         public int ServerPort { get; set; }
-        public string ClientActualApp
-        {
-            get { return clientActualApp; }
-            set
-            {
-                clientActualApp = value;
-                string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
-                using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
-                {
-                    streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
-                }
-            }
-        }
+        public string ClientActualApp { get; set; }
         public int DiscordMessageLimit { get; set; } = 100;
         public int DiscordMessageLimitSleepMs { get; set; } = 1000;
+        #endregion
+
+        #region Instance
+        private static YukoSettings settings;
+
         [JsonIgnore]
         public static YukoSettings Current
         {
@@ -52,6 +43,15 @@ namespace YukoBot
             }
         }
         #endregion
+
+        public void Save()
+        {
+            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+            using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
+            {
+                streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
+            }
+        }
 
         public static bool Availability()
         {

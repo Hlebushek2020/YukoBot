@@ -47,6 +47,7 @@ namespace YukoBot.Commands
         public async Task SetApp(CommandContext commandContext, string newlink)
         {
             YukoSettings.Current.ClientActualApp = newlink;
+            YukoSettings.Current.Save();
             await commandContext.RespondAsync("Ok");
         }
     }

@@ -127,17 +127,17 @@ namespace YukoBot
 
             if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде {command.Name} ошибка (\\*^.^*)");
+                embed.WithDescription($"Простите, в команде {command.Name} ошибка (⋟﹏⋞)");
                 commandLoger.Log(dUser, "ERROR", exception, command.Name);
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (\\*^.^*)");
+                embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (⋟﹏⋞)");
                 commandLoger.Log(dUser, "ERROR", exception, commandNotFoundEx.CommandName);
             }
-            else if (exception is ChecksFailedException)
+            else if (exception is ChecksFailedException checksFailedEx)
             {
-                CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
+                CommandModule yukoModule = (checksFailedEx.Command.Module as SingletonCommandModule).Instance as CommandModule;
                 if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
@@ -146,7 +146,7 @@ namespace YukoBot
             }
             else
             {
-                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (\\*^.^*), попробуйте обратиться к моему создателю");
+                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (⋟﹏⋞), попробуйте обратиться к моему создателю");
                 commandLoger.Log(dUser, "ERROR", exception, command?.Name ?? "Unknown", true);
             }
 

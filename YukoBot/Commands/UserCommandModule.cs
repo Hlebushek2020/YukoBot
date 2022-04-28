@@ -78,7 +78,7 @@ namespace YukoBot.Commands
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
-                .WithDescription("Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. ≧◡≦");
+                .WithDescription("Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. (≧◡≦)");
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -120,7 +120,7 @@ namespace YukoBot.Commands
                     {
                         embed = new DiscordEmbedBuilder()
                         {
-                            Title = $"≧◡≦ | {botPrefix}",
+                            Title = $"(≧◡≦) {botPrefix}",
                             Color = DiscordColor.Orange,
                             Footer = new DiscordEmbedBuilder.EmbedFooter()
                             {
@@ -240,7 +240,7 @@ namespace YukoBot.Commands
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 {
-                    Title = $"≧◡≦ | {botPrefix}",
+                    Title = $"(≧◡≦) {botPrefix}",
                     Color = DiscordColor.Orange,
                     Footer = new DiscordEmbedBuilder.EmbedFooter()
                     {

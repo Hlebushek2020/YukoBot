@@ -148,7 +148,7 @@ namespace YukoBot.Commands
             {
                 discordEmbed
                     .WithColor(DiscordColor.Orange)
-                    .WithDescription("Уведомление о завершении операции будет отправлено в личные сообщения. ≧◡≦");
+                    .WithDescription("Уведомление о завершении операции будет отправлено в личные сообщения. (≧◡≦)");
                 await commandContext.RespondAsync(discordEmbed);
                 HashSet<ulong> collectionItems = dbContext.CollectionItems
                    .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
@@ -181,7 +181,7 @@ namespace YukoBot.Commands
                 }
                 await dbContext.SaveChangesAsync();
                 DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
-                discordEmbed.WithDescription("Сообщения успешно добавлены! ≧◡≦");
+                discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
                 await dmChannel.SendMessageAsync(discordEmbed);
             }
             else
@@ -223,7 +223,7 @@ namespace YukoBot.Commands
                     await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
-                        .WithDescription($"Коллекция создана! (Id: {collection.Id}) ≧◡≦");
+                        .WithDescription($"Коллекция создана! (Id: {collection.Id}) (≧◡≦)");
                 }
                 else
                 {
@@ -286,7 +286,7 @@ namespace YukoBot.Commands
                 await dbContext.SaveChangesAsync();
                 discordEmbed
                     .WithColor(DiscordColor.Orange)
-                    .WithDescription($"Коллекция \"{dbCollection.Name}\" удалена! ≧◡≦");
+                    .WithDescription($"Коллекция \"{dbCollection.Name}\" удалена! (≧◡≦)");
             }
             else
             {
@@ -325,7 +325,7 @@ namespace YukoBot.Commands
                 await dbContext.SaveChangesAsync();
                 discordEmbed
                     .WithColor(DiscordColor.Orange)
-                    .WithDescription($"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено! ≧◡≦");
+                    .WithDescription($"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено! (≧◡≦)");
             }
             else
             {
@@ -370,7 +370,7 @@ namespace YukoBot.Commands
                     await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
-                        .WithDescription($"Коллекция \"{collection.Name}\" очищена! ≧◡≦");
+                        .WithDescription($"Коллекция \"{collection.Name}\" очищена! (≧◡≦)");
                 }
                 else
                 {
@@ -491,7 +491,7 @@ namespace YukoBot.Commands
                     await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
-                        .WithDescription("Добавлено! ≧◡≦");
+                        .WithDescription("Добавлено! (≧◡≦)");
                 }
             }
             else
@@ -541,7 +541,7 @@ namespace YukoBot.Commands
                         await dbContext.SaveChangesAsync();
                         discordEmbed
                             .WithColor(DiscordColor.Orange)
-                            .WithDescription("Добавлено! ≧◡≦");
+                            .WithDescription("Добавлено! (≧◡≦)");
                     }
                 }
                 else
@@ -573,7 +573,7 @@ namespace YukoBot.Commands
                     await dbContext.SaveChangesAsync();
                     discordEmbed
                         .WithColor(DiscordColor.Orange)
-                        .WithDescription($"Готово! ≧◡≦");
+                        .WithDescription($"Готово! (≧◡≦)");
                 }
                 else
                 {
