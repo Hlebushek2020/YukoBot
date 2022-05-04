@@ -6,13 +6,13 @@ namespace YukoBot
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             Console.Title = "Yuko[Bot]";
 
             if (!YukoSettings.Availability())
             {
-                return;
+                return 0;
             }
 
             try
@@ -25,7 +25,10 @@ namespace YukoBot
             catch (Exception ex)
             {
                 YukoLoggerFactory.GetInstance().CreateLogger<ServerLogger>().Log(LogLevel.Critical, "App", ex);
+                return ex.HResult;
             }
+
+            return 0;
         }
     }
 }
