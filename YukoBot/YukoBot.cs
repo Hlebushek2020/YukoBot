@@ -44,6 +44,7 @@ namespace YukoBot
         private volatile bool isRuning = false;
 
         private readonly TcpListener tcpListener;
+
         private readonly ServerLogger serverLogger;
         private readonly CommandLogger commandLoger;
 
@@ -52,7 +53,7 @@ namespace YukoBot
 
         private YukoBot()
         {
-            YukoLoggerFactory loggerFactory = new YukoLoggerFactory(LogLevel.Error);
+            YukoLoggerFactory loggerFactory = YukoLoggerFactory.GetInstance();
             serverLogger = loggerFactory.CreateLogger<ServerLogger>();
             commandLoger = loggerFactory.CreateLogger<CommandLogger>();
 
