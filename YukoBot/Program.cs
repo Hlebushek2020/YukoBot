@@ -25,7 +25,7 @@ namespace YukoBot
             catch (Exception ex)
             {
                 YukoLoggerFactory.GetInstance().CreateLogger<ServerLogger>().Log(LogLevel.Critical, "App", ex);
-                return ex.HResult;
+                return 1;
             }
 
             return 0;
