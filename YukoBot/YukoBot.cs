@@ -41,7 +41,7 @@ namespace YukoBot
         private readonly DiscordClient discordClient;
 
         private Task processTask;
-        private volatile bool isRuning = false;
+        private static CancellationTokenSource processCts;
 
         private readonly TcpListener tcpListener;
 
@@ -188,46 +188,40 @@ namespace YukoBot
 
         public Task RunAsync()
         {
-            processTask = Process();
-            return processTask;
-        }
-
-        private async Task Process()
-        {
-            if (isRuning)
+            if (processCts == null || processTask.IsCompleted)
             {
-                return;
-            }
-
-            isRuning = true;
-
-            serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
-
-            await discordClient.ConnectAsync();
-
-            StartDateTime = DateTime.Now;
-
-            tcpListener.Start();
-
-            serverLogger.Log(LogLevel.Information, "Server Listening");
-
-            while (isRuning)
-            {
-                if (!tcpListener.Pending())
+                processCts = new CancellationTokenSource();
+                CancellationToken processToken = processCts.Token;
+                processTask = Task.Run(async () =>
                 {
-                    Thread.Sleep(100);
-                    continue;
-                }
+                    serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
 
-                ThreadPool.QueueUserWorkItem(TcpClientProcessing, tcpListener.AcceptTcpClient());
+                    await discordClient.ConnectAsync();
+
+                    StartDateTime = DateTime.Now;
+
+                    tcpListener.Start();
+
+                    serverLogger.Log(LogLevel.Information, "Server Listening");
+
+                    while (!processToken.IsCancellationRequested)
+                    {
+                        if (!tcpListener.Pending())
+                        {
+                            Thread.Sleep(100);
+                            continue;
+                        }
+
+                        ThreadPool.QueueUserWorkItem(TcpClientProcessing, tcpListener.AcceptTcpClient());
+                    }
+                }, processToken);
             }
+            return processTask;
         }
 
         public void Shutdown()
         {
             serverLogger.Log(LogLevel.Information, "Shutdown");
-
-            isRuning = false;
 
             serverLogger.Log(LogLevel.Information, "Server stopping listener");
 
@@ -236,8 +230,9 @@ namespace YukoBot
                 tcpListener.Stop();
             }
 
-            if (processTask != null)
+            if (processCts != null && !processTask.IsCanceled)
             {
+                processCts.Cancel();
                 processTask.Wait();
             }
 
@@ -258,10 +253,7 @@ namespace YukoBot
 
             if (disposing)
             {
-                if (isRuning)
-                {
-                    Shutdown();
-                }
+                Shutdown();
 
                 if (processTask != null)
                 {
