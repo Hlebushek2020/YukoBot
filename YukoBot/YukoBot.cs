@@ -225,15 +225,15 @@ namespace YukoBot
 
             serverLogger.Log(LogLevel.Information, "Server stopping listener");
 
-            if (tcpListener != null)
-            {
-                tcpListener.Stop();
-            }
-
-            if (processCts != null && !processTask.IsCanceled)
+            if (processCts != null && !processTask.IsCompleted)
             {
                 processCts.Cancel();
                 processTask.Wait();
+            }
+
+            if (tcpListener != null)
+            {
+                tcpListener.Stop();
             }
 
             serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
