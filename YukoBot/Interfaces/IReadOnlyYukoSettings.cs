@@ -3,7 +3,6 @@
     public interface IReadOnlyYukoSettings
     {
         #region Propirties
-
         public string DatabaseHost { get; }
         public string DatabaseUser { get; }
         public string DatabasePassword { get; }
