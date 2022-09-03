@@ -2,12 +2,13 @@
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attributes;
+using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
@@ -23,6 +24,8 @@ namespace YukoBot.Commands
         }
 
         private const string DefaultCollection = "Default";
+
+        private static readonly ConcurrentDictionary<ulong, RangeInfo> _clientRanges = new ConcurrentDictionary<ulong, RangeInfo>();
 
         private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
@@ -53,26 +56,8 @@ namespace YukoBot.Commands
             {
                 discordEmbed.WithDescription("Нет вложенного сообщения!");
             }
-            DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
             await commandContext.Message.DeleteAsync();
-            if (guildSettings != null && !guildSettings.AddCommandResponse)
-            {
-                bool send = discordEmbed.Color.Value.Value == DiscordColor.Red.Value;
-                if (!send)
-                {
-                    DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
-                    send = dbUser.InfoMessages;
-                }
-                if (send)
-                {
-                    DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
-                    await dmChannel.SendMessageAsync(discordEmbed);
-                }
-            }
-            else
-            {
-                await commandContext.RespondAsync(discordEmbed);
-            }
+            await SendSpecialMessage(commandContext, discordEmbed, dbContext);
         }
         #endregion
 
@@ -105,92 +90,128 @@ namespace YukoBot.Commands
         }
         #endregion
 
-        #region Command: add-range (Message)
-        [Command("add-range")]
-        [Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
-        public async Task AddRange(CommandContext commandContext,
-            [Description("Id начального сообщения (не входит в промежуток)")] ulong messageStartId,
-            [Description("Id конечного сообщения (входит в промежуток)")] ulong messageEndId,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+        #region Command: add-range (Old, Message)
+        //[Command("add-range")]
+        //[Description("Добавляет сообщения (имеющие вложения) из заданного промежутка в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
+        //public async Task AddRange(CommandContext commandContext,
+        //    [Description("Id начального сообщения (не входит в промежуток)")] ulong messageStartId,
+        //    [Description("Id конечного сообщения (входит в промежуток)")] ulong messageEndId,
+        //    [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+        //{
+        //    DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+        //       .WithTitle(commandContext.Member.DisplayName);
+
+        //    DiscordChannel discordChannel = commandContext.Channel;
+        //    YukoDbContext dbContext = new YukoDbContext();
+        //    DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
+        //    if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
+        //    {
+        //        discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
+        //    }
+        //    bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
+        //    ulong memberId = commandContext.Member.Id;
+        //    DbCollection dbCollection;
+        //    if (!useDefaultCollection && ulong.TryParse(nameOrId, out ulong id))
+        //    {
+        //        dbCollection = dbContext.Collections.Find(id);
+        //    }
+        //    else
+        //    {
+        //        dbCollection = dbContext.Collections.Where(x => x.Name == nameOrId && x.UserId == memberId).FirstOrDefault();
+        //        if (useDefaultCollection && dbCollection == null)
+        //        {
+        //            dbCollection = new DbCollection
+        //            {
+        //                UserId = memberId,
+        //                Name = DefaultCollection
+        //            };
+        //            dbContext.Collections.Add(dbCollection);
+        //            await dbContext.SaveChangesAsync();
+        //        }
+        //    }
+        //    if (dbCollection != null && dbCollection.UserId == memberId)
+        //    {
+        //        discordEmbed
+        //            .WithColor(DiscordColor.Orange)
+        //            .WithDescription("Уведомление о завершении операции будет отправлено в личные сообщения. (≧◡≦)");
+        //        await commandContext.RespondAsync(discordEmbed);
+        //        HashSet<ulong> collectionItems = dbContext.CollectionItems
+        //           .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
+        //        int limit = 10;
+        //        bool isCompleted = false;
+        //        while (!isCompleted)
+        //        {
+        //            IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAfterAsync(messageStartId, limit);
+        //            isCompleted = messages.Count < limit;
+        //            for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
+        //            {
+        //                DiscordMessage message = messages[numMessage];
+        //                if (message.HasImages() && !collectionItems.Contains(message.Id))
+        //                {
+        //                    dbContext.CollectionItems.Add(new DbCollectionItem
+        //                    {
+        //                        ChannelId = discordChannel.Id,
+        //                        CollectionId = dbCollection.Id,
+        //                        MessageId = message.Id
+        //                    });
+        //                }
+        //                if (message.Id == messageEndId)
+        //                {
+        //                    numMessage = -1;
+        //                    isCompleted = true;
+        //                }
+        //            }
+        //            Thread.Sleep(messageLimitSleepMs / 20);
+        //            messageStartId = messages.First().Id;
+        //        }
+        //        await dbContext.SaveChangesAsync();
+        //        DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
+        //        discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
+        //        await dmChannel.SendMessageAsync(discordEmbed);
+        //    }
+        //    else
+        //    {
+        //        discordEmbed
+        //            .WithColor(DiscordColor.Red)
+        //            .WithDescription("Такой коллекции нет!");
+        //        await commandContext.RespondAsync(discordEmbed);
+        //    }
+        //}
+        #endregion
+
+        #region Command add-range (New, Message)
+        [Command("start")]
+        [Description("Задает начальное сообщение (входит промежуток)")]
+        public async Task Start(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-               .WithTitle(commandContext.Member.DisplayName);
+               .WithTitle(ctx.Member.DisplayName)
+               .WithColor(DiscordColor.Red);
 
-            DiscordChannel discordChannel = commandContext.Channel;
-            YukoDbContext dbContext = new YukoDbContext();
-            DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(commandContext.Guild.Id);
-            if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
+            DiscordMessage message = ctx.Message.ReferencedMessage;
+            if (message != null)
             {
-                discordChannel = await commandContext.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
-            }
-            bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
-            ulong memberId = commandContext.Member.Id;
-            DbCollection dbCollection;
-            if (!useDefaultCollection && ulong.TryParse(nameOrId, out ulong id))
-            {
-                dbCollection = dbContext.Collections.Find(id);
+                RangeInfo rangeInfo = new RangeInfo(message, ctx.Channel);
+                if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeInfo, (k, v) => rangeInfo) != null)
+                {
+                    discordEmbed.WithDescription("Сохранено! (≧◡≦)").WithColor(DiscordColor.Orange);
+                }
+                else
+                {
+                    discordEmbed.WithDescription("Не удалось запомнить сообщение!");
+                }
             }
             else
             {
-                dbCollection = dbContext.Collections.Where(x => x.Name == nameOrId && x.UserId == memberId).FirstOrDefault();
-                if (useDefaultCollection && dbCollection == null)
-                {
-                    dbCollection = new DbCollection
-                    {
-                        UserId = memberId,
-                        Name = DefaultCollection
-                    };
-                    dbContext.Collections.Add(dbCollection);
-                    await dbContext.SaveChangesAsync();
-                }
+                discordEmbed.WithDescription("Нет вложенного сообщения!");
             }
-            if (dbCollection != null && dbCollection.UserId == memberId)
-            {
-                discordEmbed
-                    .WithColor(DiscordColor.Orange)
-                    .WithDescription("Уведомление о завершении операции будет отправлено в личные сообщения. (≧◡≦)");
-                await commandContext.RespondAsync(discordEmbed);
-                HashSet<ulong> collectionItems = dbContext.CollectionItems
-                   .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
-                int limit = 10;
-                bool isCompleted = false;
-                while (!isCompleted)
-                {
-                    IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAfterAsync(messageStartId, limit);
-                    isCompleted = messages.Count < limit;
-                    for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
-                    {
-                        DiscordMessage message = messages[numMessage];
-                        if (message.HasImages() && !collectionItems.Contains(message.Id))
-                        {
-                            dbContext.CollectionItems.Add(new DbCollectionItem
-                            {
-                                ChannelId = discordChannel.Id,
-                                CollectionId = dbCollection.Id,
-                                MessageId = message.Id
-                            });
-                        }
-                        if (message.Id == messageEndId)
-                        {
-                            numMessage = -1;
-                            isCompleted = true;
-                        }
-                    }
-                    Thread.Sleep(messageLimitSleepMs / 20);
-                    messageStartId = messages.First().Id;
-                }
-                await dbContext.SaveChangesAsync();
-                DiscordDmChannel dmChannel = await commandContext.Member.CreateDmChannelAsync();
-                discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
-                await dmChannel.SendMessageAsync(discordEmbed);
-            }
-            else
-            {
-                discordEmbed
-                    .WithColor(DiscordColor.Red)
-                    .WithDescription("Такой коллекции нет!");
-                await commandContext.RespondAsync(discordEmbed);
-            }
+            await SendSpecialMessage(ctx, discordEmbed, new YukoDbContext());
+        }
+
+        [Command("end")]
+        [Description("end message")]
+        public async Task End(CommandContext ctx)
+        {
         }
         #endregion
 
@@ -589,6 +610,29 @@ namespace YukoBot.Commands
                     .WithDescription("Переименовываемая коллекция несуществует!");
             }
             await commandContext.RespondAsync(discordEmbed);
+        }
+
+        private async Task SendSpecialMessage(CommandContext ctx, DiscordEmbedBuilder embed, YukoDbContext dbCtx)
+        {
+            DbGuildSettings guildSettings = dbCtx.GuildsSettings.Find(ctx.Guild.Id);
+            if (guildSettings != null && !guildSettings.AddCommandResponse)
+            {
+                bool send = embed.Color.Value.Value == DiscordColor.Red.Value;
+                if (!send)
+                {
+                    DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
+                    send = dbUser.InfoMessages;
+                }
+                if (send)
+                {
+                    DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
+                    await dmChannel.SendMessageAsync(embed);
+                }
+            }
+            else
+            {
+                await ctx.RespondAsync(embed);
+            }
         }
         #endregion
     }
