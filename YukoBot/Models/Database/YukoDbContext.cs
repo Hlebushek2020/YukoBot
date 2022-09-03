@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using YukoBot.Interfaces;
 using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Models.Database
@@ -19,7 +20,7 @@ namespace YukoBot.Models.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            YukoSettings settings = YukoSettings.Current;
+            IReadOnlyYukoSettings settings = YukoSettings.Current;
 
             string connection = $"server={settings.DatabaseHost};user={settings.DatabaseUser};password={settings.DatabasePassword};database=YukoBot;";
             MySqlServerVersion serverVersion = new MySqlServerVersion(

@@ -181,7 +181,7 @@ namespace YukoBot.Commands
                             sb.AppendLine($"**__Вариант {i + 1}__**");
                         }
 
-                        sb.AppendLine($"```\n{botPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{ x.Name}]").ToList())}```{command.Description}");
+                        sb.AppendLine($"```\n{botPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}");
                         sb.AppendLine();
 
                         if (command.Aliases?.Count != 0)
@@ -249,7 +249,7 @@ namespace YukoBot.Commands
                     Description = botDescription
                 };
 
-                foreach (Category mInfo in Categories)
+                foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";

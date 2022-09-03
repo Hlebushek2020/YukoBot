@@ -28,13 +28,12 @@ namespace YukoBot.Commands
         [Description("Данные для подключения.")]
         public async Task GetClientSettings(CommandContext commandContext)
         {
-            YukoSettings settings = YukoSettings.Current;
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Orange)
                 .WithTitle($"{commandContext.Member.DisplayName}");
-            discordEmbed.AddField("Хост", settings.ServerAddress);
-            discordEmbed.AddField("Порт", settings.ServerPort.ToString());
+            discordEmbed.AddField("Хост", Settings.ServerAddress);
+            discordEmbed.AddField("Порт", Settings.ServerPort.ToString());
             await commandContext.RespondAsync(discordEmbed);
         }
 
@@ -157,8 +156,7 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                   .WithTitle(commandContext.Member.DisplayName);
 
-            YukoSettings settings = YukoSettings.Current;
-            if (settings.BugReport)
+            if (Settings.BugReport)
             {
                 DiscordMessage discordMessage = commandContext.Message;
 
@@ -181,8 +179,8 @@ namespace YukoBot.Commands
                     .WithEmbed(reportEmbed)
                     .WithFiles(files);
 
-                DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(settings.BugReportServer);
-                DiscordChannel reportChannel = reportGuild.GetChannel(settings.BugReportChannel);
+                DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(Settings.BugReportServer);
+                DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
 
                 await reportChannel.SendMessageAsync(reportMessage);
 

@@ -46,8 +46,7 @@ namespace YukoBot.Commands
         [Description("Устанавливает новую ссылку для команды: app")]
         public async Task SetApp(CommandContext commandContext, string newlink)
         {
-            YukoSettings.Current.ClientActualApp = newlink;
-            YukoSettings.Current.Save();
+            YukoSettings.Current.SetApp(newlink);
             await commandContext.RespondAsync("Ok");
         }
     }

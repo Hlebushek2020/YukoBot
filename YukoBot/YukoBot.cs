@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
+using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
@@ -59,7 +60,7 @@ namespace YukoBot
 
             serverLogger.Log(LogLevel.Information, "Initialization Discord Api");
 
-            YukoSettings settings = YukoSettings.Current;
+            IReadOnlyYukoSettings settings = YukoSettings.Current;
 
             discordClient = new DiscordClient(new DiscordConfiguration
             {
