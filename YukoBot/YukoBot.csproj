@@ -6,14 +6,14 @@
     <RootNamespace>YukoBot</RootNamespace>
 	<Authors>Sergey Govorunov</Authors>
 	<Copyright>Sergey Govorunov</Copyright>
-	<AssemblyVersion>3.1.0.2</AssemblyVersion>
-	<FileVersion>3.1.0.2</FileVersion>
+	<AssemblyVersion>4.0.0.0</AssemblyVersion>
+	<FileVersion>4.0.0.0</FileVersion>
 	<AssemblyName>YukoBot</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.3.0-nightly-01125" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.3.0-nightly-01125" />
+    <PackageReference Include="DSharpPlus" Version="4.3.0-nightly-01169" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.3.0-nightly-01169" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
   </ItemGroup>
 
