@@ -221,18 +221,18 @@ namespace YukoBot.Commands
             DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
             YukoDbContext dbContext = new YukoDbContext();
             ulong memberId = ctx.Member.Id;
+            DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(ctx.Guild.Id);
 
             if (_clientRanges.ContainsKey(memberId))
             {
                 DiscordMessage message = ctx.Message.ReferencedMessage;
-                ulong messageEndId = message.Id;
                 if (message != null)
                 {
+                    ulong messageEndId = message.Id;
                     RangeInfo rangeInfo = _clientRanges[ctx.Member.Id];
                     DiscordChannel discordChannel = ctx.Channel;
                     if (discordChannel.Id == rangeInfo.Channel.Id)
                     {
-                        DbGuildSettings guildSettings = dbContext.GuildsSettings.Find(ctx.Guild.Id);
                         if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
                         {
                             discordChannel = await ctx.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
@@ -323,7 +323,17 @@ namespace YukoBot.Commands
             {
                 discordEmbed.WithDescription("Выберите начальное изображение!");
             }
-            await SendSpecialMessage(ctx, discordEmbed, dbContext, dmChannel);
+            if (discordEmbed.Color.Value.Value == DiscordColor.Red.Value)
+            {
+                if (guildSettings != null && !guildSettings.AddCommandResponse)
+                {
+                    await dmChannel.SendMessageAsync(discordEmbed);
+                }
+                else
+                {
+                    await ctx.RespondAsync(discordEmbed);
+                }
+            }
         }
         #endregion
 
