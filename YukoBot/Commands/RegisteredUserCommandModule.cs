@@ -172,6 +172,7 @@ namespace YukoBot.Commands
                     .WithColor(DiscordColor.Orange)
                     .WithTitle("Bug-Report")
                     .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator)
+                    .AddField("Guild", commandContext.Guild.Name)
                     .AddField("Description", description)
                     .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
