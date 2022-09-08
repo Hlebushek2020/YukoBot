@@ -19,78 +19,78 @@ namespace YukoBot.Commands
     [RequireRegistered]
     public class RegisteredUserCommandModule : CommandModule
     {
-        public RegisteredUserCommandModule() : base(Category.User)
+        public RegisteredUserCommandModule() : base(Categories.User)
         {
             CommandAccessError = "Эта команда доступна для зарегистрированных пользователей!";
         }
 
         [Command("settings")]
         [Description("Данные для подключения.")]
-        public async Task GetClientSettings(CommandContext commandContext)
+        public async Task GetClientSettings(CommandContext ctx)
         {
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Orange)
-                .WithTitle($"{commandContext.Member.DisplayName}");
+                .WithTitle($"{ctx.Member.DisplayName}");
             discordEmbed.AddField("Хост", Settings.ServerAddress);
             discordEmbed.AddField("Порт", Settings.ServerPort.ToString());
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("app")]
         [Description("Ссылка на скачивание актуальной версии клиента.")]
-        public async Task GetClientApp(CommandContext commandContext)
+        public async Task GetClientApp(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Orange)
-                .WithTitle($"{commandContext.Member.DisplayName}")
+                .WithTitle($"{ctx.Member.DisplayName}")
                 .WithDescription(YukoSettings.Current.ClientActualApp);
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("ban-reason")]
         [Aliases("reason")]
         [Description("Причина бана на текущем сервере")]
-        public async Task BanReason(CommandContext commandContext)
+        public async Task BanReason(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                 .WithTitle($"{commandContext.Member.DisplayName}");
+                 .WithTitle($"{ctx.Member.DisplayName}");
 
-            YukoDbContext dbContext = new YukoDbContext();
-            List<DbBan> currentBans = dbContext.Bans.Where(x => x.ServerId == commandContext.Guild.Id && x.UserId == commandContext.Member.Id).ToList();
-            if (currentBans.Count > 0)
+            YukoDbContext dbCtx = new YukoDbContext();
+            List<DbBan> dbBanList = dbCtx.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id).ToList();
+            if (dbBanList.Count > 0)
             {
                 discordEmbed.WithColor(DiscordColor.Orange);
 
-                DbBan ban = currentBans[0];
-                if (string.IsNullOrEmpty(ban.Reason))
+                DbBan dbBan = dbBanList[0];
+                if (string.IsNullOrEmpty(dbBan.Reason))
                 {
                     discordEmbed.WithDescription("К сожалению причина бана не была указана.");
                 }
                 else
                 {
-                    discordEmbed.WithDescription(ban.Reason);
+                    discordEmbed.WithDescription(dbBan.Reason);
                 }
-                await commandContext.RespondAsync(discordEmbed);
+                await ctx.RespondAsync(discordEmbed);
                 return;
             }
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
                 .WithDescription("Вы не забанены. (≧◡≦)");
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("password-reset")]
         [Aliases("password")]
         [Description("Сброс пароля")]
-        public async Task PasswordReset(CommandContext commandContext)
+        public async Task PasswordReset(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                 .WithTitle($"{commandContext.Member.DisplayName}");
+                 .WithTitle($"{ctx.Member.DisplayName}");
 
-            YukoDbContext dbContext = new YukoDbContext();
-            DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
+            YukoDbContext dbCtx = new YukoDbContext();
+            DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
 
             string password = "";
             Random random = new Random();
@@ -110,9 +110,9 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            await dbContext.SaveChangesAsync();
+            await dbCtx.SaveChangesAsync();
 
-            DiscordDmChannel userChat = await commandContext.Member.CreateDmChannelAsync();
+            DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Orange)
                 .WithTitle("Пароль сменен!");
@@ -122,43 +122,43 @@ namespace YukoBot.Commands
             discordEmbed
                 .WithColor(DiscordColor.Orange)
                 .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. (≧◡≦)");
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("info-message-pm")]
         [Description("Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды add)")]
-        public async Task InfoMessagesInPM(CommandContext commandContext,
+        public async Task InfoMessagesInPM(CommandContext ctx,
             [Description("true - включить / false - отключить")] bool isEnabled)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(commandContext.Member.DisplayName);
+                .WithTitle(ctx.Member.DisplayName);
 
-            YukoDbContext dbContext = new YukoDbContext();
-            DbUser dbUser = dbContext.Users.Find(commandContext.Member.Id);
+            YukoDbContext dbCtx = new YukoDbContext();
+            DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
 
             if (dbUser.InfoMessages != isEnabled)
             {
                 dbUser.InfoMessages = isEnabled;
-                await dbContext.SaveChangesAsync();
+                await dbCtx.SaveChangesAsync();
             }
 
             discordEmbed.WithColor(DiscordColor.Orange)
                 .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
 
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("bug-report")]
         [Description("Позволяет сообщить об ошибке")]
-        public async Task BugReport(CommandContext commandContext,
+        public async Task BugReport(CommandContext ctx,
             [Description("Описание ошибки"), RemainingText] string description)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                  .WithTitle(commandContext.Member.DisplayName);
+                  .WithTitle(ctx.Member.DisplayName);
 
             if (Settings.BugReport)
             {
-                DiscordMessage discordMessage = commandContext.Message;
+                DiscordMessage discordMessage = ctx.Message;
 
                 Dictionary<string, Stream> files = new Dictionary<string, Stream>();
                 foreach (DiscordAttachment attachment in discordMessage.Attachments)
@@ -171,8 +171,8 @@ namespace YukoBot.Commands
                 DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
                     .WithColor(DiscordColor.Orange)
                     .WithTitle("Bug-Report")
-                    .AddField("Author", commandContext.User.Username + "#" + commandContext.User.Discriminator)
-                    .AddField("Guild", commandContext.Guild.Name)
+                    .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
+                    .AddField("Guild", ctx.Guild.Name)
                     .AddField("Description", description)
                     .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
@@ -180,7 +180,7 @@ namespace YukoBot.Commands
                     .WithEmbed(reportEmbed)
                     .WithFiles(files);
 
-                DiscordGuild reportGuild = await commandContext.Client.GetGuildAsync(Settings.BugReportServer);
+                DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
                 DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
 
                 await reportChannel.SendMessageAsync(reportMessage);
@@ -194,7 +194,7 @@ namespace YukoBot.Commands
                     .WithDescription("Ой, эта команда отключена (⋟﹏⋞)");
             }
 
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
     }
 }

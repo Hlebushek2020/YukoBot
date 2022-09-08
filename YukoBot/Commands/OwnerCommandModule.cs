@@ -5,13 +5,14 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using YukoBot.Commands.Models;
 
 namespace YukoBot.Commands
 {
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
-        public OwnerCommandModule() : base(Models.Category.Management)
+        public OwnerCommandModule() : base(Categories.Management)
         {
             CommandAccessError = "Эта команда доступна только владельцу бота!";
         }
@@ -19,15 +20,15 @@ namespace YukoBot.Commands
         [Command("shutdown")]
         [Aliases("sd")]
         [Description("Выключить бота")]
-        public async Task Shutdown(CommandContext commandContext)
+        public async Task Shutdown(CommandContext ctx)
         {
-            await commandContext.RespondAsync("Ok");
+            await ctx.RespondAsync("Ok");
             YukoBot.Current.Shutdown();
         }
 
         [Command("status")]
         [Description("Сведения о боте")]
-        public async Task Status(CommandContext commandContext)
+        public async Task Status(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
             {
@@ -39,15 +40,15 @@ namespace YukoBot.Commands
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
             discordEmbed.AddField("Время работы", $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
 
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("set-app")]
         [Description("Устанавливает новую ссылку для команды: app")]
-        public async Task SetApp(CommandContext commandContext, string newlink)
+        public async Task SetApp(CommandContext ctx, string newlink)
         {
             YukoSettings.Current.SetApp(newlink);
-            await commandContext.RespondAsync("Ok");
+            await ctx.RespondAsync("Ok");
         }
     }
 }
