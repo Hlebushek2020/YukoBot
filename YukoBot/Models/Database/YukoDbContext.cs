@@ -12,6 +12,7 @@ namespace YukoBot.Models.Database
         public DbSet<DbCollection> Collections { get; set; }
         public DbSet<DbCollectionItem> CollectionItems { get; set; }
         public DbSet<DbGuildSettings> GuildsSettings { get; set; }
+        public DbSet<DbMessageLink> MessageLinks { get; set; }
 
         public YukoDbContext()
         {
