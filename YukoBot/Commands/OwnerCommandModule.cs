@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using YukoBot.Commands.Models;
+using YukoBot.Models.Database;
+using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Commands
 {
@@ -49,6 +51,26 @@ namespace YukoBot.Commands
         {
             YukoSettings.Current.SetApp(newlink);
             await ctx.RespondAsync("Ok");
+        }
+
+        [Command("set-premium")]
+        [Description("Предоставляет пользователю дополнительные возможности")]
+        public async Task SetPremium(CommandContext ctx,
+            [Description("Участник сервера (гильдии)")] DiscordMember discordMember,
+            [Description("true - включить / false - отключить")] bool isEnabled)
+        {
+            YukoDbContext dbCtx = new YukoDbContext();
+            DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
+            if (dbUser != null)
+            {
+                dbUser.HasPremium = isEnabled;
+                await dbCtx.SaveChangesAsync();
+                await ctx.RespondAsync(isEnabled ? "Включено" : "Отключено");
+            }
+            else
+            {
+                await ctx.RespondAsync("Пользователь не найден");
+            }
         }
     }
 }
