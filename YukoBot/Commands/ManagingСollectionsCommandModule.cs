@@ -104,7 +104,7 @@ namespace YukoBot.Commands
 
         #region Command add-range (Message)
         [Command("start")]
-        [Description("Задает начальное сообщение (входит промежуток)")]
+        [Description("Задает начальное сообщение (входит в промежуток)")]
         public async Task Start(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
