@@ -128,6 +128,7 @@ namespace YukoBot.Commands
             {
                 discordEmbed.WithDescription("Нет вложенного сообщения!");
             }
+            await ctx.Message.DeleteAsync();
             await SendSpecialMessage(ctx, discordEmbed, new YukoDbContext());
         }
 
@@ -140,11 +141,12 @@ namespace YukoBot.Commands
             try
             {
                 ulong memberId = ctx.Member.Id;
+                DiscordMessage message = ctx.Message.ReferencedMessage;
+                await ctx.Message.DeleteAsync();
                 if (!_clientRanges.ContainsKey(memberId))
                 {
                     throw new IncorrectCommandDataException("Выберите начальное изображение!");
                 }
-                DiscordMessage message = ctx.Message.ReferencedMessage;
                 if (message == null)
                 {
                     throw new IncorrectCommandDataException("Нет вложенного сообщения!");
