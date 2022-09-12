@@ -213,14 +213,14 @@ namespace YukoBot.Commands
                             }
                             if (dbUser.HasPremium)
                             {
-                                foreach (string link in message.GetImages())
+                                //foreach (string link in message.GetImages())
+                                //{
+                                dbCtx.MessageLinks.Add(new DbMessage
                                 {
-                                    dbCtx.MessageLinks.Add(new DbMessageLink
-                                    {
-                                        MessageId = message.Id,
-                                        Link = link
-                                    });
-                                }
+                                    Id = message.Id,
+                                    Link = string.Join(";", message.GetImages())
+                                });
+                                //}
                             }
                             await dbCtx.SaveChangesAsync();
                             if (message.Id == messageEndId)
@@ -567,14 +567,14 @@ namespace YukoBot.Commands
             };
             if (dbCtx.Users.Find(memberId).HasPremium)
             {
-                foreach (string link in message.GetImages())
+                //foreach (string link in message.GetImages())
+                //{
+                dbCtx.MessageLinks.Add(new DbMessage
                 {
-                    dbCtx.MessageLinks.Add(new DbMessageLink
-                    {
-                        Link = link,
-                        MessageId = message.Id
-                    });
-                }
+                    Link = string.Join(";", message.GetImages()),
+                    Id = message.Id
+                });
+                //}
             }
             dbCtx.CollectionItems.Add(dbCollectionItem);
             await dbCtx.SaveChangesAsync();
@@ -617,14 +617,14 @@ namespace YukoBot.Commands
             };
             if (dbCtx.Users.Find(memberId).HasPremium)
             {
-                foreach (string link in message.GetImages())
+                //foreach (string link in message.GetImages())
+                //{
+                dbCtx.MessageLinks.Add(new DbMessage
                 {
-                    dbCtx.MessageLinks.Add(new DbMessageLink
-                    {
-                        Link = link,
-                        MessageId = message.Id
-                    });
-                }
+                    Link = string.Join(";", message.GetImages()),
+                    Id = message.Id
+                });
+                //}
             }
             dbCtx.CollectionItems.Add(dbCollectionItem);
             await dbCtx.SaveChangesAsync();

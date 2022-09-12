@@ -261,13 +261,13 @@ namespace YukoBot
                 while (groupItemEnumerator.MoveNext())
                 {
                     ulong messageId = groupItemEnumerator.Current.MessageId;
-                    List<string> links = dbCtx.MessageLinks.Where(x => x.MessageId == messageId).Select(x => x.Link).ToList();
-                    if (links.Count > 0)
+                    DbMessage dbMessage = dbCtx.MessageLinks.Where(x => x.Id == messageId).FirstOrDefault();
+                    if (dbMessage != null)
                     {
                         response = new UrlsResponse
                         {
                             Next = true,
-                            Urls = links
+                            Urls = dbMessage.Link.Split(";").ToList()
                         };
                         binaryWriter.Write(response.ToString());
                     }

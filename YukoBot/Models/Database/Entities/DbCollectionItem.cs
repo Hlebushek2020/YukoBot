@@ -21,8 +21,10 @@ namespace YukoBot.Models.Database.Entities
         [Column("channel")]
         public ulong ChannelId { get; set; }
 
-        [Required]
-        [Column("message")]
+        [ForeignKey(nameof(Message))]
+        [Column("message_id")]
         public ulong MessageId { get; set; }
+
+        public DbMessage Message { get; set; }
     }
 }
