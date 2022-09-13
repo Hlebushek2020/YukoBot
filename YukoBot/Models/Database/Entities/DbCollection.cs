@@ -11,7 +11,7 @@ namespace YukoBot.Models.Database.Entities
         [Column("id")]
         public ulong Id { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey(nameof(User))]
         [Column("user_id")]
         public ulong UserId { get; set; }
 
