@@ -34,11 +34,16 @@ namespace YukoBot.Models.Log
                 log += $"; {ex.GetType().Name}";
             }
             log += $"; {command}";
+
             lock (_fileLocker)
             {
                 _file.WriteLine(log);
                 if (ex != null && printStackTrace)
-                    _file.WriteLine(ex.StackTrace);
+                {
+                    _file.WriteLine(ex.Message);
+                    if (printStackTrace)
+                        _file.WriteLine(ex.StackTrace);
+                }
             }
 
             if (printStackTrace)
