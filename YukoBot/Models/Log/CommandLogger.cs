@@ -38,7 +38,7 @@ namespace YukoBot.Models.Log
             lock (_fileLocker)
             {
                 _file.WriteLine(log);
-                if (ex != null && printStackTrace)
+                if (ex != null)
                 {
                     _file.WriteLine(ex.Message);
                     if (printStackTrace)

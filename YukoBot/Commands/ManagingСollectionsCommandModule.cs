@@ -187,6 +187,7 @@ namespace YukoBot.Commands
                     .WithDescription("Операция выполняется, после завершения операции это сообщение будет изменено! (≧◡≦)");
                 DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                 DiscordMessage dmMessage = await dmChannel.SendMessageAsync(discordEmbed);
+                discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
                 HashSet<ulong> collectionItems = dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
                 DbUser dbUser = dbCtx.Users.Find(memberId);
@@ -194,60 +195,58 @@ namespace YukoBot.Commands
                 bool isCompleted = false;
                 ulong messageEndId = message.Id;
                 ulong messageStartId = rangeInfo.StartMessage.Id;
+                CommandLogger commandLogger = YukoLoggerFactory.GetInstance().CreateLogger<CommandLogger>();
                 IReadOnlyList<DiscordMessage> messages = rangeInfo.StartMessage.ToList();
-                try
+                while (!isCompleted)
                 {
-                    while (!isCompleted)
+                    for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
                     {
-                        for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
+                        message = messages[numMessage];
+                        if (message.HasImages() && !collectionItems.Contains(message.Id))
                         {
-                            message = messages[numMessage];
-                            if (message.HasImages() && !collectionItems.Contains(message.Id))
+                            dbCtx.CollectionItems.Add(new DbCollectionItem
                             {
-                                dbCtx.CollectionItems.Add(new DbCollectionItem
-                                {
-                                    ChannelId = channel.Id,
-                                    CollectionId = dbCollection.Id,
-                                    MessageId = message.Id
-                                });
-                            }
-                            if (dbUser.HasPremium)
-                            {
-                                //foreach (string link in message.GetImages())
-                                //{
-                                dbCtx.MessageLinks.Add(new DbMessage
-                                {
-                                    Id = message.Id,
-                                    Link = string.Join(";", message.GetImages())
-                                });
-                                //}
-                            }
-                            await dbCtx.SaveChangesAsync();
-                            if (message.Id == messageEndId)
-                            {
-                                numMessage = -1;
-                                isCompleted = true;
-                            }
+                                ChannelId = channel.Id,
+                                CollectionId = dbCollection.Id,
+                                MessageId = message.Id
+                            });
                         }
-                        if (!isCompleted)
+                        if (dbUser.HasPremium)
                         {
-                            messages = await channel.GetMessagesAfterAsync(messageStartId, limit);
-                            isCompleted = messages.Count < limit;
-                            Thread.Sleep(_messageLimitSleepMs / 20);
-                            if (!isCompleted)
+                            //foreach (string link in message.GetImages())
+                            //{
+                            dbCtx.MessageLinks.Add(new DbMessage
                             {
-                                messageStartId = messages.First().Id;
-                            }
+                                Id = message.Id,
+                                Link = string.Join(";", message.GetImages())
+                            });
+                            //}
+                        }
+                        try
+                        {
+                            await dbCtx.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            commandLogger.Log(ctx.User, "ERROR", ex, "end", false);
+                            discordEmbed.WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
+                        }
+                        if (message.Id == messageEndId)
+                        {
+                            numMessage = -1;
+                            isCompleted = true;
                         }
                     }
-                    discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
-                }
-                catch (Exception ex)
-                {
-                    CommandLogger commandLogger = YukoLoggerFactory.GetInstance().CreateLogger<CommandLogger>();
-                    commandLogger.Log(ctx.User, "ERROR", ex, "end", true);
-                    discordEmbed.WithColor(DiscordColor.Orange)
-                        .WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
+                    if (!isCompleted)
+                    {
+                        messages = await channel.GetMessagesAfterAsync(messageStartId, limit);
+                        isCompleted = messages.Count < limit;
+                        Thread.Sleep(_messageLimitSleepMs / 20);
+                        if (!isCompleted)
+                        {
+                            messageStartId = messages.First().Id;
+                        }
+                    }
                 }
                 await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
             }
