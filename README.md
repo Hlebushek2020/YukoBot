@@ -39,11 +39,13 @@ password-reset|password|Сброс пароля|:heavy_check_mark:|:heavy_check_
 register|reg|Регистрация|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 set-app|-|Устанавливает новую ссылку для команды: app|:heavy_check_mark:|:x:|:x:
 set-art-channel|-|Устанавливает канал для поиска сообщений при использовании комманд категории "Управление коллекциями"|:heavy_check_mark:|:heavy_check_mark:|:x:
-set-premium|-|Предоставляет пользователю дополнительные возможности|:heavy_check_mark:|:x:|:x:
+set-premium|-|Предоставляет пользователю [дополнительные возможности](#дополнительные-возможности)|:heavy_check_mark:|:x:|:x:
 settings|-|Данные для подключения|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 shutdown|sd|Выключить бота|:heavy_check_mark:|:x:|:x:
 status|-|Отображает сборку, дату запуска и время работы бота|:heavy_check_mark:|:x:|:x:
 unban|-|Удаляет пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера (гильдии))|:heavy_check_mark:|:heavy_check_mark:|:x:
+### Дополнительные возможности
+1) Вытаскивание ссылок на вложения при добавлении сообщений в коллекцию, а не по запросу [клиента](#yuko-collection-client)
 ## Дополнительные сведения
 1) Для удаления сообщения бота в ЛС поставьте реакцию ` :negative_squared_cross_mark: ` на это сообщение
 2) Для получения ссылки для добавления бота на сервер обращаться к владельцу репозитория (Discord: Hlebushek#4209)
