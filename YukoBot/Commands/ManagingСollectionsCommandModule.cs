@@ -28,7 +28,7 @@ namespace YukoBot.Commands
 
         private const string DefaultCollection = "Default";
 
-        private static readonly ConcurrentDictionary<ulong, RangeInfo> _clientRanges = new ConcurrentDictionary<ulong, RangeInfo>();
+        private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges = new ConcurrentDictionary<ulong, RangeStartInfo>();
 
         private readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
@@ -114,8 +114,8 @@ namespace YukoBot.Commands
             DiscordMessage message = ctx.Message.ReferencedMessage;
             if (message != null)
             {
-                RangeInfo rangeInfo = new RangeInfo(message, ctx.Channel);
-                if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeInfo, (k, v) => rangeInfo) != null)
+                RangeStartInfo rangeStartInfo = new RangeStartInfo(message, ctx.Channel);
+                if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeStartInfo, (k, v) => rangeStartInfo) != null)
                 {
                     discordEmbed.WithDescription("Сохранено! (≧◡≦)").WithColor(DiscordColor.Orange);
                 }
@@ -151,9 +151,9 @@ namespace YukoBot.Commands
                 {
                     throw new IncorrectCommandDataException("Нет вложенного сообщения!");
                 }
-                RangeInfo rangeInfo = _clientRanges[memberId];
+                RangeStartInfo rangeStartInfo = _clientRanges[memberId];
                 DiscordChannel channel = ctx.Channel;
-                if (channel.Id != rangeInfo.Channel.Id)
+                if (channel.Id != rangeStartInfo.Channel.Id)
                 {
                     throw new IncorrectCommandDataException("Начальное и конечное сообщение из разных каналов!");
                 }
@@ -194,9 +194,9 @@ namespace YukoBot.Commands
                 int limit = 10;
                 bool isCompleted = false;
                 ulong messageEndId = message.Id;
-                ulong messageStartId = rangeInfo.StartMessage.Id;
+                ulong messageStartId = rangeStartInfo.StartMessage.Id;
                 CommandLogger commandLogger = YukoLoggerFactory.GetInstance().CreateLogger<CommandLogger>();
-                IReadOnlyList<DiscordMessage> messages = rangeInfo.StartMessage.ToList();
+                IReadOnlyList<DiscordMessage> messages = rangeStartInfo.StartMessage.ToList();
                 while (!isCompleted)
                 {
                     for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)

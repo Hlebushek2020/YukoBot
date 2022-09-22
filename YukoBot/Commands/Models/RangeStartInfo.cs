@@ -2,12 +2,12 @@
 
 namespace YukoBot.Commands.Models
 {
-    internal class RangeInfo
+    internal class RangeStartInfo
     {
         public DiscordMessage StartMessage { get; }
         public DiscordChannel Channel { get; }
 
-        public RangeInfo(DiscordMessage startMessage, DiscordChannel channel)
+        public RangeStartInfo(DiscordMessage startMessage, DiscordChannel channel)
         {
             StartMessage = startMessage;
             Channel = channel;
