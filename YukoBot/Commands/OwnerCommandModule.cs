@@ -37,8 +37,9 @@ namespace YukoBot.Commands
                 Color = DiscordColor.DarkGray
             };
 
-            discordEmbed.AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location).ToShortDateString()} .net {Environment.Version}");
-            discordEmbed.AddField("Дата запуска", $"{YukoBot.Current.StartDateTime.ToShortDateString()} {YukoBot.Current.StartDateTime.ToShortTimeString()}");
+            discordEmbed.AddField("Net", $"v{Environment.Version}");
+            discordEmbed.AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}");
+            discordEmbed.AddField("Дата запуска", $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
             discordEmbed.AddField("Время работы", $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
 
