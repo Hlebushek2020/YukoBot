@@ -253,34 +253,51 @@ namespace YukoBot
             List<ulong> messageNotFound = new List<ulong>();
             IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator = request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
             binaryWriter.Write(new Response().ToString());
+            YukoDbContext dbCtx = new YukoDbContext();
             while (groupEnumerator.MoveNext())
             {
-                try
+                IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
+                DiscordChannel discordChannel = null;
+                while (groupItemEnumerator.MoveNext())
                 {
-                    DiscordChannel discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
-                    IEnumerator<MessageCollectionItemWeb> groupItemEnumerator = groupEnumerator.Current.GetEnumerator();
-                    while (groupItemEnumerator.MoveNext())
+                    ulong messageId = groupItemEnumerator.Current.MessageId;
+                    DbMessage dbMessage = dbCtx.MessageLinks.Where(x => x.Id == messageId).FirstOrDefault();
+                    if (dbMessage != null)
+                    {
+                        response = new UrlsResponse
+                        {
+                            Next = true,
+                            Urls = dbMessage.Link.Split(";").ToList()
+                        };
+                        binaryWriter.Write(response.ToString());
+                    }
+                    else
                     {
                         try
                         {
-                            DiscordMessage discordMessage = await discordChannel.GetMessageAsync(groupItemEnumerator.Current.MessageId);
-                            response = new UrlsResponse
+                            if (discordChannel == null)
+                                discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
+                            try
                             {
-                                Next = true
-                            };
-                            response.Urls.AddRange(discordMessage.GetImages());
-                            binaryWriter.Write(response.ToString());
+                                DiscordMessage discordMessage = await discordChannel.GetMessageAsync(messageId);
+                                response = new UrlsResponse
+                                {
+                                    Next = true
+                                };
+                                response.Urls.AddRange(discordMessage.GetImages());
+                                binaryWriter.Write(response.ToString());
+                            }
+                            catch (NotFoundException)
+                            {
+                                messageNotFound.Add(groupItemEnumerator.Current.MessageId);
+                            }
+                            Thread.Sleep(messageLimitSleepMs / 20);
                         }
                         catch (NotFoundException)
                         {
-                            messageNotFound.Add(groupItemEnumerator.Current.MessageId);
+                            channelNotFound.Add(groupEnumerator.Current.Key);
                         }
-                        Thread.Sleep(messageLimitSleepMs / 20);
                     }
-                }
-                catch (NotFoundException)
-                {
-                    channelNotFound.Add(groupEnumerator.Current.Key);
                 }
             }
             response = new UrlsResponse

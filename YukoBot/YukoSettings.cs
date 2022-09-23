@@ -2,10 +2,11 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using YukoBot.Interfaces;
 
 namespace YukoBot
 {
-    public class YukoSettings
+    public class YukoSettings : IReadOnlyYukoSettings
     {
         #region Propirties
         public string DatabaseHost { get; set; }
@@ -30,7 +31,7 @@ namespace YukoBot
         private static YukoSettings settings;
 
         [JsonIgnore]
-        public static YukoSettings Current
+        public static IReadOnlyYukoSettings Current
         {
             get
             {
@@ -44,7 +45,7 @@ namespace YukoBot
         }
         #endregion
 
-        public void Save()
+        private void Save()
         {
             string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
             using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
@@ -68,6 +69,12 @@ namespace YukoBot
             }
 
             return false;
+        }
+
+        public void SetApp(string appLink)
+        {
+            ClientActualApp = appLink;
+            Save();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using YukoBot.Interfaces;
 using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Models.Database
@@ -11,6 +12,7 @@ namespace YukoBot.Models.Database
         public DbSet<DbCollection> Collections { get; set; }
         public DbSet<DbCollectionItem> CollectionItems { get; set; }
         public DbSet<DbGuildSettings> GuildsSettings { get; set; }
+        public DbSet<DbMessage> MessageLinks { get; set; }
 
         public YukoDbContext()
         {
@@ -19,7 +21,7 @@ namespace YukoBot.Models.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            YukoSettings settings = YukoSettings.Current;
+            IReadOnlyYukoSettings settings = YukoSettings.Current;
 
             string connection = $"server={settings.DatabaseHost};user={settings.DatabaseUser};password={settings.DatabasePassword};database=YukoBot;";
             MySqlServerVersion serverVersion = new MySqlServerVersion(

@@ -18,27 +18,27 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
-        public UserCommandModule() : base(Category.User) { }
+        public UserCommandModule() : base(Categories.User) { }
 
         [Command("register")]
         [Aliases("reg")]
         [Description("Регистрация")]
-        public async Task Register(CommandContext commandContext)
+        public async Task Register(CommandContext ctx)
         {
-            DiscordMember member = commandContext.Member;
-            DiscordUser user = commandContext.User;
+            DiscordMember member = ctx.Member;
+            DiscordUser user = ctx.User;
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle($"{member.DisplayName}");
 
-            YukoDbContext dbContext = new YukoDbContext();
-            DbUser dbUser = dbContext.Users.Find(user.Id);
+            YukoDbContext dbCtx = new YukoDbContext();
+            DbUser dbUser = dbCtx.Users.Find(user.Id);
             if (dbUser != null)
             {
                 discordEmbed
                     .WithColor(DiscordColor.Red)
                     .WithDescription("Вы уже зарегистрированы!");
-                await commandContext.RespondAsync(discordEmbed);
+                await ctx.RespondAsync(discordEmbed);
                 return;
             }
             dbUser = new DbUser
@@ -65,8 +65,8 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            dbContext.Users.Add(dbUser);
-            await dbContext.SaveChangesAsync();
+            dbCtx.Users.Add(dbUser);
+            await dbCtx.SaveChangesAsync();
 
             DiscordDmChannel userChat = await member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
@@ -79,23 +79,21 @@ namespace YukoBot.Commands
             discordEmbed
                 .WithColor(DiscordColor.Orange)
                 .WithDescription("Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. (≧◡≦)");
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("help")]
         [Description("Показывает подсказку по командам и модулям (в случае если модуль или команда не указаны выводит подсказку по всем командам)")]
-        public async Task Help(CommandContext commandContext,
+        public async Task Help(CommandContext ctx,
             [Description("Модуль или команда")] string moduleOrCommand = null)
         {
-            string botPrefix = YukoSettings.Current.BotPrefix;
-            string botDescription = YukoSettings.Current.BotDescription;
             if (moduleOrCommand != null)
             {
                 if (CheckHelpCategoryCommand(moduleOrCommand))
                 {
-                    IEnumerable<Command> commands = commandContext.CommandsNext.RegisteredCommands.Values.Distinct()
+                    IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                         .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category.HelpCommand.Equals(moduleOrCommand) &&
-                            !x.IsHidden && !x.RunChecksAsync(commandContext, true).Result.Any());
+                            !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
                     List<string[]> commandOfDescription = new List<string[]>();
 
@@ -120,13 +118,13 @@ namespace YukoBot.Commands
                     {
                         embed = new DiscordEmbedBuilder()
                         {
-                            Title = $"(≧◡≦) {botPrefix}",
+                            Title = $"(≧◡≦) {Settings.BotPrefix}",
                             Color = DiscordColor.Orange,
                             Footer = new DiscordEmbedBuilder.EmbedFooter()
                             {
                                 Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
                             },
-                            Description = botDescription
+                            Description = Settings.BotDescription
                         };
 
                         embed.AddField(category.Name, new string('=', category.Name.Length));
@@ -139,24 +137,24 @@ namespace YukoBot.Commands
                     {
                         embed = new DiscordEmbedBuilder()
                         {
-                            Title = commandContext.Member.DisplayName,
+                            Title = ctx.Member.DisplayName,
                             Color = DiscordColor.Red,
                             Description = category.AccessError
                         };
                     }
 
-                    await commandContext.RespondAsync(embed);
+                    await ctx.RespondAsync(embed);
                 }
                 else
                 {
-                    Command command = commandContext.CommandsNext.FindCommand(moduleOrCommand, out string args);
+                    Command command = ctx.CommandsNext.FindCommand(moduleOrCommand, out string args);
 
                     if (command == null)
                         throw new CommandNotFoundException(moduleOrCommand);
 
-                    IEnumerable<CheckBaseAttribute> failedChecks = await command.RunChecksAsync(commandContext, true);
+                    IEnumerable<CheckBaseAttribute> failedChecks = await command.RunChecksAsync(ctx, true);
                     if (failedChecks.Any())
-                        throw new ChecksFailedException(command, commandContext, failedChecks);
+                        throw new ChecksFailedException(command, ctx, failedChecks);
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                     {
@@ -181,7 +179,7 @@ namespace YukoBot.Commands
                             sb.AppendLine($"**__Вариант {i + 1}__**");
                         }
 
-                        sb.AppendLine($"```\n{botPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{ x.Name}]").ToList())}```{command.Description}");
+                        sb.AppendLine($"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}");
                         sb.AppendLine();
 
                         if (command.Aliases?.Count != 0)
@@ -209,13 +207,13 @@ namespace YukoBot.Commands
 
                     embed.WithDescription(sb.ToString());
 
-                    await commandContext.RespondAsync(embed);
+                    await ctx.RespondAsync(embed);
                 }
             }
             else
             {
-                IEnumerable<Command> commands = commandContext.CommandsNext.RegisteredCommands.Values.Distinct()
-                    .Where(x => !x.IsHidden && !x.RunChecksAsync(commandContext, true).Result.Any());
+                IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
+                    .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
                 Dictionary<string, List<string>> sortedCommands = new Dictionary<string, List<string>>();
 
@@ -240,16 +238,16 @@ namespace YukoBot.Commands
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                 {
-                    Title = $"(≧◡≦) {botPrefix}",
+                    Title = $"(≧◡≦) {Settings.BotPrefix}",
                     Color = DiscordColor.Orange,
                     Footer = new DiscordEmbedBuilder.EmbedFooter()
                     {
                         Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
                     },
-                    Description = botDescription
+                    Description = Settings.BotDescription
                 };
 
-                foreach (Category mInfo in Categories)
+                foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
@@ -263,7 +261,7 @@ namespace YukoBot.Commands
                     }
                 }
 
-                await commandContext.RespondAsync(embed);
+                await ctx.RespondAsync(embed);
             }
         }
     }

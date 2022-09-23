@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
+using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
@@ -41,7 +42,7 @@ namespace YukoBot
         private readonly DiscordClient discordClient;
 
         private Task processTask;
-        private volatile bool isRuning = false;
+        private static CancellationTokenSource processCts;
 
         private readonly TcpListener tcpListener;
 
@@ -59,7 +60,7 @@ namespace YukoBot
 
             serverLogger.Log(LogLevel.Information, "Initialization Discord Api");
 
-            YukoSettings settings = YukoSettings.Current;
+            IReadOnlyYukoSettings settings = YukoSettings.Current;
 
             discordClient = new DiscordClient(new DiscordConfiguration
             {
@@ -188,57 +189,52 @@ namespace YukoBot
 
         public Task RunAsync()
         {
-            processTask = Process();
-            return processTask;
-        }
-
-        private async Task Process()
-        {
-            if (isRuning)
+            if (processCts == null || processTask.IsCompleted)
             {
-                return;
-            }
-
-            isRuning = true;
-
-            serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
-
-            await discordClient.ConnectAsync();
-
-            StartDateTime = DateTime.Now;
-
-            tcpListener.Start();
-
-            serverLogger.Log(LogLevel.Information, "Server Listening");
-
-            while (isRuning)
-            {
-                if (!tcpListener.Pending())
+                processCts = new CancellationTokenSource();
+                CancellationToken processToken = processCts.Token;
+                processTask = Task.Run(async () =>
                 {
-                    Thread.Sleep(100);
-                    continue;
-                }
+                    serverLogger.Log(LogLevel.Information, "Discord Api Authorization");
 
-                ThreadPool.QueueUserWorkItem(TcpClientProcessing, tcpListener.AcceptTcpClient());
+                    await discordClient.ConnectAsync();
+
+                    StartDateTime = DateTime.Now;
+
+                    tcpListener.Start();
+
+                    serverLogger.Log(LogLevel.Information, "Server Listening");
+
+                    while (!processToken.IsCancellationRequested)
+                    {
+                        if (!tcpListener.Pending())
+                        {
+                            Thread.Sleep(100);
+                            continue;
+                        }
+
+                        ThreadPool.QueueUserWorkItem(TcpClientProcessing, tcpListener.AcceptTcpClient());
+                    }
+                }, processToken);
             }
+            return processTask;
         }
 
         public void Shutdown()
         {
             serverLogger.Log(LogLevel.Information, "Shutdown");
 
-            isRuning = false;
-
             serverLogger.Log(LogLevel.Information, "Server stopping listener");
+
+            if (processCts != null && !processTask.IsCompleted)
+            {
+                processCts.Cancel();
+                processTask.Wait();
+            }
 
             if (tcpListener != null)
             {
                 tcpListener.Stop();
-            }
-
-            if (processTask != null)
-            {
-                processTask.Wait();
             }
 
             serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
@@ -258,10 +254,7 @@ namespace YukoBot
 
             if (disposing)
             {
-                if (isRuning)
-                {
-                    Shutdown();
-                }
+                Shutdown();
 
                 if (processTask != null)
                 {

@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using System.Collections.Generic;
 using YukoBot.Commands.Models;
+using YukoBot.Interfaces;
 
 namespace YukoBot.Commands
 {
@@ -8,7 +9,7 @@ namespace YukoBot.Commands
     {
         private static readonly Dictionary<string, Category> _categoryies = new Dictionary<string, Category>();
 
-        public static IReadOnlyCollection<Category> Categories { get => _categoryies.Values; }
+        public static IReadOnlyYukoSettings Settings { get; } = YukoSettings.Current;
 
         public Category Category { get; }
         public string CommandAccessError { get; protected set; }
@@ -24,5 +25,6 @@ namespace YukoBot.Commands
 
         public static bool CheckHelpCategoryCommand(string helpCommand) => _categoryies.ContainsKey(helpCommand);
         public static Category GetCategoryByHelpCommand(string helpCommand) => _categoryies[helpCommand];
+        public static IReadOnlyCollection<Category> GetCategories() => _categoryies.Values;
     }
 }
