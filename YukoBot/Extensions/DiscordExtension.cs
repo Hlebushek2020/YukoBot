@@ -25,10 +25,5 @@ namespace YukoBot.Extensions
             };
             return list;
         }
-
-        //public static void SaveToCache(this DiscordMessage message, ulong channelId)
-        //{
-        //    MessageStore.Save(message.GetImages(), channelId, message.Id);
-        //}
     }
 }
