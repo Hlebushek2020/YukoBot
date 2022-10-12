@@ -210,26 +210,23 @@ namespace YukoBot.Commands
                                 CollectionId = dbCollection.Id,
                                 MessageId = message.Id
                             });
-                        }
-                        if (dbUser.HasPremium)
-                        {
-                            //foreach (string link in message.GetImages())
-                            //{
-                            dbCtx.MessageLinks.Add(new DbMessage
+                            if (dbUser.HasPremium)
                             {
-                                Id = message.Id,
-                                Link = string.Join(";", message.GetImages())
-                            });
-                            //}
-                        }
-                        try
-                        {
-                            await dbCtx.SaveChangesAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            commandLogger.Log(ctx.User, "ERROR", ex, "end", false);
-                            discordEmbed.WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
+                                dbCtx.MessageLinks.Add(new DbMessage
+                                {
+                                    Id = message.Id,
+                                    Link = string.Join(";", message.GetImages())
+                                });
+                            }
+                            try
+                            {
+                                await dbCtx.SaveChangesAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                commandLogger.Log(ctx.User, "ERROR", ex, "end", false);
+                                discordEmbed.WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
+                            }
                         }
                         if (message.Id == messageEndId)
                         {
