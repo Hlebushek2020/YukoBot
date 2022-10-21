@@ -9,12 +9,13 @@ namespace YukoBot.Extensions
         public static IEnumerable<string> GetImages(this DiscordMessage message)
         {
             return message.Attachments.Select(x => x.Url).Concat(
-                message.Embeds.Where(x => x.Url != null).Select(x => x.Url.ToString()));
+                message.Embeds.Where(x => x.Url != null).Select(x => x.Url.ToString())).Concat(
+                message.Embeds.Where(x => x.Image?.Url != null).Select(x => x.Image.Url.ToString())).ToHashSet();
         }
 
         public static bool HasImages(this DiscordMessage message)
         {
-            return message.Attachments.Count > 0 || message.Embeds.Where(x => x.Url != null).Count() > 0;
+            return message.Attachments.Count > 0 || message.Embeds.Where(x => x.Url != null || x.Image?.Url != null).Count() > 0;
         }
 
         public static List<DiscordMessage> ToList(this DiscordMessage discordMessage)

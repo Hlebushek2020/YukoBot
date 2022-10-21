@@ -63,6 +63,11 @@ namespace YukoBot.Commands
                 await ctx.Message.DeleteAsync();
                 await SendSpecialMessage(ctx, ex.ToDiscordEmbed(), dbCtx);
             }
+            catch (Exception ex)
+            {
+                await ctx.Message.DeleteAsync();
+                throw ex;
+            }
         }
         #endregion
 
