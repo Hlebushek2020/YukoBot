@@ -225,20 +225,20 @@ namespace YukoBot
             serverLogger.Log(LogLevel.Information, "Shutdown");
 
             serverLogger.Log(LogLevel.Information, "Server stopping listener");
-
             if (processCts != null && !processTask.IsCompleted)
             {
                 processCts.Cancel();
                 processTask.Wait();
             }
-
             if (tcpListener != null)
             {
                 tcpListener.Stop();
             }
 
-            serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
+            serverLogger.Log(LogLevel.Information, "Waiting for clients to disconnect");
+            countClient.Wait();
 
+            serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
             if (discordClient != null)
             {
                 discordClient.DisconnectAsync().Wait();

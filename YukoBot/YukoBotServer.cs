@@ -22,9 +22,12 @@ namespace YukoBot
 {
     public partial class YukoBot : IDisposable
     {
+        CountdownEvent countClient = new CountdownEvent(0);
+
         #region Tcp Client
         private async void TcpClientProcessing(object obj)
         {
+            countClient.AddCount();
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
             serverLogger.Log(LogLevel.Information, $"Client connected:{endPoint}");
@@ -87,6 +90,7 @@ namespace YukoBot
             }
             finally
             {
+                countClient.Signal();
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
