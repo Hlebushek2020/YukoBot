@@ -12,7 +12,7 @@ namespace YukoBot.Commands
         public static IReadOnlyYukoSettings Settings { get; } = YukoSettings.Current;
 
         public Category Category { get; }
-        public string CommandAccessError { get; protected set; }
+        public virtual string CommandAccessError { get; }
 
         public CommandModule(Category category)
         {

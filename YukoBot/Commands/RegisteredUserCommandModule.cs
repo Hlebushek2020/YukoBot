@@ -19,10 +19,9 @@ namespace YukoBot.Commands
     [RequireRegistered]
     public class RegisteredUserCommandModule : CommandModule
     {
-        public RegisteredUserCommandModule() : base(Categories.User)
-        {
-            CommandAccessError = "Эта команда доступна для зарегистрированных пользователей!";
-        }
+        public override string CommandAccessError => "Эта команда доступна для зарегистрированных пользователей!";
+
+        public RegisteredUserCommandModule() : base(Categories.User) { }
 
         [Command("settings")]
         [Description("Данные для подключения.")]

@@ -21,16 +21,13 @@ namespace YukoBot.Commands
     [RequireRegisteredAndNoBan]
     public class ManagingСollectionsCommandModule : CommandModule
     {
-        public ManagingСollectionsCommandModule() : base(Categories.CollectionManagement)
-        {
-            CommandAccessError = "Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
-        }
-
         private const string DefaultCollection = "Default";
 
         private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges = new ConcurrentDictionary<ulong, RangeStartInfo>();
 
-        private readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
+        public override string CommandAccessError => "Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
+
+        public ManagingСollectionsCommandModule() : base(Categories.CollectionManagement) { }
 
         #region Command: add (Message)
         [Command("add")]
@@ -243,7 +240,7 @@ namespace YukoBot.Commands
                     {
                         messages = await channel.GetMessagesAfterAsync(messageStartId, limit);
                         isCompleted = messages.Count < limit;
-                        Thread.Sleep(_messageLimitSleepMs / 20);
+                        Thread.Sleep(Settings.DiscordMessageLimitSleepMs / 20);
                         if (!isCompleted)
                         {
                             messageStartId = messages.First().Id;

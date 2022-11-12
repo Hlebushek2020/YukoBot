@@ -14,10 +14,9 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
-        public OwnerCommandModule() : base(Categories.Management)
-        {
-            CommandAccessError = "Эта команда доступна только владельцу бота!";
-        }
+        public override string CommandAccessError => "Эта команда доступна только владельцу бота!";
+
+        public OwnerCommandModule() : base(Categories.Management) { }
 
         [Command("shutdown")]
         [Aliases("sd")]
