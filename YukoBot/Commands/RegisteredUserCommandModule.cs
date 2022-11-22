@@ -177,7 +177,7 @@ namespace YukoBot.Commands
 
                 DiscordMessageBuilder reportMessage = new DiscordMessageBuilder()
                     .WithEmbed(reportEmbed)
-                    .WithFiles(files);
+                    .AddFiles(files, true);
 
                 DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
                 DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);

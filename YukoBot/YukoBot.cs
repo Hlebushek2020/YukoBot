@@ -6,6 +6,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -67,7 +68,8 @@ namespace YukoBot
                 Token = settings.BotToken,
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = LogLevel.Error,
-                LoggerFactory = loggerFactory
+                LoggerFactory = loggerFactory,
+                Intents = DiscordIntents.All
             });
 
             discordClient.Ready += DiscordClient_Ready;
@@ -76,7 +78,7 @@ namespace YukoBot
 
             CommandsNextExtension commands = discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = new[] { settings.BotPrefix },
+                StringPrefixes = new List<string> { settings.BotPrefix },
                 EnableDefaultHelp = false
             });
 
