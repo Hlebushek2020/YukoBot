@@ -238,7 +238,10 @@ namespace YukoBot
             }
 
             serverLogger.Log(LogLevel.Information, "Waiting for clients to disconnect");
-            countClient.Wait();
+            while (countClient > 0)
+            {
+                Thread.Sleep(100);
+            }
 
             serverLogger.Log(LogLevel.Information, "Discord Api Disconnect");
             if (discordClient != null)

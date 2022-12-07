@@ -7,6 +7,6 @@ namespace YukoBot.Models.Web
         public ulong Id { get; set; }
         public string IconUri { get; set; }
         public string Name { get; set; }
-        public List<ChannelWeb> Channels { get; set; }
+        public List<ChannelWeb> Channels { get; set; } = new List<ChannelWeb>();
     }
 }
