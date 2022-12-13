@@ -49,6 +49,7 @@ namespace YukoBot
         private readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
         private readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
         private readonly BotPingModule _botPingModule = new BotPingModule();
+        private readonly DeletingMessagesByEmojiModule _deletingMessagesByEmojiModule = new DeletingMessagesByEmojiModule();
 
         private readonly DiscordClient _discordClient;
         private readonly TcpListener _tcpListener;
@@ -74,10 +75,9 @@ namespace YukoBot
             });
 
             _discordClient.Ready += DiscordClient_Ready;
-            // discordClient.MessageReactionAdded += DiscordClient_MessageReactionAdded;
             _discordClient.SocketErrored += DiscordClient_SocketErrored;
-
             _discordClient.MessageCreated += _botPingModule.Handler;
+            _discordClient.MessageReactionAdded += _deletingMessagesByEmojiModule.Handler;
 
             CommandsNextExtension commands = _discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
@@ -114,18 +114,6 @@ namespace YukoBot
             _defaultLogger.LogInformation(new EventId(0, $"Command: {e.Command.Name}"), "Command completed successfully");
             return Task.CompletedTask;
         }
-
-        //private async Task DiscordClient_MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
-        //{
-        //    if (e.Guild == null)
-        //    {
-        //        DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
-        //        if (e.Emoji.Equals(emoji))
-        //        {
-        //            await e.Message.DeleteAsync();
-        //        }
-        //    }
-        //}
 
         private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
