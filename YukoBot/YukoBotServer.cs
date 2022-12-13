@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -147,10 +148,13 @@ namespace YukoBot
             ServersResponse response = new ServersResponse();
             foreach (KeyValuePair<ulong, DiscordGuild> guild in discordClient.Guilds)
             {
-                ServerWeb server = await TC_S_GetServer(dbUser, guild.Value);
-                if (server != null)
+                if (guild.Value.Members.Any(x => x.Value.Id == dbUser.Id))
                 {
-                    response.Servers.Add(server);
+                    ServerWeb server = await TC_S_GetServer(dbUser, guild.Value);
+                    if (server != null)
+                    {
+                        response.Servers.Add(server);
+                    }
                 }
             }
             writer.Write(response.ToString());
