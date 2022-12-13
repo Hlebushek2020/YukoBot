@@ -2,6 +2,7 @@
 using System;
 using YukoBot.Interfaces;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Settings;
 
 namespace YukoBot.Models.Database
 {

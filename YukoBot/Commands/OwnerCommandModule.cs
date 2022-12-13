@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using YukoBot.Commands.Models;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Settings;
 
 namespace YukoBot.Commands
 {

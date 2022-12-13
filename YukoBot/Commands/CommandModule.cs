@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using YukoBot.Commands.Models;
 using YukoBot.Interfaces;
+using YukoBot.Settings;
 
 namespace YukoBot.Commands
 {

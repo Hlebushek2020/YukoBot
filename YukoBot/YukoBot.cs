@@ -17,6 +17,7 @@ using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
 using YukoBot.Models.Log.Providers;
+using YukoBot.Settings;
 
 namespace YukoBot
 {

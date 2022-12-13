@@ -2,6 +2,7 @@
 using System;
 using YukoBot.Models.Log;
 using YukoBot.Models.Log.Providers;
+using YukoBot.Settings;
 
 namespace YukoBot
 {
