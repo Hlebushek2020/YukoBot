@@ -124,7 +124,7 @@ namespace YukoBot
             dbUser.LoginTime = DateTime.Now;
             db.SaveChanges();
             // response build
-            DiscordUser discordUser = await discordClient.GetUserAsync(dbUser.Id);
+            DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
             return new AuthorizationResponse
             {
                 Id = discordUser.Id,
@@ -137,7 +137,7 @@ namespace YukoBot
         private async Task ClientGetServer(string json, DbUser dbUser, BinaryWriter writer)
         {
             ServerRequest request = ServerRequest.FromJson(json);
-            DiscordGuild guild = await discordClient.GetGuildAsync(request.Id);
+            DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
             ServerResponse response = ServerResponse.FromServerWeb(
                 await TC_S_GetServer(dbUser, guild));
             writer.Write(response.ToString());
@@ -146,7 +146,7 @@ namespace YukoBot
         private async Task ClientGetServers(DbUser dbUser, BinaryWriter writer)
         {
             ServersResponse response = new ServersResponse();
-            foreach (KeyValuePair<ulong, DiscordGuild> guild in discordClient.Guilds)
+            foreach (KeyValuePair<ulong, DiscordGuild> guild in _discordClient.Guilds)
             {
                 if (guild.Value.Members.Any(x => x.Value.Id == dbUser.Id))
                 {
@@ -166,7 +166,7 @@ namespace YukoBot
             DbBan ban = db.Bans.Where(x => x.UserId == dbUser.Id && x.ServerId == serverRequest.Id).FirstOrDefault();
             if (ban == null)
             {
-                DiscordGuild guild = await discordClient.GetGuildAsync(serverRequest.Id);
+                DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
                 DiscordMember isContainsMember = await guild.GetMemberAsync(dbUser.Id);
                 if (isContainsMember != null)
                 {
@@ -286,7 +286,7 @@ namespace YukoBot
                         try
                         {
                             if (discordChannel == null)
-                                discordChannel = await discordClient.GetChannelAsync(groupEnumerator.Current.Key);
+                                discordChannel = await _discordClient.GetChannelAsync(groupEnumerator.Current.Key);
                             try
                             {
                                 DiscordMessage discordMessage = await discordChannel.GetMessageAsync(messageId);
@@ -301,7 +301,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(messageLimitSleepMs / 20);
+                            Thread.Sleep(_messageLimitSleepMs / 20);
                         }
                         catch (NotFoundException)
                         {

@@ -17,6 +17,7 @@ using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
 using YukoBot.Models.Log.Providers;
+using YukoBot.Modules;
 using YukoBot.Settings;
 
 namespace YukoBot
@@ -24,17 +25,17 @@ namespace YukoBot
     public partial class YukoBot : IDisposable
     {
         #region Instance
-        private static YukoBot yukoBot;
+        private static YukoBot _yukoBot;
 
         public static YukoBot Current
         {
             get
             {
-                if (yukoBot == null)
+                if (_yukoBot == null)
                 {
-                    yukoBot = new YukoBot();
+                    _yukoBot = new YukoBot();
                 }
-                return yukoBot;
+                return _yukoBot;
             }
         }
         #endregion
@@ -42,17 +43,16 @@ namespace YukoBot
         public bool IsDisposed { get; private set; } = false;
         public DateTime StartDateTime { get; private set; }
 
-        private readonly DiscordClient discordClient;
+        private Task _processTask;
+        private static CancellationTokenSource _processCts;
 
-        private Task processTask;
-        private static CancellationTokenSource processCts;
+        private readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
+        private readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
+        private readonly BotPingModule _botPingModule = new BotPingModule();
 
-        private readonly TcpListener tcpListener;
-
+        private readonly DiscordClient _discordClient;
+        private readonly TcpListener _tcpListener;
         private readonly ILogger _defaultLogger;
-
-        private readonly int messageLimit = YukoSettings.Current.DiscordMessageLimit;
-        private readonly int messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
 
         private YukoBot()
         {
@@ -65,7 +65,7 @@ namespace YukoBot
 
             IReadOnlyYukoSettings settings = YukoSettings.Current;
 
-            discordClient = new DiscordClient(new DiscordConfiguration
+            _discordClient = new DiscordClient(new DiscordConfiguration
             {
                 Token = settings.BotToken,
                 TokenType = TokenType.Bot,
@@ -73,11 +73,13 @@ namespace YukoBot
                 Intents = DiscordIntents.All
             });
 
-            discordClient.Ready += DiscordClient_Ready;
+            _discordClient.Ready += DiscordClient_Ready;
             // discordClient.MessageReactionAdded += DiscordClient_MessageReactionAdded;
-            discordClient.SocketErrored += DiscordClient_SocketErrored;
+            _discordClient.SocketErrored += DiscordClient_SocketErrored;
 
-            CommandsNextExtension commands = discordClient.UseCommandsNext(new CommandsNextConfiguration
+            _discordClient.MessageCreated += _botPingModule.Handler;
+
+            CommandsNextExtension commands = _discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
                 StringPrefixes = new List<string> { settings.BotPrefix },
                 EnableDefaultHelp = false
@@ -94,7 +96,7 @@ namespace YukoBot
 
             _defaultLogger.LogInformation(eventId, "Server initialization");
 
-            tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
+            _tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
         }
 
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
@@ -188,36 +190,36 @@ namespace YukoBot
 
         public Task RunAsync()
         {
-            if (processCts == null || processTask.IsCompleted)
+            if (_processCts == null || _processTask.IsCompleted)
             {
-                processCts = new CancellationTokenSource();
-                CancellationToken processToken = processCts.Token;
-                processTask = Task.Run(async () =>
+                _processCts = new CancellationTokenSource();
+                CancellationToken processToken = _processCts.Token;
+                _processTask = Task.Run(async () =>
                 {
                     EventId eventId = new EventId(0, "Run");
                     _defaultLogger.LogInformation(eventId, "Discord client connect");
 
-                    await discordClient.ConnectAsync();
+                    await _discordClient.ConnectAsync();
 
                     StartDateTime = DateTime.Now;
 
-                    tcpListener.Start();
+                    _tcpListener.Start();
 
                     _defaultLogger.LogInformation(eventId, "Server listening");
 
                     while (!processToken.IsCancellationRequested)
                     {
-                        if (!tcpListener.Pending())
+                        if (!_tcpListener.Pending())
                         {
                             Thread.Sleep(100);
                             continue;
                         }
 
-                        ThreadPool.QueueUserWorkItem(TcpClientProcessing, tcpListener.AcceptTcpClient());
+                        ThreadPool.QueueUserWorkItem(TcpClientProcessing, _tcpListener.AcceptTcpClient());
                     }
                 }, processToken);
             }
-            return processTask;
+            return _processTask;
         }
 
         public void Shutdown()
@@ -226,12 +228,12 @@ namespace YukoBot
             _defaultLogger.LogInformation(eventId, "Shutdown");
 
             _defaultLogger.LogInformation(eventId, "Server stopping listener");
-            if (processCts != null && !processTask.IsCompleted)
+            if (_processCts != null && !_processTask.IsCompleted)
             {
-                processCts.Cancel();
-                processTask.Wait();
+                _processCts.Cancel();
+                _processTask.Wait();
             }
-            tcpListener?.Stop();
+            _tcpListener?.Stop();
 
             _defaultLogger.LogInformation(eventId, "Waiting for clients to disconnect");
             while (countClient > 0)
@@ -239,10 +241,10 @@ namespace YukoBot
                 Thread.Sleep(100);
             }
 
-            if (discordClient != null)
+            if (_discordClient != null)
             {
                 _defaultLogger.LogInformation(eventId, "Disconnect discord client");
-                discordClient.DisconnectAsync().Wait();
+                _discordClient.DisconnectAsync().Wait();
             }
         }
 
@@ -256,8 +258,8 @@ namespace YukoBot
             if (disposing)
             {
                 Shutdown();
-                processTask?.Dispose();
-                discordClient?.Dispose();
+                _processTask?.Dispose();
+                _discordClient?.Dispose();
             }
 
             IsDisposed = true;

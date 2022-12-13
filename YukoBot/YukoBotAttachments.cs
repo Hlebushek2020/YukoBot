@@ -15,7 +15,7 @@ namespace YukoBot
     {
         private async Task GetAttachment(ExecuteScriptRequest request, BinaryWriter writer)
         {
-            DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
             UrlsResponse response = new UrlsResponse();
             response.Urls.AddRange(discordMessage.GetImages());
@@ -24,9 +24,9 @@ namespace YukoBot
 
         private async Task GetAttachmentsAfter(ExecuteScriptRequest request, BinaryWriter writer)
         {
-            DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = messageLimit;
+            int limit = _messageLimit;
 
             while (request.Count != 0)
             {
@@ -42,7 +42,7 @@ namespace YukoBot
 
                 IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAfterAsync(request.MessageId, limit);
 
-                if (messages.Count < messageLimit)
+                if (messages.Count < _messageLimit)
                 {
                     request.Count = 0;
                 }
@@ -57,16 +57,16 @@ namespace YukoBot
                 if (messages.Count > 0)
                 {
                     request.MessageId = messages.First().Id;
-                    Thread.Sleep(messageLimitSleepMs);
+                    Thread.Sleep(_messageLimitSleepMs);
                 }
             }
         }
 
         private async Task GetAttacmentsBefore(ExecuteScriptRequest request, BinaryWriter writer)
         {
-            DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = messageLimit;
+            int limit = _messageLimit;
 
             while (request.Count != 0)
             {
@@ -82,7 +82,7 @@ namespace YukoBot
 
                 IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesBeforeAsync(request.MessageId, limit);
 
-                if (messages.Count < messageLimit)
+                if (messages.Count < _messageLimit)
                 {
                     request.Count = 0;
                 }
@@ -97,16 +97,16 @@ namespace YukoBot
                 if (messages.Count > 0)
                 {
                     request.MessageId = messages.First().Id;
-                    Thread.Sleep(messageLimitSleepMs);
+                    Thread.Sleep(_messageLimitSleepMs);
                 }
             }
         }
 
         private async Task GetAttachments(ExecuteScriptRequest request, BinaryWriter writer)
         {
-            DiscordChannel discordChannel = await discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = messageLimit;
+            int limit = _messageLimit;
 
             if (request.Count >= limit)
             {
@@ -141,11 +141,11 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                Thread.Sleep(messageLimitSleepMs);
+                Thread.Sleep(_messageLimitSleepMs);
 
                 messages = await discordChannel.GetMessagesBeforeAsync(endId, limit);
 
-                if (messages.Count < messageLimit)
+                if (messages.Count < _messageLimit)
                 {
                     request.Count = 0;
                 }
