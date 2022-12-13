@@ -1,51 +1,56 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using DSharpPlus;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+using YukoBot.Models.Log.Providers;
 
 namespace YukoBot.Models.Log
 {
     internal class YukoLoggerFactory : ILoggerFactory
     {
+        #region Instance
         private static YukoLoggerFactory _current;
 
-        public const string FileNameFormat = "yyyyMMdd";
-        public const string LogDateTimeFormatter = "dd.MM.yyyy HH:mm:ss";
-
-        private Dictionary<string, ILogger> _loggers = new Dictionary<string, ILogger>();
-
-        private YukoLoggerFactory(LogLevel discordLogLevel)
+        public static YukoLoggerFactory Current
         {
-            string logDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "logs");
-            Directory.CreateDirectory(logDirectory);
-            _loggers.Add(typeof(ServerLogger).Name, new ServerLogger(logDirectory, discordLogLevel));
-            _loggers.Add(typeof(CommandLogger).Name, new CommandLogger(logDirectory));
+            get
+            {
+                if (_current == null)
+                    _current = new YukoLoggerFactory();
+                return _current;
+            }
         }
+        #endregion
 
-        [Obsolete]
-        public void AddProvider(ILoggerProvider provider) { }
+        private readonly Dictionary<string, ILoggerProvider> _providers = new Dictionary<string, ILoggerProvider>();
+
+        public void AddProvider(ILoggerProvider provider) => _providers.Add(provider.GetType().Name, provider);
 
         public ILogger CreateLogger(string categoryName)
         {
-            if (_loggers.ContainsKey(categoryName))
-                return _loggers[categoryName];
-
-            return _loggers[typeof(ServerLogger).Name];
+            if (typeof(BaseDiscordClient).FullName.Equals(categoryName))
+            {
+                categoryName = typeof(DiscordClientLoggerProvider).Name;
+            }
+            if (_providers.ContainsKey(categoryName))
+            {
+                return _providers[categoryName].CreateLogger(categoryName);
+            }
+            string defaultProviderName = typeof(DefaultLoggerProvider).Name;
+            if (!_providers.ContainsKey(defaultProviderName))
+            {
+                _providers.Add(defaultProviderName, new DefaultLoggerProvider());
+            }
+            return _providers[defaultProviderName].CreateLogger(defaultProviderName);
         }
 
-        public T CreateLogger<T>() => (T)_loggers[typeof(T).Name];
+        public ILogger CreateLogger<T>() => CreateLogger(typeof(T).Name);
 
-        [Obsolete]
-        public void Dispose() { }
-
-        public static YukoLoggerFactory GetInstance()
+        public void Dispose()
         {
-            if (_current == null)
+            foreach (ILoggerProvider provider in _providers.Values)
             {
-                _current = new YukoLoggerFactory(LogLevel.Error);
+                provider.Dispose();
             }
-            return _current;
         }
     }
 }

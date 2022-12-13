@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +23,7 @@ namespace YukoBot
     public partial class YukoBot : IDisposable
     {
         private volatile int countClient = 0;
+        private EventId _eventId = new EventId(0, "Client");
 
         #region Tcp Client
         private async void TcpClientProcessing(object obj)
@@ -31,16 +31,16 @@ namespace YukoBot
             countClient++;
             TcpClient tcpClient = (TcpClient)obj;
             string endPoint = tcpClient.Client.RemoteEndPoint.ToString();
-            serverLogger.Log(LogLevel.Information, $"Client connected:{endPoint}");
             BinaryReader binaryReader = null;
             BinaryWriter binaryWriter = null;
             try
             {
+                _defaultLogger.LogInformation(_eventId, $"Client connected: {endPoint}");
                 NetworkStream networkStream = tcpClient.GetStream();
                 binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = binaryReader.ReadString();
-                serverLogger.Log(LogLevel.Information, $"Client request:{endPoint}({requestString})");
+                _defaultLogger.LogDebug(_eventId, $"Client {endPoint} request: {requestString}");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -87,7 +87,7 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                serverLogger.Log(LogLevel.Error, $"Client request:{endPoint}", ex);
+                _defaultLogger.LogError(_eventId, ex, $"Client: {endPoint}");
             }
             finally
             {
@@ -95,7 +95,7 @@ namespace YukoBot
                 binaryReader?.Dispose();
                 binaryWriter?.Dispose();
                 tcpClient?.Dispose();
-                serverLogger.Log(LogLevel.Information, $"Client disconnected:{endPoint}");
+                _defaultLogger.LogInformation(_eventId, $"Client disconnected: {endPoint}");
             }
         }
 
@@ -174,7 +174,9 @@ namespace YukoBot
                     ExecuteScriptRequest scriptRequest;
                     do
                     {
-                        scriptRequest = ExecuteScriptRequest.FromJson(reader.ReadString());
+                        string jsonString = reader.ReadString();
+                        scriptRequest = ExecuteScriptRequest.FromJson(jsonString);
+                        _defaultLogger.LogDebug(_eventId, $"Client: {dbUser.Id}, Execute script request: {jsonString}");
                         try
                         {
                             switch (scriptRequest.Mode)
@@ -204,7 +206,7 @@ namespace YukoBot
                                 ErrorMessage = ex.Message
                             };
                             writer.Write(response.ToString());
-                            serverLogger.Log(LogLevel.Error, $"Client execute scripts:{dbUser.Id}", ex);
+                            _defaultLogger.LogError(_eventId, ex, dbUser.Id.ToString());
                         }
                     } while (scriptRequest.HasNext);
 

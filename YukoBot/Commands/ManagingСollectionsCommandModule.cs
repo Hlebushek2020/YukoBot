@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Log;
+using YukoBot.Models.Log.Providers;
 
 namespace YukoBot.Commands
 {
@@ -26,6 +28,8 @@ namespace YukoBot.Commands
         private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges = new ConcurrentDictionary<ulong, RangeStartInfo>();
 
         public override string CommandAccessError => "Эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
+
+        private readonly ILogger _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public ManagingСollectionsCommandModule() : base(Categories.CollectionManagement) { }
 
@@ -197,7 +201,6 @@ namespace YukoBot.Commands
                 bool isCompleted = false;
                 ulong messageEndId = message.Id;
                 ulong messageStartId = rangeStartInfo.StartMessage.Id;
-                CommandLogger commandLogger = YukoLoggerFactory.GetInstance().CreateLogger<CommandLogger>();
                 IReadOnlyList<DiscordMessage> messages = rangeStartInfo.StartMessage.ToList();
                 while (!isCompleted)
                 {
@@ -226,7 +229,7 @@ namespace YukoBot.Commands
                             }
                             catch (Exception ex)
                             {
-                                commandLogger.Log(ctx.User, "ERROR", ex, "end", false);
+                                _defaultLogger.LogError(new EventId(0, "Command: end"), ex, $"{ctx.Guild.Name}, {ctx.Channel}, {ctx.Message.ReferencedMessage?.Id}");
                                 discordEmbed.WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
                             }
                         }
