@@ -74,7 +74,8 @@ namespace YukoBot.Commands
                 .WithTitle("Регистрация прошла успешно!");
             discordEmbedDm.AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**");
             discordEmbedDm.AddField("Пароль", password);
-            await userChat.SendMessageAsync(discordEmbedDm);
+            DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
+            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)

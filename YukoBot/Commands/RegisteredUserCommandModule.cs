@@ -117,7 +117,8 @@ namespace YukoBot.Commands
                 .WithColor(DiscordColor.Orange)
                 .WithTitle("Пароль сменен!");
             discordEmbedDm.AddField("Новый пароль", password);
-            await userChat.SendMessageAsync(discordEmbedDm);
+            DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
+            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
 
             discordEmbed
                 .WithColor(DiscordColor.Orange)
@@ -195,6 +196,39 @@ namespace YukoBot.Commands
             }
 
             await ctx.RespondAsync(discordEmbed);
+        }
+
+        [Command("profile")]
+        [Aliases("me")]
+        [Description("Показать информацию обо мне (только связанная с ботом)")]
+        public async Task Profile(CommandContext ctx)
+        {
+            YukoDbContext dbContext = new YukoDbContext();
+            DbUser dbUser = dbContext.Users.Find(ctx.User.Id);
+
+            DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
+                .WithThumbnail(ctx.User.AvatarUrl)
+                .WithTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
+                .AddField("Премиум: ", dbUser.HasPremium ? "есть" : "нет", true)
+                .AddField("Последний вход в приложение: ", dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "", true)
+                .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "включены" : "отключены", true)
+                .WithColor(dbUser.HasPremium ? DiscordColor.Gold : DiscordColor.Orange);
+
+            IList<DbBan> bans = dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
+            StringBuilder banListBuilder = new StringBuilder();
+            foreach (DbBan ban in bans)
+            {
+                if (banListBuilder.Length > 0)
+                {
+                    banListBuilder.AppendLine();
+                }
+                DiscordGuild discordGuild = ctx.Client.Guilds[ban.ServerId];
+                banListBuilder.Append(discordGuild.Name).Append(" - ").Append(string.IsNullOrEmpty(ban.Reason) ? "не указана" : ban.Reason);
+            }
+
+            embedBuilder.AddField("Список текущих банов:", banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
+
+            await ctx.RespondAsync(embedBuilder);
         }
     }
 }

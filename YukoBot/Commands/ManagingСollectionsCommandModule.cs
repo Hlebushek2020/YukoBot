@@ -250,7 +250,8 @@ namespace YukoBot.Commands
                         }
                     }
                 }
-                await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
+                dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
+                await dmMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
             }
             catch (IncorrectCommandDataException ex)
             {
@@ -258,7 +259,8 @@ namespace YukoBot.Commands
                 if (guildSettings != null && !guildSettings.AddCommandResponse)
                 {
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
-                    await dmChannel.SendMessageAsync(ex.ToDiscordEmbed(ctx.User.Username));
+                    DiscordMessage discordMessage = await dmChannel.SendMessageAsync(ex.ToDiscordEmbed(ctx.User.Username));
+                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
                 }
                 else
                 {
@@ -670,7 +672,8 @@ namespace YukoBot.Commands
                 {
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                     embed.WithTitle(ctx.User.Username);
-                    await dmChannel.SendMessageAsync(embed);
+                    DiscordMessage discordMessage = await dmChannel.SendMessageAsync(embed);
+                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
                 }
             }
             else
