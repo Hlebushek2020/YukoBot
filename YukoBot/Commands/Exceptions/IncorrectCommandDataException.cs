@@ -11,15 +11,15 @@ namespace YukoBot.Commands.Exceptions
         {
             return new DiscordEmbedBuilder()
                 .WithTitle(title)
-                .WithColor(DiscordColor.Red)
-                .WithDescription(Message + " (⋟﹏⋞)");
+                .WithColor(Constants.ErrorColor)
+                .WithDescription($"{Message} {Constants.SadSmile}");
         }
 
         public DiscordEmbedBuilder ToDiscordEmbed()
         {
             return new DiscordEmbedBuilder()
-                .WithColor(DiscordColor.Red)
-                .WithDescription(Message + " (⋟﹏⋞)");
+                .WithColor(Constants.ErrorColor)
+                .WithDescription($"{Message} {Constants.SadSmile}");
         }
     }
 }

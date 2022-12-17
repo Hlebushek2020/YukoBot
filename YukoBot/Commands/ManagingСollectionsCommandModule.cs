@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -85,11 +86,38 @@ namespace YukoBot.Commands
                 DbGuildSettings guildSettings = dbCtx.GuildsSettings.Find(ctx.Guild.Id);
                 DiscordChannel discordChannel = ctx.Channel;
                 bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
-                if (guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId)
+                bool artChannel = guildSettings != null && guildSettings.ArtChannelId.HasValue && discordChannel.Id != guildSettings.ArtChannelId;
+                if (artChannel)
                 {
-                    discordChannel = await ctx.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
+                    try
+                    {
+                        discordChannel = await ctx.Client.GetChannelAsync(guildSettings.ArtChannelId.Value);
+                    }
+                    catch (NotFoundException)
+                    {
+                        throw new IncorrectCommandDataException("Канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!");
+                    }
                 }
-                DiscordMessage message = await discordChannel.GetMessageAsync(messageId);
+                DiscordMessage message;
+                try
+                {
+                    message = await discordChannel.GetMessageAsync(messageId);
+                }
+                catch (NotFoundException)
+                {
+                    if (artChannel)
+                    {
+                        throw new IncorrectCommandDataException("Заданное сообщение не найдено в канале для поиска сообщений");
+                    }
+                    else if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
+                    {
+                        throw new IncorrectCommandDataException("Заданное сообщение не найдено в текущем канале! Канал для поиска сообщений по умолчанию не установлен, обратитесь к администратору сервера!");
+                    }
+                    else
+                    {
+                        throw new IncorrectCommandDataException("Заданное сообщение не найдено в текущем канале!");
+                    }
+                }
                 DiscordEmbedBuilder discordEmbed;
                 if (useDefaultCollection)
                 {
@@ -115,7 +143,7 @@ namespace YukoBot.Commands
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                .WithTitle(ctx.Member.DisplayName)
-               .WithColor(DiscordColor.Red);
+               .WithColor(Constants.ErrorColor);
 
             DiscordMessage message = ctx.Message.ReferencedMessage;
             if (message != null)
@@ -123,16 +151,17 @@ namespace YukoBot.Commands
                 RangeStartInfo rangeStartInfo = new RangeStartInfo(message, ctx.Channel);
                 if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeStartInfo, (k, v) => rangeStartInfo) != null)
                 {
-                    discordEmbed.WithDescription("Сохранено! (≧◡≦)").WithColor(DiscordColor.Orange);
+                    discordEmbed.WithColor(Constants.SuccessColor)
+                        .WithDescription($"Сохранено! {Constants.HappySmile}");
                 }
                 else
                 {
-                    discordEmbed.WithDescription("Не удалось запомнить сообщение!");
+                    discordEmbed.WithDescription($"Не удалось запомнить сообщение! {Constants.SadSmile}");
                 }
             }
             else
             {
-                discordEmbed.WithDescription("Нет вложенного сообщения!");
+                discordEmbed.WithDescription($"Нет вложенного сообщения! {Constants.SadSmile}");
             }
             await ctx.Message.DeleteAsync();
             await SendSpecialMessage(ctx, discordEmbed, new YukoDbContext());
@@ -189,11 +218,11 @@ namespace YukoBot.Commands
                 }
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                     .WithTitle(ctx.Member.DisplayName)
-                    .WithColor(DiscordColor.Orange)
-                    .WithDescription("Операция выполняется, после завершения операции это сообщение будет изменено! (≧◡≦)");
+                    .WithColor(Constants.SuccessColor)
+                    .WithDescription($"Операция выполняется, после завершения операции это сообщение будет изменено! {Constants.HappySmile}");
                 DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                 DiscordMessage dmMessage = await dmChannel.SendMessageAsync(discordEmbed);
-                discordEmbed.WithDescription("Сообщения успешно добавлены! (≧◡≦)");
+                discordEmbed.WithDescription($"Сообщения успешно добавлены! {Constants.HappySmile}");
                 HashSet<ulong> collectionItems = dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
                 DbUser dbUser = dbCtx.Users.Find(memberId);
@@ -230,7 +259,7 @@ namespace YukoBot.Commands
                             catch (Exception ex)
                             {
                                 _defaultLogger.LogError(new EventId(0, "Command: end"), ex, $"{ctx.Guild.Name}, {ctx.Channel}, {ctx.Message.ReferencedMessage?.Id}");
-                                discordEmbed.WithDescription("Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! (⋟﹏⋞)");
+                                discordEmbed.WithDescription($"Во время добавления сообщения, произошла ошибка. Добавлены не все сообщения! {Constants.SadSmile}");
                             }
                         }
                         if (message.Id == messageEndId)
@@ -251,7 +280,7 @@ namespace YukoBot.Commands
                     }
                 }
                 dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
-                await dmMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
+                await dmMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
             }
             catch (IncorrectCommandDataException ex)
             {
@@ -260,7 +289,7 @@ namespace YukoBot.Commands
                 {
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                     DiscordMessage discordMessage = await dmChannel.SendMessageAsync(ex.ToDiscordEmbed(ctx.User.Username));
-                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
+                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
                 }
                 else
                 {
@@ -297,8 +326,8 @@ namespace YukoBot.Commands
                 await dbCtx.SaveChangesAsync();
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                     .WithTitle(ctx.Member.DisplayName)
-                    .WithColor(DiscordColor.Orange)
-                    .WithDescription($"Коллекция создана! (Id: {collection.Id}) (≧◡≦)");
+                    .WithColor(Constants.SuccessColor)
+                    .WithDescription($"Коллекция создана! (Id: {collection.Id}) {Constants.HappySmile}");
                 await ctx.RespondAsync(discordEmbed);
             }
             catch (IncorrectCommandDataException ex)
@@ -354,7 +383,8 @@ namespace YukoBot.Commands
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(ctx.Member.DisplayName);
+                .WithTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
             YukoDbContext dbContext = new YukoDbContext();
             ulong memberId = ctx.Member.Id;
             DbCollection dbCollection;
@@ -370,15 +400,12 @@ namespace YukoBot.Commands
             {
                 dbContext.Collections.Remove(dbCollection);
                 await dbContext.SaveChangesAsync();
-                discordEmbed
-                    .WithColor(DiscordColor.Orange)
-                    .WithDescription($"Коллекция \"{dbCollection.Name}\" удалена! (≧◡≦)");
+                discordEmbed.WithDescription($"Коллекция \"{dbCollection.Name}\" удалена! {Constants.HappySmile}");
             }
             else
             {
-                discordEmbed
-                    .WithColor(DiscordColor.Red)
-                    .WithDescription("Такой коллекции нет!");
+                discordEmbed.WithColor(Constants.ErrorColor)
+                    .WithDescription($"Такой коллекции нет! {Constants.SadSmile}");
             }
             await ctx.RespondAsync(discordEmbed);
         }
@@ -392,7 +419,8 @@ namespace YukoBot.Commands
         {
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(commandContext.Member.DisplayName);
+                .WithTitle(commandContext.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
             YukoDbContext dbContext = new YukoDbContext();
             ulong memberId = commandContext.Member.Id;
             DbCollection dbCollection;
@@ -409,15 +437,12 @@ namespace YukoBot.Commands
                 IQueryable<DbCollectionItem> dbCollectionItems = dbContext.CollectionItems.Where(x => x.CollectionId == dbCollection.Id && x.MessageId == messageId);
                 dbContext.CollectionItems.RemoveRange(dbCollectionItems);
                 await dbContext.SaveChangesAsync();
-                discordEmbed
-                    .WithColor(DiscordColor.Orange)
-                    .WithDescription($"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено! (≧◡≦)");
+                discordEmbed.WithDescription($"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено! {Constants.HappySmile}");
             }
             else
             {
-                discordEmbed
-                    .WithColor(DiscordColor.Red)
-                    .WithDescription("Такой коллекции нет!");
+                discordEmbed.WithColor(Constants.ErrorColor)
+                    .WithDescription($"Такой коллекции нет! {Constants.SadSmile}");
             }
             await commandContext.RespondAsync(discordEmbed);
         }
@@ -430,12 +455,12 @@ namespace YukoBot.Commands
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(ctx.Member.DisplayName);
+                .WithTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
             if (string.IsNullOrEmpty(nameOrId))
             {
-                discordEmbed
-                   .WithColor(DiscordColor.Red)
-                   .WithDescription("Название или id коллекции не может быть пустым!");
+                discordEmbed.WithColor(Constants.ErrorColor)
+                   .WithDescription($"Название или id коллекции не может быть пустым! {Constants.SadSmile}");
             }
             else
             {
@@ -454,15 +479,12 @@ namespace YukoBot.Commands
                     IQueryable<DbCollectionItem> items = dbContext.CollectionItems.Where(x => x.CollectionId == collection.Id);
                     dbContext.CollectionItems.RemoveRange(items);
                     await dbContext.SaveChangesAsync();
-                    discordEmbed
-                        .WithColor(DiscordColor.Orange)
-                        .WithDescription($"Коллекция \"{collection.Name}\" очищена! (≧◡≦)");
+                    discordEmbed.WithDescription($"Коллекция \"{collection.Name}\" очищена! {Constants.HappySmile}");
                 }
                 else
                 {
-                    discordEmbed
-                        .WithColor(DiscordColor.Red)
-                        .WithDescription("Такой коллекции нет!");
+                    discordEmbed.WithColor(Constants.ErrorColor)
+                        .WithDescription($"Такой коллекции нет! {Constants.SadSmile}");
                 }
             }
             await ctx.RespondAsync(discordEmbed);
@@ -484,7 +506,7 @@ namespace YukoBot.Commands
             }
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Member.DisplayName)
-                .WithColor(DiscordColor.Orange)
+                .WithColor(Constants.SuccessColor)
                 .WithDescription(stringBuilder.ToString());
             await ctx.RespondAsync(discordEmbed);
         }
@@ -496,12 +518,12 @@ namespace YukoBot.Commands
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(commandContext.Member.DisplayName);
+                .WithTitle(commandContext.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
             if (string.IsNullOrEmpty(nameOrId))
             {
-                discordEmbed
-                   .WithColor(DiscordColor.Red)
-                   .WithDescription("Название или id коллекции не может быть пустым!");
+                discordEmbed.WithColor(Constants.ErrorColor)
+                   .WithDescription($"Название или id коллекции не может быть пустым! {Constants.SadSmile}");
             }
             else
             {
@@ -523,15 +545,12 @@ namespace YukoBot.Commands
                     {
                         stringBuilder.AppendLine(item.MessageId.ToString());
                     }
-                    discordEmbed
-                        .WithColor(DiscordColor.Orange)
-                        .WithDescription(stringBuilder.Length != 0 ? stringBuilder.ToString() : "Ой, эта коллекция пустая!");
+                    discordEmbed.WithDescription(stringBuilder.Length != 0 ? stringBuilder.ToString() : "Ой, эта коллекция пустая!");
                 }
                 else
                 {
-                    discordEmbed
-                        .WithColor(DiscordColor.Red)
-                        .WithDescription("Такой коллекции нет!");
+                    discordEmbed.WithColor(Constants.ErrorColor)
+                        .WithDescription($"Такой коллекции нет! {Constants.SadSmile}");
                 }
             }
             await commandContext.RespondAsync(discordEmbed);
@@ -570,21 +589,18 @@ namespace YukoBot.Commands
             };
             if (dbCtx.Users.Find(memberId).HasPremium)
             {
-                //foreach (string link in message.GetImages())
-                //{
                 dbCtx.MessageLinks.Add(new DbMessage
                 {
                     Link = string.Join(";", message.GetImages()),
                     Id = message.Id
                 });
-                //}
             }
             dbCtx.CollectionItems.Add(dbCollectionItem);
             await dbCtx.SaveChangesAsync();
             return new DiscordEmbedBuilder()
                 .WithTitle(ctx.Member.DisplayName)
-                .WithColor(DiscordColor.Orange)
-                .WithDescription("Добавлено! (≧◡≦)");
+                .WithColor(Constants.SuccessColor)
+                .WithDescription($"Добавлено! {Constants.HappySmile}");
         }
 
         private async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx, DiscordMessage message, string nameOrId)
@@ -620,21 +636,18 @@ namespace YukoBot.Commands
             };
             if (dbCtx.Users.Find(memberId).HasPremium)
             {
-                //foreach (string link in message.GetImages())
-                //{
                 dbCtx.MessageLinks.Add(new DbMessage
                 {
                     Link = string.Join(";", message.GetImages()),
                     Id = message.Id
                 });
-                //}
             }
             dbCtx.CollectionItems.Add(dbCollectionItem);
             await dbCtx.SaveChangesAsync();
             return new DiscordEmbedBuilder()
                 .WithTitle(ctx.Member.DisplayName)
-                .WithColor(DiscordColor.Orange)
-                .WithDescription("Добавлено! (≧◡≦)");
+                .WithColor(Constants.SuccessColor)
+                .WithDescription($"Добавлено! {Constants.HappySmile}");
         }
 
         private async Task RenameCollection(CommandContext ctx, YukoDbContext dbCtx, DbCollection dbCollection, string newName)
@@ -652,8 +665,8 @@ namespace YukoBot.Commands
             await dbCtx.SaveChangesAsync();
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Member.DisplayName)
-                .WithColor(DiscordColor.Orange)
-                .WithDescription($"Готово! (≧◡≦)");
+                .WithColor(Constants.SuccessColor)
+                .WithDescription($"Готово! {Constants.HappySmile}");
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -673,7 +686,7 @@ namespace YukoBot.Commands
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                     embed.WithTitle(ctx.User.Username);
                     DiscordMessage discordMessage = await dmChannel.SendMessageAsync(embed);
-                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
+                    await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
                 }
             }
             else

@@ -29,15 +29,15 @@ namespace YukoBot.Commands
             DiscordUser user = ctx.User;
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle($"{member.DisplayName}");
+                .WithTitle(ctx.Member.DisplayName);
 
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(user.Id);
             if (dbUser != null)
             {
                 discordEmbed
-                    .WithColor(DiscordColor.Red)
-                    .WithDescription("Вы уже зарегистрированы!");
+                    .WithColor(Constants.SuccessColor)
+                    .WithDescription($"Вы уже зарегистрированы! {Constants.HappySmile}");
                 await ctx.RespondAsync(discordEmbed);
                 return;
             }
@@ -70,16 +70,16 @@ namespace YukoBot.Commands
 
             DiscordDmChannel userChat = await member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithColor(DiscordColor.Orange)
-                .WithTitle("Регистрация прошла успешно!");
-            discordEmbedDm.AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**");
-            discordEmbedDm.AddField("Пароль", password);
+                .WithColor(Constants.SuccessColor)
+                .WithTitle($"Регистрация прошла успешно! {Constants.HappySmile}")
+                .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
+                .AddField("Пароль", password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
-            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
+            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
             discordEmbed
-                .WithColor(DiscordColor.Orange)
-                .WithDescription("Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. (≧◡≦)");
+                .WithColor(Constants.SuccessColor)
+                .WithDescription($"Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. {Constants.HappySmile}");
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -118,17 +118,12 @@ namespace YukoBot.Commands
                     if (commandOfDescription.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
-                        {
-                            Title = $"(≧◡≦) {Settings.BotPrefix}",
-                            Color = DiscordColor.Orange,
-                            Footer = new DiscordEmbedBuilder.EmbedFooter()
-                            {
-                                Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
-                            },
-                            Description = Settings.BotDescription
-                        };
+                            .WithTitle($"{Settings.BotPrefix} | {Constants.HappySmile}")
+                            .WithColor(Constants.SuccessColor)
+                            .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}")
+                            .WithDescription(Settings.BotDescription)
+                            .AddField(category.Name, new string('=', category.Name.Length));
 
-                        embed.AddField(category.Name, new string('=', category.Name.Length));
                         foreach (string[] item in commandOfDescription)
                         {
                             embed.AddField(item[0], item[1]);
@@ -137,11 +132,9 @@ namespace YukoBot.Commands
                     else
                     {
                         embed = new DiscordEmbedBuilder()
-                        {
-                            Title = ctx.Member.DisplayName,
-                            Color = DiscordColor.Red,
-                            Description = category.AccessError
-                        };
+                            .WithTitle(ctx.Member.DisplayName)
+                            .WithColor(Constants.ErrorColor)
+                            .WithDescription(category.AccessError);
                     }
 
                     await ctx.RespondAsync(embed);
@@ -158,16 +151,11 @@ namespace YukoBot.Commands
                         throw new ChecksFailedException(command, ctx, failedChecks);
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                    {
-                        Title = $"Описание команды {command.Name}",
-                        Color = DiscordColor.Orange,
-                        Footer = new DiscordEmbedBuilder.EmbedFooter()
-                        {
-                            Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
-                        },
-                    };
+                        .WithTitle($"{command.Name} | {Constants.HappySmile}")
+                        .WithColor(Constants.SuccessColor)
+                        .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
 
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder descriptionBuilder = new StringBuilder();
 
                     bool countOverloads = command.Overloads.Count > 1;
 
@@ -177,36 +165,34 @@ namespace YukoBot.Commands
 
                         if (countOverloads)
                         {
-                            sb.AppendLine($"**__Вариант {i + 1}__**");
+                            descriptionBuilder.AppendLine($"**__Вариант {i + 1}__**");
                         }
 
-                        sb.AppendLine($"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}");
-                        sb.AppendLine();
+                        descriptionBuilder.AppendLine($"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}").AppendLine();
 
                         if (command.Aliases?.Count != 0)
                         {
-                            sb.AppendLine("**Алиасы:**");
+                            descriptionBuilder.AppendLine("**Алиасы:**");
                             foreach (string alias in command.Aliases)
                             {
-                                sb.Append($"{alias} ");
+                                descriptionBuilder.Append($"{alias} ");
                             }
-                            sb.AppendLine();
-                            sb.AppendLine();
+                            descriptionBuilder.AppendLine().AppendLine();
                         }
 
                         if (commandOverload.Arguments.Count != 0)
                         {
-                            sb.AppendLine("**Аргументы:**");
+                            descriptionBuilder.AppendLine("**Аргументы:**");
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
                                 string defaultValue = (argument.DefaultValue != null) ? $" (По умолчанию: {argument.DefaultValue})" : string.Empty;
-                                sb.AppendLine($"`{argument.Name}`: {argument.Description}{defaultValue}");
+                                descriptionBuilder.AppendLine($"`{argument.Name}`: {argument.Description}{defaultValue}");
                             }
-                            sb.AppendLine();
+                            descriptionBuilder.AppendLine();
                         }
                     }
 
-                    embed.WithDescription(sb.ToString());
+                    embed.WithDescription(descriptionBuilder.ToString());
 
                     await ctx.RespondAsync(embed);
                 }
@@ -238,15 +224,10 @@ namespace YukoBot.Commands
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                {
-                    Title = $"(≧◡≦) {Settings.BotPrefix}",
-                    Color = DiscordColor.Orange,
-                    Footer = new DiscordEmbedBuilder.EmbedFooter()
-                    {
-                        Text = $"v{Assembly.GetExecutingAssembly().GetName().Version}"
-                    },
-                    Description = Settings.BotDescription
-                };
+                    .WithTitle($"{Settings.BotPrefix} | {Constants.HappySmile}")
+                    .WithColor(Constants.SuccessColor)
+                    .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}")
+                    .WithDescription(Settings.BotDescription);
 
                 foreach (Category mInfo in GetCategories())
                 {

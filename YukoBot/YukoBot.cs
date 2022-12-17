@@ -100,7 +100,7 @@ namespace YukoBot
         }
 
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            await sender.UpdateStatusAsync(new DiscordActivity($"на тебя (≧◡≦) | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
+            await sender.UpdateStatusAsync(new DiscordActivity($"на тебя {Constants.HappySmile} | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
@@ -131,12 +131,12 @@ namespace YukoBot
 
             if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде {command.Name} ошибка (⋟﹏⋞)");
+                embed.WithDescription($"Простите, в команде `{command.Name}` ошибка! {Constants.SadSmile}");
                 _defaultLogger.LogWarning(new EventId(0, $"Command: {e.Command.Name}"), exception, "");
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды {commandNotFoundEx.CommandName} (⋟﹏⋞)");
+                embed.WithDescription($"Простите, я не знаю команды `{commandNotFoundEx.CommandName}`! {Constants.SadSmile}");
                 _defaultLogger.LogWarning(new EventId(0, $"Command: {commandNotFoundEx.CommandName}"), exception, "");
             }
             else if (exception is ChecksFailedException checksFailedEx)
@@ -150,7 +150,7 @@ namespace YukoBot
             }
             else
             {
-                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка (⋟﹏⋞), попробуйте обратиться к моему создателю");
+                embed.WithDescription($"Простите, при выполнении команды произошла неизвестная ошибка {Constants.SadSmile}, попробуйте обратиться к моему создателю");
                 _defaultLogger.LogError(new EventId(0, $"Command: {e.Command?.Name ?? "Unknown"}"), exception, "");
             }
 

@@ -28,12 +28,12 @@ namespace YukoBot.Commands
         [Description("Данные для подключения.")]
         public async Task GetClientSettings(CommandContext ctx)
         {
-
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithColor(DiscordColor.Orange)
-                .WithTitle($"{ctx.Member.DisplayName}");
-            discordEmbed.AddField("Хост", Settings.ServerAddress);
-            discordEmbed.AddField("Порт", Settings.ServerPort.ToString());
+                .WithColor(Constants.SuccessColor)
+                .WithTitle(ctx.Member.DisplayName)
+                .AddField("Хост", Settings.ServerAddress)
+                .AddField("Порт", Settings.ServerPort.ToString());
+
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -42,9 +42,10 @@ namespace YukoBot.Commands
         public async Task GetClientApp(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithColor(DiscordColor.Orange)
-                .WithTitle($"{ctx.Member.DisplayName}")
+                .WithColor(Constants.SuccessColor)
+                .WithTitle(ctx.Member.DisplayName)
                 .WithDescription(YukoSettings.Current.ClientActualApp);
+
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -54,14 +55,13 @@ namespace YukoBot.Commands
         public async Task BanReason(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                 .WithTitle($"{ctx.Member.DisplayName}");
+                .WithTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
 
             YukoDbContext dbCtx = new YukoDbContext();
             List<DbBan> dbBanList = dbCtx.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id).ToList();
             if (dbBanList.Count > 0)
             {
-                discordEmbed.WithColor(DiscordColor.Orange);
-
                 DbBan dbBan = dbBanList[0];
                 if (string.IsNullOrEmpty(dbBan.Reason))
                 {
@@ -71,13 +71,12 @@ namespace YukoBot.Commands
                 {
                     discordEmbed.WithDescription(dbBan.Reason);
                 }
-                await ctx.RespondAsync(discordEmbed);
-                return;
+            }
+            else
+            {
+                discordEmbed.WithDescription($"Вы не забанены. {Constants.HappySmile}");
             }
 
-            discordEmbed
-                .WithColor(DiscordColor.Orange)
-                .WithDescription("Вы не забанены. (≧◡≦)");
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -87,7 +86,9 @@ namespace YukoBot.Commands
         public async Task PasswordReset(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                 .WithTitle($"{ctx.Member.DisplayName}");
+                 .WithTitle(ctx.Member.DisplayName)
+                 .WithColor(Constants.SuccessColor)
+                 .WithDescription($"Пароль сменен! Новый пароль отправлен в личные сообщения. {Constants.HappySmile}");
 
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
@@ -114,15 +115,12 @@ namespace YukoBot.Commands
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithColor(DiscordColor.Orange)
-                .WithTitle("Пароль сменен!");
-            discordEmbedDm.AddField("Новый пароль", password);
+                .WithColor(Constants.SuccessColor)
+                .WithTitle($"Пароль сменен! {Constants.HappySmile}")
+                .AddField("Новый пароль", password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
-            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":negative_squared_cross_mark:", false));
+            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
-            discordEmbed
-                .WithColor(DiscordColor.Orange)
-                .WithDescription("Пароль сменен! Новый пароль отправлен в личные сообщения. (≧◡≦)");
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -132,7 +130,8 @@ namespace YukoBot.Commands
             [Description("true - включить / false - отключить")] bool isEnabled)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(ctx.Member.DisplayName);
+                .WithTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor);
 
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
@@ -143,8 +142,7 @@ namespace YukoBot.Commands
                 await dbCtx.SaveChangesAsync();
             }
 
-            discordEmbed.WithColor(DiscordColor.Orange)
-                .WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
+            discordEmbed.WithDescription($"{(isEnabled ? "Включено" : "Отключено")}! (≧◡≦)");
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -181,18 +179,23 @@ namespace YukoBot.Commands
                     .WithEmbed(reportEmbed)
                     .AddFiles(files, true);
 
+                if (discordMessage.ReferencedMessage != null && discordMessage.ReferencedMessage.Embeds != null)
+                {
+                    reportMessage.AddEmbeds(discordMessage.ReferencedMessage.Embeds);
+                }
+
                 DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
                 DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
 
                 await reportChannel.SendMessageAsync(reportMessage);
 
-                discordEmbed.WithColor(DiscordColor.Orange)
-                    .WithDescription("Баг-репорт успешно отправлен! (≧◡≦)");
+                discordEmbed.WithColor(Constants.SuccessColor)
+                    .WithDescription($"Баг-репорт успешно отправлен! {Constants.HappySmile}");
             }
             else
             {
-                discordEmbed.WithColor(DiscordColor.Red)
-                    .WithDescription("Ой, эта команда отключена (⋟﹏⋞)");
+                discordEmbed.WithColor(Constants.ErrorColor)
+                    .WithDescription($"Ой, эта команда отключена! {Constants.SadSmile}");
             }
 
             await ctx.RespondAsync(discordEmbed);
@@ -208,7 +211,7 @@ namespace YukoBot.Commands
 
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithThumbnail(ctx.User.AvatarUrl)
-                .WithTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
+                .WithTitle($"{(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)} {Constants.HappySmile}")
                 .AddField("Премиум: ", dbUser.HasPremium ? "есть" : "нет", true)
                 .AddField("Последний вход в приложение: ", dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "", true)
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "включены" : "отключены", true)

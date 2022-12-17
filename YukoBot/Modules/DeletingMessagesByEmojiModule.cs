@@ -15,7 +15,7 @@ namespace YukoBot.Modules
 
         public async Task Handler(DiscordClient sender, MessageReactionAddEventArgs e)
         {
-            DiscordEmoji emoji = DiscordEmoji.FromName(sender, ":negative_squared_cross_mark:", false);
+            DiscordEmoji emoji = DiscordEmoji.FromName(sender, Constants.DeleteMessageEmoji, false);
 
             if (e.Emoji.Equals(emoji) && !e.User.Id.Equals(sender.CurrentUser.Id))
             {

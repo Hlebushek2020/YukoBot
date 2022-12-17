@@ -9,7 +9,9 @@ namespace YukoBot
         public static DiscordColor StatusColor { get; } = DiscordColor.DarkGray;
         public static DiscordColor PremiumColor { get; } = DiscordColor.Gold;
 
-        public static string HappySmile { get; } = "(≧◡≦)";
-        public static string SadSmile { get; } = "(⋟﹏⋞)";
+        public const string HappySmile = "(≧◡≦)";
+        public const string SadSmile = "(⋟﹏⋞)";
+
+        public const string DeleteMessageEmoji = ":negative_squared_cross_mark:";
     }
 }

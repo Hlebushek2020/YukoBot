@@ -33,13 +33,11 @@ namespace YukoBot.Commands
         public async Task Status(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            {
-                Color = DiscordColor.DarkGray
-            };
+                .WithColor(Constants.StatusColor)
+                .AddField("Net", $"v{Environment.Version}")
+                .AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
+                .AddField("Дата запуска", $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
 
-            discordEmbed.AddField("Net", $"v{Environment.Version}");
-            discordEmbed.AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}");
-            discordEmbed.AddField("Дата запуска", $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
             discordEmbed.AddField("Время работы", $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
 
@@ -47,7 +45,7 @@ namespace YukoBot.Commands
         }
 
         [Command("set-app")]
-        [Description("Устанавливает новую ссылку для команды: app")]
+        [Description("Установить новую ссылку для команды `app`")]
         public async Task SetApp(CommandContext ctx, string newlink)
         {
             YukoSettings.Current.SetApp(newlink);
@@ -55,10 +53,10 @@ namespace YukoBot.Commands
         }
 
         [Command("set-premium")]
-        [Description("Предоставляет пользователю дополнительные возможности")]
+        [Description("Предоставление пользователю дополнительных возможностей")]
         public async Task SetPremium(CommandContext ctx,
             [Description("Участник сервера (гильдии)")] DiscordMember discordMember,
-            [Description("true - включить / false - отключить")] bool isEnabled)
+            [Description("true - предоставить / false - отобрать")] bool isEnabled)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
@@ -66,11 +64,11 @@ namespace YukoBot.Commands
             {
                 dbUser.HasPremium = isEnabled;
                 await dbCtx.SaveChangesAsync();
-                await ctx.RespondAsync(isEnabled ? "Включено" : "Отключено");
+                await ctx.RespondAsync(isEnabled ? "Предоставлено" : "Отобрано");
             }
             else
             {
-                await ctx.RespondAsync("Пользователь не найден");
+                await ctx.RespondAsync("Данный участник сервера (гильдии) не зарегистрирован");
             }
         }
     }
