@@ -1,12 +1,10 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attributes;
@@ -25,7 +23,7 @@ namespace YukoBot.Commands
         public RegisteredUserCommandModule() : base(Categories.User) { }
 
         [Command("settings")]
-        [Description("Данные для подключения.")]
+        [Description("Показать настройки для подключения")]
         public async Task GetClientSettings(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -38,7 +36,7 @@ namespace YukoBot.Commands
         }
 
         [Command("app")]
-        [Description("Ссылка на скачивание актуальной версии клиента.")]
+        [Description("Показать ссылку на скачивание актуальной версии клиента")]
         public async Task GetClientApp(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -80,52 +78,52 @@ namespace YukoBot.Commands
             await ctx.RespondAsync(discordEmbed);
         }
 
-        [Command("password-reset")]
-        [Aliases("password")]
-        [Description("Сброс пароля")]
-        public async Task PasswordReset(CommandContext ctx)
-        {
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                 .WithTitle(ctx.Member.DisplayName)
-                 .WithColor(Constants.SuccessColor)
-                 .WithDescription($"Пароль сменен! Новый пароль отправлен в личные сообщения. {Constants.HappySmile}");
+        //[Command("password-reset")]
+        //[Aliases("password")]
+        //[Description("Сброс пароля")]
+        //public async Task PasswordReset(CommandContext ctx)
+        //{
+        //    DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+        //         .WithTitle(ctx.Member.DisplayName)
+        //         .WithColor(Constants.SuccessColor)
+        //         .WithDescription($"Пароль сменен! Новый пароль отправлен в личные сообщения. {Constants.HappySmile}");
 
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
+        //    YukoDbContext dbCtx = new YukoDbContext();
+        //    DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
 
-            string password = "";
-            Random random = new Random();
-            while (password.Length != 10)
-            {
-                password += (char)random.Next(33, 127);
-            }
+        //    string password = "";
+        //    Random random = new Random();
+        //    while (password.Length != 10)
+        //    {
+        //        password += (char)random.Next(33, 127);
+        //    }
 
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
-                foreach (byte code in hashBytes)
-                {
-                    hashBuilder.Append(code.ToString("X2"));
-                }
-                dbUser.Password = hashBuilder.ToString();
-            }
+        //    using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+        //    {
+        //        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+        //        StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
+        //        foreach (byte code in hashBytes)
+        //        {
+        //            hashBuilder.Append(code.ToString("X2"));
+        //        }
+        //        dbUser.Password = hashBuilder.ToString();
+        //    }
 
-            await dbCtx.SaveChangesAsync();
+        //    await dbCtx.SaveChangesAsync();
 
-            DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
-            DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithColor(Constants.SuccessColor)
-                .WithTitle($"Пароль сменен! {Constants.HappySmile}")
-                .AddField("Новый пароль", password);
-            DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
-            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
+        //    DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
+        //    DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
+        //        .WithColor(Constants.SuccessColor)
+        //        .WithTitle($"Пароль сменен! {Constants.HappySmile}")
+        //        .AddField("Новый пароль", password);
+        //    DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
+        //    await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
-            await ctx.RespondAsync(discordEmbed);
-        }
+        //    await ctx.RespondAsync(discordEmbed);
+        //}
 
         [Command("info-message-pm")]
-        [Description("Отключает или включает отправку информационных сообщений в личные сообщения (работает для команды add)")]
+        [Description("Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
         public async Task InfoMessagesInPM(CommandContext ctx,
             [Description("true - включить / false - отключить")] bool isEnabled)
         {
@@ -148,7 +146,7 @@ namespace YukoBot.Commands
         }
 
         [Command("bug-report")]
-        [Description("Позволяет сообщить об ошибке")]
+        [Description("Сообщить об ошибке")]
         public async Task BugReport(CommandContext ctx,
             [Description("Описание ошибки"), RemainingText] string description)
         {
@@ -203,7 +201,7 @@ namespace YukoBot.Commands
 
         [Command("profile")]
         [Aliases("me")]
-        [Description("Показать информацию обо мне (только связанная с ботом)")]
+        [Description("Показать информацию о моей учетной записи бота")]
         public async Task Profile(CommandContext ctx)
         {
             YukoDbContext dbContext = new YukoDbContext();

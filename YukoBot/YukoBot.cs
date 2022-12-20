@@ -238,19 +238,18 @@ namespace YukoBot
 
         protected virtual void Dispose(bool disposing)
         {
-            if (IsDisposed)
+            if (!IsDisposed && disposing)
             {
-                return;
-            }
+                if (!_processCts.IsCancellationRequested)
+                {
+                    Shutdown();
+                }
 
-            if (disposing)
-            {
-                Shutdown();
                 _processTask?.Dispose();
                 _discordClient?.Dispose();
-            }
 
-            IsDisposed = true;
+                IsDisposed = true;
+            }
         }
 
         public void Dispose()

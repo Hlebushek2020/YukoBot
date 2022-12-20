@@ -22,7 +22,7 @@ namespace YukoBot.Commands
 
         [Command("register")]
         [Aliases("reg")]
-        [Description("Регистрация")]
+        [Description("Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль")]
         public async Task Register(CommandContext ctx)
         {
             DiscordMember member = ctx.Member;
@@ -84,16 +84,16 @@ namespace YukoBot.Commands
         }
 
         [Command("help")]
-        [Description("Показывает подсказку по командам и модулям (в случае если модуль или команда не указаны выводит подсказку по всем командам)")]
+        [Description("Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание")]
         public async Task Help(CommandContext ctx,
-            [Description("Модуль или команда")] string moduleOrCommand = null)
+            [Description("Категория или команда")] string categoryOrCommand = null)
         {
-            if (moduleOrCommand != null)
+            if (categoryOrCommand != null)
             {
-                if (CheckHelpCategoryCommand(moduleOrCommand))
+                if (CheckHelpCategoryCommand(categoryOrCommand))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
-                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category.HelpCommand.Equals(moduleOrCommand) &&
+                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category.HelpCommand.Equals(categoryOrCommand) &&
                             !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
                     List<string[]> commandOfDescription = new List<string[]>();
@@ -113,7 +113,7 @@ namespace YukoBot.Commands
 
                     DiscordEmbedBuilder embed;
 
-                    Category category = GetCategoryByHelpCommand(moduleOrCommand);
+                    Category category = GetCategoryByHelpCommand(categoryOrCommand);
 
                     if (commandOfDescription.Count > 0)
                     {
@@ -141,10 +141,10 @@ namespace YukoBot.Commands
                 }
                 else
                 {
-                    Command command = ctx.CommandsNext.FindCommand(moduleOrCommand, out string args);
+                    Command command = ctx.CommandsNext.FindCommand(categoryOrCommand, out string args);
 
                     if (command == null)
-                        throw new CommandNotFoundException(moduleOrCommand);
+                        throw new CommandNotFoundException(categoryOrCommand);
 
                     IEnumerable<CheckBaseAttribute> failedChecks = await command.RunChecksAsync(ctx, true);
                     if (failedChecks.Any())

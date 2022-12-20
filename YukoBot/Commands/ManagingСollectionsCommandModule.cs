@@ -36,9 +36,9 @@ namespace YukoBot.Commands
 
         #region Command: add (Message)
         [Command("add")]
-        [Description("Добавляет вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
+        [Description("Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
         public async Task AddToCollection(CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+            [Description("Название или Id коллекции (необязательно)"), RemainingText] string nameOrId = DefaultCollection)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             try
@@ -75,10 +75,10 @@ namespace YukoBot.Commands
 
         #region Command: add-by-id (Message)
         [Command("add-by-id")]
-        [Description("Добавляет сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
+        [Description("Добавить указанное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию")]
         public async Task AddToCollectionById(CommandContext ctx,
             [Description("Id сообщения")] ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+            [Description("Название или Id коллекции (необязательно)"), RemainingText] string nameOrId = DefaultCollection)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace YukoBot.Commands
 
         #region Command add-range (Message)
         [Command("start")]
-        [Description("Задает начальное сообщение (входит в промежуток)")]
+        [Description("Задать вложенное сообщение начальным сообщением для промежутка (входит в промежуток)")]
         public async Task Start(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -168,9 +168,9 @@ namespace YukoBot.Commands
         }
 
         [Command("end")]
-        [Description("Задает конечное сообщение (входит в промежуток) и добавляет промежуток в заданную коллекцию")]
+        [Description("Задать вложенное сообщение конечным сообщением (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию.  Если коллекция не указана сообщения добавляются в коллекцию по умолчанию")]
         public async Task End(CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText] string nameOrId = DefaultCollection)
+            [Description("Название или Id коллекции (необязательно)"), RemainingText] string nameOrId = DefaultCollection)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             try
@@ -301,7 +301,7 @@ namespace YukoBot.Commands
 
         #region Command: add (Collection)
         [Command("add-collection")]
-        [Description("Создает новую коллекцию")]
+        [Description("Создать новую коллекцию")]
         public async Task AddCollection(CommandContext ctx,
             [Description("Название коллекции"), RemainingText] string collectionName)
         {
@@ -339,7 +339,7 @@ namespace YukoBot.Commands
 
         #region Command: rename-collection (Collection)
         [Command("rename-collection")]
-        [Description("Переименовывает указанную коллекцию")]
+        [Description("Переименовать указанную коллекцию")]
         public async Task RenameCollection(CommandContext ctx,
             [Description("Id коллекции")] ulong collectionId,
             [Description("Новое название коллекции"), RemainingText] string newName)
@@ -357,7 +357,7 @@ namespace YukoBot.Commands
         }
 
         [Command("rename-collection")]
-        [Description("Переименовывает указанную коллекцию")]
+        [Description("Переименовать указанную коллекцию")]
         public async Task RenameCollection(CommandContext ctx,
             [Description("Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")] string oldName,
             [Description("Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")] string newName)
@@ -378,7 +378,7 @@ namespace YukoBot.Commands
         #region Command: remove-collection/item
         [Command("remove-collection")]
         [Aliases("rm-collection")]
-        [Description("Удаляет коллекцию")]
+        [Description("Удалить коллекцию")]
         public async Task DeleteFromCollection(CommandContext ctx,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
@@ -450,7 +450,7 @@ namespace YukoBot.Commands
 
         #region Command: clear-collection
         [Command("clear-collection")]
-        [Description("Удаляет все сообщения из коллекции")]
+        [Description("Удалить все сообщения из коллекции")]
         public async Task ClearCollection(CommandContext ctx,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
@@ -494,7 +494,7 @@ namespace YukoBot.Commands
         #region Command: show-collections/items
         [Command("show-collections")]
         [Aliases("collections")]
-        [Description("Показывает список коллекций")]
+        [Description("Показать список коллекций")]
         public async Task ShowCollections(CommandContext ctx)
         {
             YukoDbContext dbContext = new YukoDbContext();
@@ -513,7 +513,7 @@ namespace YukoBot.Commands
 
         [Command("show-items")]
         [Aliases("items")]
-        [Description("Показывает последние 25 сообщений коллекции")]
+        [Description("Показать последние 25 сообщений коллекции")]
         public async Task ShowItems(CommandContext commandContext,
             [Description("Название или Id коллекции"), RemainingText] string nameOrId)
         {
