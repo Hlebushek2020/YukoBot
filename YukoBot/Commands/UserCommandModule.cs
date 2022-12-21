@@ -22,30 +22,25 @@ namespace YukoBot.Commands
 
         [Command("register")]
         [Aliases("reg")]
-        [Description("Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль")]
+        [Description("Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
         public async Task Register(CommandContext ctx)
         {
-            DiscordMember member = ctx.Member;
-            DiscordUser user = ctx.User;
-
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Member.DisplayName);
 
             YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(user.Id);
-            if (dbUser != null)
+            DbUser dbUser = dbCtx.Users.Find(ctx.User.Id);
+            bool isRegister = false;
+            if (dbUser == null)
             {
-                discordEmbed
-                    .WithColor(Constants.SuccessColor)
-                    .WithDescription($"Вы уже зарегистрированы! {Constants.HappySmile}");
-                await ctx.RespondAsync(discordEmbed);
-                return;
+                isRegister = true;
+                dbUser = new DbUser
+                {
+                    Id = ctx.User.Id,
+                    Nikname = ctx.User.Username + "#" + ctx.User.Discriminator
+                };
+                dbCtx.Users.Add(dbUser);
             }
-            dbUser = new DbUser
-            {
-                Id = user.Id,
-                Nikname = user.Username + "#" + user.Discriminator
-            };
 
             string password = "";
             Random random = new Random();
@@ -65,26 +60,25 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            dbCtx.Users.Add(dbUser);
             await dbCtx.SaveChangesAsync();
 
-            DiscordDmChannel userChat = await member.CreateDmChannelAsync();
+            DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
                 .WithColor(Constants.SuccessColor)
-                .WithTitle($"Регистрация прошла успешно! {Constants.HappySmile}")
+                .WithTitle($"{(isRegister ? "Регистрация прошла успешно!" : "Пароль сменен!")} {Constants.HappySmile}")
                 .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
-                .AddField("Пароль", password);
+                .AddField(isRegister ? "Пароль" : "Новый пароль", password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
             await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
             discordEmbed
                 .WithColor(Constants.SuccessColor)
-                .WithDescription($"Регистрация прошла успешно! Пароль для входа отправлен в личные сообщения. {Constants.HappySmile}");
+                .WithDescription($"{(isRegister ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС." : "Новый пароль от учетной записи отправлен в ЛС.")} {Constants.HappySmile}");
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("help")]
-        [Description("Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание")]
+        [Description("Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
         public async Task Help(CommandContext ctx,
             [Description("Категория или команда")] string categoryOrCommand = null)
         {

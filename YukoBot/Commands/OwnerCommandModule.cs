@@ -15,21 +15,21 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
-        public override string CommandAccessError => "Эта команда доступна только владельцу бота!";
+        public override string CommandAccessError => $"Простите, эта команда доступна только владельцу бота! {Constants.SadSmile}";
 
         public OwnerCommandModule() : base(Categories.Management) { }
 
         [Command("shutdown")]
         [Aliases("sd")]
-        [Description("Выключить бота")]
+        [Description("Выключить бота.")]
         public async Task Shutdown(CommandContext ctx)
         {
-            await ctx.RespondAsync("Ok");
+            await ctx.RespondAsync($"Будет сделано, хозяин! {Constants.HappySmile}");
             YukoBot.Current.Shutdown();
         }
 
         [Command("status")]
-        [Description("Сведения о боте")]
+        [Description("Сведения о боте.")]
         public async Task Status(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -45,15 +45,15 @@ namespace YukoBot.Commands
         }
 
         [Command("set-app")]
-        [Description("Установить новую ссылку для команды `app`")]
+        [Description("Установить новую ссылку для команды `app`.")]
         public async Task SetApp(CommandContext ctx, string newlink)
         {
             YukoSettings.Current.SetApp(newlink);
-            await ctx.RespondAsync("Ok");
+            await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
         }
 
         [Command("set-premium")]
-        [Description("Предоставление пользователю дополнительных возможностей")]
+        [Description("Предоставление пользователю дополнительных возможностей.")]
         public async Task SetPremium(CommandContext ctx,
             [Description("Участник сервера (гильдии)")] DiscordMember discordMember,
             [Description("true - предоставить / false - отобрать")] bool isEnabled)
@@ -68,7 +68,7 @@ namespace YukoBot.Commands
             }
             else
             {
-                await ctx.RespondAsync("Данный участник сервера (гильдии) не зарегистрирован");
+                await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
             }
         }
     }

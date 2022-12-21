@@ -78,50 +78,6 @@ namespace YukoBot.Commands
             await ctx.RespondAsync(discordEmbed);
         }
 
-        //[Command("password-reset")]
-        //[Aliases("password")]
-        //[Description("Сброс пароля")]
-        //public async Task PasswordReset(CommandContext ctx)
-        //{
-        //    DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-        //         .WithTitle(ctx.Member.DisplayName)
-        //         .WithColor(Constants.SuccessColor)
-        //         .WithDescription($"Пароль сменен! Новый пароль отправлен в личные сообщения. {Constants.HappySmile}");
-
-        //    YukoDbContext dbCtx = new YukoDbContext();
-        //    DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
-
-        //    string password = "";
-        //    Random random = new Random();
-        //    while (password.Length != 10)
-        //    {
-        //        password += (char)random.Next(33, 127);
-        //    }
-
-        //    using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-        //    {
-        //        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-        //        StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
-        //        foreach (byte code in hashBytes)
-        //        {
-        //            hashBuilder.Append(code.ToString("X2"));
-        //        }
-        //        dbUser.Password = hashBuilder.ToString();
-        //    }
-
-        //    await dbCtx.SaveChangesAsync();
-
-        //    DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
-        //    DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-        //        .WithColor(Constants.SuccessColor)
-        //        .WithTitle($"Пароль сменен! {Constants.HappySmile}")
-        //        .AddField("Новый пароль", password);
-        //    DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
-        //    await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
-
-        //    await ctx.RespondAsync(discordEmbed);
-        //}
-
         [Command("info-message-pm")]
         [Description("Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
         public async Task InfoMessagesInPM(CommandContext ctx,
