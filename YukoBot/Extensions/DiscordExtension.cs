@@ -26,5 +26,18 @@ namespace YukoBot.Extensions
             };
             return list;
         }
+
+        public static DiscordEmbedBuilder WithHappyTitle(this DiscordEmbedBuilder discordEmbedBuilder, string title) =>
+            discordEmbedBuilder.WithTitle($"{title} {Constants.HappySmile}");
+
+        public static DiscordEmbedBuilder WithSadTitle(this DiscordEmbedBuilder discordEmbedBuilder, string title) =>
+            discordEmbedBuilder.WithTitle($"{title} {Constants.SadSmile}");
+
+        public static DiscordEmbedBuilder WithHappyMessage(this DiscordEmbedBuilder discordEmbedBuilder, string title, string description) =>
+            discordEmbedBuilder.WithTitle($"{title} {Constants.HappySmile}").WithColor(Constants.SuccessColor).WithDescription(description);
+
+        public static DiscordEmbedBuilder WithSadMessage(this DiscordEmbedBuilder discordEmbedBuilder, string title, string description) =>
+            discordEmbedBuilder.WithTitle($"{title} {Constants.SadSmile}").WithColor(Constants.ErrorColor).WithDescription(description);
+
     }
 }

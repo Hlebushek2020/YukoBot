@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoBot.Commands;
+using YukoBot.Extensions;
 using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
@@ -124,19 +125,17 @@ namespace YukoBot
             DiscordUser dUser = context.User;
 
             DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-            {
-                Title = dMember?.DisplayName,
-                Color = DiscordColor.Red
-            };
+                .WithSadTitle(dMember != null ? dMember.DisplayName : dUser.Username)
+                .WithColor(Constants.ErrorColor);
 
             if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде `{command.Name}` ошибка! {Constants.SadSmile}");
+                embed.WithDescription($"Простите, в команде `{command.Name}` ошибка!");
                 _defaultLogger.LogWarning(new EventId(0, $"Command: {e.Command.Name}"), exception, "");
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды `{commandNotFoundEx.CommandName}`! {Constants.SadSmile}");
+                embed.WithDescription($"Простите, я не знаю команды `{commandNotFoundEx.CommandName}`!");
                 _defaultLogger.LogWarning(new EventId(0, $"Command: {commandNotFoundEx.CommandName}"), exception, "");
             }
             else if (exception is ChecksFailedException checksFailedEx)
@@ -150,7 +149,7 @@ namespace YukoBot
             }
             else
             {
-                embed.WithDescription($"Простите, при выполнении команды произошла неизвестная ошибка {Constants.SadSmile}, попробуйте обратиться к моему создателю");
+                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
                 _defaultLogger.LogError(new EventId(0, $"Command: {e.Command?.Name ?? "Unknown"}"), exception, "");
             }
 

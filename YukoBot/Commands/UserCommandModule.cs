@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using YukoBot.Commands.Models;
+using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 
@@ -25,9 +26,6 @@ namespace YukoBot.Commands
         [Description("Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
         public async Task Register(CommandContext ctx)
         {
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithTitle(ctx.Member.DisplayName);
-
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(ctx.User.Id);
             bool isRegister = false;
@@ -64,16 +62,18 @@ namespace YukoBot.Commands
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
+                .WithHappyTitle(isRegister ? "Регистрация прошла успешно!" : "Пароль сменен!")
                 .WithColor(Constants.SuccessColor)
-                .WithTitle($"{(isRegister ? "Регистрация прошла успешно!" : "Пароль сменен!")} {Constants.HappySmile}")
                 .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
                 .AddField(isRegister ? "Пароль" : "Новый пароль", password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
             await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
-            discordEmbed
-                .WithColor(Constants.SuccessColor)
-                .WithDescription($"{(isRegister ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС." : "Новый пароль от учетной записи отправлен в ЛС.")} {Constants.HappySmile}");
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(ctx.Member.DisplayName,
+                    isRegister
+                        ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС."
+                        : "Новый пароль от учетной записи отправлен в ЛС.");
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -112,10 +112,8 @@ namespace YukoBot.Commands
                     if (commandOfDescription.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
-                            .WithTitle($"{Settings.BotPrefix} | {Constants.HappySmile}")
-                            .WithColor(Constants.SuccessColor)
+                            .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
                             .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}")
-                            .WithDescription(Settings.BotDescription)
                             .AddField(category.Name, new string('=', category.Name.Length));
 
                         foreach (string[] item in commandOfDescription)
@@ -126,9 +124,7 @@ namespace YukoBot.Commands
                     else
                     {
                         embed = new DiscordEmbedBuilder()
-                            .WithTitle(ctx.Member.DisplayName)
-                            .WithColor(Constants.ErrorColor)
-                            .WithDescription(category.AccessError);
+                            .WithSadMessage(ctx.Member.DisplayName, category.AccessError);
                     }
 
                     await ctx.RespondAsync(embed);
@@ -143,11 +139,6 @@ namespace YukoBot.Commands
                     IEnumerable<CheckBaseAttribute> failedChecks = await command.RunChecksAsync(ctx, true);
                     if (failedChecks.Any())
                         throw new ChecksFailedException(command, ctx, failedChecks);
-
-                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                        .WithTitle($"{command.Name} | {Constants.HappySmile}")
-                        .WithColor(Constants.SuccessColor)
-                        .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
 
                     StringBuilder descriptionBuilder = new StringBuilder();
 
@@ -186,7 +177,9 @@ namespace YukoBot.Commands
                         }
                     }
 
-                    embed.WithDescription(descriptionBuilder.ToString());
+                    DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
+                        .WithHappyMessage($"{command.Name} |", descriptionBuilder.ToString())
+                        .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
 
                     await ctx.RespondAsync(embed);
                 }
@@ -218,10 +211,8 @@ namespace YukoBot.Commands
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                    .WithTitle($"{Settings.BotPrefix} | {Constants.HappySmile}")
-                    .WithColor(Constants.SuccessColor)
-                    .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}")
-                    .WithDescription(Settings.BotDescription);
+                    .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
+                    .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
 
                 foreach (Category mInfo in GetCategories())
                 {

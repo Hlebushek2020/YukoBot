@@ -15,7 +15,7 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
-        public override string CommandAccessError => $"Простите, эта команда доступна только владельцу бота! {Constants.SadSmile}";
+        public override string CommandAccessError => "Простите, эта команда доступна только владельцу бота!";
 
         public OwnerCommandModule() : base(Categories.Management) { }
 
@@ -64,7 +64,7 @@ namespace YukoBot.Commands
             {
                 dbUser.HasPremium = isEnabled;
                 await dbCtx.SaveChangesAsync();
-                await ctx.RespondAsync(isEnabled ? "Предоставлено" : "Отобрано");
+                await ctx.RespondAsync($"{(isEnabled ? "Предоставлено" : "Отобрано")}! {Constants.HappySmile}");
             }
             else
             {
