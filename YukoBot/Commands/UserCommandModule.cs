@@ -19,11 +19,14 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
-        public UserCommandModule() : base(Categories.User) { }
+        public UserCommandModule() : base(Categories.User)
+        {
+        }
 
         [Command("register")]
         [Aliases("reg")]
-        [Description("Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
+        [Description(
+            "Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
         public async Task Register(CommandContext ctx)
         {
             YukoDbContext dbCtx = new YukoDbContext();
@@ -67,7 +70,8 @@ namespace YukoBot.Commands
                 .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
                 .AddField(isRegister ? "Пароль" : "Новый пароль", password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
-            await userMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
+            await userMessage.CreateReactionAsync(
+                DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName,
@@ -78,17 +82,20 @@ namespace YukoBot.Commands
         }
 
         [Command("help")]
-        [Description("Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
+        [Description(
+            "Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
         public async Task Help(CommandContext ctx,
-            [Description("Категория или команда")] string categoryOrCommand = null)
+            [Description("Категория или команда")]
+            string categoryOrCommand = null)
         {
             if (categoryOrCommand != null)
             {
                 if (CheckHelpCategoryCommand(categoryOrCommand))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
-                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category.HelpCommand.Equals(categoryOrCommand) &&
-                            !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
+                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category
+                                    .HelpCommand.Equals(categoryOrCommand) &&
+                                    !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
                     List<string[]> commandOfDescription = new List<string[]>();
 
@@ -153,7 +160,10 @@ namespace YukoBot.Commands
                             descriptionBuilder.AppendLine($"**__Вариант {i + 1}__**");
                         }
 
-                        descriptionBuilder.AppendLine($"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}").AppendLine();
+                        descriptionBuilder
+                            .AppendLine(
+                                $"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}")
+                            .AppendLine();
 
                         if (command.Aliases?.Count != 0)
                         {
@@ -170,8 +180,11 @@ namespace YukoBot.Commands
                             descriptionBuilder.AppendLine("**Аргументы:**");
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
-                                string defaultValue = (argument.DefaultValue != null) ? $" (По умолчанию: {argument.DefaultValue})" : string.Empty;
-                                descriptionBuilder.AppendLine($"`{argument.Name}`: {argument.Description}{defaultValue}");
+                                string defaultValue = (argument.DefaultValue != null)
+                                    ? $" (По умолчанию: {argument.DefaultValue})"
+                                    : string.Empty;
+                                descriptionBuilder.AppendLine(
+                                    $"`{argument.Name}`: {argument.Description}{defaultValue}");
                             }
                             descriptionBuilder.AppendLine();
                         }

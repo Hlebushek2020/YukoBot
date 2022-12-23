@@ -19,12 +19,15 @@ namespace YukoBot.Commands
     [RequireRegistered]
     public class RegisteredUserCommandModule : CommandModule
     {
-        public override string CommandAccessError => "Простите, эта команда доступна для зарегистрированных пользователей!";
+        public override string CommandAccessError =>
+            "Простите, эта команда доступна для зарегистрированных пользователей!";
 
-        public RegisteredUserCommandModule() : base(Categories.User) { }
+        public RegisteredUserCommandModule() : base(Categories.User)
+        {
+        }
 
         [Command("settings")]
-        [Description("Показать настройки для подключения.")]
+        [Description("Показать настройки для подключения к боту.")]
         public async Task GetClientSettings(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -55,7 +58,8 @@ namespace YukoBot.Commands
                 .WithColor(Constants.SuccessColor);
 
             YukoDbContext dbCtx = new YukoDbContext();
-            List<DbBan> dbBanList = dbCtx.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id).ToList();
+            List<DbBan> dbBanList = dbCtx.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id)
+                .ToList();
             if (dbBanList.Count > 0)
             {
                 DbBan dbBan = dbBanList[0];
@@ -79,9 +83,11 @@ namespace YukoBot.Commands
         }
 
         [Command("info-message-pm")]
-        [Description("Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
+        [Description(
+            "Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
         public async Task InfoMessagesInPM(CommandContext ctx,
-            [Description("true - включить / false - отключить")] bool isEnabled)
+            [Description("true - включить / false - отключить")]
+            bool isEnabled)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
@@ -101,7 +107,8 @@ namespace YukoBot.Commands
         [Command("bug-report")]
         [Description("Сообщить об ошибке.")]
         public async Task BugReport(CommandContext ctx,
-            [Description("Описание ошибки"), RemainingText] string description)
+            [Description("Описание ошибки"), RemainingText]
+            string description)
         {
             DiscordEmbedBuilder discordEmbed = null;
 
@@ -163,7 +170,8 @@ namespace YukoBot.Commands
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
                 .AddField("Премиум: ", dbUser.HasPremium ? "есть" : "нет", true)
-                .AddField("Последний вход в приложение: ", dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "-", true)
+                .AddField("Последний вход в приложение: ",
+                    dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "-", true)
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "включены" : "отключены", true)
                 .WithColor(dbUser.HasPremium ? Constants.PremiumColor : Constants.SuccessColor);
 
@@ -176,11 +184,11 @@ namespace YukoBot.Commands
                     banListBuilder.AppendLine();
                 }
                 DiscordGuild discordGuild = ctx.Client.Guilds[ban.ServerId];
-                banListBuilder.Append(discordGuild.Name).Append(" - ").Append(string.IsNullOrEmpty(ban.Reason) ? "не указана" : ban.Reason);
+                banListBuilder.Append(discordGuild.Name).Append(" - ")
+                    .Append(string.IsNullOrEmpty(ban.Reason) ? "не указана" : ban.Reason);
             }
-
-            embedBuilder.AddField("Список текущих банов:", banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
-
+            embedBuilder.AddField("Список текущих банов:",
+                banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
             await ctx.RespondAsync(embedBuilder);
         }
     }

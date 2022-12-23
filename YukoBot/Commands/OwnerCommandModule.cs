@@ -17,7 +17,9 @@ namespace YukoBot.Commands
     {
         public override string CommandAccessError => "Простите, эта команда доступна только владельцу бота!";
 
-        public OwnerCommandModule() : base(Categories.Management) { }
+        public OwnerCommandModule() : base(Categories.Management)
+        {
+        }
 
         [Command("shutdown")]
         [Aliases("sd")]
@@ -35,11 +37,14 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.StatusColor)
                 .AddField("Net", $"v{Environment.Version}")
-                .AddField("Сборка", $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
-                .AddField("Дата запуска", $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
+                .AddField("Сборка",
+                    $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
+                .AddField("Дата запуска",
+                    $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
 
             TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
-            discordEmbed.AddField("Время работы", $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
+            discordEmbed.AddField("Время работы",
+                $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -55,8 +60,10 @@ namespace YukoBot.Commands
         [Command("set-premium")]
         [Description("Предоставление пользователю дополнительных возможностей.")]
         public async Task SetPremium(CommandContext ctx,
-            [Description("Участник сервера (гильдии)")] DiscordMember discordMember,
-            [Description("true - предоставить / false - отобрать")] bool isEnabled)
+            [Description("Участник сервера (гильдии)")]
+            DiscordMember discordMember,
+            [Description("true - предоставить / false - отобрать")]
+            bool isEnabled)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(discordMember.Id);

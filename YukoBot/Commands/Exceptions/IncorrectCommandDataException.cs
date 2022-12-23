@@ -1,25 +1,17 @@
 ﻿using DSharpPlus.Entities;
 using System;
+using System.Reflection.Metadata;
+using YukoBot.Extensions;
 
 namespace YukoBot.Commands.Exceptions
 {
     internal class IncorrectCommandDataException : Exception
     {
-        public IncorrectCommandDataException(string message) : base(message) { }
-
-        public DiscordEmbedBuilder ToDiscordEmbed(string title)
+        public IncorrectCommandDataException(string message) : base(message)
         {
-            return new DiscordEmbedBuilder()
-                .WithTitle(title)
-                .WithColor(Constants.ErrorColor)
-                .WithDescription($"{Message} {Constants.SadSmile}");
         }
 
-        public DiscordEmbedBuilder ToDiscordEmbed()
-        {
-            return new DiscordEmbedBuilder()
-                .WithColor(Constants.ErrorColor)
-                .WithDescription($"{Message} {Constants.SadSmile}");
-        }
+        public DiscordEmbedBuilder ToDiscordEmbed() =>
+            new DiscordEmbedBuilder().WithDescription(Message).WithColor(Constants.ErrorColor);
     }
 }
