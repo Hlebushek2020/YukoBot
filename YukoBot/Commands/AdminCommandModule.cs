@@ -36,7 +36,8 @@ namespace YukoBot.Commands
             if (dbUser == null)
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName, "Невозможно забанить незарегистрированного участника!");
+                    .WithSadMessage(ctx.Member.DisplayName,
+                        "Простите, я не могу забанить незарегистрированного участника!");
                 await ctx.RespondAsync(discordEmbed);
                 return;
             }
@@ -78,12 +79,14 @@ namespace YukoBot.Commands
             if (dbUser == null)
             {
                 discordEmbed.WithSadMessage(ctx.Member.DisplayName,
-                    "Невозможно разбанить незарегистрированного участника!");
+                    "Простите, я не могу разбанить незарегистрированного участника!");
             }
             else
             {
-                List<DbBan> dbBanList =
-                    dbCtx.Bans.Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
+                discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Участник не забанен!");
+
+                IReadOnlyList<DbBan> dbBanList = dbCtx.Bans
+                    .Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
                 if (dbBanList.Count > 0)
                 {
                     foreach (DbBan dbBan in dbBanList)
@@ -91,9 +94,9 @@ namespace YukoBot.Commands
                         dbCtx.Bans.Remove(dbBan);
                     }
                     await dbCtx.SaveChangesAsync();
-                }
 
-                discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Участник успешно разбанен!");
+                    discordEmbed.WithDescription("Участник успешно разбанен!");
+                }
             }
 
             await ctx.RespondAsync(discordEmbed);
@@ -113,7 +116,8 @@ namespace YukoBot.Commands
             if (dbUser == null)
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName, $"Участник {member.DisplayName} не зарегистрирован!");
+                    .WithSadMessage(ctx.Member.DisplayName,
+                        $"Простите, участник {member.DisplayName} не зарегистрирован!");
                 await ctx.RespondAsync(discordEmbed);
                 return;
             }
@@ -162,7 +166,7 @@ namespace YukoBot.Commands
             await dbCtx.SaveChangesAsync();
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, "Канал успешно установлен!");
+                .WithHappyMessage(ctx.Member.DisplayName, "Канал для поиска сообщений успешно установлен!");
             await ctx.RespondAsync(discordEmbed);
         }
 

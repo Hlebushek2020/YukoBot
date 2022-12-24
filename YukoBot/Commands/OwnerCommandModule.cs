@@ -26,7 +26,7 @@ namespace YukoBot.Commands
         [Description("Выключить бота.")]
         public async Task Shutdown(CommandContext ctx)
         {
-            await ctx.RespondAsync($"Будет сделано, хозяин! {Constants.HappySmile}");
+            await ctx.RespondAsync($"Хорошо, хозяин! {Constants.HappySmile}");
             YukoBot.Current.Shutdown();
         }
 
