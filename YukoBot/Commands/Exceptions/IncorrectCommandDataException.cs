@@ -11,6 +11,9 @@ namespace YukoBot.Commands.Exceptions
         {
         }
 
+        public DiscordEmbedBuilder ToDiscordEmbed(string title) =>
+            new DiscordEmbedBuilder().WithSadMessage(title, Message);
+
         public DiscordEmbedBuilder ToDiscordEmbed() =>
             new DiscordEmbedBuilder().WithDescription(Message).WithColor(Constants.ErrorColor);
     }
