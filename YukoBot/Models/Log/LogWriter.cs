@@ -9,23 +9,26 @@ namespace YukoBot.Models.Log
 {
     public class LogWriter : IDisposable
     {
-        public const string FileNameFormat = "yyyyMMdd";
+        public const string FileNameFormat = "yyyy_MM_dd";
         public const string LogDateTimeFormatter = "dd.MM.yyyy HH:mm:ss";
 
-        private static readonly ConcurrentDictionary<string, LogWriter> _logWritters = new ConcurrentDictionary<string, LogWriter>();
+        private static readonly ConcurrentDictionary<string, LogWriter> _logWritters =
+            new ConcurrentDictionary<string, LogWriter>();
 
         public bool IsDisposable { get; private set; } = false;
 
         private readonly StreamWriter _fileLog;
         private readonly string _postFix;
 
-        private LogWriter() { }
+        private LogWriter()
+        {
+        }
 
         private LogWriter(string postFix)
         {
             string logsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "logs");
             Directory.CreateDirectory(logsPath);
-            string fileName = Path.Combine(logsPath, $"{DateTime.Now.ToString(FileNameFormat)}{postFix}.txt");
+            string fileName = Path.Combine(logsPath, $"{DateTime.Now.ToString(FileNameFormat)}{postFix}.log");
             _fileLog = new StreamWriter(fileName, true, Encoding.UTF8) { AutoFlush = true };
             _postFix = postFix;
         }
@@ -37,9 +40,11 @@ namespace YukoBot.Models.Log
             _logWritters.TryRemove(_postFix, out _);
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+            Func<TState, Exception, string> formatter)
         {
-            string log = $"[{DateTime.Now.ToString(LogDateTimeFormatter)}] {logLevel.ToString().ToUpper()}; {(eventId.Name != null ? eventId.Name : "none")}";
+            string log =
+                $"[{DateTime.Now.ToString(LogDateTimeFormatter)}] {logLevel.ToString().ToUpper()}; {eventId.Name ?? "none"}";
 
             string formatedMessage = formatter(state, exception);
             if (!string.IsNullOrEmpty(formatedMessage))
