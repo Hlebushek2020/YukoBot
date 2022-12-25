@@ -23,7 +23,7 @@ using YukoBot.Settings;
 
 namespace YukoBot
 {
-    public partial class YukoBot : IDisposable
+    public class YukoBot : IDisposable
     {
         #region Instance
         private static YukoBot _yukoBot;
@@ -47,10 +47,9 @@ namespace YukoBot
         private Task _processTask;
         private static CancellationTokenSource _processCts;
 
-        private readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
-        private readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
         private readonly BotPingModule _botPingModule = new BotPingModule();
-        private readonly DeletingMessagesByEmojiModule _deletingMessagesByEmojiModule = new DeletingMessagesByEmojiModule();
+        private readonly DeletingMessagesByEmojiModule _deletingMessagesByEmojiModule =
+            new DeletingMessagesByEmojiModule();
 
         private readonly DiscordClient _discordClient;
         private readonly TcpListener _tcpListener;
@@ -101,7 +100,8 @@ namespace YukoBot
         }
 
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            await sender.UpdateStatusAsync(new DiscordActivity($"на тебя {Constants.HappySmile} | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
+            await sender.UpdateStatusAsync(new DiscordActivity(
+                $"на тебя {Constants.HappySmile} | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
 
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
@@ -112,7 +112,8 @@ namespace YukoBot
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
-            _defaultLogger.LogInformation(new EventId(0, $"Command: {e.Command.Name}"), "Command completed successfully");
+            _defaultLogger.LogInformation(new EventId(0, $"Command: {e.Command.Name}"),
+                "Command completed successfully");
             return Task.CompletedTask;
         }
 
@@ -140,7 +141,8 @@ namespace YukoBot
             }
             else if (exception is ChecksFailedException checksFailedEx)
             {
-                CommandModule yukoModule = (checksFailedEx.Command.Module as SingletonCommandModule).Instance as CommandModule;
+                CommandModule yukoModule =
+                    (checksFailedEx.Command.Module as SingletonCommandModule).Instance as CommandModule;
                 if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
                 {
                     embed.WithDescription(yukoModule.CommandAccessError);
@@ -149,7 +151,8 @@ namespace YukoBot
             }
             else
             {
-                embed.WithDescription("Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
+                embed.WithDescription(
+                    "Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
                 _defaultLogger.LogError(new EventId(0, $"Command: {e.Command?.Name ?? "Unknown"}"), exception, "");
             }
 
@@ -196,13 +199,16 @@ namespace YukoBot
 
                     while (!processToken.IsCancellationRequested)
                     {
-                        if (!_tcpListener.Pending())
+                        if (_tcpListener.Pending())
                         {
-                            Thread.Sleep(100);
-                            continue;
+                            YukoClient yukoClient =
+                                new YukoClient(_discordClient, await _tcpListener.AcceptTcpClientAsync());
+                            ThreadPool.QueueUserWorkItem(yukoClient.Process);
                         }
-
-                        ThreadPool.QueueUserWorkItem(TcpClientProcessing, _tcpListener.AcceptTcpClient());
+                        else
+                        {
+                            await Task.Delay(100, processToken);
+                        }
                     }
                 }, processToken);
             }
@@ -223,9 +229,9 @@ namespace YukoBot
             _tcpListener?.Stop();
 
             _defaultLogger.LogInformation(eventId, "Waiting for clients to disconnect");
-            while (countClient > 0)
+            while (YukoClient.Availability)
             {
-                Thread.Sleep(100);
+                Task.Delay(100);
             }
 
             if (_discordClient != null)
