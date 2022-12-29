@@ -57,10 +57,7 @@ namespace YukoBot.Commands
                     throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
                 }
 
-                DiscordEmbedBuilder discordEmbed =
-                    DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase)
-                        ? await AddToCollection(ctx, dbCtx, message)
-                        : await AddToCollection(ctx, dbCtx, message, nameOrId);
+                DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, dbCtx, message, nameOrId);
                 await SendSpecialMessage(ctx, discordEmbed, dbCtx);
             }
             catch (IncorrectCommandDataException ex)
@@ -85,7 +82,6 @@ namespace YukoBot.Commands
                 YukoDbContext dbCtx = new YukoDbContext();
                 DbGuildSettings guildSettings = dbCtx.GuildsSettings.Find(ctx.Guild.Id);
                 DiscordChannel discordChannel = ctx.Channel;
-                bool useDefaultCollection = DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase);
                 bool artChannel = guildSettings != null && guildSettings.ArtChannelId.HasValue &&
                                   discordChannel.Id != guildSettings.ArtChannelId;
                 if (artChannel)
@@ -130,9 +126,7 @@ namespace YukoBot.Commands
                         : "Простите, у меня нет прав на чтение сообщений в текущем канале!");
                 }
 
-                DiscordEmbedBuilder discordEmbed = useDefaultCollection
-                    ? await AddToCollection(ctx, dbCtx, message)
-                    : await AddToCollection(ctx, dbCtx, message, nameOrId);
+                DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, dbCtx, message, nameOrId);
                 await ctx.RespondAsync(discordEmbed);
             }
             catch (IncorrectCommandDataException ex)
@@ -205,19 +199,22 @@ namespace YukoBot.Commands
                 DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
                     ? dbCtx.Collections.Find(id)
                     : dbCtx.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
-                if (DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase) && dbCollection == null)
-                {
-                    dbCollection = new DbCollection
-                    {
-                        UserId = memberId,
-                        Name = DefaultCollection
-                    };
-                    dbCtx.Collections.Add(dbCollection);
-                    await dbCtx.SaveChangesAsync();
-                }
                 if (dbCollection == null)
                 {
-                    throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
+                    if (DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        dbCollection = new DbCollection
+                        {
+                            UserId = memberId,
+                            Name = DefaultCollection
+                        };
+                        dbCtx.Collections.Add(dbCollection);
+                        await dbCtx.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
+                    }
                 }
 
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -564,7 +561,7 @@ namespace YukoBot.Commands
 
         #region NOT COMMAND
         private static async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
-            DiscordMessage message, string nameOrId = null)
+            DiscordMessage message, string nameOrId)
         {
             if (!message.HasImages())
             {
@@ -572,32 +569,26 @@ namespace YukoBot.Commands
                     "Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!");
             }
 
-            DbCollection dbCollection;
             ulong memberId = ctx.Member.Id;
-            if (nameOrId != null)
+            DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
+                ? dbCtx.Collections.Find(id)
+                : dbCtx.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
+            if (dbCollection == null)
             {
-                if (ulong.TryParse(nameOrId, out ulong id))
+                if (DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase))
                 {
-                    dbCollection = dbCtx.Collections.Find(id);
+                    dbCollection = new DbCollection
+                    {
+                        UserId = memberId,
+                        Name = DefaultCollection
+                    };
+                    dbCtx.Collections.Add(dbCollection);
+                    await dbCtx.SaveChangesAsync();
                 }
                 else
                 {
-                    dbCollection = dbCtx.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
-                }
-                if (dbCollection == null)
-                {
                     throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
                 }
-            }
-            else
-            {
-                dbCollection = new DbCollection
-                {
-                    UserId = memberId,
-                    Name = DefaultCollection
-                };
-                dbCtx.Collections.Add(dbCollection);
-                await dbCtx.SaveChangesAsync();
             }
 
             DbCollectionItem dbCollectionItem =
