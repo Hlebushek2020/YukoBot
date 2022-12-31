@@ -207,7 +207,7 @@ namespace YukoBot
                         }
                         else
                         {
-                            await Task.Delay(100, processToken);
+                            await Task.Delay(200);
                         }
                     }
                 }, processToken);
