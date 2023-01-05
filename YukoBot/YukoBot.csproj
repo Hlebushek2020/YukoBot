@@ -6,8 +6,8 @@
     <RootNamespace>YukoBot</RootNamespace>
 	<Authors>Sergey Govorunov</Authors>
 	<Copyright>Sergey Govorunov</Copyright>
-	<AssemblyVersion>4.1.0.0</AssemblyVersion>
-	<FileVersion>4.1.0.0</FileVersion>
+	<AssemblyVersion>4.0.1.0</AssemblyVersion>
+	<FileVersion>4.0.1.0</FileVersion>
 	<AssemblyName>YukoBot</AssemblyName>
   </PropertyGroup>
 
