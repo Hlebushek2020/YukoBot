@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YukoBot.Commands.Attributes;
+using YukoBot.Commands.Exceptions;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
@@ -31,6 +32,16 @@ namespace YukoBot.Commands
             string reason = null)
         {
             DiscordEmbedBuilder discordEmbed = null;
+
+            if (ctx.User.Id.Equals(member.Id))
+            {
+                discordEmbed = new DiscordEmbedBuilder()
+                    .WithSadMessage(ctx.Member.DisplayName,
+                        "Простите, самобан запрещен!");
+                await ctx.RespondAsync(discordEmbed);
+                return;
+            }
+
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(member.Id);
             if (dbUser == null)
@@ -73,6 +84,15 @@ namespace YukoBot.Commands
             DiscordMember member)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder();
+
+            if (ctx.User.Id.Equals(member.Id))
+            {
+                discordEmbed = new DiscordEmbedBuilder()
+                    .WithSadMessage(ctx.Member.DisplayName,
+                        "Простите, саморазбан запрещен!");
+                await ctx.RespondAsync(discordEmbed);
+                return;
+            }
 
             YukoDbContext dbCtx = new YukoDbContext();
             DbUser dbUser = dbCtx.Users.Find(member.Id);
