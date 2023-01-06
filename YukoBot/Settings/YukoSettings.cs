@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using YukoBot.Interfaces;
 
-namespace YukoBot
+namespace YukoBot.Settings
 {
     public class YukoSettings : IReadOnlyYukoSettings
     {

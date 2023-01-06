@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using YukoBot.Models.Log;
+using YukoBot.Models.Log.Providers;
+using YukoBot.Settings;
 
 namespace YukoBot
 {
@@ -17,14 +19,15 @@ namespace YukoBot
 
             try
             {
-                using (YukoBot yukoBot = YukoBot.Current)
+                using (YukoBot yuko = YukoBot.Current)
                 {
-                    yukoBot.RunAsync().GetAwaiter().GetResult();
+                    yuko.RunAsync().GetAwaiter().GetResult();
                 }
             }
             catch (Exception ex)
             {
-                YukoLoggerFactory.GetInstance().CreateLogger<ServerLogger>().Log(LogLevel.Critical, "App", ex);
+                ILogger defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
+                defaultLogger.LogCritical(new EventId(0, "App"), ex, "");
                 return 1;
             }
 

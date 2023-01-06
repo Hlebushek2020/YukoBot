@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using YukoBot.Commands.Models;
 using YukoBot.Interfaces;
+using YukoBot.Settings;
 
 namespace YukoBot.Commands
 {
@@ -12,7 +13,7 @@ namespace YukoBot.Commands
         public static IReadOnlyYukoSettings Settings { get; } = YukoSettings.Current;
 
         public Category Category { get; }
-        public string CommandAccessError { get; protected set; }
+        public virtual string CommandAccessError { get; }
 
         public CommandModule(Category category)
         {
