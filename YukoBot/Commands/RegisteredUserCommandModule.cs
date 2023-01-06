@@ -169,10 +169,10 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
-                .AddField("Премиум: ", dbUser.HasPremium ? "есть" : "нет", true)
+                .AddField("Премиум: ", dbUser.HasPremium ? "Есть" : "Нет", true)
                 .AddField("Последний вход в приложение: ",
                     dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "-", true)
-                .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "включены" : "отключены", true)
+                .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
                 .WithColor(dbUser.HasPremium ? Constants.PremiumColor : Constants.SuccessColor);
 
             IList<DbBan> bans = dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
