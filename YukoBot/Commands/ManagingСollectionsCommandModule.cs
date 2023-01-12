@@ -222,7 +222,7 @@ namespace YukoBot.Commands
                         "Пожалуйста подождите, после завершения операции я изменю это сообщение!");
                 DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                 DiscordMessage dmMessage = await dmChannel.SendMessageAsync(discordEmbed);
-                discordEmbed.WithDescription("Сообщения успешно добавлены!");
+                discordEmbed.WithDescription($"Сообщения в коллекцию \"{dbCollection.Name}\" успешно добавлены!");
 
                 HashSet<ulong> collectionItems = dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
@@ -264,7 +264,7 @@ namespace YukoBot.Commands
                                     $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
 
                                 discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
-                                    "Простите, во время добавления сообщения произошла ошибка. Добавлены не все сообщения!");
+                                    $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Добавлены не все сообщения!");
                             }
                         }
                         if (discordMessage.Id == messageEndId)

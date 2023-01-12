@@ -34,11 +34,13 @@ namespace YukoBot.Commands
         [Description("Сведения о боте.")]
         public async Task Status(CommandContext ctx)
         {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.StatusColor)
                 .AddField("Net", $"v{Environment.Version}")
                 .AddField("Сборка",
-                    $"v{Assembly.GetExecutingAssembly().GetName().Version} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
+                    $"v{version.Major}.{version.Minor}.{version.Build} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
                 .AddField("Дата запуска",
                     $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
 

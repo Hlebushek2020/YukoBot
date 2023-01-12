@@ -157,7 +157,10 @@ namespace YukoBot
             }
 
             bool sendToCurrentChannel = true;
-            if (dMember != null && command != null && command.Name.Equals("add", StringComparison.OrdinalIgnoreCase))
+            if (dMember != null && command != null &&
+                (command.Name.Equals("add", StringComparison.OrdinalIgnoreCase) ||
+                 command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
+                 command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
                 YukoDbContext dbContext = new YukoDbContext();
                 DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);

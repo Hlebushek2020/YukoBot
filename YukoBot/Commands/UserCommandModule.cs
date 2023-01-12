@@ -88,6 +88,8 @@ namespace YukoBot.Commands
             [Description("Категория или команда")]
             string categoryOrCommand = null)
         {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
             if (categoryOrCommand != null)
             {
                 if (CheckHelpCategoryCommand(categoryOrCommand))
@@ -120,7 +122,7 @@ namespace YukoBot.Commands
                     {
                         embed = new DiscordEmbedBuilder()
                             .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
-                            .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}")
+                            .WithFooter(versionString)
                             .AddField(category.Name, new string('=', category.Name.Length));
 
                         foreach (string[] item in commandOfDescription)
@@ -192,7 +194,7 @@ namespace YukoBot.Commands
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                         .WithHappyMessage($"{command.Name} |", descriptionBuilder.ToString())
-                        .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
+                        .WithFooter(versionString);
 
                     await ctx.RespondAsync(embed);
                 }
@@ -225,7 +227,7 @@ namespace YukoBot.Commands
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                     .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
-                    .WithFooter($"v{Assembly.GetExecutingAssembly().GetName().Version}");
+                    .WithFooter(versionString);
 
                 foreach (Category mInfo in GetCategories())
                 {
