@@ -18,7 +18,7 @@ namespace YukoBot.Models.Database.Entities
         public DbUser User { get; set; }
 
         [Required]
-        [Column("server")]
+        [Column("server_id")]
         public ulong ServerId { get; set; }
 
         [MaxLength(256)]

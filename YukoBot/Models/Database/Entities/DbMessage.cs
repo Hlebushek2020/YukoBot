@@ -11,6 +11,10 @@ namespace YukoBot.Models.Database.Entities
         [Column("id")]
         public ulong Id { get; set; }
 
+        [Required]
+        [Column("channel_id")]
+        public ulong ChannelId { get; set; }
+
         [Column("links")]
         [Required]
         public string Link { get; set; }

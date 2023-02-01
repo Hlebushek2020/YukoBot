@@ -13,7 +13,7 @@ namespace YukoBot.Models.Database
         public DbSet<DbCollection> Collections { get; set; }
         public DbSet<DbCollectionItem> CollectionItems { get; set; }
         public DbSet<DbGuildSettings> GuildsSettings { get; set; }
-        public DbSet<DbMessage> MessageLinks { get; set; }
+        public DbSet<DbMessage> Messages { get; set; }
 
         public YukoDbContext()
         {
@@ -24,7 +24,8 @@ namespace YukoBot.Models.Database
         {
             IReadOnlyYukoSettings settings = YukoSettings.Current;
 
-            string connection = $"server={settings.DatabaseHost};user={settings.DatabaseUser};password={settings.DatabasePassword};database=YukoBot;";
+            string connection =
+                $"server={settings.DatabaseHost};user={settings.DatabaseUser};password={settings.DatabasePassword};database=YukoBot;";
             MySqlServerVersion serverVersion = new MySqlServerVersion(
                 new Version(settings.DatabaseVersion[0], settings.DatabaseVersion[1], settings.DatabaseVersion[2]));
             optionsBuilder.UseMySql(connection, serverVersion);

@@ -17,14 +17,14 @@ namespace YukoBot.Models.Database.Entities
 
         public DbCollection Collection { get; set; }
 
-        [Required]
-        [Column("channel")]
-        public ulong ChannelId { get; set; }
-
         [ForeignKey(nameof(Message))]
         [Column("message_id")]
         public ulong MessageId { get; set; }
 
         public DbMessage Message { get; set; }
+
+        [Required]
+        [Column("is_saved_links")]
+        public bool IsSavedLinks { get; set; }
     }
 }

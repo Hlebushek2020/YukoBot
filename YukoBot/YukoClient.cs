@@ -14,6 +14,7 @@ using YukoBot.Enums;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Models.Database.JoinedEntities;
 using YukoBot.Models.Log;
 using YukoBot.Models.Log.Providers;
 using YukoBot.Models.Web;
@@ -249,14 +250,16 @@ namespace YukoBot
             foreach (DbCollection dbCollection in dbCollections)
             {
                 MessageCollectionWeb collection = new MessageCollectionWeb { Name = dbCollection.Name };
-                IQueryable<DbCollectionItem> dbCollectionItems =
-                    _dbCtx.CollectionItems.Where(x => x.CollectionId == dbCollection.Id);
-                foreach (DbCollectionItem dbCollectionItem in dbCollectionItems)
+                IQueryable<DbMessage> dbCollectionItems = _dbCtx.CollectionItems
+                    .Where(x => x.CollectionId == dbCollection.Id)
+                    .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
+                        (ci, m) => new DbMessage { Id = m.Id, ChannelId = m.ChannelId });
+                foreach (DbMessage dbMessage in dbCollectionItems)
                 {
                     collection.Items.Add(new MessageCollectionItemWeb
                     {
-                        ChannelId = dbCollectionItem.ChannelId,
-                        MessageId = dbCollectionItem.MessageId
+                        ChannelId = dbMessage.ChannelId,
+                        MessageId = dbMessage.Id
                     });
                 }
                 response.MessageCollections.Add(collection);
@@ -278,6 +281,16 @@ namespace YukoBot
             {
                 using IEnumerator<MessageCollectionItemWeb> groupItemEnumerator =
                     groupEnumerator.Current.GetEnumerator();
+                Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
+                    .Where(ci => ci.CollectionId == groupEnumerator.Current.Key)
+                    .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
+                        (ci, m) => new CollectionItemJoinMessage
+                        {
+                            MessageId = m.Id,
+                            Link = m.Link,
+                            IsSavedLinks = ci.IsSavedLinks
+                        })
+                    .ToDictionary(k => k.MessageId);
                 DiscordChannel discordChannel = null;
                 while (groupItemEnumerator.MoveNext())
                 {

@@ -240,32 +240,7 @@ namespace YukoBot.Commands
                         discordMessage = messages[numMessage];
                         if (discordMessage.HasImages() && !collectionItems.Contains(discordMessage.Id))
                         {
-                            dbCtx.CollectionItems.Add(new DbCollectionItem
-                            {
-                                ChannelId = channel.Id,
-                                CollectionId = dbCollection.Id,
-                                MessageId = discordMessage.Id
-                            });
-                            if (dbUser.HasPremium)
-                            {
-                                dbCtx.MessageLinks.Add(new DbMessage
-                                {
-                                    Id = discordMessage.Id,
-                                    Link = string.Join(";", discordMessage.GetImages())
-                                });
-                            }
-                            try
-                            {
-                                await dbCtx.SaveChangesAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                _defaultLogger.LogError(new EventId(0, "Command: end"), ex,
-                                    $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
-
-                                discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
-                                    $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Добавлены не все сообщения!");
-                            }
+                            await SaveCollectionItem(ctx, discordMessage, discordEmbed, dbCtx, dbCollection, dbUser);
                         }
                         if (discordMessage.Id == messageEndId)
                         {
@@ -560,7 +535,46 @@ namespace YukoBot.Commands
         #endregion
 
         #region NOT COMMAND
-        private static async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
+        private async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
+            DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, DbUser dbUser)
+        {
+            dbCtx.CollectionItems.Add(new DbCollectionItem
+            {
+                CollectionId = dbCollection.Id,
+                MessageId = discordMessage.Id,
+                IsSavedLinks = dbUser.HasPremium
+            });
+
+            DbMessage dbMessage = dbCtx.Messages.Find(discordMessage.Id);
+            if (dbMessage == null)
+            {
+                dbMessage = new DbMessage
+                {
+                    Id = discordMessage.Id,
+                    ChannelId = ctx.Channel.Id
+                };
+                dbCtx.Messages.Add(dbMessage);
+            }
+            if (dbUser.HasPremium)
+            {
+                dbMessage.Link = string.Join(";", discordMessage.GetImages());
+            }
+
+            try
+            {
+                await dbCtx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _defaultLogger.LogError(new EventId(0, $"Command: {ctx.Command.Name}"), ex,
+                    $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
+
+                discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
+                    $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка.{(ctx.Command.Name.Equals("end") ? " Добавлены не все сообщения!" : "")}");
+            }
+        }
+
+        private async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
             DiscordMessage message, string nameOrId)
         {
             if (!message.HasImages())
@@ -600,22 +614,10 @@ namespace YukoBot.Commands
                     $"Простите, данное сообщение уже добавлено в коллекцию \"{dbCollection.Name}\"!");
             }
 
-            dbCollectionItem = new DbCollectionItem
-            {
-                ChannelId = message.ChannelId,
-                MessageId = message.Id,
-                CollectionId = dbCollection.Id
-            };
-            dbCtx.CollectionItems.Add(dbCollectionItem);
-            if (dbCtx.Users.Find(memberId).HasPremium)
-            {
-                dbCtx.MessageLinks.Add(new DbMessage
-                {
-                    Link = string.Join(";", message.GetImages()),
-                    Id = message.Id
-                });
-            }
-            await dbCtx.SaveChangesAsync();
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
+
+            await SaveCollectionItem(ctx, message, discordEmbed, dbCtx, dbCollection, dbCtx.Users.Find(memberId));
 
             return new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
