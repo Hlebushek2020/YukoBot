@@ -566,8 +566,16 @@ namespace YukoBot.Commands
                 _defaultLogger.LogError(new EventId(0, $"Command: {ctx.Command.Name}"), ex,
                     $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
 
-                discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
-                    $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка.{(ctx.Command.Name.Equals("end") ? " Добавлены не все сообщения!" : "")}");
+                if (ctx.Command.Name.Equals("end"))
+                {
+                    discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
+                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Добавлены не все сообщения!");
+                }
+                else
+                {
+                    discordEmbed.WithSadMessage(ctx.Member.DisplayName,
+                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Сообщение не добавлено в коллекцию!");
+                }
             }
         }
 
@@ -616,8 +624,7 @@ namespace YukoBot.Commands
 
             await SaveCollectionItem(ctx, message, discordEmbed, dbCtx, dbCollection, dbCtx.Users.Find(memberId));
 
-            return new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
+            return discordEmbed;
         }
 
         private static async Task RenameCollection(CommandContext ctx, YukoDbContext dbCtx, DbCollection dbCollection,
