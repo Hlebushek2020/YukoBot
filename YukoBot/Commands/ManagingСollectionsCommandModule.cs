@@ -664,7 +664,6 @@ namespace YukoBot.Commands
                 }
                 if (send)
                 {
-                    embed.WithSadTitle(ctx.User.Username);
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                     DiscordMessage discordMessage = await dmChannel.SendMessageAsync(embed);
                     await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client,
@@ -673,7 +672,6 @@ namespace YukoBot.Commands
             }
             else
             {
-                embed.WithSadTitle(ctx.Member.DisplayName);
                 await ctx.RespondAsync(embed);
             }
         }
