@@ -25,20 +25,20 @@ namespace YukoBot.Models.Database.Entities
         public ulong UserId { get; set; }
 
         /// <summary>
-        /// User entry associated with this entry. Is not a column.
+        /// User entry associated with this entry. Is not a column. Optional field.
         /// </summary>
         public DbUser User { get; set; }
 
         /// <summary>
         /// Unique identifier of the server associated with this entry. This identifier is taken from the
-        /// <see cref="DSharpPlus.Entities.DiscordChannel"/> class.
+        /// corresponding property of the <see cref="DSharpPlus.Entities.DiscordChannel"/> class. Required field.
         /// </summary>
         [Required]
         [Column("server_id")]
         public ulong ServerId { get; set; }
 
         /// <summary>
-        /// Reason for banning the user associated with this entry. Optional field.
+        /// Reason for blocking a user on a given server (must not exceed 256 characters). Optional field.
         /// </summary>
         [MaxLength(256)]
         [Column("reason")]
