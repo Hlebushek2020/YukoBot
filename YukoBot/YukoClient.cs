@@ -269,6 +269,7 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
+            int slipTime = _messageLimitSleepMs / 20;
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             List<ulong> channelNotFound = new List<ulong>();
@@ -295,15 +296,21 @@ namespace YukoBot
                 while (groupItemEnumerator.MoveNext())
                 {
                     ulong messageId = groupItemEnumerator.Current.MessageId;
-                    DbMessage dbMessage = dbCtx.MessageLinks.FirstOrDefault(x => x.Id == messageId);
-                    if (dbMessage != null)
+                    if (collectionItems.ContainsKey(messageId))
                     {
+                        CollectionItemJoinMessage collectionItem = collectionItems[messageId];
+
                         response = new UrlsResponse
                         {
                             Next = true,
-                            Urls = dbMessage.Link.Split(";").ToList()
+                            Urls = collectionItem.Link.Split(";").ToList()
                         };
                         _binaryWriter.Write(response.ToString());
+
+                        if (!collectionItem.IsSavedLinks)
+                        {
+                            Thread.Sleep(slipTime);
+                        }
                     }
                     else
                     {
@@ -322,7 +329,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(_messageLimitSleepMs / 20);
+                            Thread.Sleep(slipTime);
                         }
                         catch (NotFoundException)
                         {

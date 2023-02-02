@@ -28,11 +28,11 @@ namespace YukoBot.Commands
 
         private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges =
             new ConcurrentDictionary<ulong, RangeStartInfo>();
+        private static readonly ILogger _defaultLogger =
+            YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public override string CommandAccessError =>
             "Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
-
-        private readonly ILogger _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public ManagingСollectionsCommandModule() : base(Categories.CollectionManagement)
         {
@@ -535,7 +535,7 @@ namespace YukoBot.Commands
         #endregion
 
         #region NOT COMMAND
-        private async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
+        private static async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
             DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, DbUser dbUser)
         {
             dbCtx.CollectionItems.Add(new DbCollectionItem
@@ -555,10 +555,7 @@ namespace YukoBot.Commands
                 };
                 dbCtx.Messages.Add(dbMessage);
             }
-            if (dbUser.HasPremium)
-            {
-                dbMessage.Link = string.Join(";", discordMessage.GetImages());
-            }
+            dbMessage.Link = string.Join(";", discordMessage.GetImages());
 
             try
             {
@@ -574,7 +571,7 @@ namespace YukoBot.Commands
             }
         }
 
-        private async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
+        private static async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
             DiscordMessage message, string nameOrId)
         {
             if (!message.HasImages())
