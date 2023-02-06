@@ -269,7 +269,7 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
-            int slipTime = _messageLimitSleepMs / 20;
+            int sleepTime = _messageLimitSleepMs / 20;
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             List<ulong> channelNotFound = new List<ulong>();
@@ -309,7 +309,7 @@ namespace YukoBot
 
                         if (!collectionItem.IsSavedLinks)
                         {
-                            Thread.Sleep(slipTime);
+                            Thread.Sleep(sleepTime);
                         }
                     }
                     else
@@ -329,7 +329,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(slipTime);
+                            Thread.Sleep(sleepTime);
                         }
                         catch (NotFoundException)
                         {
