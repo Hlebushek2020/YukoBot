@@ -28,11 +28,11 @@ namespace YukoBot.Commands
 
         private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges =
             new ConcurrentDictionary<ulong, RangeStartInfo>();
+        private static readonly ILogger _defaultLogger =
+            YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public override string CommandAccessError =>
             "Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";
-
-        private readonly ILogger _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public ManagingСollectionsCommandModule() : base(Categories.CollectionManagement)
         {
@@ -240,32 +240,7 @@ namespace YukoBot.Commands
                         discordMessage = messages[numMessage];
                         if (discordMessage.HasImages() && !collectionItems.Contains(discordMessage.Id))
                         {
-                            dbCtx.CollectionItems.Add(new DbCollectionItem
-                            {
-                                ChannelId = channel.Id,
-                                CollectionId = dbCollection.Id,
-                                MessageId = discordMessage.Id
-                            });
-                            if (dbUser.HasPremium)
-                            {
-                                dbCtx.MessageLinks.Add(new DbMessage
-                                {
-                                    Id = discordMessage.Id,
-                                    Link = string.Join(";", discordMessage.GetImages())
-                                });
-                            }
-                            try
-                            {
-                                await dbCtx.SaveChangesAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                _defaultLogger.LogError(new EventId(0, "Command: end"), ex,
-                                    $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
-
-                                discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
-                                    $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Добавлены не все сообщения!");
-                            }
+                            await SaveCollectionItem(ctx, discordMessage, discordEmbed, dbCtx, dbCollection, dbUser);
                         }
                         if (discordMessage.Id == messageEndId)
                         {
@@ -560,6 +535,50 @@ namespace YukoBot.Commands
         #endregion
 
         #region NOT COMMAND
+        private static async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
+            DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, DbUser dbUser)
+        {
+            dbCtx.CollectionItems.Add(new DbCollectionItem
+            {
+                CollectionId = dbCollection.Id,
+                MessageId = discordMessage.Id,
+                IsSavedLinks = dbUser.HasPremium
+            });
+
+            DbMessage dbMessage = dbCtx.Messages.Find(discordMessage.Id);
+            if (dbMessage == null)
+            {
+                dbMessage = new DbMessage
+                {
+                    Id = discordMessage.Id,
+                    ChannelId = ctx.Channel.Id
+                };
+                dbCtx.Messages.Add(dbMessage);
+            }
+            dbMessage.Link = string.Join(";", discordMessage.GetImages());
+
+            try
+            {
+                await dbCtx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _defaultLogger.LogError(new EventId(0, $"Command: {ctx.Command.Name}"), ex,
+                    $"{ctx.Guild.Name}, {ctx.Channel}, {discordMessage.Id}");
+
+                if (ctx.Command.Name.Equals("end"))
+                {
+                    discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
+                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Добавлены не все сообщения!");
+                }
+                else
+                {
+                    discordEmbed.WithSadMessage(ctx.Member.DisplayName,
+                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name}\" произошла ошибка. Сообщение не добавлено в коллекцию!");
+                }
+            }
+        }
+
         private static async Task<DiscordEmbedBuilder> AddToCollection(CommandContext ctx, YukoDbContext dbCtx,
             DiscordMessage message, string nameOrId)
         {
@@ -600,25 +619,12 @@ namespace YukoBot.Commands
                     $"Простите, данное сообщение уже добавлено в коллекцию \"{dbCollection.Name}\"!");
             }
 
-            dbCollectionItem = new DbCollectionItem
-            {
-                ChannelId = message.ChannelId,
-                MessageId = message.Id,
-                CollectionId = dbCollection.Id
-            };
-            dbCtx.CollectionItems.Add(dbCollectionItem);
-            if (dbCtx.Users.Find(memberId).HasPremium)
-            {
-                dbCtx.MessageLinks.Add(new DbMessage
-                {
-                    Link = string.Join(";", message.GetImages()),
-                    Id = message.Id
-                });
-            }
-            await dbCtx.SaveChangesAsync();
-
-            return new DiscordEmbedBuilder()
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
+
+            await SaveCollectionItem(ctx, message, discordEmbed, dbCtx, dbCollection, dbCtx.Users.Find(memberId));
+
+            return discordEmbed;
         }
 
         private static async Task RenameCollection(CommandContext ctx, YukoDbContext dbCtx, DbCollection dbCollection,
@@ -658,7 +664,6 @@ namespace YukoBot.Commands
                 }
                 if (send)
                 {
-                    embed.WithSadTitle(ctx.User.Username);
                     DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
                     DiscordMessage discordMessage = await dmChannel.SendMessageAsync(embed);
                     await discordMessage.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client,
@@ -667,7 +672,6 @@ namespace YukoBot.Commands
             }
             else
             {
-                embed.WithSadTitle(ctx.Member.DisplayName);
                 await ctx.RespondAsync(embed);
             }
         }
