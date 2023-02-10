@@ -511,8 +511,10 @@ namespace YukoBot.Commands
                         x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId));
                 if (collection != null && collection.UserId == commandContext.Member.Id)
                 {
+                    // Due to the fact that the EF cannot construct a query to take the last elements, the AsEnumerable
+                    // transformation is used, which will execute the query and return an enumeration
                     IEnumerable<DbCollectionItem> items = dbContext.CollectionItems
-                        .Where(x => x.CollectionId == collection.Id).TakeLast(25);
+                        .Where(x => x.CollectionId == collection.Id).AsEnumerable().TakeLast(25);
                     StringBuilder stringBuilder = new StringBuilder();
                     foreach (DbCollectionItem item in items)
                     {
