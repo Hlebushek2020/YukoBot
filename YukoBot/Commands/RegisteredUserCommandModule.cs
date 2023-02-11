@@ -125,8 +125,12 @@ namespace YukoBot.Commands
                     .WithTitle("Bug-Report")
                     .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
                     .AddField("Guild", ctx.Guild.Name)
-                    .AddField("Description", description)
                     .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+
+                if (!string.IsNullOrEmpty(description))
+                {
+                    reportEmbed.AddField("Description", description);
+                }
 
                 DiscordMessageBuilder reportMessage = new DiscordMessageBuilder().WithEmbed(reportEmbed);
                 foreach (DiscordAttachment attachment in discordMessage.Attachments)
