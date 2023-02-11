@@ -28,8 +28,6 @@ namespace YukoBot.Commands
 
         private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges =
             new ConcurrentDictionary<ulong, RangeStartInfo>();
-        private static readonly ILogger _defaultLogger =
-            YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
         public override string CommandAccessError =>
             "Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!";

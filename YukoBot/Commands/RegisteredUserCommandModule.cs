@@ -1,12 +1,15 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using System;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using YukoBot.Commands.Attributes;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
@@ -114,31 +117,50 @@ namespace YukoBot.Commands
 
             if (Settings.BugReport)
             {
+                EventId eventId = new EventId(0, $"Command: {ctx.Command.Name}");
                 DiscordMessage discordMessage = ctx.Message;
-
-                Dictionary<string, Stream> files = new Dictionary<string, Stream>();
-                foreach (DiscordAttachment attachment in discordMessage.Attachments)
-                {
-                    WebClient webClient = new WebClient();
-                    MemoryStream memoryStream = new MemoryStream(webClient.DownloadData(attachment.Url));
-                    files.Add(files.Count + attachment.FileName, memoryStream);
-                }
 
                 DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
                     .WithColor(Constants.SuccessColor)
                     .WithTitle("Bug-Report")
                     .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
                     .AddField("Guild", ctx.Guild.Name)
-                    .AddField("Description", description)
                     .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
-                DiscordMessageBuilder reportMessage = new DiscordMessageBuilder()
-                    .WithEmbed(reportEmbed)
-                    .AddFiles(files, true);
-
-                if (discordMessage.ReferencedMessage != null && discordMessage.ReferencedMessage.Embeds != null)
+                if (!string.IsNullOrEmpty(description))
                 {
-                    reportMessage.AddEmbeds(discordMessage.ReferencedMessage.Embeds);
+                    reportEmbed.AddField("Description", description);
+                }
+
+                DiscordMessageBuilder reportMessage = new DiscordMessageBuilder().WithEmbed(reportEmbed);
+                foreach (DiscordAttachment attachment in discordMessage.Attachments)
+                {
+                    try
+                    {
+                        using HttpClient client = new HttpClient();
+                        Stream fileStream = await client.GetStreamAsync(attachment.Url);
+                        string fileName = attachment.FileName ?? Guid.NewGuid().ToString();
+                        reportMessage.AddFile(fileName, fileStream);
+                    }
+                    catch (Exception ex)
+                    {
+                        _defaultLogger.LogWarning(eventId, ex, "");
+                    }
+                }
+
+                DiscordMessage referencedMessage = discordMessage.ReferencedMessage;
+
+                if (referencedMessage != null)
+                {
+                    if (!string.IsNullOrEmpty(referencedMessage.Content))
+                    {
+                        reportEmbed.AddField("Reference Message", referencedMessage.Content);
+                    }
+
+                    if (referencedMessage.Embeds != null)
+                    {
+                        reportMessage.AddEmbeds(referencedMessage.Embeds);
+                    }
                 }
 
                 DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
