@@ -110,7 +110,9 @@ namespace YukoBot.Commands
         [Command("bug-report")]
         [Description("Сообщить об ошибке.")]
         public async Task BugReport(CommandContext ctx,
-            [Description("Описание ошибки"), RemainingText]
+            [Description(
+                 "Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой."),
+             RemainingText]
             string description)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -120,56 +122,67 @@ namespace YukoBot.Commands
                 EventId eventId = new EventId(0, $"Command: {ctx.Command.Name}");
                 DiscordMessage discordMessage = ctx.Message;
 
-                DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
-                    .WithColor(Constants.SuccessColor)
-                    .WithTitle("Bug-Report")
-                    .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
-                    .AddField("Guild", ctx.Guild.Name)
-                    .AddField("Date", discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
-
-                if (!string.IsNullOrEmpty(description))
-                {
-                    reportEmbed.AddField("Description", description);
-                }
-
-                DiscordMessageBuilder reportMessage = new DiscordMessageBuilder().WithEmbed(reportEmbed);
-                foreach (DiscordAttachment attachment in discordMessage.Attachments)
-                {
-                    try
-                    {
-                        using HttpClient client = new HttpClient();
-                        Stream fileStream = await client.GetStreamAsync(attachment.Url);
-                        string fileName = attachment.FileName ?? Guid.NewGuid().ToString();
-                        reportMessage.AddFile(fileName, fileStream);
-                    }
-                    catch (Exception ex)
-                    {
-                        _defaultLogger.LogWarning(eventId, ex, "");
-                    }
-                }
-
                 DiscordMessage referencedMessage = discordMessage.ReferencedMessage;
 
-                if (referencedMessage != null)
+                if (referencedMessage == null && discordMessage.Attachments.Count == 0 &&
+                    string.IsNullOrEmpty(description))
                 {
-                    if (!string.IsNullOrEmpty(referencedMessage.Content))
-                    {
-                        reportEmbed.AddField("Reference Message", referencedMessage.Content);
-                    }
-
-                    if (referencedMessage.Embeds != null)
-                    {
-                        reportMessage.AddEmbeds(referencedMessage.Embeds);
-                    }
+                    discordEmbed = new DiscordEmbedBuilder()
+                        .WithSadMessage(ctx.Member.DisplayName,
+                            "Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!");
                 }
+                else
+                {
+                    DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
+                        .WithColor(Constants.SuccessColor)
+                        .WithTitle("Bug-Report")
+                        .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
+                        .AddField("Guild", ctx.Guild.Name)
+                        .AddField("Date",
+                            discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
-                DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
-                DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
+                    if (!string.IsNullOrEmpty(description))
+                    {
+                        reportEmbed.AddField("Description", description);
+                    }
 
-                await reportChannel.SendMessageAsync(reportMessage);
+                    DiscordMessageBuilder reportMessage = new DiscordMessageBuilder().WithEmbed(reportEmbed);
+                    foreach (DiscordAttachment attachment in discordMessage.Attachments)
+                    {
+                        try
+                        {
+                            using HttpClient client = new HttpClient();
+                            Stream fileStream = await client.GetStreamAsync(attachment.Url);
+                            string fileName = attachment.FileName ?? Guid.NewGuid().ToString();
+                            reportMessage.AddFile(fileName, fileStream);
+                        }
+                        catch (Exception ex)
+                        {
+                            _defaultLogger.LogWarning(eventId, ex, "");
+                        }
+                    }
 
-                discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(ctx.Member.DisplayName, "Баг-репорт успешно отправлен!");
+                    if (referencedMessage != null)
+                    {
+                        if (!string.IsNullOrEmpty(referencedMessage.Content))
+                        {
+                            reportEmbed.AddField("Reference Message", referencedMessage.Content);
+                        }
+
+                        if (referencedMessage.Embeds != null)
+                        {
+                            reportMessage.AddEmbeds(referencedMessage.Embeds);
+                        }
+                    }
+
+                    DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
+                    DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
+
+                    await reportChannel.SendMessageAsync(reportMessage);
+
+                    discordEmbed = new DiscordEmbedBuilder()
+                        .WithHappyMessage(ctx.Member.DisplayName, "Баг-репорт успешно отправлен!");
+                }
             }
             else
             {
