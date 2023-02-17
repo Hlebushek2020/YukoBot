@@ -103,8 +103,6 @@ namespace YukoBot.Commands
 
                     foreach (Command command in commands)
                     {
-                        CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
-
                         string aliases = string.Empty;
                         if (command.Aliases.Count > 0)
                             aliases = $" ({string.Join(' ', command.Aliases)})";
@@ -245,6 +243,13 @@ namespace YukoBot.Commands
 
                 await ctx.RespondAsync(embed);
             }
+        }
+
+        [Command("info")]
+        [Description("Информация о боте и его возможностях.")]
+        public async Task Info(CommandContext ctx)
+        {
+            await ctx.RespondAsync("Not Implemented");
         }
     }
 }
