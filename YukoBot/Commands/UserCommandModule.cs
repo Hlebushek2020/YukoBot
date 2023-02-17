@@ -264,7 +264,8 @@ namespace YukoBot.Commands
                     "Премиум доступ позволяет заранее сохранять необходимые данные для скачивания вложений из сообщения " +
                     "при добавлении сообщения в коллекцию. Это в разы уменьшает время получения ссылок клиентом для " +
                     "скачивания вложений. На данный момент выдается моим хозяином.")
-                .AddField("Ссылки", "[GitHub](https://github.com/Hlebushek2020/YukoBot)")
+                .AddField("Ссылки",
+                    "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
                 .WithFooter(versionString);
 
