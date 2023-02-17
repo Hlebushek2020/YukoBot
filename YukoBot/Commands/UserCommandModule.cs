@@ -231,14 +231,10 @@ namespace YukoBot.Commands
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    if (sortedCommands.ContainsKey(categoryName))
-                    {
-                        embed.AddField(fieldName, string.Join(' ', sortedCommands[categoryName]));
-                    }
-                    else
-                    {
-                        embed.AddField(fieldName, mInfo.AccessError);
-                    }
+                    embed.AddField(fieldName,
+                        sortedCommands.ContainsKey(categoryName)
+                            ? string.Join(' ', sortedCommands[categoryName])
+                            : mInfo.AccessError);
                 }
 
                 await ctx.RespondAsync(embed);
