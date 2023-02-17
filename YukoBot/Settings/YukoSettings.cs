@@ -15,7 +15,6 @@ namespace YukoBot.Settings
         public int[] DatabaseVersion { get; set; }
         public string BotToken { get; set; }
         public string BotPrefix { get; set; } = ">yuko";
-        public string BotDescription { get; set; } = "Бот предназначен для скачивания вложений(я) из сообщений(я)";
         public bool BugReport { get; set; } = false;
         public ulong BugReportChannel { get; set; }
         public ulong BugReportServer { get; set; }
@@ -37,8 +36,10 @@ namespace YukoBot.Settings
             {
                 if (settings == null)
                 {
-                    string settingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
-                    settings = JsonConvert.DeserializeObject<YukoSettings>(File.ReadAllText(settingsFile, Encoding.UTF8));
+                    string settingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                        "settings.json");
+                    settings = JsonConvert.DeserializeObject<YukoSettings>(
+                        File.ReadAllText(settingsFile, Encoding.UTF8));
                 }
                 return settings;
             }
@@ -47,7 +48,8 @@ namespace YukoBot.Settings
 
         private void Save()
         {
-            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "settings.json");
             using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
             {
                 streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
@@ -56,7 +58,8 @@ namespace YukoBot.Settings
 
         public static bool Availability()
         {
-            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "settings.json");
 
             if (File.Exists(settingsPath))
             {
