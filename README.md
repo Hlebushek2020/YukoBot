@@ -74,6 +74,7 @@ app|-|Показать ссылку на скачивание актуально
 ban|-|Запретить пользователю скачивать с этого сервера|:heavy_check_mark:|:heavy_check_mark:|:x:
 ban-reason|reason|Причина бана на текущем сервере|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 bag-report|-|Сообщить об ошибке|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
+info|-|Информация о боте и его возможностях|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 info-message-pm|-|Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
 member-ban-reason|m-reason|Причина бана участника сервера|:heavy_check_mark:|:heavy_check_mark:|:x:
 profile|me|Показать информацию о моей учетной записи бота|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:
