@@ -9,7 +9,6 @@
         public int[] DatabaseVersion { get; }
         public string BotToken { get; }
         public string BotPrefix { get; }
-        public string BotDescription { get; }
         public bool BugReport { get; }
         public ulong BugReportChannel { get; }
         public ulong BugReportServer { get; }

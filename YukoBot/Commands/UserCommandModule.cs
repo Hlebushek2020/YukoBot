@@ -19,6 +19,9 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
+        private static string BotDescription { get; } =
+            $"Привет, для того что бы узнать больше информации обо мне выполни команду `{Settings.BotPrefix} info`.";
+
         public UserCommandModule() : base(Categories.User)
         {
         }
@@ -103,8 +106,6 @@ namespace YukoBot.Commands
 
                     foreach (Command command in commands)
                     {
-                        CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
-
                         string aliases = string.Empty;
                         if (command.Aliases.Count > 0)
                             aliases = $" ({string.Join(' ', command.Aliases)})";
@@ -121,7 +122,7 @@ namespace YukoBot.Commands
                     if (commandOfDescription.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
-                            .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
+                            .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
                             .WithFooter(versionString)
                             .AddField(category.Name, new string('=', category.Name.Length));
 
@@ -226,25 +227,49 @@ namespace YukoBot.Commands
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                    .WithHappyMessage($"{Settings.BotPrefix} |", Settings.BotDescription)
+                    .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
                     .WithFooter(versionString);
 
                 foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    if (sortedCommands.ContainsKey(categoryName))
-                    {
-                        embed.AddField(fieldName, string.Join(' ', sortedCommands[categoryName]));
-                    }
-                    else
-                    {
-                        embed.AddField(fieldName, mInfo.AccessError);
-                    }
+                    embed.AddField(fieldName,
+                        sortedCommands.ContainsKey(categoryName)
+                            ? string.Join(' ', sortedCommands[categoryName])
+                            : mInfo.AccessError);
                 }
 
                 await ctx.RespondAsync(embed);
             }
+        }
+
+        [Command("info")]
+        [Description("Информация о боте и его возможностях.")]
+        public async Task Info(CommandContext ctx)
+        {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
+
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(Settings.BotPrefix + " | Info",
+                    "Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) " +
+                    "дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) " +
+                    "для последующего скачивания этих коллекций.")
+                .AddField("Управление коллекциями",
+                    "Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных " +
+                    "команд управления коллекциями воспользуйся командой `" + Settings.BotPrefix + " help " +
+                    Categories.CollectionManagement.HelpCommand + "`.")
+                .AddField("Премиум доступ",
+                    "Премиум доступ позволяет заранее сохранять необходимые данные для скачивания вложений из сообщения " +
+                    "при добавлении сообщения в коллекцию. Это в разы уменьшает время получения ссылок клиентом для " +
+                    "скачивания вложений. На данный момент выдается моим хозяином.")
+                .AddField("Ссылки",
+                    "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
+                .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
+                .WithFooter(versionString);
+
+            await ctx.RespondAsync(discordEmbed);
         }
     }
 }
