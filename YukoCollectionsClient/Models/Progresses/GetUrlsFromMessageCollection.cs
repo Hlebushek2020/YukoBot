@@ -21,7 +21,7 @@ namespace YukoCollectionsClient.Models.Progress
         public override void Run(Dispatcher dispatcher)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (UrlsProvider provider = WebClient.Current.GetUrls(messageCollection.Items))
+            using (UrlsProvider provider = WebClient.Current.GetUrls(messageCollection))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
                 UrlsResponse response = provider.ReadBlock();
@@ -47,12 +47,18 @@ namespace YukoCollectionsClient.Models.Progress
                     } while (response.Next);
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke(
+                            (Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
+                                App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)),
+                            $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke(
+                        (Action<string>)((string errorMessage) =>
+                            SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
+                                MessageBoxImage.Error)), response.ErrorMessage);
                 }
             }
         }

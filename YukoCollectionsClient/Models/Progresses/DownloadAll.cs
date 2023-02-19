@@ -37,7 +37,7 @@ namespace YukoCollectionsClient.Models.Progress
                     Value = 0;
                 });
                 bool download = true;
-                using (UrlsProvider provider = YWeb.WebClient.Current.GetUrls(collection.Items))
+                using (UrlsProvider provider = YWeb.WebClient.Current.GetUrls(collection))
                 {
                     dispatcher.Invoke(() => State = "Аутентификация");
                     UrlsResponse response = provider.ReadBlock();
