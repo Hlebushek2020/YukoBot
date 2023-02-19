@@ -27,7 +27,7 @@ namespace YukoCollectionsClient.Models.Progress
             this.folder = folder;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             foreach (MessageCollection collection in messageCollections)
             {
@@ -47,7 +47,9 @@ namespace YukoCollectionsClient.Models.Progress
                         {
                             collection.Urls.Clear();
                         }
-                        dispatcher.Invoke((Action<string>)((string collectionName) => State = $"Обработка коллекции \"{collectionName}\""), collection.Name);
+                        dispatcher.Invoke(
+                            (Action<string>)((string collectionName) =>
+                                State = $"Обработка коллекции \"{collectionName}\""), collection.Name);
                         StringBuilder errorMessages = new StringBuilder();
                         do
                         {
@@ -67,13 +69,19 @@ namespace YukoCollectionsClient.Models.Progress
                         } while (response.Next);
                         if (errorMessages.Length != 0)
                         {
-                            MessageBoxResult messageBoxResult = (MessageBoxResult)dispatcher.Invoke((Func<string, MessageBoxResult>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning)), $"Вы действительно хотите скачать вложения? При получении ссылок коллекции \"{collection.Name}\" возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
+                            MessageBoxResult messageBoxResult = (MessageBoxResult)dispatcher.Invoke(
+                                (Func<string, MessageBoxResult>)((string errorMessage) =>
+                                    SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.YesNo,
+                                        MessageBoxImage.Warning)),
+                                $"Вы действительно хотите скачать вложения? При получении ссылок коллекции \"{collection.Name}\" возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
                             download = messageBoxResult == MessageBoxResult.Yes;
                         }
                     }
                     else
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                        dispatcher.Invoke(
+                            (Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
+                                App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
                         download = false;
                     }
                 }
@@ -135,14 +143,16 @@ namespace YukoCollectionsClient.Models.Progress
                         if (addPointTimer >= 9)
                         {
                             addPointTimer = 0;
-                            dispatcher.Invoke((Action<string>)((string state) => State = state), $"{baseState} {new string('.', pointCount)}");
+                            dispatcher.Invoke((Action<string>)((string state) => State = state),
+                                $"{baseState} {new string('.', pointCount)}");
                             if (pointCount >= 3)
                             {
                                 pointCount = -1;
                             }
                             pointCount++;
                         }
-                    };
+                    }
+                    ;
                 }
             }
         }
@@ -156,7 +166,9 @@ namespace YukoCollectionsClient.Models.Progress
                     webClient.DownloadFile(new Uri(url), fileName);
                 }
             }
-            catch { }
+            catch
+            {
+            }
             dispatcher.Invoke(() => Value++);
         }
     }

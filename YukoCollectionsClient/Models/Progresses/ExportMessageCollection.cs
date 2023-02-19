@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Threading;
 
 namespace YukoCollectionsClient.Models.Progress
@@ -17,7 +18,7 @@ namespace YukoCollectionsClient.Models.Progress
             this.fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка");
             using (StreamWriter streamWriter = new StreamWriter(fileName, false, Encoding.UTF8))

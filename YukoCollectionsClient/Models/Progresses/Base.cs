@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using System.Threading;
+using Prism.Mvvm;
 using System.Windows.Threading;
 
 namespace YukoCollectionsClient.Models.Progress
@@ -55,6 +56,8 @@ namespace YukoCollectionsClient.Models.Progress
         }
         #endregion
 
-        public virtual void Run(Dispatcher dispatcher) { }
+        public virtual void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
+        {
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace YukoCollectionsClient.Models.Progress
             this.folder = folder;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             HashSet<string> filesTemp = new HashSet<string>();
             Downloader downloader = new Downloader();
@@ -31,7 +31,6 @@ namespace YukoCollectionsClient.Models.Progress
                 MaxValue = count;
                 State = state;
             }), baseState, urls.Count);
-
 
             foreach (string url in urls)
             {
@@ -70,14 +69,16 @@ namespace YukoCollectionsClient.Models.Progress
                 if (addPointTimer >= 9)
                 {
                     addPointTimer = 0;
-                    dispatcher.Invoke((Action<string>)((string state) => State = state), $"{baseState} {new string('.', pointCount)}");
+                    dispatcher.Invoke((Action<string>)((string state) => State = state),
+                        $"{baseState} {new string('.', pointCount)}");
                     if (pointCount >= 3)
                     {
                         pointCount = -1;
                     }
                     pointCount++;
                 }
-            };
+            }
+            ;
         }
 
         private void DownloadFile(string url, string fileName, Dispatcher dispatcher)
@@ -89,7 +90,9 @@ namespace YukoCollectionsClient.Models.Progress
                     webClient.DownloadFile(new Uri(url), fileName);
                 }
             }
-            catch { }
+            catch
+            {
+            }
             dispatcher.Invoke(() => Value++);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoCollectionsClient.Models.Web;
@@ -17,7 +18,7 @@ namespace YukoCollectionsClient.Models.Progress
             this.overrideMessageCollections = overrideMessageCollections;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Получение данных");
             MessageCollectionsResponse response = WebClient.Current.GetMessageCollections();
@@ -26,7 +27,8 @@ namespace YukoCollectionsClient.Models.Progress
             {
                 if (overrideMessageCollections)
                 {
-                    Storage.Current.MessageCollections = new ObservableCollection<MessageCollection>(response.MessageCollections);
+                    Storage.Current.MessageCollections =
+                        new ObservableCollection<MessageCollection>(response.MessageCollections);
                 }
                 else
                 {
@@ -53,7 +55,10 @@ namespace YukoCollectionsClient.Models.Progress
             }
             else
             {
-                dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                dispatcher.Invoke(
+                    (Action<string>)((string errorMessage) =>
+                        SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
+                            MessageBoxImage.Error)), response.ErrorMessage);
             }
         }
     }

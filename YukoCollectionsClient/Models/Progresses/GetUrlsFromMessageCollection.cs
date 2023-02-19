@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClientBase.Models.Web.Responses;
@@ -11,17 +12,17 @@ namespace YukoCollectionsClient.Models.Progress
 {
     public class GetUrlsFromMessageCollection : Base
     {
-        private readonly MessageCollection messageCollection;
+        private readonly MessageCollection _messageCollection;
 
         public GetUrlsFromMessageCollection(MessageCollection messageCollection)
         {
-            this.messageCollection = messageCollection;
+            _messageCollection = messageCollection;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (UrlsProvider provider = WebClient.Current.GetUrls(messageCollection.Items))
+            using (UrlsProvider provider = WebClient.Current.GetUrls(_messageCollection.Items))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
                 UrlsResponse response = provider.ReadBlock();
@@ -36,7 +37,7 @@ namespace YukoCollectionsClient.Models.Progress
                         {
                             foreach (string url in response.Urls)
                             {
-                                dispatcher.Invoke(() => messageCollection.Urls.Add(url));
+                                dispatcher.Invoke(() => _messageCollection.Urls.Add(url));
                             }
                         }
                         else
@@ -44,15 +45,21 @@ namespace YukoCollectionsClient.Models.Progress
                             errorMessages.AppendLine(response.ErrorMessage);
                         }
 
-                    } while (response.Next);
+                    } while (response.Next && !cancellationToken.IsCancellationRequested);
                     if (errorMessages.Length != 0)
                     {
-                        dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)), $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
+                        dispatcher.Invoke(
+                            (Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
+                                App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)),
+                            $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
                     }
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke(
+                        (Action<string>)((string errorMessage) =>
+                            SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
+                                MessageBoxImage.Error)), response.ErrorMessage);
                 }
             }
         }
