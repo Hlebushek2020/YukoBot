@@ -35,6 +35,8 @@ namespace YukoBot
         private static readonly EventId _eventId = new EventId(0, "Client");
         private static readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
         private static readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
+        private static readonly int _messageLimitSleepMsForOne =
+            _messageLimitSleepMs / YukoSettings.Current.DiscordMessageLimitSleepMsDividerForOne;
         private static readonly ILogger
             _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
@@ -273,7 +275,6 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
-            int sleepTime = _messageLimitSleepMs / 10;
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
@@ -312,7 +313,7 @@ namespace YukoBot
 
                         if (!collectionItem.IsSavedLinks)
                         {
-                            Thread.Sleep(sleepTime);
+                            Thread.Sleep(_messageLimitSleepMsForOne);
                         }
                     }
                     else
@@ -332,7 +333,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(sleepTime);
+                            Thread.Sleep(_messageLimitSleepMsForOne);
                         }
                         catch (NotFoundException)
                         {
