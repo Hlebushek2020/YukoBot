@@ -273,7 +273,7 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
-            int sleepTime = _messageLimitSleepMs / 20;
+            int sleepTime = _messageLimitSleepMs / 10;
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
