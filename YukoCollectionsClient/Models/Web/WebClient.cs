@@ -30,9 +30,7 @@ namespace YukoCollectionsClient.Models.Web
             }
         }
 
-        public UrlsProvider GetUrls(IReadOnlyCollection<MessageCollectionItem> messageCollectionItems)
-        {
-            return new UrlsProvider(token, messageCollectionItems);
-        }
+        public UrlsProvider GetUrls(MessageCollection messageCollection) =>
+            new UrlsProvider(token, messageCollection);
     }
 }

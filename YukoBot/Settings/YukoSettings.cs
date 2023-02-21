@@ -24,6 +24,7 @@ namespace YukoBot.Settings
         public string ClientActualApp { get; set; }
         public int DiscordMessageLimit { get; set; } = 100;
         public int DiscordMessageLimitSleepMs { get; set; } = 1000;
+        public int DiscordMessageLimitSleepMsDividerForOne { get; set; } = 10;
         #endregion
 
         #region Instance

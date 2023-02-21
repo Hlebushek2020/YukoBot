@@ -35,6 +35,8 @@ namespace YukoBot
         private static readonly EventId _eventId = new EventId(0, "Client");
         private static readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
         private static readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
+        private static readonly int _messageLimitSleepMsForOne =
+            _messageLimitSleepMs / YukoSettings.Current.DiscordMessageLimitSleepMsDividerForOne;
         private static readonly ILogger
             _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
 
@@ -249,7 +251,11 @@ namespace YukoBot
             MessageCollectionsResponse response = new MessageCollectionsResponse();
             foreach (DbCollection dbCollection in dbCollections)
             {
-                MessageCollectionWeb collection = new MessageCollectionWeb { Name = dbCollection.Name };
+                MessageCollectionWeb collection = new MessageCollectionWeb
+                {
+                    Name = dbCollection.Name,
+                    Id = dbCollection.Id
+                };
                 IQueryable<DbMessage> dbCollectionItems = _dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id)
                     .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
@@ -269,29 +275,27 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
-            int sleepTime = _messageLimitSleepMs / 20;
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
+            Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
+                .Where(ci => ci.CollectionId == request.Id)
+                .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
+                    (ci, m) => new CollectionItemJoinMessage
+                    {
+                        MessageId = m.Id,
+                        Link = m.Link,
+                        IsSavedLinks = ci.IsSavedLinks
+                    })
+                .ToDictionary(k => k.MessageId);
             List<ulong> channelNotFound = new List<ulong>();
             List<ulong> messageNotFound = new List<ulong>();
             using IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator =
                 request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
             _binaryWriter.Write(new Response().ToString());
-            YukoDbContext dbCtx = new YukoDbContext();
             while (groupEnumerator.MoveNext())
             {
                 using IEnumerator<MessageCollectionItemWeb> groupItemEnumerator =
                     groupEnumerator.Current.GetEnumerator();
-                Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
-                    .Where(ci => ci.CollectionId == groupEnumerator.Current.Key)
-                    .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
-                        (ci, m) => new CollectionItemJoinMessage
-                        {
-                            MessageId = m.Id,
-                            Link = m.Link,
-                            IsSavedLinks = ci.IsSavedLinks
-                        })
-                    .ToDictionary(k => k.MessageId);
                 DiscordChannel discordChannel = null;
                 while (groupItemEnumerator.MoveNext())
                 {
@@ -309,7 +313,7 @@ namespace YukoBot
 
                         if (!collectionItem.IsSavedLinks)
                         {
-                            Thread.Sleep(sleepTime);
+                            Thread.Sleep(_messageLimitSleepMsForOne);
                         }
                     }
                     else
@@ -329,7 +333,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(sleepTime);
+                            Thread.Sleep(_messageLimitSleepMsForOne);
                         }
                         catch (NotFoundException)
                         {

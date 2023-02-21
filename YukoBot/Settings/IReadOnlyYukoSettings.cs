@@ -18,6 +18,7 @@
         public string ClientActualApp { get; }
         public int DiscordMessageLimit { get; }
         public int DiscordMessageLimitSleepMs { get; }
+        public int DiscordMessageLimitSleepMsDividerForOne { get; }
         #endregion
 
         public void SetApp(string appLink);
