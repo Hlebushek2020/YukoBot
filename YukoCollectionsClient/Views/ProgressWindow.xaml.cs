@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Progress;
 using YukoCollectionsClient.ViewModels;
 using SUI = Sergey.UI.Extension;
@@ -17,11 +18,11 @@ namespace YukoCollectionsClient
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly bool _isCancelled;
-        private readonly Base _model;
+        private readonly BaseProgressModel _model;
 
         private bool _isCompleted = false;
 
-        public ProgressWindow(Base model, bool isCancelled = false)
+        public ProgressWindow(BaseProgressModel model, bool isCancelled = false)
         {
             InitializeComponent();
             Loaded += Window_Loaded;

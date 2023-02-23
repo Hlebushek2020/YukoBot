@@ -141,7 +141,7 @@ namespace YukoCollectionsClient.ViewModels
                             MessageBoxImage.Question);
                         ProgressWindow progressWindow = new ProgressWindow(
                             new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath,
-                                messageBoxResult == MessageBoxResult.Yes));
+                                messageBoxResult == MessageBoxResult.Yes), true);
                         progressWindow.ShowDialog();
                     }
                 }
@@ -300,7 +300,7 @@ namespace YukoCollectionsClient.ViewModels
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         ProgressWindow progressWindow = new ProgressWindow(
-                            new Download(selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath));
+                            new Download(selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath), true);
                         progressWindow.ShowDialog();
                     }
                 }
@@ -310,7 +310,7 @@ namespace YukoCollectionsClient.ViewModels
         private bool MessageCollectionsFilter(object item)
         {
             return string.IsNullOrEmpty(searchCollections) ||
-                   ((MessageCollection)item).Name.ToLower().Contains(searchCollections);
+                   ((MessageCollection) item).Name.ToLower().Contains(searchCollections);
         }
     }
 }

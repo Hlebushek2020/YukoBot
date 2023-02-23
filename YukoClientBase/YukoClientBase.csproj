@@ -50,20 +50,34 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Sergey.UI.Extension">
       <HintPath>..\..\Sergey.UI.Extension\Sergey.UI.Extension\VS_Output\bin\Debug\Sergey.UI.Extension.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\RequestType.cs" />
@@ -72,6 +86,7 @@
     <Compile Include="Interfaces\IViewTitle.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\DownloaderLogger.cs" />
+    <Compile Include="Models\Progresses\BaseProgressModel.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\BaseRequest.cs" />
@@ -102,6 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\menu-refresh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

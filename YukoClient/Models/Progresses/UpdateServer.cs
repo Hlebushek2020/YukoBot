@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
+using YukoClientBase.Models.Progresses;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
-    public class UpdateServer : Base
+    public class UpdateServer : BaseProgressModel
     {
         private readonly Server server;
 
@@ -17,7 +19,7 @@ namespace YukoClient.Models.Progress
             this.server = server;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Получение данных о сервере");
             ServerResponse serverResponse = WebClient.Current.GetServer(server.Id);

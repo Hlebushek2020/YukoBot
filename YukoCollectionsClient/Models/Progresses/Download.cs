@@ -5,10 +5,11 @@ using System.Net;
 using System.Threading;
 using System.Windows.Threading;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class Download : Base
+    public class Download : BaseProgressModel
     {
         private readonly ICollection<string> _urls;
         private readonly string _folder;

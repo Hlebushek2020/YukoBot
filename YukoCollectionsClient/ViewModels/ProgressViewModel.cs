@@ -1,5 +1,6 @@
 ﻿using Prism.Mvvm;
 using YukoClientBase.Interfaces;
+using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Progress;
 
 namespace YukoCollectionsClient.ViewModels
@@ -7,7 +8,7 @@ namespace YukoCollectionsClient.ViewModels
     public class ProgressViewModel : BindableBase, IViewTitle
     {
         #region Fields
-        private Base model;
+        private BaseProgressModel model;
         #endregion
 
         #region Propirties
@@ -18,7 +19,7 @@ namespace YukoCollectionsClient.ViewModels
         public bool IsIndeterminate { get => model.IsIndeterminate; }
         #endregion
 
-        public ProgressViewModel(Base model)
+        public ProgressViewModel(BaseProgressModel model)
         {
             this.model = model;
             this.model.PropertyChanged += (s, e) => RaisePropertyChanged(e.PropertyName);

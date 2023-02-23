@@ -1,45 +1,45 @@
 ﻿using System.Threading;
-using Prism.Mvvm;
 using System.Windows.Threading;
+using Prism.Mvvm;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoClientBase.Models.Progresses
 {
-    public class Base : BindableBase
+    public class BaseProgressModel : BindableBase
     {
         #region Field
-        private string state = string.Empty;
-        private int value = 0;
-        private int maxValue = 1;
-        private bool isIndeterminate = true;
+        private string _state = string.Empty;
+        private int _value = 0;
+        private int _maxValue = 1;
+        private bool _isIndeterminate = true;
         #endregion
 
         #region Propirties
         public string State
         {
-            get { return state; }
+            get { return _state; }
             set
             {
-                state = value;
+                _state = value;
                 RaisePropertyChanged();
             }
         }
         public int Value
         {
-            get { return value; }
+            get { return _value; }
             set
             {
-                this.value = value;
+                this._value = value;
                 RaisePropertyChanged();
             }
         }
         public int MaxValue
         {
-            get { return maxValue; }
+            get { return _maxValue; }
             set
             {
-                maxValue = value;
-                IsIndeterminate = maxValue < 1;
-                if (!isIndeterminate)
+                _maxValue = value;
+                IsIndeterminate = _maxValue < 1;
+                if (!_isIndeterminate)
                 {
                     RaisePropertyChanged();
                 }
@@ -47,10 +47,10 @@ namespace YukoCollectionsClient.Models.Progress
         }
         public bool IsIndeterminate
         {
-            get { return isIndeterminate; }
+            get { return _isIndeterminate; }
             set
             {
-                isIndeterminate = value;
+                _isIndeterminate = value;
                 RaisePropertyChanged();
             }
         }

@@ -4,10 +4,11 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class ImportUrls : Base
+    public class ImportUrls : BaseProgressModel
     {
         private readonly ICollection<string> urls;
         private readonly string fileName;

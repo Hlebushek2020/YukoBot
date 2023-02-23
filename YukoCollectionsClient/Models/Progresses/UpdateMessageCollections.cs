@@ -3,13 +3,14 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Responses;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class UpdateMessageCollections : Base
+    public class UpdateMessageCollections : BaseProgressModel
     {
         private readonly bool overrideMessageCollections;
 

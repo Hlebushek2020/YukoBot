@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Providers;
 using SUI = Sergey.UI.Extension;
@@ -14,7 +15,7 @@ using YWeb = YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class DownloadAll : Base
+    public class DownloadAll : BaseProgressModel
     {
         private readonly ICollection<MessageCollection> _messageCollections;
         private readonly string _folder;

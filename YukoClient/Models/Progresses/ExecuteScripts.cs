@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Providers;
+using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
-    public class ExecuteScripts : Base
+    public class ExecuteScripts : BaseProgressModel
     {
         private readonly Server server;
 
@@ -18,7 +20,7 @@ namespace YukoClient.Models.Progress
             this.server = server;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подключение");
             using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(server.Id, server.Scripts.Count))

@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
@@ -10,7 +11,7 @@ using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class GetUrlsFromMessageCollection : Base
+    public class GetUrlsFromMessageCollection : BaseProgressModel
     {
         private readonly MessageCollection _messageCollection;
 
