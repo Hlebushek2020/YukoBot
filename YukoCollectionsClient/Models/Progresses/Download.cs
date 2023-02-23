@@ -32,76 +32,77 @@ namespace YukoCollectionsClient.Models.Progress
                 State = state;
             }), baseState, _urls.Count);
 
-            foreach (string url in _urls)
+            using (DownloaderLogger downloaderLogger = new DownloaderLogger(_folder))
             {
-                string baseFileName = Path.GetFileName(url);
-                if (baseFileName.Contains("?"))
+                foreach (string url in _urls)
                 {
-                    baseFileName = baseFileName.Remove(baseFileName.IndexOf("?"));
-                }
-
-                string fileNameFull = Path.Combine(_folder, baseFileName);
-                string fileName = baseFileName;
-
-                int i = 0;
-
-                while (File.Exists(fileNameFull) || filesTemp.Contains(fileName))
-                {
-                    fileName = $"{i}-{baseFileName}";
-                    fileNameFull = Path.Combine(_folder, fileName);
-                    i++;
-                }
-
-                filesTemp.Add(fileName);
-
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                downloader.StartNew(() => DownloadFile(url, fileNameFull, dispatcher, cancellationToken));
-            }
-
-            filesTemp.Clear();
-
-            int addPointTimer = 0;
-            int pointCount = 0;
-
-            while (downloader.IsActive)
-            {
-                Thread.Sleep(100);
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    addPointTimer++;
-                    if (addPointTimer >= 9)
+                    string baseFileName = Path.GetFileName(url);
+                    if (baseFileName.Contains("?"))
                     {
-                        addPointTimer = 0;
-                        dispatcher.Invoke((Action<string>) ((string state) => State = state),
-                            $"{baseState} {new string('.', pointCount)}");
-                        if (pointCount >= 3)
+                        baseFileName = baseFileName.Remove(baseFileName.IndexOf("?"));
+                    }
+
+                    string fileNameFull = Path.Combine(_folder, baseFileName);
+                    string fileName = baseFileName;
+
+                    int i = 0;
+
+                    while (File.Exists(fileNameFull) || filesTemp.Contains(fileName))
+                    {
+                        fileName = $"{i}-{baseFileName}";
+                        fileNameFull = Path.Combine(_folder, fileName);
+                        i++;
+                    }
+
+                    filesTemp.Add(fileName);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+
+                    downloader.StartNew(() =>
+                    {
+                        if (!cancellationToken.IsCancellationRequested)
                         {
-                            pointCount = -1;
+                            try
+                            {
+                                using (WebClient webClient = new WebClient())
+                                {
+                                    webClient.DownloadFile(new Uri(url), fileNameFull);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                downloaderLogger.Log(url, ex);
+                            }
+                            dispatcher.Invoke(() => Value++);
                         }
-                        pointCount++;
-                    }
+                    });
                 }
-            }
-        }
 
-        private void DownloadFile(string url, string fileName, Dispatcher dispatcher,
-            CancellationToken cancellationToken)
-        {
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                try
+                filesTemp.Clear();
+
+                int addPointTimer = 0;
+                int pointCount = 0;
+
+                while (downloader.IsActive)
                 {
-                    using (WebClient webClient = new WebClient())
+                    Thread.Sleep(100);
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        webClient.DownloadFile(new Uri(url), fileName);
+                        addPointTimer++;
+                        if (addPointTimer >= 9)
+                        {
+                            addPointTimer = 0;
+                            dispatcher.Invoke((Action<string>) ((string state) => State = state),
+                                $"{baseState} {new string('.', pointCount)}");
+                            if (pointCount >= 3)
+                            {
+                                pointCount = -1;
+                            }
+                            pointCount++;
+                        }
                     }
                 }
-                catch
-                {
-                }
-                dispatcher.Invoke(() => Value++);
             }
         }
     }
