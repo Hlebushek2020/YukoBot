@@ -13,37 +13,36 @@ namespace YukoCollectionsClient.Models.Web.Providers
 {
     public class UrlsProvider : IDisposable
     {
-        private bool disposed = false;
+        private bool _disposed = false;
 
-        private readonly TcpClient client;
-        private readonly BinaryReader clientReader;
-        private readonly BinaryWriter clientWriter;
+        private readonly TcpClient _client;
+        private readonly BinaryReader _clientReader;
+        private readonly BinaryWriter _clientWriter;
 
-        public UrlsProvider(string token, IReadOnlyCollection<MessageCollectionItem> messageCollectionItems)
+        public UrlsProvider(string token, MessageCollection messageCollection)
         {
-            client = new TcpClient
+            _client = new TcpClient
             {
                 SendTimeout = WebClient.SendTimeout,
                 ReceiveTimeout = WebClient.ReceiveTimeout
             };
-            client.Connect(Settings.Current.Host, Settings.Current.Port);
-            NetworkStream networkStream = client.GetStream();
-            clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
-            clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
+            _client.Connect(Settings.Current.Host, Settings.Current.Port);
+            NetworkStream networkStream = _client.GetStream();
+            _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
+            _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
             UrlsRequest request = new UrlsRequest
             {
                 Type = RequestType.GetUrls,
                 Token = token,
-                Items = messageCollectionItems
+                Items = messageCollection.Items,
+                Id = messageCollection.Id
             };
-            clientWriter.Write(request.ToString());
+            _clientWriter.Write(request.ToString());
         }
 
-        public UrlsResponse ReadBlock()
-        {
-            return JsonConvert.DeserializeObject<UrlsResponse>(clientReader.ReadString());
-        }
+        public UrlsResponse ReadBlock() =>
+            JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());
 
         public void Dispose()
         {
@@ -53,15 +52,15 @@ namespace YukoCollectionsClient.Models.Web.Providers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
-                    clientReader.Dispose();
-                    clientWriter.Dispose();
-                    client.Dispose();
+                    _clientReader.Dispose();
+                    _clientWriter.Dispose();
+                    _client.Dispose();
                 }
-                disposed = true;
+                _disposed = true;
             }
         }
     }

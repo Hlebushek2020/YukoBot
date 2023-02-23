@@ -14,10 +14,11 @@ namespace YukoCollectionsClient.Models
     public class Storage : BindableBase, IUser
     {
         #region Fields
-        private ulong id;
-        private string avatarUri;
-        private string nikname;
-        private ObservableCollection<MessageCollection> messageCollections = new ObservableCollection<MessageCollection>();
+        private ulong _id;
+        private string _avatarUri;
+        private string _nikname;
+        private ObservableCollection<MessageCollection> _messageCollections =
+            new ObservableCollection<MessageCollection>();
         #endregion
 
         #region Propirties
@@ -25,21 +26,21 @@ namespace YukoCollectionsClient.Models
 
         public ulong Id
         {
-            get { return id; }
+            get { return _id; }
             set
             {
-                id = value;
+                _id = value;
                 RaisePropertyChanged();
             }
         }
 
         public string AvatarUri
         {
-            get { return avatarUri; }
+            get { return _avatarUri; }
             set
             {
-                avatarUri = value;
-                RaisePropertyChanged("Avatar");
+                _avatarUri = value;
+                RaisePropertyChanged(nameof(Avatar));
             }
         }
 
@@ -48,13 +49,13 @@ namespace YukoCollectionsClient.Models
         {
             get
             {
-                if (string.IsNullOrEmpty(avatarUri))
+                if (string.IsNullOrEmpty(_avatarUri))
                 {
                     return null;
                 }
                 return new ImageBrush
                 {
-                    ImageSource = new BitmapImage(new Uri(avatarUri, UriKind.Absolute)),
+                    ImageSource = new BitmapImage(new Uri(_avatarUri, UriKind.Absolute)),
                     Stretch = Stretch.UniformToFill
                 };
             }
@@ -62,10 +63,10 @@ namespace YukoCollectionsClient.Models
 
         public string Nikname
         {
-            get { return nikname; }
+            get { return _nikname; }
             set
             {
-                nikname = value;
+                _nikname = value;
                 RaisePropertyChanged();
             }
         }
@@ -73,10 +74,10 @@ namespace YukoCollectionsClient.Models
         [JsonIgnore]
         public ObservableCollection<MessageCollection> MessageCollections
         {
-            get { return messageCollections; }
+            get { return _messageCollections; }
             set
             {
-                messageCollections = value;
+                _messageCollections = value;
                 RaisePropertyChanged();
             }
         }

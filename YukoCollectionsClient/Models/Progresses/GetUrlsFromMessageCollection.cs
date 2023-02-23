@@ -22,7 +22,7 @@ namespace YukoCollectionsClient.Models.Progress
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подключение");
-            using (UrlsProvider provider = WebClient.Current.GetUrls(_messageCollection.Items))
+            using (UrlsProvider provider = WebClient.Current.GetUrls(_messageCollection))
             {
                 dispatcher.Invoke(() => State = "Аутентификация");
                 UrlsResponse response = provider.ReadBlock();

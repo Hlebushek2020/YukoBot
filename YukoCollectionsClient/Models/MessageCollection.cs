@@ -7,56 +7,52 @@ namespace YukoCollectionsClient.Models
     public class MessageCollection : BindableBase, IEquatable<MessageCollection>
     {
         #region Fields
-        private string name;
-        private ObservableCollection<MessageCollectionItem> items = new ObservableCollection<MessageCollectionItem>();
-        private ObservableCollection<string> urls = new ObservableCollection<string>();
+        private string _name;
+        private ObservableCollection<MessageCollectionItem> _items = new ObservableCollection<MessageCollectionItem>();
+        private ObservableCollection<string> _urls = new ObservableCollection<string>();
         #endregion
 
         #region Propirties
+        public ulong Id { get; set; }
+
         public string Name
         {
-            get { return name; }
+            get { return _name; }
             set
             {
-                name = value;
+                _name = value;
                 RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<MessageCollectionItem> Items
         {
-            get { return items; }
+            get { return _items; }
             set
             {
-                items = value;
+                _items = value;
                 RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<string> Urls
         {
-            get { return urls; }
+            get { return _urls; }
             set
             {
-                urls = value;
+                _urls = value;
                 RaisePropertyChanged();
             }
         }
         #endregion
 
-        public bool Equals(MessageCollection other)
-        {
-            return other != null && name.Equals(other.name);
-        }
+        public bool Equals(MessageCollection other) =>
+            other != null && Id.Equals(other.Id);
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as MessageCollection);
-        }
+        public override bool Equals(object obj) =>
+            Equals(obj as MessageCollection);
 
-        public override int GetHashCode()
-        {
-            return name.GetHashCode();
-        }
+        public override int GetHashCode() =>
+            Id.GetHashCode();
     }
 }
