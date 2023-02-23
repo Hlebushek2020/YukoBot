@@ -10,13 +10,13 @@ namespace YukoCollectionsClient.Models.Progress
 {
     public class Download : Base
     {
-        private readonly ICollection<string> urls;
-        private readonly string folder;
+        private readonly ICollection<string> _urls;
+        private readonly string _folder;
 
         public Download(ICollection<string> urls, string folder)
         {
-            this.urls = urls;
-            this.folder = folder;
+            _urls = urls;
+            _folder = folder;
         }
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
@@ -24,15 +24,15 @@ namespace YukoCollectionsClient.Models.Progress
             HashSet<string> filesTemp = new HashSet<string>();
             Downloader downloader = new Downloader();
 
-            string baseState = "Загрузка";
+            const string baseState = "Загрузка";
 
-            dispatcher.Invoke((Action<string, int>)((string state, int count) =>
+            dispatcher.Invoke((Action<string, int>) ((string state, int count) =>
             {
                 MaxValue = count;
                 State = state;
-            }), baseState, urls.Count);
+            }), baseState, _urls.Count);
 
-            foreach (string url in urls)
+            foreach (string url in _urls)
             {
                 string baseFileName = Path.GetFileName(url);
                 if (baseFileName.Contains("?"))
@@ -40,7 +40,7 @@ namespace YukoCollectionsClient.Models.Progress
                     baseFileName = baseFileName.Remove(baseFileName.IndexOf("?"));
                 }
 
-                string fileNameFull = Path.Combine(folder, baseFileName);
+                string fileNameFull = Path.Combine(_folder, baseFileName);
                 string fileName = baseFileName;
 
                 int i = 0;
@@ -48,13 +48,16 @@ namespace YukoCollectionsClient.Models.Progress
                 while (File.Exists(fileNameFull) || filesTemp.Contains(fileName))
                 {
                     fileName = $"{i}-{baseFileName}";
-                    fileNameFull = Path.Combine(folder, fileName);
+                    fileNameFull = Path.Combine(_folder, fileName);
                     i++;
                 }
 
                 filesTemp.Add(fileName);
 
-                downloader.StartNew(() => DownloadFile(url, fileNameFull, dispatcher));
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                downloader.StartNew(() => DownloadFile(url, fileNameFull, dispatcher, cancellationToken));
             }
 
             filesTemp.Clear();
@@ -62,38 +65,44 @@ namespace YukoCollectionsClient.Models.Progress
             int addPointTimer = 0;
             int pointCount = 0;
 
-            while (downloader.CompletedCount < urls.Count)
+            while (downloader.IsActive)
             {
                 Thread.Sleep(100);
-                addPointTimer++;
-                if (addPointTimer >= 9)
+                if (!cancellationToken.IsCancellationRequested)
                 {
-                    addPointTimer = 0;
-                    dispatcher.Invoke((Action<string>)((string state) => State = state),
-                        $"{baseState} {new string('.', pointCount)}");
-                    if (pointCount >= 3)
+                    addPointTimer++;
+                    if (addPointTimer >= 9)
                     {
-                        pointCount = -1;
+                        addPointTimer = 0;
+                        dispatcher.Invoke((Action<string>) ((string state) => State = state),
+                            $"{baseState} {new string('.', pointCount)}");
+                        if (pointCount >= 3)
+                        {
+                            pointCount = -1;
+                        }
+                        pointCount++;
                     }
-                    pointCount++;
                 }
             }
-            ;
         }
 
-        private void DownloadFile(string url, string fileName, Dispatcher dispatcher)
+        private void DownloadFile(string url, string fileName, Dispatcher dispatcher,
+            CancellationToken cancellationToken)
         {
-            try
+            if (!cancellationToken.IsCancellationRequested)
             {
-                using (WebClient webClient = new WebClient())
+                try
                 {
-                    webClient.DownloadFile(new Uri(url), fileName);
+                    using (WebClient webClient = new WebClient())
+                    {
+                        webClient.DownloadFile(new Uri(url), fileName);
+                    }
                 }
+                catch
+                {
+                }
+                dispatcher.Invoke(() => Value++);
             }
-            catch
-            {
-            }
-            dispatcher.Invoke(() => Value++);
         }
     }
 }

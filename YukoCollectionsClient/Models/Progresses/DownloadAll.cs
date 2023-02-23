@@ -48,7 +48,7 @@ namespace YukoCollectionsClient.Models.Progress
                             collection.Urls.Clear();
                         }
                         dispatcher.Invoke(
-                            (Action<string>)((string collectionName) =>
+                            (Action<string>) ((string collectionName) =>
                                 State = $"Обработка коллекции \"{collectionName}\""), collection.Name);
                         StringBuilder errorMessages = new StringBuilder();
                         do
@@ -65,12 +65,11 @@ namespace YukoCollectionsClient.Models.Progress
                             {
                                 errorMessages.AppendLine(response.ErrorMessage);
                             }
-
                         } while (response.Next);
                         if (errorMessages.Length != 0)
                         {
-                            MessageBoxResult messageBoxResult = (MessageBoxResult)dispatcher.Invoke(
-                                (Func<string, MessageBoxResult>)((string errorMessage) =>
+                            MessageBoxResult messageBoxResult = (MessageBoxResult) dispatcher.Invoke(
+                                (Func<string, MessageBoxResult>) ((string errorMessage) =>
                                     SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.YesNo,
                                         MessageBoxImage.Warning)),
                                 $"Вы действительно хотите скачать вложения? При получении ссылок коллекции \"{collection.Name}\" возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
@@ -80,7 +79,7 @@ namespace YukoCollectionsClient.Models.Progress
                     else
                     {
                         dispatcher.Invoke(
-                            (Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
+                            (Action<string>) ((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
                                 App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
                         download = false;
                     }
@@ -92,7 +91,7 @@ namespace YukoCollectionsClient.Models.Progress
 
                     string baseState = "Загрузка";
 
-                    dispatcher.Invoke((Action<string, int>)((string state, int count) =>
+                    dispatcher.Invoke((Action<string, int>) ((string state, int count) =>
                     {
                         MaxValue = count;
                         State = state;
@@ -101,7 +100,7 @@ namespace YukoCollectionsClient.Models.Progress
                     string folderName = collection.Name;
                     foreach (char replaceChar in Path.GetInvalidFileNameChars())
                     {
-                        folderName.Replace(replaceChar.ToString(), "");
+                        folderName = folderName.Replace(replaceChar.ToString(), "");
                     }
                     string collectionFolder = Path.Combine(folder, folderName);
                     Directory.CreateDirectory(collectionFolder);
@@ -128,7 +127,10 @@ namespace YukoCollectionsClient.Models.Progress
 
                         filesTemp.Add(fileName);
 
-                        downloader.StartNew(() => DownloadFile(url, fileNameFull, dispatcher));
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
+
+                        downloader.StartNew(() => DownloadFile(url, fileNameFull, dispatcher, cancellationToken));
                     }
 
                     filesTemp.Clear();
@@ -136,40 +138,46 @@ namespace YukoCollectionsClient.Models.Progress
                     int addPointTimer = 0;
                     int pointCount = 0;
 
-                    while (downloader.CompletedCount < collection.Urls.Count)
+                    while (downloader.IsActive)
                     {
                         Thread.Sleep(100);
-                        addPointTimer++;
-                        if (addPointTimer >= 9)
+                        if (!cancellationToken.IsCancellationRequested)
                         {
-                            addPointTimer = 0;
-                            dispatcher.Invoke((Action<string>)((string state) => State = state),
-                                $"{baseState} {new string('.', pointCount)}");
-                            if (pointCount >= 3)
+                            addPointTimer++;
+                            if (addPointTimer >= 9)
                             {
-                                pointCount = -1;
+                                addPointTimer = 0;
+                                dispatcher.Invoke((Action<string>) ((string state) => State = state),
+                                    $"{baseState} {new string('.', pointCount)}");
+                                if (pointCount >= 3)
+                                {
+                                    pointCount = -1;
+                                }
+                                pointCount++;
                             }
-                            pointCount++;
                         }
                     }
-                    ;
                 }
             }
         }
 
-        private void DownloadFile(string url, string fileName, Dispatcher dispatcher)
+        private void DownloadFile(string url, string fileName, Dispatcher dispatcher,
+            CancellationToken cancellationToken)
         {
-            try
+            if (!cancellationToken.IsCancellationRequested)
             {
-                using (WebClient webClient = new WebClient())
+                try
                 {
-                    webClient.DownloadFile(new Uri(url), fileName);
+                    using (WebClient webClient = new WebClient())
+                    {
+                        webClient.DownloadFile(new Uri(url), fileName);
+                    }
                 }
+                catch
+                {
+                }
+                dispatcher.Invoke(() => Value++);
             }
-            catch
-            {
-            }
-            dispatcher.Invoke(() => Value++);
         }
     }
 }
