@@ -49,7 +49,7 @@ namespace YukoCollectionsClient.Models.Progress
                     {
                         if (_clearUrlList)
                         {
-                            collection.Urls.Clear();
+                            dispatcher.Invoke(() => collection.Urls.Clear());
                         }
                         dispatcher.Invoke(
                             (Action<string>) ((string collectionName) =>
