@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -25,6 +27,7 @@ namespace YukoBot.Settings
         public int DiscordMessageLimit { get; set; } = 100;
         public int DiscordMessageLimitSleepMs { get; set; } = 1000;
         public int DiscordMessageLimitSleepMsDividerForOne { get; set; } = 10;
+        public List<string> Filters { get; set; }
         #endregion
 
         #region Instance
