@@ -7,6 +7,16 @@ namespace YukoBot.Extensions
 {
     public static class DiscordExtension
     {
+        /*
+        private static readonly ILogger _defaultLogger =
+            YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
+
+        private static readonly EventId _getImagesEventId =
+            new EventId(0, $"{nameof(DiscordExtension)}: {nameof(GetImages)}");
+        private static readonly EventId _hasImagesEventId =
+            new EventId(0, $"{nameof(DiscordExtension)}: {nameof(HasImages)}");
+        */
+
         private static IEnumerable<string> GetAllImages(DiscordMessage message)
         {
             return message.Attachments.Select(x => x.Url)
