@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoClient.Models.Progress
 {
-    public class ExportUrls : Base
+    public class ExportUrls : BaseProgressModel
     {
         private readonly ICollection<string> urls;
         private readonly string fileName;
@@ -16,7 +18,7 @@ namespace YukoClient.Models.Progress
             this.fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка к экспорту сылок");
             using (StreamWriter streamWriter = new StreamWriter(fileName, false, Encoding.UTF8))

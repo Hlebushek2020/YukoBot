@@ -3,18 +3,20 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Progresses;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.Models.Progress
 {
-    public class StorageInitialization : Base
+    public class StorageInitialization : BaseProgressModel
     {
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Поиск сохраненных данных");
             string serversCacheFilePath = Path.Combine(Settings.ProgramResourceFolder, Settings.ServersCacheFile);

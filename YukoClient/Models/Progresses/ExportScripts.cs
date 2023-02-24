@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoClient.Models.Progress
 {
-    public class ExportScripts : Base
+    public class ExportScripts : BaseProgressModel
     {
         private readonly ICollection<Script> scripts;
         private readonly string fileName;
@@ -18,7 +20,7 @@ namespace YukoClient.Models.Progress
             this.serverId = serverId;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка к экспорту правил");
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))

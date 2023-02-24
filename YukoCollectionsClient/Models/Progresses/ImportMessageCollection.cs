@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoCollectionsClient.Models.Progress
 {
-    public class ImportMessageCollection : Base
+    public class ImportMessageCollection : BaseProgressModel
     {
         private readonly ICollection<MessageCollectionItem> messageCollectionItems;
         private readonly string fileName;
@@ -17,7 +19,7 @@ namespace YukoCollectionsClient.Models.Progress
             this.fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Чтение данных");
             string json = File.ReadAllText(fileName, Encoding.UTF8);

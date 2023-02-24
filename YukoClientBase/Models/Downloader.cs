@@ -11,6 +11,11 @@ namespace YukoClientBase.Models
         #region Limited Concurrency Level Task Scheduler
         private class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
         {
+            public bool IsActive
+            {
+                get => _currentThreadIsProcessingItems || _delegatesQueuedOrRunning > 0;
+            }
+
             /// <summary>Whether the current thread is processing work items.</summary>
             [ThreadStatic]
             private static bool _currentThreadIsProcessingItems;
@@ -30,7 +35,7 @@ namespace YukoClientBase.Models
             {
                 if (maxDegreeOfParallelism < 1)
                 {
-                    throw new ArgumentOutOfRangeException("maxDegreeOfParallelism");
+                    throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism));
                 }
                 _maxDegreeOfParallelism = maxDegreeOfParallelism;
             }
@@ -88,7 +93,10 @@ namespace YukoClientBase.Models
                         }
                     }
                     // We're done processing items on the current thread
-                    finally { _currentThreadIsProcessingItems = false; }
+                    finally
+                    {
+                        _currentThreadIsProcessingItems = false;
+                    }
                 });
             }
 
@@ -126,7 +134,10 @@ namespace YukoClientBase.Models
             }
 
             /// <summary>Gets the maximum concurrency level supported by this scheduler.</summary>
-            public sealed override int MaximumConcurrencyLevel { get { return _maxDegreeOfParallelism; } }
+            public sealed override int MaximumConcurrencyLevel
+            {
+                get { return _maxDegreeOfParallelism; }
+            }
 
             /// <summary>Gets an enumerable of the tasks currently scheduled on this scheduler.</summary>
             /// <returns>An enumerable of the tasks currently scheduled.</returns>
@@ -140,7 +151,10 @@ namespace YukoClientBase.Models
                     {
                         return _tasks.ToArray();
                     }
-                    else { throw new NotSupportedException(); }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
                 }
                 finally
                 {
@@ -154,26 +168,24 @@ namespace YukoClientBase.Models
         #endregion
 
         #region Fields
-        private readonly TaskFactory taskFactory;
-        private int completedCount = 0;
+        private readonly TaskFactory _taskFactory;
+        private readonly LimitedConcurrencyLevelTaskScheduler _taskScheduler;
         #endregion
 
         #region Propirties
-        public int CompletedCount { get => completedCount; }
+        public bool IsActive
+        {
+            get => _taskScheduler.IsActive;
+        }
         #endregion
 
         public Downloader()
         {
-            taskFactory = new TaskFactory(
-                new LimitedConcurrencyLevelTaskScheduler(Settings.Current.MaxDownloadThreads));
+            _taskScheduler = new LimitedConcurrencyLevelTaskScheduler(Settings.Current.MaxDownloadThreads);
+            _taskFactory = new TaskFactory(_taskScheduler);
         }
 
-        public void StartNew(Action action)
-        {
-            taskFactory.StartNew(action += () =>
-            {
-                Interlocked.Increment(ref completedCount);
-            });
-        }
+        public void StartNew(Action action) =>
+            _taskFactory.StartNew(action);
     }
 }

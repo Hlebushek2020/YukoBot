@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Threading;
+using YukoClientBase.Models.Progresses;
 
 namespace YukoClient.Models.Progress
 {
-    public class ImportUrls : Base
+    public class ImportUrls : BaseProgressModel
     {
         private readonly ICollection<string> urls;
         private readonly string fileName;
@@ -17,7 +19,7 @@ namespace YukoClient.Models.Progress
             this.fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher)
+        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка к импорту сылок");
             using (StreamReader streamReader = new StreamReader(fileName, Encoding.UTF8))

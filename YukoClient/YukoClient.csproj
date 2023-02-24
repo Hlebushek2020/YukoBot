@@ -162,7 +162,6 @@
     <Compile Include="Models\Progresses\ImportUrls.cs" />
     <Compile Include="Models\Progresses\ImportScripts.cs" />
     <Compile Include="Models\Progresses\ExportScripts.cs" />
-    <Compile Include="Models\Progresses\Base.cs" />
     <Compile Include="Models\Script.cs" />
     <Compile Include="Models\Server.cs" />
     <Compile Include="Models\Storage.cs" />
