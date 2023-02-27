@@ -28,15 +28,16 @@ namespace YukoBot.Extensions
 
         public static IEnumerable<string> GetImages(this DiscordMessage message)
         {
+            // TODO: refactor: create new list where removed items match regex
             return GetAllImages(message).Where(x => !Settings.YukoSettings.Current.Filters
-                .All(y => Regex.Match(x, y).Success)).ToHashSet();
+                .Any(y => Regex.Match(x, y).Success)).ToHashSet();
         }
 
         public static bool HasImages(this DiscordMessage message)
         {
             return GetAllImages(message)
                 .Any(x => !Settings.YukoSettings.Current.Filters
-                    .All(y => Regex.Match(x, y).Success));
+                    .Any(y => Regex.Match(x, y).Success));
         }
 
         public static List<DiscordMessage> ToList(this DiscordMessage discordMessage)
