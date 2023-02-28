@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YukoBot.Interfaces;
+using YukoBot.Settings;
 
 namespace YukoBot.Extensions
 {
@@ -17,7 +19,7 @@ namespace YukoBot.Extensions
             new EventId(0, $"{nameof(DiscordExtension)}: {nameof(HasImages)}");
         */
 
-        private static IEnumerable<string> GetAllImages(DiscordMessage message)
+        private static IEnumerable<string> GetAllLinks(this DiscordMessage message)
         {
             return message.Attachments.Select(x => x.Url)
                 .Concat(message.Embeds.Where(x => x.Url != null)
@@ -28,16 +30,18 @@ namespace YukoBot.Extensions
 
         public static IEnumerable<string> GetImages(this DiscordMessage message)
         {
-            // TODO: refactor: create new list where removed items match regex
-            return GetAllImages(message).Where(x => !Settings.YukoSettings.Current.Filters
+            IReadOnlyList<string> filters = YukoSettings.Current.Filters;
+
+            return message.GetAllLinks().Where(x => !filters
                 .Any(y => Regex.Match(x, y).Success)).ToHashSet();
         }
 
         public static bool HasImages(this DiscordMessage message)
         {
-            return GetAllImages(message)
-                .Any(x => !Settings.YukoSettings.Current.Filters
-                    .Any(y => Regex.Match(x, y).Success));
+            IReadOnlyList<string> filters = YukoSettings.Current.Filters;
+
+            return message.GetAllLinks().Any(x => !filters
+                .Any(y => Regex.Match(x, y).Success));
         }
 
         public static List<DiscordMessage> ToList(this DiscordMessage discordMessage)
