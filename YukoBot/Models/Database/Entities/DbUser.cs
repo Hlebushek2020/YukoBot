@@ -43,7 +43,7 @@ namespace YukoBot.Models.Database.Entities
         public string Token { get; set; }
 
         /// <summary>
-        /// The time and date of the last login to the application.
+        /// The time and date of the last login to the application. Default value: null.
         /// </summary>
         [Column("login_time")]
         public DateTime? LoginTime { get; set; }
@@ -56,14 +56,17 @@ namespace YukoBot.Models.Database.Entities
         public bool InfoMessages { get; set; } = true;
 
         /// <summary>
-        /// Indicates whether the user has premium access or not. Default value: false.
+        /// Indicates whether the user has premium access or not. Isn't column.
         /// </summary>
         [NotMapped]
-        public bool HasPremium
+        public bool HasPremiumAccess
         {
             get => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
         }
 
+        /// <summary>
+        /// Expiration date of premium access. Default value: null.
+        /// </summary>
         [Column("premium_access_expires")]
         public DateTime? PremiumAccessExpires { get; set; }
     }
