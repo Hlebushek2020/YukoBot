@@ -58,8 +58,13 @@ namespace YukoBot.Models.Database.Entities
         /// <summary>
         /// Indicates whether the user has premium access or not. Default value: false.
         /// </summary>
-        [Required]
-        [Column("has_premium")]
-        public bool HasPremium { get; set; } = false;
+        [NotMapped]
+        public bool HasPremium
+        {
+            get => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
+        }
+
+        [Column("premium_access_expires")]
+        public DateTime? PremiumAccessExpires { get; set; }
     }
 }

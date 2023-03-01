@@ -59,6 +59,7 @@ namespace YukoBot.Commands
             await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
         }
 
+        /*
         [Command("set-premium")]
         [Description("Предоставление пользователю дополнительных возможностей.")]
         public async Task SetPremium(CommandContext ctx,
@@ -78,6 +79,59 @@ namespace YukoBot.Commands
             else
             {
                 await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
+            }
+        }
+        */
+
+        [Command("extend-premium")]
+        [Description("Продлить премиум доступ.")]
+        public async Task ExtendPremium(CommandContext ctx,
+            [Description("Участник сервера (гильдии).")]
+            DiscordMember discordMember,
+            [Description(
+                "Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.")]
+            int count,
+            [Description(
+                "Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.")]
+            string type)
+        {
+            type = type.ToLower();
+            if (!type.Equals("day") && !type.Equals("month") && !type.Equals("year") &&
+                !type.Equals("d") && !type.Equals("m") && !type.Equals("y"))
+            {
+                await ctx.RespondAsync(
+                    $"Хозяин! Пожалуйста, укажите единицу измерения для значения! {Constants.SadSmile}");
+            }
+            else
+            {
+                YukoDbContext dbCtx = new YukoDbContext();
+                DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
+                if (dbUser != null)
+                {
+                    DateTime forAdding = dbUser.PremiumAccessExpires ?? DateTime.Now;
+                    switch (type)
+                    {
+                        case "day":
+                        case "d":
+                            forAdding = forAdding.AddDays(count);
+                            break;
+                        case "month":
+                        case "m":
+                            forAdding = forAdding.AddMonths(count);
+                            break;
+                        default:
+                            forAdding = forAdding.AddYears(count);
+                            break;
+                    }
+                    dbUser.PremiumAccessExpires = forAdding;
+                    await dbCtx.SaveChangesAsync();
+                    await ctx.RespondAsync(
+                        $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile}");
+                }
+                else
+                {
+                    await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
+                }
             }
         }
     }
