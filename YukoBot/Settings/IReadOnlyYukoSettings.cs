@@ -1,4 +1,7 @@
-﻿namespace YukoBot.Interfaces
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace YukoBot.Interfaces
 {
     public interface IReadOnlyYukoSettings
     {
@@ -19,6 +22,7 @@
         public int DiscordMessageLimit { get; }
         public int DiscordMessageLimitSleepMs { get; }
         public int DiscordMessageLimitSleepMsDividerForOne { get; }
+        public IReadOnlyList<string> Filters { get; }
         #endregion
 
         public void SetApp(string appLink);
