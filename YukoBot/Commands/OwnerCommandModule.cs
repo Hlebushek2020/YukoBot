@@ -15,6 +15,15 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
+        #region Constants
+        private const string ExtendPremiumDayFull = "day";
+        private const string ExtendPremiumDayShort = "d";
+        private const string ExtendPremiumMonthFull = "month";
+        private const string ExtendPremiumMonthShort = "m";
+        private const string ExtendPremiumYearFull = "year";
+        private const string ExtendPremiumYearShort = "y";
+        #endregion
+
         public override string CommandAccessError => "Простите, эта команда доступна только владельцу бота!";
 
         public OwnerCommandModule() : base(Categories.Management)
@@ -96,8 +105,9 @@ namespace YukoBot.Commands
             string type)
         {
             type = type.ToLower();
-            if (!type.Equals("day") && !type.Equals("month") && !type.Equals("year") &&
-                !type.Equals("d") && !type.Equals("m") && !type.Equals("y"))
+            if (!type.Equals(ExtendPremiumDayFull) && !type.Equals(ExtendPremiumDayShort) &&
+                !type.Equals(ExtendPremiumMonthFull) && !type.Equals(ExtendPremiumMonthShort) &&
+                !type.Equals(ExtendPremiumYearFull) && !type.Equals(ExtendPremiumYearShort))
             {
                 await ctx.RespondAsync(
                     $"Хозяин! Пожалуйста, укажите единицу измерения для значения! {Constants.SadSmile}");
@@ -111,12 +121,12 @@ namespace YukoBot.Commands
                     DateTime forAdding = dbUser.PremiumAccessExpires ?? DateTime.Now;
                     switch (type)
                     {
-                        case "day":
-                        case "d":
+                        case ExtendPremiumDayFull:
+                        case ExtendPremiumDayShort:
                             forAdding = forAdding.AddDays(count);
                             break;
-                        case "month":
-                        case "m":
+                        case ExtendPremiumMonthFull:
+                        case ExtendPremiumMonthShort:
                             forAdding = forAdding.AddMonths(count);
                             break;
                         default:
