@@ -22,7 +22,7 @@ namespace YukoBot.Interfaces
         public int DiscordMessageLimit { get; }
         public int DiscordMessageLimitSleepMs { get; }
         public int DiscordMessageLimitSleepMsDividerForOne { get; }
-        public List<string> Filters { get; }
+        public IReadOnlyList<string> Filters { get; }
         #endregion
 
         public void SetApp(string appLink);
