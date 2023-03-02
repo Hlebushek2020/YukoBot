@@ -201,14 +201,19 @@ namespace YukoBot.Commands
             YukoDbContext dbContext = new YukoDbContext();
             DbUser dbUser = dbContext.Users.Find(ctx.User.Id);
 
+            bool hasPremiumAccess = dbUser.HasPremiumAccess;
+
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
-                .AddField("Премиум: ", dbUser.HasPremium ? "Есть" : "Нет", true)
+                .AddField("Премиум: ",
+                    (hasPremiumAccess ? "Есть" : "Нет") + (dbUser.PremiumAccessExpires.HasValue
+                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {dbUser.PremiumAccessExpires.Value:f}"
+                        : ""), true)
                 .AddField("Последний вход в приложение: ",
-                    dbUser.LoginTime != null ? dbUser.LoginTime?.ToString("dd.MM.yyyy HH:mm") : "-", true)
+                    dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString("f") : "-", true)
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
-                .WithColor(dbUser.HasPremium ? Constants.PremiumColor : Constants.SuccessColor);
+                .WithColor(hasPremiumAccess ? Constants.PremiumAccessColor : Constants.SuccessColor);
 
             IList<DbBan> bans = dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
             StringBuilder banListBuilder = new StringBuilder();
@@ -224,6 +229,7 @@ namespace YukoBot.Commands
             }
             embedBuilder.AddField("Список текущих банов:",
                 banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
+
             await ctx.RespondAsync(embedBuilder);
         }
     }

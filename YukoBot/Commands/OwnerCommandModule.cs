@@ -40,6 +40,7 @@ namespace YukoBot.Commands
         }
 
         [Command("status")]
+        [Aliases("stat")]
         [Description("Сведения о боте.")]
         public async Task Status(CommandContext ctx)
         {
@@ -68,31 +69,8 @@ namespace YukoBot.Commands
             await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
         }
 
-        /*
-        [Command("set-premium")]
-        [Description("Предоставление пользователю дополнительных возможностей.")]
-        public async Task SetPremium(CommandContext ctx,
-            [Description("Участник сервера (гильдии)")]
-            DiscordMember discordMember,
-            [Description("true - предоставить / false - отобрать")]
-            bool isEnabled)
-        {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
-            if (dbUser != null)
-            {
-                dbUser.HasPremium = isEnabled;
-                await dbCtx.SaveChangesAsync();
-                await ctx.RespondAsync($"{(isEnabled ? "Предоставлено" : "Отобрано")}! {Constants.HappySmile}");
-            }
-            else
-            {
-                await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
-            }
-        }
-        */
-
         [Command("extend-premium")]
+        [Aliases("ep")]
         [Description("Продлить премиум доступ.")]
         public async Task ExtendPremium(CommandContext ctx,
             [Description("Участник сервера (гильдии).")]
@@ -118,7 +96,10 @@ namespace YukoBot.Commands
                 DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
                 if (dbUser != null)
                 {
-                    DateTime forAdding = dbUser.PremiumAccessExpires ?? DateTime.Now;
+                    DateTime forAdding = DateTime.Now;
+                    if (dbUser.PremiumAccessExpires != null && dbUser.PremiumAccessExpires.Value > forAdding)
+                        forAdding = dbUser.PremiumAccessExpires.Value;
+
                     switch (type)
                     {
                         case ExtendPremiumDayFull:
@@ -135,6 +116,7 @@ namespace YukoBot.Commands
                     }
                     dbUser.PremiumAccessExpires = forAdding;
                     await dbCtx.SaveChangesAsync();
+
                     await ctx.RespondAsync(
                         $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile}");
                 }
