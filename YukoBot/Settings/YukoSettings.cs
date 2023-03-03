@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using YukoBot.Interfaces;
 
 namespace YukoBot.Settings
@@ -27,25 +28,27 @@ namespace YukoBot.Settings
         public int DiscordMessageLimit { get; set; } = 100;
         public int DiscordMessageLimitSleepMs { get; set; } = 1000;
         public int DiscordMessageLimitSleepMsDividerForOne { get; set; } = 10;
+        public LogLevel DiscordApiLogLevel { get; set; } = LogLevel.Information;
+        public LogLevel BotLogLevel { get; set; } = LogLevel.Information;
         public IReadOnlyList<string> Filters { get; set; }
         #endregion
 
         #region Instance
-        private static YukoSettings settings;
+        private static YukoSettings _settings;
 
         [JsonIgnore]
         public static IReadOnlyYukoSettings Current
         {
             get
             {
-                if (settings == null)
+                if (_settings == null)
                 {
                     string settingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         "settings.json");
-                    settings = JsonConvert.DeserializeObject<YukoSettings>(
+                    _settings = JsonConvert.DeserializeObject<YukoSettings>(
                         File.ReadAllText(settingsFile, Encoding.UTF8));
                 }
-                return settings;
+                return _settings;
             }
         }
         #endregion

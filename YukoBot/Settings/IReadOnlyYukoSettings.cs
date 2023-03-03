@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace YukoBot.Interfaces
 {
@@ -22,6 +23,8 @@ namespace YukoBot.Interfaces
         public int DiscordMessageLimit { get; }
         public int DiscordMessageLimitSleepMs { get; }
         public int DiscordMessageLimitSleepMsDividerForOne { get; }
+        public LogLevel DiscordApiLogLevel { get; }
+        public LogLevel BotLogLevel { get; }
         public IReadOnlyList<string> Filters { get; }
         #endregion
 
