@@ -224,7 +224,10 @@ namespace YukoBot.Commands
 
                 HashSet<ulong> collectionItems = dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
+
                 DbUser dbUser = dbCtx.Users.Find(memberId);
+                bool hasPremiumAccess = dbUser.HasPremiumAccess;
+
                 const int limit = 10;
                 bool isCompleted = false;
                 DiscordMessage discordMessage = ctx.Message.ReferencedMessage;
@@ -238,7 +241,8 @@ namespace YukoBot.Commands
                         discordMessage = messages[numMessage];
                         if (discordMessage.HasImages() && !collectionItems.Contains(discordMessage.Id))
                         {
-                            await SaveCollectionItem(ctx, discordMessage, discordEmbed, dbCtx, dbCollection, dbUser);
+                            await SaveCollectionItem(ctx, discordMessage, discordEmbed, dbCtx, dbCollection,
+                                hasPremiumAccess);
                         }
                         if (discordMessage.Id == messageEndId)
                         {
@@ -536,13 +540,13 @@ namespace YukoBot.Commands
 
         #region NOT COMMAND
         private static async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
-            DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, DbUser dbUser)
+            DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, bool hasPremiumAccess)
         {
             dbCtx.CollectionItems.Add(new DbCollectionItem
             {
                 CollectionId = dbCollection.Id,
                 MessageId = discordMessage.Id,
-                IsSavedLinks = dbUser.HasPremium
+                IsSavedLinks = hasPremiumAccess
             });
 
             DbMessage dbMessage = dbCtx.Messages.Find(discordMessage.Id);
@@ -622,7 +626,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
 
-            await SaveCollectionItem(ctx, message, discordEmbed, dbCtx, dbCollection, dbCtx.Users.Find(memberId));
+            bool hasPremiumAccess = dbCtx.Users.Find(memberId).HasPremiumAccess;
+            await SaveCollectionItem(ctx, message, discordEmbed, dbCtx, dbCollection, hasPremiumAccess);
 
             return discordEmbed;
         }

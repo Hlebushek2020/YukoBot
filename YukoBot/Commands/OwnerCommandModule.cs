@@ -15,6 +15,15 @@ namespace YukoBot.Commands
     [RequireOwner]
     public class OwnerCommandModule : CommandModule
     {
+        #region Constants
+        private const string ExtendPremiumDayFull = "day";
+        private const string ExtendPremiumDayShort = "d";
+        private const string ExtendPremiumMonthFull = "month";
+        private const string ExtendPremiumMonthShort = "m";
+        private const string ExtendPremiumYearFull = "year";
+        private const string ExtendPremiumYearShort = "y";
+        #endregion
+
         public override string CommandAccessError => "Простите, эта команда доступна только владельцу бота!";
 
         public OwnerCommandModule() : base(Categories.Management)
@@ -31,6 +40,7 @@ namespace YukoBot.Commands
         }
 
         [Command("status")]
+        [Aliases("stat")]
         [Description("Сведения о боте.")]
         public async Task Status(CommandContext ctx)
         {
@@ -59,25 +69,61 @@ namespace YukoBot.Commands
             await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
         }
 
-        [Command("set-premium")]
-        [Description("Предоставление пользователю дополнительных возможностей.")]
-        public async Task SetPremium(CommandContext ctx,
-            [Description("Участник сервера (гильдии)")]
+        [Command("extend-premium")]
+        [Aliases("ep")]
+        [Description("Продлить премиум доступ.")]
+        public async Task ExtendPremium(CommandContext ctx,
+            [Description("Участник сервера (гильдии).")]
             DiscordMember discordMember,
-            [Description("true - предоставить / false - отобрать")]
-            bool isEnabled)
+            [Description(
+                "Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.")]
+            int count,
+            [Description(
+                "Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.")]
+            string type)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
-            if (dbUser != null)
+            type = type.ToLower();
+            if (!type.Equals(ExtendPremiumDayFull) && !type.Equals(ExtendPremiumDayShort) &&
+                !type.Equals(ExtendPremiumMonthFull) && !type.Equals(ExtendPremiumMonthShort) &&
+                !type.Equals(ExtendPremiumYearFull) && !type.Equals(ExtendPremiumYearShort))
             {
-                dbUser.HasPremium = isEnabled;
-                await dbCtx.SaveChangesAsync();
-                await ctx.RespondAsync($"{(isEnabled ? "Предоставлено" : "Отобрано")}! {Constants.HappySmile}");
+                await ctx.RespondAsync(
+                    $"Хозяин! Пожалуйста, укажите единицу измерения для значения! {Constants.SadSmile}");
             }
             else
             {
-                await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
+                YukoDbContext dbCtx = new YukoDbContext();
+                DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
+                if (dbUser != null)
+                {
+                    DateTime forAdding = DateTime.Now;
+                    if (dbUser.PremiumAccessExpires != null && dbUser.PremiumAccessExpires.Value > forAdding)
+                        forAdding = dbUser.PremiumAccessExpires.Value;
+
+                    switch (type)
+                    {
+                        case ExtendPremiumDayFull:
+                        case ExtendPremiumDayShort:
+                            forAdding = forAdding.AddDays(count);
+                            break;
+                        case ExtendPremiumMonthFull:
+                        case ExtendPremiumMonthShort:
+                            forAdding = forAdding.AddMonths(count);
+                            break;
+                        default:
+                            forAdding = forAdding.AddYears(count);
+                            break;
+                    }
+                    dbUser.PremiumAccessExpires = forAdding;
+                    await dbCtx.SaveChangesAsync();
+
+                    await ctx.RespondAsync(
+                        $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile}");
+                }
+                else
+                {
+                    await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
+                }
             }
         }
     }
