@@ -57,14 +57,14 @@ namespace YukoBot
 
         private YukoBot()
         {
+            IReadOnlyYukoSettings settings = YukoSettings.Current;
+
             YukoLoggerFactory loggerFactory = YukoLoggerFactory.Current;
-            loggerFactory.AddProvider(new DiscordClientLoggerProvider(LogLevel.Error));
+            loggerFactory.AddProvider(new DiscordClientLoggerProvider(settings.DiscordApiLogLevel));
             _defaultLogger = loggerFactory.CreateLogger<DefaultLoggerProvider>();
 
             EventId eventId = new EventId(0, "Init");
             _defaultLogger.LogInformation(eventId, "Initializing discord client");
-
-            IReadOnlyYukoSettings settings = YukoSettings.Current;
 
             _discordClient = new DiscordClient(new DiscordConfiguration
             {
