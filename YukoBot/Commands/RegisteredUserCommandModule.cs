@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,6 +23,10 @@ namespace YukoBot.Commands
     [RequireRegistered]
     public class RegisteredUserCommandModule : CommandModule
     {
+        #region Constants
+        private const string ProfileDtf = "d MMMM yyyy г. hh:mm";
+        #endregion
+
         public override string CommandAccessError =>
             "Простите, эта команда доступна для зарегистрированных пользователей!";
 
@@ -199,8 +204,9 @@ namespace YukoBot.Commands
         public async Task Profile(CommandContext ctx)
         {
             YukoDbContext dbContext = new YukoDbContext();
-            DbUser dbUser = dbContext.Users.Find(ctx.User.Id);
+            CultureInfo locale = CultureInfo.GetCultureInfo("ru-RU");
 
+            DbUser dbUser = dbContext.Users.Find(ctx.User.Id);
             bool hasPremiumAccess = dbUser.HasPremiumAccess;
 
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
@@ -208,10 +214,11 @@ namespace YukoBot.Commands
                 .WithThumbnail(ctx.User.AvatarUrl)
                 .AddField("Премиум: ",
                     (hasPremiumAccess ? "Есть" : "Нет") + (dbUser.PremiumAccessExpires.HasValue
-                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {dbUser.PremiumAccessExpires.Value:f}"
+                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale)}"
                         : ""), true)
                 .AddField("Последний вход в приложение: ",
-                    dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString("f") : "-", true)
+                    dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString(ProfileDtf, locale) : "-",
+                    true)
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
                 .WithColor(hasPremiumAccess ? Constants.PremiumAccessColor : Constants.SuccessColor);
 
