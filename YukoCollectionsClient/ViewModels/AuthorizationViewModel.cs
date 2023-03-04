@@ -34,7 +34,7 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    SUI.Dialogs.MessageBox.Show("Сначало настройте программу! Значок в правом нижнем углу.", App.Name,
+                    SUI.Dialogs.MessageBox.Show("Сначала настройте программу! Значок в правом нижнем углу.", App.Name,
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
