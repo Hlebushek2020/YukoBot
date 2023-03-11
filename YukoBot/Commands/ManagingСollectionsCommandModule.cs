@@ -429,6 +429,15 @@ namespace YukoBot.Commands
         }
         #endregion
 
+        [Command("remove-item")]
+        [Aliases("rm-item")]
+        [Description("Удалить сообщение из коллекции.")]
+        public async Task DeleteFromCollection(CommandContext commandContext,
+            [Description("Название или Id коллекции"), RemainingText]
+            string nameOrId = DefaultCollection)
+        {
+        }
+
         #region Command: clear-collection
         [Command("clear-collection")]
         [Description("Удалить все сообщения из коллекции.")]
