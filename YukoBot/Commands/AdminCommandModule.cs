@@ -28,7 +28,7 @@ namespace YukoBot.Commands
         public async Task Ban(CommandContext ctx,
             [Description("Участник сервера")]
             DiscordMember member,
-            [Description("Причина (необязательно)"), RemainingText]
+            [Description("Причина"), RemainingText]
             string reason = null)
         {
             DiscordEmbedBuilder discordEmbed = null;

@@ -41,7 +41,7 @@ namespace YukoBot.Commands
         [Description(
             "Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
         public async Task AddToCollection(CommandContext ctx,
-            [Description("Название или Id коллекции (необязательно)"), RemainingText]
+            [Description("Название или Id коллекции"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             YukoDbContext dbCtx = new YukoDbContext();
@@ -60,7 +60,7 @@ namespace YukoBot.Commands
             }
             catch (IncorrectCommandDataException ex)
             {
-                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(), dbCtx);
+                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(ctx.Member.DisplayName), dbCtx);
             }
         }
         #endregion
@@ -72,7 +72,7 @@ namespace YukoBot.Commands
         public async Task AddToCollectionById(CommandContext ctx,
             [Description("Id сообщения")]
             ulong messageId,
-            [Description("Название или Id коллекции (необязательно)"), RemainingText]
+            [Description("Название или Id коллекции"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -167,7 +167,7 @@ namespace YukoBot.Commands
         [Description(
             "Задать вложенное сообщение конечным сообщением для промежутка (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию. Если коллекция не указана сообщения добавляются в коллекцию по умолчанию.")]
         public async Task End(CommandContext ctx,
-            [Description("Название или Id коллекции (необязательно)"), RemainingText]
+            [Description("Название или Id коллекции"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             YukoDbContext dbCtx = new YukoDbContext();
@@ -268,7 +268,7 @@ namespace YukoBot.Commands
             }
             catch (IncorrectCommandDataException ex)
             {
-                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(), dbCtx);
+                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(ctx.Member.DisplayName), dbCtx);
             }
         }
         #endregion
@@ -392,51 +392,50 @@ namespace YukoBot.Commands
         }
 
         [Command("remove-item")]
-        [Aliases("rm-item")]
-        [Description("Удалить сообщение из коллекции.")]
-        public async Task DeleteFromCollection(CommandContext commandContext,
+        [Description("Удалить вложенное сообщение из коллекции.")]
+        public async Task DeleteFromCollection(CommandContext ctx,
             [Description("Id сообщения")]
             ulong messageId,
             [Description("Название или Id коллекции"), RemainingText]
             string nameOrId)
         {
-            DiscordEmbedBuilder discordEmbed = null;
-            YukoDbContext dbContext = new YukoDbContext();
-            ulong memberId = commandContext.Member.Id;
-            DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
-                ? dbContext.Collections.Find(id)
-                : dbContext.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
-            if (dbCollection != null && dbCollection.UserId == memberId)
+            YukoDbContext dbCtx = new YukoDbContext();
+            try
             {
-                IList<DbCollectionItem> dbCollectionItems = dbContext.CollectionItems
-                    .Where(x => x.CollectionId == dbCollection.Id && x.MessageId == messageId).ToList();
-                dbContext.CollectionItems.RemoveRange(dbCollectionItems);
-                await dbContext.SaveChangesAsync();
-
-                discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(commandContext.Member.DisplayName,
-                        dbCollectionItems.Count > 0
-                            ? $"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено!"
-                            : $"Ой, сообщения {messageId} и так нет в коллекции!");
+                await DeleteFromCollection(ctx, dbCtx, messageId, nameOrId);
             }
-            else
+            catch (IncorrectCommandDataException ex)
             {
-                discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(commandContext.Member.DisplayName, "Простите, такой коллекции нет!");
+                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(ctx.Member.DisplayName), dbCtx);
             }
-
-            await commandContext.RespondAsync(discordEmbed);
         }
-        #endregion
 
         [Command("remove-item")]
         [Aliases("rm-item")]
         [Description("Удалить сообщение из коллекции.")]
-        public async Task DeleteFromCollection(CommandContext commandContext,
+        public async Task DeleteFromCollection(CommandContext ctx,
             [Description("Название или Id коллекции"), RemainingText]
             string nameOrId = DefaultCollection)
         {
+            YukoDbContext dbCtx = new YukoDbContext();
+            try
+            {
+                await ctx.Message.DeleteAsync();
+
+                DiscordMessage message = ctx.Message.ReferencedMessage;
+                if (message == null)
+                {
+                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
+                }
+
+                await DeleteFromCollection(ctx, dbCtx, message.Id, nameOrId);
+            }
+            catch (IncorrectCommandDataException ex)
+            {
+                await SendSpecialMessage(ctx, ex.ToDiscordEmbed(ctx.Member.DisplayName), dbCtx);
+            }
         }
+        #endregion
 
         #region Command: clear-collection
         [Command("clear-collection")]
@@ -548,6 +547,32 @@ namespace YukoBot.Commands
         #endregion
 
         #region NOT COMMAND
+        private static async Task DeleteFromCollection(CommandContext ctx, YukoDbContext dbCtx, ulong messageId,
+            string nameOrId)
+        {
+            ulong memberId = ctx.Member.Id;
+
+            DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
+                ? dbCtx.Collections.Find(id)
+                : dbCtx.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
+            if (dbCollection == null || dbCollection.UserId != memberId)
+            {
+                throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
+            }
+
+            IList<DbCollectionItem> dbCollectionItems = dbCtx.CollectionItems
+                .Where(x => x.CollectionId == dbCollection.Id && x.MessageId == messageId).ToList();
+            dbCtx.CollectionItems.RemoveRange(dbCollectionItems);
+            await dbCtx.SaveChangesAsync();
+
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(ctx.Member.DisplayName,
+                    dbCollectionItems.Count > 0
+                        ? $"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено!"
+                        : $"Ой, сообщения {messageId} и так нет в коллекции!");
+            await SendSpecialMessage(ctx, discordEmbed, dbCtx);
+        }
+
         private static async Task SaveCollectionItem(CommandContext ctx, DiscordMessage discordMessage,
             DiscordEmbedBuilder discordEmbed, YukoDbContext dbCtx, DbCollection dbCollection, bool hasPremiumAccess)
         {

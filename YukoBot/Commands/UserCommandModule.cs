@@ -184,7 +184,7 @@ namespace YukoBot.Commands
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
                                 string defaultValue = (argument.DefaultValue != null)
-                                    ? $" (По умолчанию: {argument.DefaultValue})"
+                                    ? $" (Необязательно, по умолчанию: {argument.DefaultValue})"
                                     : string.Empty;
                                 descriptionBuilder.AppendLine(
                                     $"`{argument.Name}`: {argument.Description}{defaultValue}");

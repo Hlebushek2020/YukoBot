@@ -44,9 +44,12 @@ namespace YukoBot.Modules
                         DiscordMember botOwnerMember = await e.Message.Channel.Guild.GetMemberAsync(botOwnerUser.Id);
                         botOwner = botOwnerMember.DisplayName;
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                    }
 
-                    await e.Message.RespondAsync($"**Спряталась за {botOwner} и смотрит на {messageAuthorMember.DisplayName}**");
+                    await e.Message.RespondAsync(
+                        $"**Спряталась за {botOwner} и смотрит на {messageAuthorMember.DisplayName}**");
                 }
             }
         }

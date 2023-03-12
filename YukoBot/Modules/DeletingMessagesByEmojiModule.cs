@@ -22,7 +22,8 @@ namespace YukoBot.Modules
                 DiscordMessage discordMessage = await e.Channel.GetMessageAsync(e.Message.Id);
                 if (discordMessage.Author.Id.Equals(sender.CurrentUser.Id))
                 {
-                    _defaultLogger.LogInformation(_eventId, $"{e.User.Username}#{e.User.Discriminator}{(e.Guild != null ? $", {e.Guild.Name}, {e.Channel.Name}" : $"")}, {e.Message.Id}");
+                    _defaultLogger.LogInformation(_eventId,
+                        $"{e.User.Username}#{e.User.Discriminator}{(e.Guild != null ? $", {e.Guild.Name}, {e.Channel.Name}" : $"")}, {e.Message.Id}");
 
                     if (e.Guild != null)
                     {
