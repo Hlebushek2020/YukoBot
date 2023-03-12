@@ -392,12 +392,12 @@ namespace YukoBot.Commands
         }
 
         [Command("remove-item")]
-        [Description("Удалить вложенное сообщение из коллекции.")]
+        [Description("Удалить сообщение из коллекции.")]
         public async Task DeleteFromCollection(CommandContext ctx,
             [Description("Id сообщения")]
             ulong messageId,
             [Description("Название или Id коллекции"), RemainingText]
-            string nameOrId)
+            string nameOrId = DefaultCollection)
         {
             YukoDbContext dbCtx = new YukoDbContext();
             try
@@ -410,9 +410,9 @@ namespace YukoBot.Commands
             }
         }
 
-        [Command("remove-item")]
-        [Aliases("rm-item")]
-        [Description("Удалить сообщение из коллекции.")]
+        [Command("remove")]
+        [Aliases("rm")]
+        [Description("Удалить вложенное сообщение из коллекции.")]
         public async Task DeleteFromCollection(CommandContext ctx,
             [Description("Название или Id коллекции"), RemainingText]
             string nameOrId = DefaultCollection)

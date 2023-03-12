@@ -21,7 +21,7 @@ namespace YukoBot.Commands
         public Category Category { get; }
         public virtual string CommandAccessError { get; }
 
-        public CommandModule(Category category)
+        protected CommandModule(Category category)
         {
             // register category
             if (!_categoryies.ContainsKey(category.HelpCommand))
@@ -30,8 +30,8 @@ namespace YukoBot.Commands
             Category = category;
         }
 
-        public static bool CheckHelpCategoryCommand(string helpCommand) => _categoryies.ContainsKey(helpCommand);
-        public static Category GetCategoryByHelpCommand(string helpCommand) => _categoryies[helpCommand];
-        public static IReadOnlyCollection<Category> GetCategories() => _categoryies.Values;
+        protected static bool CheckHelpCategoryCommand(string helpCommand) => _categoryies.ContainsKey(helpCommand);
+        protected static Category GetCategoryByHelpCommand(string helpCommand) => _categoryies[helpCommand];
+        protected static IReadOnlyCollection<Category> GetCategories() => _categoryies.Values;
     }
 }

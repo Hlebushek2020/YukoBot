@@ -29,7 +29,7 @@ namespace YukoBot.Commands
             [Description("Участник сервера")]
             DiscordMember member,
             [Description("Причина"), RemainingText]
-            string reason = null)
+            string reason = "")
         {
             DiscordEmbedBuilder discordEmbed = null;
 
@@ -66,7 +66,7 @@ namespace YukoBot.Commands
             {
                 User = dbUser,
                 ServerId = member.Guild.Id,
-                Reason = reason
+                Reason = string.IsNullOrWhiteSpace(reason) ? null : reason
             };
 
             dbCtx.Bans.Add(dbBan);
