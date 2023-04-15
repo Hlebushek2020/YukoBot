@@ -89,11 +89,11 @@ namespace YukoBot.Commands
             "Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
         public async Task Help(CommandContext ctx,
             [Description("Категория или команда")]
-            string categoryOrCommand = null)
+            string categoryOrCommand = "")
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
-            if (categoryOrCommand != null)
+            if (!string.IsNullOrWhiteSpace(categoryOrCommand))
             {
                 if (CheckHelpCategoryCommand(categoryOrCommand))
                 {
@@ -184,7 +184,7 @@ namespace YukoBot.Commands
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
                                 string defaultValue = (argument.DefaultValue != null)
-                                    ? $" (По умолчанию: {argument.DefaultValue})"
+                                    ? $" (Необязательно, по умолчанию: {argument.DefaultValue})"
                                     : string.Empty;
                                 descriptionBuilder.AppendLine(
                                     $"`{argument.Name}`: {argument.Description}{defaultValue}");

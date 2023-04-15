@@ -49,6 +49,7 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.StatusColor)
                 .AddField("Net", $"v{Environment.Version}")
+                .AddField("DSharpPlus", $"v{ctx.Client.VersionString}")
                 .AddField("Сборка",
                     $"v{version.Major}.{version.Minor}.{version.Build} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
                 .AddField("Дата запуска",

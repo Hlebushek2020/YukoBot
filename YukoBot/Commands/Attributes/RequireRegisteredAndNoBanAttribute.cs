@@ -18,7 +18,8 @@ namespace YukoBot.Commands.Attributes
             DbUser dbUser = dbContext.Users.Find(userId);
             if (dbUser != null)
             {
-                DbBan dbBan = dbContext.Bans.Where(x => x.UserId == userId && x.ServerId == ctx.Guild.Id).FirstOrDefault();
+                DbBan dbBan = dbContext.Bans.Where(x => x.UserId == userId && x.ServerId == ctx.Guild.Id)
+                    .FirstOrDefault();
                 return Task.FromResult(dbBan == null);
             }
             return Task.FromResult(false);

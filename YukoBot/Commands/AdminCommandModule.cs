@@ -28,8 +28,8 @@ namespace YukoBot.Commands
         public async Task Ban(CommandContext ctx,
             [Description("Участник сервера")]
             DiscordMember member,
-            [Description("Причина (необязательно)"), RemainingText]
-            string reason = null)
+            [Description("Причина"), RemainingText]
+            string reason = "")
         {
             DiscordEmbedBuilder discordEmbed = null;
 
@@ -66,7 +66,7 @@ namespace YukoBot.Commands
             {
                 User = dbUser,
                 ServerId = member.Guild.Id,
-                Reason = reason
+                Reason = string.IsNullOrWhiteSpace(reason) ? null : reason
             };
 
             dbCtx.Bans.Add(dbBan);
