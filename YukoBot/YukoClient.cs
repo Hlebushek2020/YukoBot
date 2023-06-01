@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,20 +27,21 @@ namespace YukoBot
 {
     public class YukoClient : IDisposable
     {
-        public static bool Availability
-        {
-            get => _countClient > 0;
-        }
-
+        #region Static Fields
         private static volatile int _countClient = 0;
         private static readonly EventId _eventId = new EventId(0, "Client");
         private static readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
-        private static readonly int _messageLimitSleepMs = YukoSettings.Current.DiscordMessageLimitSleepMs;
+        private static readonly int _messageLimitSleepMs =
+            YukoSettings.Current.DiscordMessageLimitSleepMs;
         private static readonly int _messageLimitSleepMsForOne =
             _messageLimitSleepMs / YukoSettings.Current.DiscordMessageLimitSleepMsDividerForOne;
         private static readonly ILogger
             _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
+        private static readonly ConcurrentDictionary<Guid, ulong> _userTokens =
+            new ConcurrentDictionary<Guid, ulong>();
+        #endregion
 
+        #region Fields
         private readonly DiscordClient _discordClient;
         private readonly TcpClient _tcpClient;
 
@@ -48,6 +50,12 @@ namespace YukoBot
         private BinaryWriter _binaryWriter = null;
         private YukoDbContext _dbCtx = null;
         private DbUser _currentDbUser = null;
+        #endregion
+
+        public static bool Availability
+        {
+            get => _countClient > 0;
+        }
 
         public YukoClient(DiscordClient discordClient, TcpClient tcpClient)
         {
@@ -76,10 +84,15 @@ namespace YukoBot
                 else
                 {
                     _dbCtx = new YukoDbContext();
-                    _currentDbUser = _dbCtx.Users.FirstOrDefault(x => x.Token == baseRequest.Token);
+                    Guid userToken = Guid.Parse(baseRequest.Token);
+                    _currentDbUser = await _dbCtx.Users.FindAsync(
+                        _userTokens.ContainsKey(userToken)
+                            ? _userTokens[userToken]
+                            : ulong.MinValue);
                     if (_currentDbUser == null || baseRequest.Token == null)
                     {
-                        Response baseResponse = new Response { ErrorMessage = "Вы не авторизованы!" };
+                        Response baseResponse = new Response
+                            { ErrorMessage = "Вы не авторизованы!" };
                         _binaryWriter.Write(baseResponse.ToString());
                     }
                     else
@@ -139,9 +152,11 @@ namespace YukoBot
                 };
             }
             // save db
-            dbUser.Token = Guid.NewGuid().ToString();
+            Guid userToken = Guid.NewGuid();
             dbUser.LoginTime = DateTime.Now;
-            db.SaveChanges();
+            await db.SaveChangesAsync();
+            // add token to dictionary
+            _userTokens.AddOrUpdate(userToken, x => dbUser.Id, (x, y) => dbUser.Id);
             // response build
             DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
             return new AuthorizationResponse
@@ -149,7 +164,7 @@ namespace YukoBot
                 Id = discordUser.Id,
                 Nikname = discordUser.Username + "#" + discordUser.Discriminator,
                 AvatarUri = discordUser.AvatarUrl,
-                Token = dbUser.Token
+                Token = userToken.ToString()
             };
         }
 
@@ -235,10 +250,13 @@ namespace YukoBot
             }
             else
             {
-                string reason = string.IsNullOrEmpty(ban.Reason) ? "" : $" Причина бана: {ban.Reason}.";
+                string reason = string.IsNullOrEmpty(ban.Reason)
+                    ? ""
+                    : $" Причина бана: {ban.Reason}.";
                 Response response = new Response
                 {
-                    ErrorMessage = $"Вы забанены на этом сервере, для разбана обратитесь к админу сервера.{reason}"
+                    ErrorMessage =
+                        $"Вы забанены на этом сервере, для разбана обратитесь к админу сервера.{reason}"
                 };
                 _binaryWriter.Write(response.ToString());
             }
@@ -321,10 +339,13 @@ namespace YukoBot
                         try
                         {
                             if (discordChannel == null)
-                                discordChannel = await _discordClient.GetChannelAsync(groupEnumerator.Current.Key);
+                                discordChannel =
+                                    await _discordClient.GetChannelAsync(
+                                        groupEnumerator.Current.Key);
                             try
                             {
-                                DiscordMessage discordMessage = await discordChannel.GetMessageAsync(messageId);
+                                DiscordMessage discordMessage =
+                                    await discordChannel.GetMessageAsync(messageId);
                                 response = new UrlsResponse { Next = true };
                                 response.Urls.AddRange(discordMessage.GetImages());
                                 _binaryWriter.Write(response.ToString());
@@ -351,7 +372,8 @@ namespace YukoBot
             {
                 if (channelNotFound.Count > 0)
                 {
-                    response.ErrorMessage += $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
+                    response.ErrorMessage +=
+                        $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
                 }
                 if (messageNotFound.Count > 0)
                 {
@@ -383,7 +405,8 @@ namespace YukoBot
                     if (!channel.IsCategory && channel.Type != ChannelType.Voice)
                     {
                         Permissions userPermission = channel.PermissionsFor(isContainsMember);
-                        if (userPermission.HasPermission(Permissions.AccessChannels | Permissions.ReadMessageHistory))
+                        if (userPermission.HasPermission(Permissions.AccessChannels |
+                                                         Permissions.ReadMessageHistory))
                         {
                             ChannelWeb channelResponse = new ChannelWeb
                             {

@@ -32,13 +32,13 @@ namespace YukoBot.Modules
                             e.Message.ReferencedMessage?.Author.Id == e.User.Id && discordMessage.IsTTS)
                         {
                             await e.Message.DeleteAsync();
-                            e.Handled = true;
+                            //e.Handled = true;
                         }
                     }
                     else
                     {
                         await e.Message.DeleteAsync();
-                        e.Handled = true;
+                        //e.Handled = true;
                     }
                 }
             }
