@@ -9,7 +9,7 @@ using YukoBot.Settings;
 
 namespace YukoBot
 {
-    class Program
+    internal class Program
     {
         private const string LogOutputTemplate =
             "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message}{NewLine}{Exception}";
@@ -33,7 +33,7 @@ namespace YukoBot
                 Version = $"{version.Major}.{version.Minor}.{version.Build}";
             }
         }
-        
+
         static async Task<int> Main(string[] args)
         {
             Console.Title = "Yuko [Bot]";
