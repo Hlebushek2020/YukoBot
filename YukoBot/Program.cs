@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 using YukoBot.Models.Log;
 using YukoBot.Models.Log.Providers;
 using YukoBot.Settings;
@@ -8,9 +11,32 @@ namespace YukoBot
 {
     class Program
     {
-        static int Main(string[] args)
+        private const string LogOutputTemplate =
+            "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message}{NewLine}{Exception}";
+
+        public static string Version { get; }
+        public static string Directory { get; }
+
+        static Program()
         {
-            Console.Title = "Yuko[Bot]";
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+            Directory = Path.GetDirectoryName(currentAssembly.Location) ?? string.Empty;
+            AssemblyInformationalVersionAttribute informationalVersionAttribute =
+                currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            if (informationalVersionAttribute != null)
+            {
+                Version = informationalVersionAttribute.InformationalVersion;
+            }
+            else
+            {
+                Version version = currentAssembly.GetName().Version;
+                Version = $"{version.Major}.{version.Minor}.{version.Build}";
+            }
+        }
+        
+        static async Task<int> Main(string[] args)
+        {
+            Console.Title = "Yuko [Bot]";
 
             if (!YukoSettings.Availability())
             {
