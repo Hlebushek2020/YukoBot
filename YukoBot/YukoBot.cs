@@ -1,89 +1,86 @@
-﻿using DSharpPlus;
-using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Entities;
-using DSharpPlus.CommandsNext.Exceptions;
-using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using DSharpPlus;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Entities;
+using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using YukoBot.Commands;
 using YukoBot.Extensions;
 using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
-using YukoBot.Modules;
-using YukoBot.Settings;
+using YukoBot.Services;
+using YukoBot.Services.Implementation;
 
 namespace YukoBot
 {
-    public class YukoBot : IDisposable
+    public class YukoBot : IYukoBot, IDisposable
     {
-        #region Instance
-        private static YukoBot _yukoBot;
-
-        public static YukoBot Current
-        {
-            get
-            {
-                if (_yukoBot == null)
-                {
-                    _yukoBot = new YukoBot();
-                }
-                return _yukoBot;
-            }
-        }
-        #endregion
-
-        public bool IsDisposed { get; private set; } = false;
         public DateTime StartDateTime { get; private set; }
 
-        private Task _processTask;
-        private static CancellationTokenSource _processCts;
-
-        private readonly BotPingModule _botPingModule = new BotPingModule();
-        private readonly DeletingMessagesByEmojiModule _deletingMessagesByEmojiModule =
-            new DeletingMessagesByEmojiModule();
-
+        #region Fields
         private readonly DiscordClient _discordClient;
         private readonly TcpListener _tcpListener;
-        private readonly ILogger _defaultLogger;
+        private readonly ILogger<YukoBot> _logger;
+        private readonly IServiceProvider _services;
+        private readonly IYukoSettings _yukoSettings;
 
-        private YukoBot()
+        private Task _processTask;
+        private CancellationTokenSource _processCts;
+        #endregion
+
+        public YukoBot(IYukoSettings yukoSettings)
         {
-            IReadOnlyYukoSettings settings = YukoSettings.Current;
+            _yukoSettings = yukoSettings;
 
-            YukoLoggerFactory loggerFactory = YukoLoggerFactory.Current;
-            loggerFactory.AddProvider(new DiscordClientLoggerProvider(settings.DiscordApiLogLevel));
-            _defaultLogger = loggerFactory.CreateLogger<DefaultLoggerProvider>();
+            ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog(dispose: true);
+            _logger = loggerFactory.CreateLogger<YukoBot>();
 
-            EventId eventId = new EventId(0, "Init");
-            _defaultLogger.LogInformation(eventId, "Initializing discord client");
+            _logger.LogInformation("Initializing discord client");
 
-            _discordClient = new DiscordClient(new DiscordConfiguration
-            {
-                Token = settings.BotToken,
-                TokenType = TokenType.Bot,
-                LoggerFactory = loggerFactory,
-                Intents = DiscordIntents.All
-            });
+            _discordClient = new DiscordClient(
+                new DiscordConfiguration
+                {
+                    Token = _yukoSettings.BotToken,
+                    TokenType = TokenType.Bot,
+                    LoggerFactory = loggerFactory,
+                    Intents = DiscordIntents.All
+                });
 
             _discordClient.Ready += DiscordClient_Ready;
-            _discordClient.SocketErrored += DiscordClient_SocketErrored;
-            _discordClient.MessageCreated += _botPingModule.Handler;
-            _discordClient.MessageReactionAdded += _deletingMessagesByEmojiModule.Handler;
 
-            CommandsNextExtension commands = _discordClient.UseCommandsNext(new CommandsNextConfiguration
-            {
-                StringPrefixes = new List<string> { settings.BotPrefix },
-                EnableDefaultHelp = false
-            });
+            _services = new ServiceCollection()
+                .AddLogging(lb => lb.AddSerilog(dispose: true))
+                .AddSingleton(_discordClient)
+                .AddSingleton(_yukoSettings)
+                .AddSingleton(typeof(IYukoBot), this)
+                .AddSingleton<IBotPingService, BotPingService>()
+                .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
+                .BuildServiceProvider();
+
+            // Initializing services that won't be called anywhere
+            _services.GetService<IBotPingService>();
+            _services.GetService<IDeletingMessagesByEmojiService>();
+
+            CommandsNextExtension commands = _discordClient.UseCommandsNext(
+                new CommandsNextConfiguration
+                {
+                    StringPrefixes = new List<string> { yukoSettings.BotPrefix },
+                    EnableDefaultHelp = false,
+                    Services = _services
+                });
+
+            commands.CommandErrored += Commands_CommandErrored;
+            commands.CommandExecuted += Commands_CommandExecuted;
 
             commands.RegisterCommands<OwnerCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
@@ -91,28 +88,31 @@ namespace YukoBot
             commands.RegisterCommands<RegisteredUserCommandModule>();
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
-            commands.CommandErrored += Commands_CommandErrored;
-            commands.CommandExecuted += Commands_CommandExecuted;
-
-            _defaultLogger.LogInformation(eventId, "Server initialization");
-
-            _tcpListener = new TcpListener(IPAddress.Parse(settings.ServerInternalAddress), settings.ServerPort);
+            _logger.LogInformation("Server initialization");
+            _tcpListener = new TcpListener(
+                IPAddress.Parse(_yukoSettings.ServerInternalAddress),
+                _yukoSettings.ServerPort);
         }
 
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            await sender.UpdateStatusAsync(new DiscordActivity(
-                $"на тебя {Constants.HappySmile} | {YukoSettings.Current.BotPrefix} help", ActivityType.Watching));
+            await sender.UpdateStatusAsync(
+                new DiscordActivity(
+                    $"на тебя {Constants.HappySmile} | {_yukoSettings.BotPrefix} help",
+                    ActivityType.Watching));
 
+        /*
         private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
         {
             _defaultLogger.LogCritical(new EventId(0, "Discord Client: Socket Errored"), e.Exception, "");
             Environment.Exit(1);
             return Task.CompletedTask;
         }
+        */
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
-            _defaultLogger.LogInformation(new EventId(0, $"Command: {e.Command.Name}"),
+            _defaultLogger.LogInformation(
+                new EventId(0, $"Command: {e.Command.Name}"),
                 "Command completed successfully");
             return Task.CompletedTask;
         }
@@ -187,38 +187,40 @@ namespace YukoBot
             {
                 _processCts = new CancellationTokenSource();
                 CancellationToken processToken = _processCts.Token;
-                _processTask = Task.Run(async () =>
-                {
-                    EventId eventId = new EventId(0, "Run");
-                    _defaultLogger.LogInformation(eventId, "Discord client connect");
-
-                    await _discordClient.ConnectAsync();
-
-                    StartDateTime = DateTime.Now;
-
-                    _tcpListener.Start();
-
-                    _defaultLogger.LogInformation(eventId, "Server listening");
-
-                    while (!processToken.IsCancellationRequested)
+                _processTask = Task.Run(
+                    async () =>
                     {
-                        if (_tcpListener.Pending())
+                        EventId eventId = new EventId(0, "Run");
+                        _defaultLogger.LogInformation(eventId, "Discord client connect");
+
+                        await _discordClient.ConnectAsync();
+
+                        StartDateTime = DateTime.Now;
+
+                        _tcpListener.Start();
+
+                        _defaultLogger.LogInformation(eventId, "Server listening");
+
+                        while (!processToken.IsCancellationRequested)
                         {
-                            YukoClient yukoClient =
-                                new YukoClient(_discordClient, await _tcpListener.AcceptTcpClientAsync());
-                            ThreadPool.QueueUserWorkItem(yukoClient.Process);
+                            if (_tcpListener.Pending())
+                            {
+                                YukoClient yukoClient =
+                                    new YukoClient(_discordClient, await _tcpListener.AcceptTcpClientAsync());
+                                ThreadPool.QueueUserWorkItem(yukoClient.Process);
+                            }
+                            else
+                            {
+                                await Task.Delay(200);
+                            }
                         }
-                        else
-                        {
-                            await Task.Delay(200);
-                        }
-                    }
-                }, processToken);
+                    },
+                    processToken);
             }
             return _processTask;
         }
 
-        public void Shutdown()
+        public void Shutdown(string reason = null)
         {
             EventId eventId = new EventId(0, "Shutdown");
             _defaultLogger.LogInformation(eventId, "Shutdown");

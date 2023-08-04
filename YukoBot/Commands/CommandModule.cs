@@ -1,10 +1,8 @@
-﻿using DSharpPlus.CommandsNext;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DSharpPlus.CommandsNext;
 using Microsoft.Extensions.Logging;
 using YukoBot.Commands.Models;
 using YukoBot.Interfaces;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
 using YukoBot.Settings;
 
 namespace YukoBot.Commands
@@ -16,7 +14,7 @@ namespace YukoBot.Commands
 
         private static readonly Dictionary<string, Category> _categoryies = new Dictionary<string, Category>();
 
-        protected static IReadOnlyYukoSettings Settings { get; } = YukoSettings.Current;
+        protected static IYukoSettings Settings { get; } = YukoSettings.Current;
 
         public Category Category { get; }
         public virtual string CommandAccessError { get; }

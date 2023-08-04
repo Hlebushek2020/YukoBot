@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using YukoBot.Interfaces;
 using YukoBot.Settings;
 
 namespace YukoBot
@@ -36,25 +38,46 @@ namespace YukoBot
 
         static async Task<int> Main(string[] args)
         {
-            Console.Title = "Yuko [Bot]";
-
             if (!YukoSettings.Availability())
-            {
                 return 0;
-            }
 
-            try
+            IYukoSettings yukoSettings = YukoSettings.Load();
+
+            LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+                .WriteTo.Console(
+                    outputTemplate: LogOutputTemplate,
+                    theme: SystemConsoleTheme.Colored)
+                .WriteTo.File(
+                    path: Path.Combine(Directory, "logs", ".log"),
+                    outputTemplate: LogOutputTemplate,
+                    rollingInterval: RollingInterval.Day)
+                .Enrich.FromLogContext();
+
+            loggerConfiguration = yukoSettings.BotLogLevel switch
             {
-                using (YukoBot yuko = YukoBot.Current)
+                LogLevel.Critical => loggerConfiguration.MinimumLevel.Fatal(),
+                LogLevel.Error => loggerConfiguration.MinimumLevel.Error(),
+                LogLevel.Warning => loggerConfiguration.MinimumLevel.Warning(),
+                LogLevel.Information => loggerConfiguration.MinimumLevel.Information(),
+                _ => loggerConfiguration.MinimumLevel.Debug()
+            };
+
+            Log.Logger = loggerConfiguration.CreateLogger();
+
+            bool isShutdown = false;
+            while (!isShutdown)
+            {
+                try
                 {
-                    yuko.RunAsync().GetAwaiter().GetResult();
+                    using YukoBot yuko = new YukoBot(yukoSettings);
+                    await yuko.RunAsync();
+                    isShutdown = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                ILogger defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
-                defaultLogger.LogCritical(new EventId(0, "App"), ex, "");
-                return 1;
+                catch (Exception ex)
+                {
+                    Log.Logger.ForContext<Program>().Fatal(ex, "Bot failed. Bot restart after 2 minutes.");
+                    Thread.Sleep(120000);
+                }
             }
 
             return 0;

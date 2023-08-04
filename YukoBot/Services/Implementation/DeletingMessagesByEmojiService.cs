@@ -1,17 +1,25 @@
-﻿using DSharpPlus;
+﻿using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
 
-namespace YukoBot.Modules
+namespace YukoBot.Services.Implementation
 {
-    internal class DeletingMessagesByEmojiModule : IHandlerModule<MessageReactionAddEventArgs>
+    internal class DeletingMessagesByEmojiService : IDeletingMessagesByEmojiService
     {
-        private readonly ILogger _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
-        private readonly EventId _eventId = new EventId(0, "Deleting Messages By Emoji");
+        private readonly ILogger<DeletingMessagesByEmojiService> _logger;
+
+        public DeletingMessagesByEmojiService(
+            DiscordClient discordClient,
+            ILogger<DeletingMessagesByEmojiService> logger)
+        {
+            _logger = logger;
+
+            discordClient.MessageReactionAdded += Handler;
+
+            _logger.LogInformation($"{nameof(DeletingMessagesByEmojiService)} loaded.");
+        }
 
         public async Task Handler(DiscordClient sender, MessageReactionAddEventArgs e)
         {
@@ -22,8 +30,10 @@ namespace YukoBot.Modules
                 DiscordMessage discordMessage = await e.Channel.GetMessageAsync(e.Message.Id);
                 if (discordMessage.Author.Id.Equals(sender.CurrentUser.Id))
                 {
-                    _defaultLogger.LogInformation(_eventId,
-                        $"{e.User.Username}#{e.User.Discriminator}{(e.Guild != null ? $", {e.Guild.Name}, {e.Channel.Name}" : $"")}, {e.Message.Id}");
+                    _logger.LogInformation(
+                        e.Guild != null
+                            ? $"Guild: {e.Guild.Name} ({e.Guild.Id}). Channel: {e.Channel.Name} ({e.Channel.Id})."
+                            : $"Username: {e.User.Username}");
 
                     if (e.Guild != null)
                     {
@@ -32,13 +42,11 @@ namespace YukoBot.Modules
                             e.Message.ReferencedMessage?.Author.Id == e.User.Id && discordMessage.IsTTS)
                         {
                             await e.Message.DeleteAsync();
-                            //e.Handled = true;
                         }
                     }
                     else
                     {
                         await e.Message.DeleteAsync();
-                        //e.Handled = true;
                     }
                 }
             }

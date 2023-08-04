@@ -1,36 +1,44 @@
-﻿using DSharpPlus;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using YukoBot.Interfaces;
 using YukoBot.Models.Database;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
-using YukoBot.Settings;
 
-namespace YukoBot.Modules
+namespace YukoBot.Services.Implementation
 {
-    internal class BotPingModule : IHandlerModule<MessageCreateEventArgs>
+    internal class BotPingService : IBotPingService
     {
-        private readonly ILogger _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
-        private readonly EventId _eventId = new EventId(0, "Ping");
+        private readonly IYukoSettings _yukoSettings;
+        private readonly ILogger<BotPingService> _logger;
+
+        public BotPingService(DiscordClient discordClient, IYukoSettings yukoSettings, ILogger<BotPingService> logger)
+        {
+            _yukoSettings = yukoSettings;
+            _logger = logger;
+
+            discordClient.MessageCreated += Handler;
+
+            _logger.LogInformation($"{nameof(BotPingService)} loaded.");
+        }
 
         public async Task Handler(DiscordClient sender, MessageCreateEventArgs e)
         {
             string messageContent = e.Message.Content.Trim();
 
             if ($"<@{sender.CurrentUser.Id}>".Equals(messageContent) ||
-                messageContent.Equals(YukoSettings.Current.BotPrefix, StringComparison.InvariantCultureIgnoreCase))
+                messageContent.Equals(_yukoSettings.BotPrefix, StringComparison.InvariantCultureIgnoreCase))
             {
-                _defaultLogger.LogInformation(_eventId, $"{e.Guild.Name}, {e.Channel.Name}, {e.Message.Id}");
+                _logger.LogInformation($"{e.Guild.Name}, {e.Channel.Name}, {e.Message.Id}");
 
                 DiscordApplication discordApplication = sender.CurrentApplication;
-                bool isOwner = discordApplication.Owners.Any((DiscordUser x) => x.Id == e.Message.Author.Id);
+                bool isOwner = discordApplication.Owners.Any(x => x.Id == e.Message.Author.Id);
                 DiscordMember messageAuthorMember = await e.Message.Channel.Guild.GetMemberAsync(e.Message.Author.Id);
 
-                if (isOwner || new YukoDbContext().Users.Find(e.Message.Author.Id) != null)
+                if (isOwner || await new YukoDbContext().Users.FindAsync(e.Message.Author.Id) != null)
                 {
                     await e.Message.RespondAsync($"**Подбежала и обняла {messageAuthorMember.DisplayName}**");
                 }
@@ -46,6 +54,7 @@ namespace YukoBot.Modules
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
 
                     await e.Message.RespondAsync(
