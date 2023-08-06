@@ -1,14 +1,13 @@
-﻿using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using YukoBot.Commands.Models;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Settings;
 
 namespace YukoBot.Commands
 {
@@ -24,19 +23,27 @@ namespace YukoBot.Commands
         private const string ExtendPremiumYearShort = "y";
         #endregion
 
-        public override string CommandAccessError => "Простите, эта команда доступна только владельцу бота!";
+        private readonly IYukoBot _yukoBot;
+        private readonly IYukoSettings _yukoSettings;
 
-        public OwnerCommandModule() : base(Categories.Management)
+        public OwnerCommandModule(IYukoBot yukoBot, IYukoSettings yukoSettings) : base(
+            Categories.Management,
+            "Простите, эта команда доступна только владельцу бота!")
         {
+            _yukoBot = yukoBot;
+            _yukoSettings = yukoSettings;
         }
 
         [Command("shutdown")]
         [Aliases("sd")]
         [Description("Выключить бота.")]
-        public async Task Shutdown(CommandContext ctx)
+        public async Task Shutdown(
+            CommandContext ctx,
+            [Description("Причина выключения бота"), RemainingText]
+            string reason)
         {
             await ctx.RespondAsync($"Хорошо, хозяин! {Constants.HappySmile}");
-            YukoBot.Current.Shutdown();
+            _yukoBot.Shutdown(reason);
         }
 
         [Command("status")]
@@ -44,19 +51,18 @@ namespace YukoBot.Commands
         [Description("Сведения о боте.")]
         public async Task Status(CommandContext ctx)
         {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.StatusColor)
                 .AddField("Net", $"v{Environment.Version}")
                 .AddField("DSharpPlus", $"v{ctx.Client.VersionString}")
-                .AddField("Сборка",
-                    $"v{version.Major}.{version.Minor}.{version.Build} {File.GetCreationTime(Assembly.GetExecutingAssembly().Location):dd.MM.yyyy}")
-                .AddField("Дата запуска",
-                    $"{YukoBot.Current.StartDateTime:dd.MM.yyyy} {YukoBot.Current.StartDateTime:HH:mm:ss zzz}");
+                .AddField("Сборка", $"v{Program.Version} {File.GetCreationTime(assemblyLocation):dd.MM.yyyy}")
+                .AddField("Дата запуска", _yukoBot.StartDateTime.ToString("dd.MM.yyyy HH:mm:ss zzz"));
 
-            TimeSpan timeSpan = DateTime.Now - YukoBot.Current.StartDateTime;
-            discordEmbed.AddField("Время работы",
+            TimeSpan timeSpan = DateTime.Now - _yukoBot.StartDateTime;
+            discordEmbed.AddField(
+                "Время работы",
                 $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
 
             await ctx.RespondAsync(discordEmbed);
@@ -66,14 +72,15 @@ namespace YukoBot.Commands
         [Description("Установить новую ссылку для команды `app`.")]
         public async Task SetApp(CommandContext ctx, string newlink)
         {
-            YukoSettings.Current.SetApp(newlink);
+            _yukoSettings.SetApp(newlink);
             await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
         }
 
         [Command("extend-premium")]
         [Aliases("ep")]
         [Description("Продлить премиум доступ.")]
-        public async Task ExtendPremium(CommandContext ctx,
+        public async Task ExtendPremium(
+            CommandContext ctx,
             [Description("Участник сервера (гильдии).")]
             DiscordMember discordMember,
             [Description(
@@ -94,7 +101,7 @@ namespace YukoBot.Commands
             else
             {
                 YukoDbContext dbCtx = new YukoDbContext();
-                DbUser dbUser = dbCtx.Users.Find(discordMember.Id);
+                DbUser dbUser = await dbCtx.Users.FindAsync(discordMember.Id);
                 if (dbUser != null)
                 {
                     DateTime forAdding = DateTime.Now;
@@ -119,7 +126,8 @@ namespace YukoBot.Commands
                     await dbCtx.SaveChangesAsync();
 
                     await ctx.RespondAsync(
-                        $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile}");
+                        $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile
+                        }");
                 }
                 else
                 {

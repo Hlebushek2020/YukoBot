@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using YukoBot.Interfaces;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Settings;
 
 namespace YukoBot.Models.Database
 {

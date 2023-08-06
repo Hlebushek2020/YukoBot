@@ -1,22 +1,20 @@
 ﻿using System;
-using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using Microsoft.Extensions.Logging;
 using YukoBot.Commands.Attributes;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
-using YukoBot.Settings;
 
 namespace YukoBot.Commands
 {
@@ -27,11 +25,17 @@ namespace YukoBot.Commands
         private const string ProfileDtf = "d MMMM yyyy г. hh:mm";
         #endregion
 
-        public override string CommandAccessError =>
-            "Простите, эта команда доступна для зарегистрированных пользователей!";
+        private readonly IYukoSettings _yukoSettings;
+        private readonly ILogger<RegisteredUserCommandModule> _logger;
 
-        public RegisteredUserCommandModule() : base(Categories.User)
+        public RegisteredUserCommandModule(
+            IYukoSettings yukoSettings,
+            ILogger<RegisteredUserCommandModule> logger) : base(
+            Categories.User,
+            "Простите, эта команда доступна для зарегистрированных пользователей!")
         {
+            _yukoSettings = yukoSettings;
+            _logger = logger;
         }
 
         [Command("settings")]
@@ -41,8 +45,8 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member.DisplayName)
                 .WithColor(Constants.SuccessColor)
-                .AddField("Хост", Settings.ServerAddress)
-                .AddField("Порт", Settings.ServerPort.ToString());
+                .AddField("Хост", _yukoSettings.ServerAddress)
+                .AddField("Порт", _yukoSettings.ServerPort.ToString());
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -52,7 +56,7 @@ namespace YukoBot.Commands
         public async Task GetClientApp(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, YukoSettings.Current.ClientActualApp);
+                .WithHappyMessage(ctx.Member.DisplayName, _yukoSettings.ClientActualApp);
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -72,14 +76,8 @@ namespace YukoBot.Commands
             {
                 DbBan dbBan = dbBanList[0];
                 discordEmbed.WithSadTitle(ctx.Member.DisplayName);
-                if (string.IsNullOrEmpty(dbBan.Reason))
-                {
-                    discordEmbed.WithDescription("К сожалению причина бана не была указана.");
-                }
-                else
-                {
-                    discordEmbed.WithDescription(dbBan.Reason);
-                }
+                discordEmbed.WithDescription(
+                    string.IsNullOrEmpty(dbBan.Reason) ? "К сожалению причина бана не была указана." : dbBan.Reason);
             }
             else
             {
@@ -93,12 +91,13 @@ namespace YukoBot.Commands
         [Command("info-message-pm")]
         [Description(
             "Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
-        public async Task InfoMessagesInPM(CommandContext ctx,
+        public async Task InfoMessagesInPM(
+            CommandContext ctx,
             [Description("true - включить / false - отключить")]
             bool isEnabled)
         {
             YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(ctx.Member.Id);
+            DbUser dbUser = await dbCtx.Users.FindAsync(ctx.Member.Id);
 
             if (dbUser.InfoMessages != isEnabled)
             {
@@ -114,7 +113,8 @@ namespace YukoBot.Commands
 
         [Command("bug-report")]
         [Description("Сообщить об ошибке.")]
-        public async Task BugReport(CommandContext ctx,
+        public async Task BugReport(
+            CommandContext ctx,
             [Description(
                  "Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой."),
              RemainingText]
@@ -122,7 +122,7 @@ namespace YukoBot.Commands
         {
             DiscordEmbedBuilder discordEmbed = null;
 
-            if (Settings.BugReport)
+            if (_yukoSettings.BugReport)
             {
                 EventId eventId = new EventId(0, $"Command: {ctx.Command.Name}");
                 DiscordMessage discordMessage = ctx.Message;
@@ -133,7 +133,8 @@ namespace YukoBot.Commands
                     string.IsNullOrEmpty(description))
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(ctx.Member.DisplayName,
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
                             "Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!");
                 }
                 else
@@ -143,7 +144,8 @@ namespace YukoBot.Commands
                         .WithTitle("Bug-Report")
                         .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
                         .AddField("Guild", ctx.Guild.Name)
-                        .AddField("Date",
+                        .AddField(
+                            "Date",
                             discordMessage.CreationTimestamp.LocalDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
 
                     if (!string.IsNullOrEmpty(description))
@@ -163,7 +165,7 @@ namespace YukoBot.Commands
                         }
                         catch (Exception ex)
                         {
-                            _defaultLogger.LogWarning(eventId, ex, "");
+                            _logger.LogWarning($"Failed to download attachment. Message: {ex.Message}.");
                         }
                     }
 
@@ -180,8 +182,8 @@ namespace YukoBot.Commands
                         }
                     }
 
-                    DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(Settings.BugReportServer);
-                    DiscordChannel reportChannel = reportGuild.GetChannel(Settings.BugReportChannel);
+                    DiscordGuild reportGuild = await ctx.Client.GetGuildAsync(_yukoSettings.BugReportServer);
+                    DiscordChannel reportChannel = reportGuild.GetChannel(_yukoSettings.BugReportChannel);
 
                     await reportChannel.SendMessageAsync(reportMessage);
 
@@ -206,17 +208,21 @@ namespace YukoBot.Commands
             YukoDbContext dbContext = new YukoDbContext();
             CultureInfo locale = CultureInfo.GetCultureInfo("ru-RU");
 
-            DbUser dbUser = dbContext.Users.Find(ctx.User.Id);
+            DbUser dbUser = await dbContext.Users.FindAsync(ctx.User.Id);
             bool hasPremiumAccess = dbUser.HasPremiumAccess;
 
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
-                .AddField("Премиум: ",
+                .AddField(
+                    "Премиум: ",
                     (hasPremiumAccess ? "Есть" : "Нет") + (dbUser.PremiumAccessExpires.HasValue
-                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale)}"
-                        : ""), true)
-                .AddField("Последний вход в приложение: ",
+                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {
+                            dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale)}"
+                        : ""),
+                    true)
+                .AddField(
+                    "Последний вход в приложение: ",
                     dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString(ProfileDtf, locale) : "-",
                     true)
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
@@ -234,7 +240,8 @@ namespace YukoBot.Commands
                 banListBuilder.Append(discordGuild.Name).Append(" - ")
                     .Append(string.IsNullOrEmpty(ban.Reason) ? "не указана" : ban.Reason);
             }
-            embedBuilder.AddField("Список текущих банов:",
+            embedBuilder.AddField(
+                "Список текущих банов:",
                 banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
 
             await ctx.RespondAsync(embedBuilder);

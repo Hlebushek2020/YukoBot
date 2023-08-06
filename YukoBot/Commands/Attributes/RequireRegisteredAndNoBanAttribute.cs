@@ -1,8 +1,8 @@
-﻿using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 
@@ -18,8 +18,7 @@ namespace YukoBot.Commands.Attributes
             DbUser dbUser = dbContext.Users.Find(userId);
             if (dbUser != null)
             {
-                DbBan dbBan = dbContext.Bans.Where(x => x.UserId == userId && x.ServerId == ctx.Guild.Id)
-                    .FirstOrDefault();
+                DbBan dbBan = dbContext.Bans.FirstOrDefault(x => x.UserId == userId && x.ServerId == ctx.Guild.Id);
                 return Task.FromResult(dbBan == null);
             }
             return Task.FromResult(false);

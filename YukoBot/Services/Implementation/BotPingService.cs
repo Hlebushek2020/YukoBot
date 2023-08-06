@@ -5,7 +5,6 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
-using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 
 namespace YukoBot.Services.Implementation

@@ -12,16 +12,12 @@ using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
 using Microsoft.Extensions.Logging;
 using YukoBot.Enums;
-using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Database.JoinedEntities;
-using YukoBot.Models.Log;
-using YukoBot.Models.Log.Providers;
 using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
-using YukoBot.Settings;
 
 namespace YukoBot
 {
@@ -31,12 +27,16 @@ namespace YukoBot
         private static volatile int _countClient = 0;
         private static readonly EventId _eventId = new EventId(0, "Client");
         private static readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
+
         private static readonly int _messageLimitSleepMs =
             YukoSettings.Current.DiscordMessageLimitSleepMs;
+
         private static readonly int _messageLimitSleepMsForOne =
             _messageLimitSleepMs / YukoSettings.Current.DiscordMessageLimitSleepMsDividerForOne;
+
         private static readonly ILogger
             _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
+
         private static readonly ConcurrentDictionary<Guid, ulong> _userTokens =
             new ConcurrentDictionary<Guid, ulong>();
         #endregion
@@ -196,8 +196,9 @@ namespace YukoBot
         private async Task ClientExecuteScripts(string json)
         {
             ServerRequest serverRequest = ServerRequest.FromJson(json);
-            DbBan ban = _dbCtx.Bans.FirstOrDefault(x =>
-                x.UserId == _currentDbUser.Id && x.ServerId == serverRequest.Id);
+            DbBan ban = _dbCtx.Bans.FirstOrDefault(
+                x =>
+                    x.UserId == _currentDbUser.Id && x.ServerId == serverRequest.Id);
             if (ban == null)
             {
                 DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
@@ -210,7 +211,8 @@ namespace YukoBot
                     {
                         string jsonString = _binaryReader.ReadString();
                         scriptRequest = ExecuteScriptRequest.FromJson(jsonString);
-                        _defaultLogger.LogDebug(_eventId,
+                        _defaultLogger.LogDebug(
+                            _eventId,
                             $"Client: {_currentDbUser.Id}, Execute script request: {jsonString}");
                         try
                         {
@@ -276,15 +278,19 @@ namespace YukoBot
                 };
                 IQueryable<DbMessage> dbCollectionItems = _dbCtx.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id)
-                    .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
+                    .Join(
+                        _dbCtx.Messages,
+                        ci => ci.MessageId,
+                        m => m.Id,
                         (ci, m) => new DbMessage { Id = m.Id, ChannelId = m.ChannelId });
                 foreach (DbMessage dbMessage in dbCollectionItems)
                 {
-                    collection.Items.Add(new MessageCollectionItemWeb
-                    {
-                        ChannelId = dbMessage.ChannelId,
-                        MessageId = dbMessage.Id
-                    });
+                    collection.Items.Add(
+                        new MessageCollectionItemWeb
+                        {
+                            ChannelId = dbMessage.ChannelId,
+                            MessageId = dbMessage.Id
+                        });
                 }
                 response.MessageCollections.Add(collection);
             }
@@ -297,7 +303,10 @@ namespace YukoBot
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
-                .Join(_dbCtx.Messages, ci => ci.MessageId, m => m.Id,
+                .Join(
+                    _dbCtx.Messages,
+                    ci => ci.MessageId,
+                    m => m.Id,
                     (ci, m) => new CollectionItemJoinMessage
                     {
                         MessageId = m.Id,
@@ -405,8 +414,9 @@ namespace YukoBot
                     if (!channel.IsCategory && channel.Type != ChannelType.Voice)
                     {
                         Permissions userPermission = channel.PermissionsFor(isContainsMember);
-                        if (userPermission.HasPermission(Permissions.AccessChannels |
-                                                         Permissions.ReadMessageHistory))
+                        if (userPermission.HasPermission(
+                                Permissions.AccessChannels |
+                                Permissions.ReadMessageHistory))
                         {
                             ChannelWeb channelResponse = new ChannelWeb
                             {

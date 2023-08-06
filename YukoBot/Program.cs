@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
-using YukoBot.Interfaces;
-using YukoBot.Settings;
 
 namespace YukoBot
 {

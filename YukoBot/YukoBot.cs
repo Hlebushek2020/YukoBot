@@ -15,7 +15,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using YukoBot.Commands;
 using YukoBot.Extensions;
-using YukoBot.Interfaces;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Services;
@@ -36,6 +35,7 @@ namespace YukoBot
 
         private Task _processTask;
         private CancellationTokenSource _processCts;
+        private bool _isDisposed = false;
         #endregion
 
         public YukoBot(IYukoSettings yukoSettings)
@@ -97,7 +97,7 @@ namespace YukoBot
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
             await sender.UpdateStatusAsync(
                 new DiscordActivity(
-                    $"на тебя {Constants.HappySmile} | {_yukoSettings.BotPrefix} help",
+                    $"на тебя {Constants.HappySmile} | {_yukoSettings.BotPrefix}help",
                     ActivityType.Watching));
 
         /*
@@ -111,9 +111,7 @@ namespace YukoBot
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
-            _defaultLogger.LogInformation(
-                new EventId(0, $"Command: {e.Command.Name}"),
-                "Command completed successfully");
+            _logger.LogInformation($"Command {e.Command.Name} completed successfully");
             return Task.CompletedTask;
         }
 
@@ -132,28 +130,35 @@ namespace YukoBot
             if (exception is ArgumentException)
             {
                 embed.WithDescription($"Простите, в команде `{command.Name}` ошибка!");
-                _defaultLogger.LogWarning(new EventId(0, $"Command: {e.Command.Name}"), exception, "");
+                _logger.LogWarning(
+                    $"Error when executing the {e.Command.Name} command. Type: ArgumentException. Message: {
+                        exception.Message}");
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
                 embed.WithDescription($"Простите, я не знаю команды `{commandNotFoundEx.CommandName}`!");
-                _defaultLogger.LogWarning(new EventId(0, $"Command: {commandNotFoundEx.CommandName}"), exception, "");
+                _logger.LogWarning(
+                    $"Error when executing the {commandNotFoundEx.CommandName
+                    } command. Type: CommandNotFoundException. Message: {exception.Message}");
             }
             else if (exception is ChecksFailedException checksFailedEx)
             {
                 CommandModule yukoModule =
-                    (checksFailedEx.Command.Module as SingletonCommandModule).Instance as CommandModule;
-                if (!string.IsNullOrEmpty(yukoModule.CommandAccessError))
-                {
-                    embed.WithDescription(yukoModule.CommandAccessError);
-                }
-                _defaultLogger.LogWarning(new EventId(0, $"Command: {checksFailedEx.Command.Name}"), exception, "");
+                    (checksFailedEx.Command.Module as SingletonCommandModule)?.Instance as CommandModule;
+                embed.WithDescription(
+                    !string.IsNullOrEmpty(yukoModule?.CommandAccessError)
+                        ? yukoModule.CommandAccessError
+                        : exception.Message);
+
+                _logger.LogWarning(
+                    $"Error when executing the {checksFailedEx.Command.Name
+                    } command. Type: CommandNotFoundException. Message: {exception.Message}");
             }
             else
             {
                 embed.WithDescription(
                     "Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
-                _defaultLogger.LogError(new EventId(0, $"Command: {e.Command?.Name ?? "Unknown"}"), exception, "");
+                _logger.LogError($"Error when executing the: {e.Command?.Name ?? "Unknown"}", exception);
             }
 
             bool sendToCurrentChannel = true;
@@ -163,7 +168,7 @@ namespace YukoBot
                  command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
                 YukoDbContext dbContext = new YukoDbContext();
-                DbGuildSettings dbGuildSettings = dbContext.GuildsSettings.Find(context.Guild.Id);
+                DbGuildSettings dbGuildSettings = await dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
                 {
                     sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
@@ -190,28 +195,26 @@ namespace YukoBot
                 _processTask = Task.Run(
                     async () =>
                     {
-                        EventId eventId = new EventId(0, "Run");
-                        _defaultLogger.LogInformation(eventId, "Discord client connect");
-
+                        _logger.LogInformation("Discord client connect");
                         await _discordClient.ConnectAsync();
-
                         StartDateTime = DateTime.Now;
 
                         _tcpListener.Start();
-
-                        _defaultLogger.LogInformation(eventId, "Server listening");
+                        _logger.LogInformation("Server listening");
 
                         while (!processToken.IsCancellationRequested)
                         {
                             if (_tcpListener.Pending())
                             {
                                 YukoClient yukoClient =
-                                    new YukoClient(_discordClient, await _tcpListener.AcceptTcpClientAsync());
+                                    new YukoClient(
+                                        _discordClient,
+                                        await _tcpListener.AcceptTcpClientAsync(processToken));
                                 ThreadPool.QueueUserWorkItem(yukoClient.Process);
                             }
                             else
                             {
-                                await Task.Delay(200);
+                                await Task.Delay(200, processToken);
                             }
                         }
                     },
@@ -222,10 +225,9 @@ namespace YukoBot
 
         public void Shutdown(string reason = null)
         {
-            EventId eventId = new EventId(0, "Shutdown");
-            _defaultLogger.LogInformation(eventId, "Shutdown");
+            _logger.LogInformation("Shutdown");
 
-            _defaultLogger.LogInformation(eventId, "Server stopping listener");
+            _logger.LogInformation("Server stopping listener");
             if (_processCts != null && !_processTask.IsCompleted)
             {
                 _processCts.Cancel();
@@ -233,7 +235,7 @@ namespace YukoBot
             }
             _tcpListener?.Stop();
 
-            _defaultLogger.LogInformation(eventId, "Waiting for clients to disconnect");
+            _logger.LogInformation("Waiting for clients to disconnect");
             while (YukoClient.Availability)
             {
                 Task.Delay(100);
@@ -241,24 +243,22 @@ namespace YukoBot
 
             if (_discordClient != null)
             {
-                _defaultLogger.LogInformation(eventId, "Disconnect discord client");
+                _logger.LogInformation("Disconnect discord client");
                 _discordClient.DisconnectAsync().Wait();
             }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!IsDisposed && disposing)
+            if (!_isDisposed && disposing)
             {
                 if (!_processCts.IsCancellationRequested)
-                {
                     Shutdown();
-                }
 
                 _processTask?.Dispose();
                 _discordClient?.Dispose();
 
-                IsDisposed = true;
+                _isDisposed = true;
             }
         }
 

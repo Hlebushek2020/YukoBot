@@ -1,15 +1,15 @@
-﻿using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.CommandsNext.Entities;
-using DSharpPlus.CommandsNext.Exceptions;
-using DSharpPlus.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.CommandsNext.Entities;
+using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Entities;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
@@ -19,11 +19,15 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
-        private static string BotDescription { get; } =
-            $"Привет, для того что бы узнать больше информации обо мне выполни команду `{Settings.BotPrefix} info`.";
+        private readonly IYukoSettings _yukoSettings;
 
-        public UserCommandModule() : base(Categories.User)
+        private string BotDescription { get; }
+
+        public UserCommandModule(IYukoSettings yukoSettings) : base(Categories.User, null)
         {
+            _yukoSettings = yukoSettings;
+            BotDescription = $"Привет, для того что бы узнать больше информации обо мне выполни команду `{
+                _yukoSettings.BotPrefix}info`.";
         }
 
         [Command("register")]
@@ -50,7 +54,7 @@ namespace YukoBot.Commands
             Random random = new Random();
             while (password.Length != 10)
             {
-                password += (char)random.Next(33, 127);
+                password += (char) random.Next(33, 127);
             }
 
             using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
@@ -77,7 +81,8 @@ namespace YukoBot.Commands
                 DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName,
+                .WithHappyMessage(
+                    ctx.Member.DisplayName,
                     isRegister
                         ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС."
                         : "Новый пароль от учетной записи отправлен в ЛС.");
@@ -87,7 +92,8 @@ namespace YukoBot.Commands
         [Command("help")]
         [Description(
             "Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
-        public async Task Help(CommandContext ctx,
+        public async Task Help(
+            CommandContext ctx,
             [Description("Категория или команда")]
             string categoryOrCommand = "")
         {
@@ -98,9 +104,10 @@ namespace YukoBot.Commands
                 if (CheckHelpCategoryCommand(categoryOrCommand))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
-                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category
-                                    .HelpCommand.Equals(categoryOrCommand) &&
-                                    !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
+                        .Where(
+                            x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category
+                                 .HelpCommand.Equals(categoryOrCommand) &&
+                                 !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
                     List<string[]> commandOfDescription = new List<string[]>();
 
@@ -122,7 +129,7 @@ namespace YukoBot.Commands
                     if (commandOfDescription.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
-                            .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
+                            .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
                             .WithFooter(versionString)
                             .AddField(category.Name, new string('=', category.Name.Length));
 
@@ -165,7 +172,10 @@ namespace YukoBot.Commands
 
                         descriptionBuilder
                             .AppendLine(
-                                $"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}")
+                                $"```\n{_yukoSettings.BotPrefix} {command.Name} {string.Join(
+                                    ' ',
+                                    commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{
+                                    command.Description}")
                             .AppendLine();
 
                         if (command.Aliases?.Count != 0)
@@ -227,14 +237,15 @@ namespace YukoBot.Commands
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                    .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
+                    .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
                     .WithFooter(versionString);
 
                 foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    embed.AddField(fieldName,
+                    embed.AddField(
+                        fieldName,
                         sortedCommands.ContainsKey(categoryName)
                             ? string.Join(' ', sortedCommands[categoryName])
                             : mInfo.AccessError);
@@ -252,19 +263,23 @@ namespace YukoBot.Commands
             string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(Settings.BotPrefix + " | Info",
+                .WithHappyMessage(
+                    _yukoSettings.BotPrefix + " | Info",
                     "Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) " +
                     "дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) " +
                     "для последующего скачивания этих коллекций.")
-                .AddField("Управление коллекциями",
+                .AddField(
+                    "Управление коллекциями",
                     "Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных " +
-                    "команд управления коллекциями воспользуйся командой `" + Settings.BotPrefix + " help " +
+                    "команд управления коллекциями воспользуйся командой `" + _yukoSettings.BotPrefix + "help " +
                     Categories.CollectionManagement.HelpCommand + "`.")
-                .AddField("Премиум доступ",
+                .AddField(
+                    "Премиум доступ",
                     "Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) " +
                     "для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для " +
                     "скачивания вложений. На данный момент выдается моим хозяином.")
-                .AddField("Ссылки",
+                .AddField(
+                    "Ссылки",
                     "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
                 .WithFooter(versionString);

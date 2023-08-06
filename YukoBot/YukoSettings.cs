@@ -3,9 +3,8 @@ using System.IO;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using YukoBot.Interfaces;
 
-namespace YukoBot.Settings
+namespace YukoBot
 {
     public class YukoSettings : IYukoSettings
     {

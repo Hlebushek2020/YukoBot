@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace YukoBot;
-
-public interface IYukoBot
+namespace YukoBot
 {
-    DateTime StartDateTime { get; }
-    void Shutdown(string reason = null);
+    public interface IYukoBot
+    {
+        DateTime StartDateTime { get; }
+        void Shutdown(string reason = null);
+    }
 }
