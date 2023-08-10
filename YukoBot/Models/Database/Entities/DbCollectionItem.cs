@@ -47,7 +47,7 @@ namespace YukoBot.Models.Database.Entities
         /// Required field.
         /// </summary>
         [Required]
-        [Column("is_saved_links")]
+        [Column("saved_links")]
         public bool IsSavedLinks { get; set; }
     }
 }
