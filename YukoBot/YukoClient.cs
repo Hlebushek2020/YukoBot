@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using YukoBot.Enums;
+using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Database.JoinedEntities;
@@ -23,27 +25,18 @@ namespace YukoBot
 {
     public class YukoClient : IDisposable
     {
-        #region Static Fields
-        private static volatile int _countClient = 0;
-        private static readonly EventId _eventId = new EventId(0, "Client");
-        private static readonly int _messageLimit = YukoSettings.Current.DiscordMessageLimit;
-
-        private static readonly int _messageLimitSleepMs =
-            YukoSettings.Current.DiscordMessageLimitSleepMs;
-
-        private static readonly int _messageLimitSleepMsForOne =
-            _messageLimitSleepMs / YukoSettings.Current.DiscordMessageLimitSleepMsDividerForOne;
-
-        private static readonly ILogger
-            _defaultLogger = YukoLoggerFactory.Current.CreateLogger<DefaultLoggerProvider>();
-
-        private static readonly ConcurrentDictionary<Guid, ulong> _userTokens =
-            new ConcurrentDictionary<Guid, ulong>();
-        #endregion
-
         #region Fields
+        private static volatile int _countClient = 0;
+        private static readonly ConcurrentDictionary<Guid, ulong> _userTokens = new ConcurrentDictionary<Guid, ulong>();
+
         private readonly DiscordClient _discordClient;
+        private readonly ILogger<YukoClient> _logger;
         private readonly TcpClient _tcpClient;
+        private readonly IYukoSettings _yukoSettings;
+        private readonly int _messageLimit;
+        private readonly int _messageLimitSleepMs;
+        private readonly int _messageLimitSleepMsForOne;
+        private readonly string _endPoint;
 
         private bool _isDisposed = false;
         private BinaryReader _binaryReader = null;
@@ -52,29 +45,34 @@ namespace YukoBot
         private DbUser _currentDbUser = null;
         #endregion
 
-        public static bool Availability
-        {
-            get => _countClient > 0;
-        }
+        public static bool Availability => _countClient > 0;
 
-        public YukoClient(DiscordClient discordClient, TcpClient tcpClient)
+        public YukoClient(IServiceProvider services, TcpClient tcpClient)
         {
-            _discordClient = discordClient;
+            _discordClient = services.GetService<DiscordClient>();
+            _logger = services.GetService<ILogger<YukoClient>>();
             _tcpClient = tcpClient;
+
+            _endPoint = _tcpClient.Client.RemoteEndPoint.ToString();
+
+            _yukoSettings = services.GetService<IYukoSettings>();
+            _messageLimit = _yukoSettings.DiscordMessageLimit;
+            _messageLimitSleepMs = _yukoSettings.DiscordMessageLimitSleepMs;
+            _messageLimitSleepMsForOne = _yukoSettings.DiscordMessageLimitSleepMs /
+                                         _yukoSettings.DiscordMessageLimitSleepMsDividerForOne;
         }
 
-        public async void Process(object obj)
+        public async void Process()
         {
             Interlocked.Increment(ref _countClient);
-            string endPoint = _tcpClient.Client.RemoteEndPoint.ToString();
             try
             {
-                _defaultLogger.LogInformation(_eventId, $"Client connected: {endPoint}");
+                _logger.LogInformation($"[{_endPoint}] Connected");
                 NetworkStream networkStream = _tcpClient.GetStream();
                 _binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 _binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 string requestString = _binaryReader.ReadString();
-                _defaultLogger.LogDebug(_eventId, $"Client {endPoint} request: {requestString}");
+                _logger.LogDebug($"[{_endPoint}] Request: {requestString}");
                 BaseRequest baseRequest = BaseRequest.FromJson(requestString);
                 if (baseRequest.Type == RequestType.Authorization)
                 {
@@ -120,13 +118,13 @@ namespace YukoBot
             }
             catch (Exception ex)
             {
-                _defaultLogger.LogError(_eventId, ex, $"Client: {endPoint}");
+                _logger.LogError(ex, $"[{_endPoint}] {ex.Message}");
             }
             finally
             {
                 Interlocked.Decrement(ref _countClient);
                 Dispose();
-                _defaultLogger.LogInformation(_eventId, $"Client disconnected: {endPoint}");
+                _logger.LogInformation($"[{_endPoint}] Disconnected");
             }
         }
 
@@ -211,9 +209,7 @@ namespace YukoBot
                     {
                         string jsonString = _binaryReader.ReadString();
                         scriptRequest = ExecuteScriptRequest.FromJson(jsonString);
-                        _defaultLogger.LogDebug(
-                            _eventId,
-                            $"Client: {_currentDbUser.Id}, Execute script request: {jsonString}");
+                        _logger.LogDebug($"[{_endPoint}] Execute script request: {jsonString}");
                         try
                         {
                             switch (scriptRequest.Mode)
@@ -240,7 +236,7 @@ namespace YukoBot
                         {
                             Response response = new Response { ErrorMessage = ex.Message };
                             _binaryWriter.Write(response.ToString());
-                            _defaultLogger.LogError(_eventId, ex, _currentDbUser.Id.ToString());
+                            _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
                         }
                     } while (scriptRequest.HasNext);
                 }
@@ -356,7 +352,7 @@ namespace YukoBot
                                 DiscordMessage discordMessage =
                                     await discordChannel.GetMessageAsync(messageId);
                                 response = new UrlsResponse { Next = true };
-                                response.Urls.AddRange(discordMessage.GetImages());
+                                response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
                                 _binaryWriter.Write(response.ToString());
                             }
                             catch (NotFoundException)
@@ -439,7 +435,7 @@ namespace YukoBot
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
             UrlsResponse response = new UrlsResponse();
-            response.Urls.AddRange(discordMessage.GetImages());
+            response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
             _binaryWriter.Write(response.ToString());
         }
 
@@ -472,7 +468,7 @@ namespace YukoBot
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.GetImages());
+                    response.Urls.AddRange(message.GetImages(_yukoSettings));
                 }
                 _binaryWriter.Write(response.ToString());
 
@@ -513,7 +509,7 @@ namespace YukoBot
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.GetImages());
+                    response.Urls.AddRange(message.GetImages(_yukoSettings));
                 }
                 _binaryWriter.Write(response.ToString());
 
@@ -546,7 +542,7 @@ namespace YukoBot
             UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
             foreach (DiscordMessage message in messages)
             {
-                response.Urls.AddRange(message.GetImages());
+                response.Urls.AddRange(message.GetImages(_yukoSettings));
             }
             _binaryWriter.Write(response.ToString());
 
@@ -580,7 +576,7 @@ namespace YukoBot
                 response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
                 {
-                    response.Urls.AddRange(message.GetImages());
+                    response.Urls.AddRange(message.GetImages(_yukoSettings));
                 }
                 _binaryWriter.Write(response.ToString());
             }

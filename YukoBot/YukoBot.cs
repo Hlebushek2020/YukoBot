@@ -64,6 +64,7 @@ namespace YukoBot
                 .AddSingleton(_discordClient)
                 .AddSingleton(_yukoSettings)
                 .AddSingleton(typeof(IYukoBot), this)
+                //.AddDbContext<IYukoDbContext, YukoDbContext>()
                 .AddSingleton<IBotNotificationsService, BotNotificationsService>()
                 .AddSingleton<IBotPingService, BotPingService>()
                 .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
