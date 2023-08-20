@@ -165,7 +165,7 @@ namespace YukoBot
             {
                 embed.WithDescription(
                     "Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
-                _logger.LogError($"Error when executing the: {e.Command?.Name ?? "Unknown"}", exception);
+                _logger.LogError(exception, $"Error when executing the: {e.Command?.Name ?? "Unknown"}");
             }
 
             bool sendToCurrentChannel = true;

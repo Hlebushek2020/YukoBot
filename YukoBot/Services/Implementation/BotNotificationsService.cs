@@ -18,8 +18,12 @@ namespace YukoBot.Services.Implementation
         private readonly YukoDbContext _dbContext;
         private readonly ILogger<BotNotificationsService> _logger;
 
-        public BotNotificationsService(DiscordClient discordClient, ILogger<BotNotificationsService> logger)
+        public BotNotificationsService(
+            DiscordClient discordClient,
+            YukoDbContext dbContext,
+            ILogger<BotNotificationsService> logger)
         {
+            _dbContext = dbContext;
             _discordClient = discordClient;
             _logger = logger;
 

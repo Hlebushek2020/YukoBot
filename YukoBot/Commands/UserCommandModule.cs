@@ -45,7 +45,7 @@ namespace YukoBot.Commands
                 dbUser = new DbUser
                 {
                     Id = ctx.User.Id,
-                    Nikname = ctx.User.Username + "#" + ctx.User.Discriminator
+                    Nikname = ctx.User.Username //+ "#" + ctx.User.Discriminator
                 };
                 dbCtx.Users.Add(dbUser);
             }
