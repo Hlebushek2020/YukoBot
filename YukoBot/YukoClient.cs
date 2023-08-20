@@ -33,6 +33,7 @@ namespace YukoBot
         private readonly ILogger<YukoClient> _logger;
         private readonly TcpClient _tcpClient;
         private readonly IYukoSettings _yukoSettings;
+        private readonly YukoDbContext _dbContext;
         private readonly int _messageLimit;
         private readonly int _messageLimitSleepMs;
         private readonly int _messageLimitSleepMsForOne;
@@ -41,7 +42,6 @@ namespace YukoBot
         private bool _isDisposed = false;
         private BinaryReader _binaryReader = null;
         private BinaryWriter _binaryWriter = null;
-        private YukoDbContext _dbCtx = null;
         private DbUser _currentDbUser = null;
         #endregion
 
@@ -49,20 +49,21 @@ namespace YukoBot
 
         public YukoClient(IServiceProvider services, TcpClient tcpClient)
         {
-            _discordClient = services.GetService<DiscordClient>();
-            _logger = services.GetService<ILogger<YukoClient>>();
             _tcpClient = tcpClient;
-
             _endPoint = _tcpClient.Client.RemoteEndPoint.ToString();
 
+            _discordClient = services.GetService<DiscordClient>();
+            _logger = services.GetService<ILogger<YukoClient>>();
+            _dbContext = services.GetService<YukoDbContext>();
             _yukoSettings = services.GetService<IYukoSettings>();
+
             _messageLimit = _yukoSettings.DiscordMessageLimit;
             _messageLimitSleepMs = _yukoSettings.DiscordMessageLimitSleepMs;
             _messageLimitSleepMsForOne = _yukoSettings.DiscordMessageLimitSleepMs /
                                          _yukoSettings.DiscordMessageLimitSleepMsDividerForOne;
         }
 
-        public async void Process()
+        public async void Process(object args)
         {
             Interlocked.Increment(ref _countClient);
             try
@@ -81,9 +82,8 @@ namespace YukoBot
                 }
                 else
                 {
-                    _dbCtx = new YukoDbContext();
                     Guid userToken = Guid.Parse(baseRequest.Token);
-                    _currentDbUser = await _dbCtx.Users.FindAsync(
+                    _currentDbUser = await _dbContext.Users.FindAsync(
                         _userTokens.ContainsKey(userToken)
                             ? _userTokens[userToken]
                             : ulong.MinValue);
@@ -132,13 +132,12 @@ namespace YukoBot
         private async Task<AuthorizationResponse> ClientAuthorization(string json)
         {
             AuthorizationRequest request = AuthorizationRequest.FromJson(json);
-            YukoDbContext db = new YukoDbContext();
-            DbUser dbUser = db.Users.FirstOrDefault(x => x.Nikname == request.Login);
+            DbUser dbUser = _dbContext.Users.FirstOrDefault(x => x.Nikname == request.Login);
             if (dbUser is null)
             {
                 if (ulong.TryParse(request.Login, out ulong id))
                 {
-                    dbUser = db.Users.FirstOrDefault(x => x.Id == id);
+                    dbUser = _dbContext.Users.FirstOrDefault(x => x.Id == id);
                 }
             }
             if (dbUser == null || !dbUser.Password.Equals(request.Password))
@@ -152,7 +151,7 @@ namespace YukoBot
             // save db
             Guid userToken = Guid.NewGuid();
             dbUser.LoginTime = DateTime.Now;
-            await db.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             // add token to dictionary
             _userTokens.AddOrUpdate(userToken, x => dbUser.Id, (x, y) => dbUser.Id);
             // response build
@@ -194,7 +193,7 @@ namespace YukoBot
         private async Task ClientExecuteScripts(string json)
         {
             ServerRequest serverRequest = ServerRequest.FromJson(json);
-            DbBan ban = _dbCtx.Bans.FirstOrDefault(
+            DbBan ban = _dbContext.Bans.FirstOrDefault(
                 x =>
                     x.UserId == _currentDbUser.Id && x.ServerId == serverRequest.Id);
             if (ban == null)
@@ -263,7 +262,7 @@ namespace YukoBot
         private void ClientGetMessageCollections()
         {
             IReadOnlyList<DbCollection> dbCollections =
-                _dbCtx.Collections.Where(x => x.UserId == _currentDbUser.Id).ToList();
+                _dbContext.Collections.Where(x => x.UserId == _currentDbUser.Id).ToList();
             MessageCollectionsResponse response = new MessageCollectionsResponse();
             foreach (DbCollection dbCollection in dbCollections)
             {
@@ -272,10 +271,10 @@ namespace YukoBot
                     Name = dbCollection.Name,
                     Id = dbCollection.Id
                 };
-                IQueryable<DbMessage> dbCollectionItems = _dbCtx.CollectionItems
+                IQueryable<DbMessage> dbCollectionItems = _dbContext.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id)
                     .Join(
-                        _dbCtx.Messages,
+                        _dbContext.Messages,
                         ci => ci.MessageId,
                         m => m.Id,
                         (ci, m) => new DbMessage { Id = m.Id, ChannelId = m.ChannelId });
@@ -297,10 +296,10 @@ namespace YukoBot
         {
             UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
-            Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbCtx.CollectionItems
+            Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
                 .Join(
-                    _dbCtx.Messages,
+                    _dbContext.Messages,
                     ci => ci.MessageId,
                     m => m.Id,
                     (ci, m) => new CollectionItemJoinMessage
@@ -596,7 +595,7 @@ namespace YukoBot
                 _binaryReader?.Dispose();
                 _binaryWriter?.Dispose();
                 _tcpClient?.Dispose();
-                _dbCtx?.Dispose();
+                _dbContext?.Dispose();
                 _isDisposed = true;
             }
         }

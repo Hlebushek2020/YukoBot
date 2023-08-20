@@ -32,6 +32,7 @@ namespace YukoBot
         private readonly ILogger<YukoBot> _logger;
         private readonly IServiceProvider _services;
         private readonly IYukoSettings _yukoSettings;
+        private readonly YukoDbContext _dbContext;
         private readonly IBotNotificationsService _notificationsService;
 
         private Task _processTask;
@@ -64,7 +65,7 @@ namespace YukoBot
                 .AddSingleton(_discordClient)
                 .AddSingleton(_yukoSettings)
                 .AddSingleton(typeof(IYukoBot), this)
-                //.AddDbContext<IYukoDbContext, YukoDbContext>()
+                .AddDbContext<YukoDbContext>()
                 .AddSingleton<IBotNotificationsService, BotNotificationsService>()
                 .AddSingleton<IBotPingService, BotPingService>()
                 .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
@@ -74,6 +75,7 @@ namespace YukoBot
             _services.GetService<IBotPingService>();
             _services.GetService<IDeletingMessagesByEmojiService>();
 
+            _dbContext = _services.GetService<YukoDbContext>();
             _notificationsService = _services.GetService<IBotNotificationsService>();
 
             CommandsNextExtension commands = _discordClient.UseCommandsNext(
@@ -172,8 +174,7 @@ namespace YukoBot
                  command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
                  command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
-                YukoDbContext dbContext = new YukoDbContext();
-                DbGuildSettings dbGuildSettings = await dbContext.GuildsSettings.FindAsync(context.Guild.Id);
+                DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
                 {
                     sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
@@ -215,7 +216,7 @@ namespace YukoBot
                             {
                                 YukoClient yukoClient =
                                     new YukoClient(
-                                        _discordClient,
+                                        _services,
                                         await _tcpListener.AcceptTcpClientAsync(processToken));
                                 ThreadPool.QueueUserWorkItem(yukoClient.Process);
                             }

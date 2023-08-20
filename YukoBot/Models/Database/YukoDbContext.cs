@@ -4,7 +4,7 @@ using YukoBot.Models.Database.Entities;
 
 namespace YukoBot.Models.Database
 {
-    public class YukoDbContext : DbContext, IYukoDbContext
+    public class YukoDbContext : DbContext
     {
         private readonly IYukoSettings _yukoSettings;
 

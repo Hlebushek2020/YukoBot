@@ -16,9 +16,14 @@ namespace YukoBot.Commands
     [RequireOwnerAndUserPermissions(Permissions.Administrator)]
     public class AdminCommandModule : CommandModule
     {
-        public AdminCommandModule() : base(
+        private readonly YukoDbContext _dbContext;
+
+        public AdminCommandModule(YukoDbContext dbContext) : base(
             Categories.Management,
-            "Простите, эта команда доступна админу гильдии и владельцу бота!") { }
+            "Простите, эта команда доступна админу гильдии и владельцу бота!")
+        {
+            _dbContext = dbContext;
+        }
 
         [Command("ban")]
         [Description("Запретить пользователю скачивать с этого сервера.")]
@@ -41,8 +46,7 @@ namespace YukoBot.Commands
                 return;
             }
 
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = await dbCtx.Users.FindAsync(member.Id);
+            DbUser dbUser = await _dbContext.Users.FindAsync(member.Id);
             if (dbUser == null)
             {
                 discordEmbed = new DiscordEmbedBuilder()
@@ -53,7 +57,7 @@ namespace YukoBot.Commands
                 return;
             }
 
-            int isBanned = dbCtx.Bans.Count(x => x.ServerId == member.Guild.Id && x.UserId == member.Id);
+            int isBanned = _dbContext.Bans.Count(x => x.ServerId == member.Guild.Id && x.UserId == member.Id);
             if (isBanned > 0)
             {
                 discordEmbed = new DiscordEmbedBuilder()
@@ -69,8 +73,8 @@ namespace YukoBot.Commands
                 Reason = string.IsNullOrWhiteSpace(reason) ? null : reason
             };
 
-            dbCtx.Bans.Add(dbBan);
-            await dbCtx.SaveChangesAsync();
+            _dbContext.Bans.Add(dbBan);
+            await _dbContext.SaveChangesAsync();
 
             discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, "Участник успешно забанен!");
@@ -96,8 +100,7 @@ namespace YukoBot.Commands
                 return;
             }
 
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = await dbCtx.Users.FindAsync(member.Id);
+            DbUser dbUser = await _dbContext.Users.FindAsync(member.Id);
             if (dbUser == null)
             {
                 discordEmbed.WithSadMessage(
@@ -108,15 +111,15 @@ namespace YukoBot.Commands
             {
                 discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Участник не забанен!");
 
-                IReadOnlyList<DbBan> dbBanList = dbCtx.Bans
+                IReadOnlyList<DbBan> dbBanList = _dbContext.Bans
                     .Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
                 if (dbBanList.Count > 0)
                 {
                     foreach (DbBan dbBan in dbBanList)
                     {
-                        dbCtx.Bans.Remove(dbBan);
+                        _dbContext.Bans.Remove(dbBan);
                     }
-                    await dbCtx.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
 
                     discordEmbed.WithDescription("Участник успешно разбанен!");
                 }
@@ -135,8 +138,7 @@ namespace YukoBot.Commands
         {
             DiscordEmbedBuilder discordEmbed = null;
 
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = await dbCtx.Users.FindAsync(member.Id);
+            DbUser dbUser = await _dbContext.Users.FindAsync(member.Id);
             if (dbUser == null)
             {
                 discordEmbed = new DiscordEmbedBuilder()
@@ -152,7 +154,7 @@ namespace YukoBot.Commands
                 .WithColor(Constants.SuccessColor);
 
             List<DbBan> dbBanList =
-                dbCtx.Bans.Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
+                _dbContext.Bans.Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
             if (dbBanList.Count > 0)
             {
                 DbBan ban = dbBanList[0];
@@ -176,22 +178,21 @@ namespace YukoBot.Commands
             [Description("Канал для поиска сообщений")]
             DiscordChannel сhannel)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbGuildSettings guildArtChannel = await dbCtx.GuildsSettings.FindAsync(ctx.Guild.Id);
+            DbGuildSettings guildArtChannel = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
             if (guildArtChannel != null)
             {
                 guildArtChannel.ArtChannelId = сhannel.Id;
             }
             else
             {
-                dbCtx.GuildsSettings.Add(
+                _dbContext.GuildsSettings.Add(
                     new DbGuildSettings
                     {
                         Id = ctx.Guild.Id,
                         ArtChannelId = сhannel.Id
                     });
             }
-            await dbCtx.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, "Канал для поиска сообщений успешно установлен!");
@@ -207,22 +208,21 @@ namespace YukoBot.Commands
             [Description("true - включить / false - отключить")]
             bool isEnabled)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbGuildSettings dbGuildSettings = await dbCtx.GuildsSettings.FindAsync(ctx.Guild.Id);
+            DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
             if (dbGuildSettings != null)
             {
                 dbGuildSettings.AddCommandResponse = isEnabled;
             }
             else
             {
-                dbCtx.GuildsSettings.Add(
+                _dbContext.GuildsSettings.Add(
                     new DbGuildSettings
                     {
                         Id = ctx.Guild.Id,
                         AddCommandResponse = isEnabled
                     });
             }
-            await dbCtx.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(ctx.Member.DisplayName, isEnabled ? "Включено!" : "Отключено!");
