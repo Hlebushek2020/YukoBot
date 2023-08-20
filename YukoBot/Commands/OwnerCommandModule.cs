@@ -100,7 +100,7 @@ namespace YukoBot.Commands
             }
             else
             {
-                YukoDbContext dbCtx = new YukoDbContext();
+                YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
                 DbUser dbUser = await dbCtx.Users.FindAsync(discordMember.Id);
                 if (dbUser != null)
                 {

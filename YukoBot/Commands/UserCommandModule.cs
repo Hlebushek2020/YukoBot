@@ -36,7 +36,7 @@ namespace YukoBot.Commands
             "Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
         public async Task Register(CommandContext ctx)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
+            YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
             DbUser dbUser = dbCtx.Users.Find(ctx.User.Id);
             bool isRegister = false;
             if (dbUser == null)
