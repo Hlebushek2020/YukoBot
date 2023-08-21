@@ -35,15 +35,6 @@ namespace YukoBot.Models.Database.Entities
         [Column("password")]
         public string Password { get; set; }
 
-        /*
-        /// <summary>
-        /// Token. Used to identify the user after logging in to the application.
-        /// </summary>
-        [MaxLength(36)]
-        [Column("token")]
-        public string Token { get; set; }
-        */
-
         /// <summary>
         /// The time and date of the last login to the application. Default value: null.
         /// </summary>

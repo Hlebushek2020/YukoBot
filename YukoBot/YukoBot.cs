@@ -32,6 +32,7 @@ namespace YukoBot
         private readonly ILogger<YukoBot> _logger;
         private readonly IServiceProvider _services;
         private readonly IYukoSettings _yukoSettings;
+        private readonly IBotNotificationsService _notificationsService;
 
         private Task _processTask;
         private CancellationTokenSource _processCts;
@@ -63,6 +64,7 @@ namespace YukoBot
                 .AddSingleton(_discordClient)
                 .AddSingleton(_yukoSettings)
                 .AddSingleton(typeof(IYukoBot), this)
+                .AddSingleton<IBotNotificationsService, BotNotificationsService>()
                 .AddSingleton<IBotPingService, BotPingService>()
                 .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
                 .BuildServiceProvider();
@@ -70,6 +72,8 @@ namespace YukoBot
             // Initializing services that won't be called anywhere
             _services.GetService<IBotPingService>();
             _services.GetService<IDeletingMessagesByEmojiService>();
+
+            _notificationsService = _services.GetService<IBotNotificationsService>();
 
             CommandsNextExtension commands = _discordClient.UseCommandsNext(
                 new CommandsNextConfiguration
@@ -199,6 +203,8 @@ namespace YukoBot
                         await _discordClient.ConnectAsync();
                         StartDateTime = DateTime.Now;
 
+                        await _notificationsService.SendReadyNotifications();
+
                         _tcpListener.Start();
                         _logger.LogInformation("Server listening");
 
@@ -240,6 +246,9 @@ namespace YukoBot
             {
                 Task.Delay(100);
             }
+
+            if (!string.IsNullOrEmpty(reason))
+                _notificationsService.SendShutdownNotifications(reason).Wait();
 
             if (_discordClient != null)
             {
