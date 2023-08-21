@@ -25,15 +25,18 @@ namespace YukoBot.Commands
         private const string ProfileDtf = "d MMMM yyyy г. hh:mm";
         #endregion
 
+        private readonly YukoDbContext _dbContext;
         private readonly IYukoSettings _yukoSettings;
         private readonly ILogger<RegisteredUserCommandModule> _logger;
 
         public RegisteredUserCommandModule(
+            YukoDbContext dbContext,
             IYukoSettings yukoSettings,
             ILogger<RegisteredUserCommandModule> logger) : base(
             Categories.User,
             "Простите, эта команда доступна для зарегистрированных пользователей!")
         {
+            _dbContext = dbContext;
             _yukoSettings = yukoSettings;
             _logger = logger;
         }
@@ -69,8 +72,7 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.SuccessColor);
 
-            YukoDbContext dbCtx = new YukoDbContext();
-            List<DbBan> dbBanList = dbCtx.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id)
+            List<DbBan> dbBanList = _dbContext.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id)
                 .ToList();
             if (dbBanList.Count > 0)
             {
@@ -96,13 +98,12 @@ namespace YukoBot.Commands
             [Description("true - включить / false - отключить")]
             bool isEnabled)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = await dbCtx.Users.FindAsync(ctx.Member.Id);
+            DbUser dbUser = await _dbContext.Users.FindAsync(ctx.Member.Id);
 
             if (dbUser.InfoMessages != isEnabled)
             {
                 dbUser.InfoMessages = isEnabled;
-                await dbCtx.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -205,10 +206,10 @@ namespace YukoBot.Commands
         [Description("Показать информацию о моей учетной записи бота.")]
         public async Task Profile(CommandContext ctx)
         {
-            YukoDbContext dbContext = new YukoDbContext();
+            // TODO: ??????????????????????
             CultureInfo locale = CultureInfo.GetCultureInfo("ru-RU");
 
-            DbUser dbUser = await dbContext.Users.FindAsync(ctx.User.Id);
+            DbUser dbUser = await _dbContext.Users.FindAsync(ctx.User.Id);
             bool hasPremiumAccess = dbUser.HasPremiumAccess;
 
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
@@ -228,7 +229,7 @@ namespace YukoBot.Commands
                 .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
                 .WithColor(hasPremiumAccess ? Constants.PremiumAccessColor : Constants.SuccessColor);
 
-            IList<DbBan> bans = dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
+            IList<DbBan> bans = _dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
             StringBuilder banListBuilder = new StringBuilder();
             foreach (DbBan ban in bans)
             {

@@ -11,11 +11,17 @@ namespace YukoBot.Services.Implementation
 {
     internal class BotPingService : IBotPingService
     {
+        private readonly YukoDbContext _dbContext;
         private readonly IYukoSettings _yukoSettings;
         private readonly ILogger<BotPingService> _logger;
 
-        public BotPingService(DiscordClient discordClient, IYukoSettings yukoSettings, ILogger<BotPingService> logger)
+        public BotPingService(
+            DiscordClient discordClient,
+            YukoDbContext dbContext,
+            IYukoSettings yukoSettings,
+            ILogger<BotPingService> logger)
         {
+            _dbContext = dbContext;
             _yukoSettings = yukoSettings;
             _logger = logger;
 
@@ -37,7 +43,7 @@ namespace YukoBot.Services.Implementation
                 bool isOwner = discordApplication.Owners.Any(x => x.Id == e.Message.Author.Id);
                 DiscordMember messageAuthorMember = await e.Message.Channel.Guild.GetMemberAsync(e.Message.Author.Id);
 
-                if (isOwner || await new YukoDbContext().Users.FindAsync(e.Message.Author.Id) != null)
+                if (isOwner || await _dbContext.Users.FindAsync(e.Message.Author.Id) != null)
                 {
                     await e.Message.RespondAsync($"**Подбежала и обняла {messageAuthorMember.DisplayName}**");
                 }

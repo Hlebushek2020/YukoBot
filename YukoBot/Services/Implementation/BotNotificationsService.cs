@@ -15,10 +15,15 @@ namespace YukoBot.Services.Implementation
     internal class BotNotificationsService : IBotNotificationsService
     {
         private readonly DiscordClient _discordClient;
+        private readonly YukoDbContext _dbContext;
         private readonly ILogger<BotNotificationsService> _logger;
 
-        public BotNotificationsService(DiscordClient discordClient, ILogger<BotNotificationsService> logger)
+        public BotNotificationsService(
+            DiscordClient discordClient,
+            YukoDbContext dbContext,
+            ILogger<BotNotificationsService> logger)
         {
+            _dbContext = dbContext;
             _discordClient = discordClient;
             _logger = logger;
 
@@ -34,15 +39,15 @@ namespace YukoBot.Services.Implementation
         public Task SendShutdownNotifications(string reason)
         {
             _logger.LogInformation("Sending notifications about the shutdown of the bot.");
-            return SendNotifications($"Отключение бота по следующей причине: {reason}",
+            return SendNotifications(
+                $"Отключение бота по следующей причине: {reason}",
                 gs => gs.IsShutdownNotification);
         }
 
         private async Task SendNotifications(string message, Expression<Func<DbGuildSettings, bool>> predicate)
         {
-            YukoDbContext voltDbContext = new YukoDbContext();
             IReadOnlyList<DbGuildSettings> guildSettingsList =
-                await voltDbContext.GuildsSettings.Where(predicate).ToListAsync();
+                await _dbContext.GuildsSettings.Where(predicate).ToListAsync();
 
             DiscordEmbed discordEmbed = new DiscordEmbedBuilder()
                 .WithTitle(_discordClient.CurrentUser.Username)
