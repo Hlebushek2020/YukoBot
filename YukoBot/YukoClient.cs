@@ -253,7 +253,7 @@ namespace YukoBot
                 Response response = new Response
                 {
                     ErrorMessage =
-                        $"Вы забанены на этом сервере, для разбана обратитесь к админу сервера.{reason}"
+                        $"Вы забанены на этом сервере, для разбана обратитесь к администратору сервера.{reason}"
                 };
                 _binaryWriter.Write(response.ToString());
             }

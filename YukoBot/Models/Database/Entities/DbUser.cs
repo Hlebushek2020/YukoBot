@@ -49,18 +49,15 @@ namespace YukoBot.Models.Database.Entities
         public bool InfoMessages { get; set; } = true;
 
         /// <summary>
-        /// Indicates whether the user has premium access or not. Isn't column.
-        /// </summary>
-        [NotMapped]
-        public bool HasPremiumAccess
-        {
-            get => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
-        }
-
-        /// <summary>
         /// Expiration date of premium access. Default value: null.
         /// </summary>
         [Column("premium_access_expires")]
         public DateTime? PremiumAccessExpires { get; set; }
+
+        /// <summary>
+        /// Indicates whether the user has premium access or not. Isn't column.
+        /// </summary>
+        [NotMapped]
+        public bool HasPremiumAccess => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
     }
 }

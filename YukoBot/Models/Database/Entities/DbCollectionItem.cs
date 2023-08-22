@@ -48,6 +48,6 @@ namespace YukoBot.Models.Database.Entities
         /// </summary>
         [Required]
         [Column("saved_links")]
-        public bool IsSavedLinks { get; set; }
+        public bool IsSavedLinks { get; set; } = false;
     }
 }

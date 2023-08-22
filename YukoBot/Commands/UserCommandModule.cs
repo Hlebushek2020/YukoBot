@@ -37,7 +37,7 @@ namespace YukoBot.Commands
         public async Task Register(CommandContext ctx)
         {
             YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
-            DbUser dbUser = dbCtx.Users.Find(ctx.User.Id);
+            DbUser dbUser = await dbCtx.Users.FindAsync(ctx.User.Id);
             bool isRegister = false;
             if (dbUser == null)
             {
@@ -57,7 +57,7 @@ namespace YukoBot.Commands
                 password += (char) random.Next(33, 127);
             }
 
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+            using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
@@ -97,8 +97,6 @@ namespace YukoBot.Commands
             [Description("Категория или команда")]
             string categoryOrCommand = "")
         {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
             if (!string.IsNullOrWhiteSpace(categoryOrCommand))
             {
                 if (CheckHelpCategoryCommand(categoryOrCommand))
@@ -130,7 +128,7 @@ namespace YukoBot.Commands
                     {
                         embed = new DiscordEmbedBuilder()
                             .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
-                            .WithFooter(versionString)
+                            .WithFooter($"v{Program.Version}")
                             .AddField(category.Name, new string('=', category.Name.Length));
 
                         foreach (string[] item in commandOfDescription)
@@ -205,7 +203,7 @@ namespace YukoBot.Commands
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                         .WithHappyMessage($"{command.Name} |", descriptionBuilder.ToString())
-                        .WithFooter(versionString);
+                        .WithFooter($"v{Program.Version}");
 
                     await ctx.RespondAsync(embed);
                 }
@@ -238,7 +236,7 @@ namespace YukoBot.Commands
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                     .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
-                    .WithFooter(versionString);
+                    .WithFooter($"v{Program.Version}");
 
                 foreach (Category mInfo in GetCategories())
                 {
@@ -259,9 +257,6 @@ namespace YukoBot.Commands
         [Description("Информация о боте и его возможностях.")]
         public async Task Info(CommandContext ctx)
         {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
-
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(
                     _yukoSettings.BotPrefix + " | Info",
@@ -282,7 +277,7 @@ namespace YukoBot.Commands
                     "Ссылки",
                     "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
-                .WithFooter(versionString);
+                .WithFooter($"v{Program.Version}");
 
             await ctx.RespondAsync(discordEmbed);
         }
