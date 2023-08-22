@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,6 +106,7 @@ namespace YukoBot.Commands
                                  .HelpCommand.Equals(categoryOrCommand) &&
                                  !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
+                    // TODO: use dictionary
                     List<string[]> commandOfDescription = new List<string[]>();
 
                     foreach (Command command in commands)
@@ -213,6 +213,7 @@ namespace YukoBot.Commands
                 IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                     .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
+                // TODO: use HashSet, not use List
                 Dictionary<string, List<string>> sortedCommands = new Dictionary<string, List<string>>();
 
                 foreach (Command command in commands)
