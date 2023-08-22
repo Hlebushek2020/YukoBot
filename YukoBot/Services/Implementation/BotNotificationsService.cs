@@ -33,14 +33,16 @@ namespace YukoBot.Services.Implementation
         public Task SendReadyNotifications()
         {
             _logger.LogInformation("Sending notifications about the start of the bot.");
-            return SendNotifications("Бот снова в сети!", gs => gs.IsReadyNotification);
+            return SendNotifications(
+                "Новый день - новая возможность! Я готова вас радовать!",
+                gs => gs.IsReadyNotification);
         }
 
         public Task SendShutdownNotifications(string reason)
         {
             _logger.LogInformation("Sending notifications about the shutdown of the bot.");
             return SendNotifications(
-                $"Отключение бота по следующей причине: {reason}",
+                $"Хорошего дня (вечера)! Хозяин сказал мне отдыхать по причине: {reason}",
                 gs => gs.IsShutdownNotification);
         }
 
