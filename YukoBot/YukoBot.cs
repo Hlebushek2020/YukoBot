@@ -202,30 +202,34 @@ namespace YukoBot
                 _processTask = Task.Run(
                     async () =>
                     {
-                        _logger.LogInformation("Discord client connect");
-                        await _discordClient.ConnectAsync();
-                        StartDateTime = DateTime.Now;
-
-                        await _notificationsService.SendReadyNotifications();
-
-                        _tcpListener.Start();
-                        _logger.LogInformation("Server listening");
-
-                        while (!processToken.IsCancellationRequested)
+                        try
                         {
-                            if (_tcpListener.Pending())
+                            _logger.LogInformation("Discord client connect");
+                            await _discordClient.ConnectAsync();
+                            StartDateTime = DateTime.Now;
+
+                            await _notificationsService.SendReadyNotifications();
+
+                            _tcpListener.Start();
+                            _logger.LogInformation("Server listening");
+
+                            while (!processToken.IsCancellationRequested)
                             {
-                                YukoClient yukoClient =
-                                    new YukoClient(
-                                        _services,
-                                        await _tcpListener.AcceptTcpClientAsync(processToken));
-                                ThreadPool.QueueUserWorkItem(yukoClient.Process);
-                            }
-                            else
-                            {
-                                await Task.Delay(200, processToken);
+                                if (_tcpListener.Pending())
+                                {
+                                    YukoClient yukoClient =
+                                        new YukoClient(
+                                            _services,
+                                            await _tcpListener.AcceptTcpClientAsync(processToken));
+                                    ThreadPool.QueueUserWorkItem(yukoClient.Process);
+                                }
+                                else
+                                {
+                                    await Task.Delay(200, processToken);
+                                }
                             }
                         }
+                        catch (TaskCanceledException) { }
                     },
                     processToken);
             }

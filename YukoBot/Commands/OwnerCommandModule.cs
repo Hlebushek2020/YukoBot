@@ -42,6 +42,9 @@ namespace YukoBot.Commands
             [Description("Причина выключения бота"), RemainingText]
             string reason)
         {
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new ArgumentException();
+
             await ctx.RespondAsync($"Хорошо, хозяин! {Constants.HappySmile}");
             _yukoBot.Shutdown(reason);
         }
