@@ -629,7 +629,7 @@ namespace YukoBot.Commands
             {
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _logger.LogError(
                     $"Error saving database changes. Discord info: server {ctx.Guild.Name}; channel {ctx.Channel.Name
