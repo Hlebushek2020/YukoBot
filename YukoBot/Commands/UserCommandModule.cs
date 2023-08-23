@@ -114,7 +114,7 @@ namespace YukoBot.Commands
                                  .HelpCommand.Equals(categoryOrCommand) &&
                                  !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                    Dictionary<string, string> commandOfDescription = new Dictionary<string, string>();
+                    SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();
 
                     foreach (Command command in commands)
                     {
@@ -124,23 +124,23 @@ namespace YukoBot.Commands
 
                         string fieldTitle = $"{command.Name}{aliases}";
 
-                        commandOfDescription.Add(fieldTitle, command.Description);
+                        descriptionByCommand.Add(fieldTitle, command.Description);
                     }
 
                     DiscordEmbedBuilder embed;
 
                     Category category = GetCategoryByHelpCommand(categoryOrCommand);
 
-                    if (commandOfDescription.Count > 0)
+                    if (descriptionByCommand.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
                             .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
                             .WithFooter($"v{Program.Version}")
                             .AddField(category.Name, new string('=', category.Name.Length));
 
-                        foreach (KeyValuePair<string, string> keyValuePair in commandOfDescription)
+                        foreach (KeyValuePair<string, string> item in descriptionByCommand)
                         {
-                            embed.AddField(keyValuePair.Key, keyValuePair.Value);
+                            embed.AddField(item.Key, item.Value);
                         }
                     }
                     else
@@ -223,7 +223,8 @@ namespace YukoBot.Commands
                 IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                     .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                Dictionary<string, HashSet<string>> sortedCommands = new Dictionary<string, HashSet<string>>();
+                Dictionary<string, SortedSet<string>> sortedCommandsByCategory =
+                    new Dictionary<string, SortedSet<string>>();
 
                 foreach (Command command in commands)
                 {
@@ -234,14 +235,14 @@ namespace YukoBot.Commands
                     if (string.IsNullOrEmpty(categoryName))
                         continue;
 
-                    if (!sortedCommands.ContainsKey(categoryName))
-                        sortedCommands.Add(categoryName, new HashSet<string>());
+                    if (!sortedCommandsByCategory.ContainsKey(categoryName))
+                        sortedCommandsByCategory.Add(categoryName, new SortedSet<string>());
 
                     string aliases = string.Empty;
                     if (command.Aliases.Count > 0)
                         aliases = $" ({string.Join(' ', command.Aliases)})";
 
-                    sortedCommands[categoryName].Add($"`{command.Name}{aliases}`");
+                    sortedCommandsByCategory[categoryName].Add($"`{command.Name}{aliases}`");
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
@@ -254,8 +255,8 @@ namespace YukoBot.Commands
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
                     embed.AddField(
                         fieldName,
-                        sortedCommands.TryGetValue(categoryName, out HashSet<string> value)
-                            ? string.Join(' ', value)
+                        sortedCommandsByCategory.TryGetValue(categoryName, out SortedSet<string> sortedCommands)
+                            ? string.Join(' ', sortedCommands)
                             : mInfo.AccessError);
                 }
 
