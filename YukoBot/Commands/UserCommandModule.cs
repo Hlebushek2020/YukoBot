@@ -25,8 +25,7 @@ namespace YukoBot.Commands
         public UserCommandModule(IYukoSettings yukoSettings) : base(Categories.User, null)
         {
             _yukoSettings = yukoSettings;
-            BotDescription = $"Привет, для того что бы узнать больше информации обо мне выполни команду `{
-                _yukoSettings.BotPrefix}info`.";
+            BotDescription = string.Format(Resources.BotDescription, _yukoSettings.BotPrefix);
         }
 
         [Command("register")]
@@ -44,7 +43,7 @@ namespace YukoBot.Commands
                 dbUser = new DbUser
                 {
                     Id = ctx.User.Id,
-                    Nikname = ctx.User.Username //+ "#" + ctx.User.Discriminator
+                    Nikname = ctx.User.Username
                 };
                 dbCtx.Users.Add(dbUser);
             }
@@ -71,10 +70,16 @@ namespace YukoBot.Commands
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithHappyTitle(isRegister ? "Регистрация прошла успешно!" : "Пароль сменен!")
+                .WithHappyTitle(isRegister
+                    ? Resources.UserCommand_Register_DmTitle_Register
+                    : Resources.UserCommand_Register_DmTitle_PasswordChange)
                 .WithColor(Constants.SuccessColor)
-                .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
-                .AddField(isRegister ? "Пароль" : "Новый пароль", password);
+                .AddField(Resources.UserCommand_Register_FieldDmTitle_Login,
+                    string.Format(Resources.UserCommand_Register_FieldDmDescription_Login, dbUser.Nikname, dbUser.Id))
+                .AddField(
+                    isRegister
+                        ? Resources.UserCommand_Register_FieldDmTitle_Password
+                        : Resources.UserCommand_Register_FieldDmTitle_NewPassword, password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
             await userMessage.CreateReactionAsync(
                 DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
@@ -83,8 +88,8 @@ namespace YukoBot.Commands
                 .WithHappyMessage(
                     ctx.Member.DisplayName,
                     isRegister
-                        ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС."
-                        : "Новый пароль от учетной записи отправлен в ЛС.");
+                        ? Resources.UserCommand_Register_Description_Register
+                        : Resources.UserCommand_Register_Description_PasswordChange);
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -106,8 +111,7 @@ namespace YukoBot.Commands
                                  .HelpCommand.Equals(categoryOrCommand) &&
                                  !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                    // TODO: use dictionary
-                    List<string[]> commandOfDescription = new List<string[]>();
+                    Dictionary<string, string> commandOfDescription = new Dictionary<string, string>();
 
                     foreach (Command command in commands)
                     {
@@ -117,7 +121,7 @@ namespace YukoBot.Commands
 
                         string fieldTitle = $"{command.Name}{aliases}";
 
-                        commandOfDescription.Add(new string[] { fieldTitle, command.Description });
+                        commandOfDescription.Add(fieldTitle, command.Description);
                     }
 
                     DiscordEmbedBuilder embed;
@@ -131,9 +135,9 @@ namespace YukoBot.Commands
                             .WithFooter($"v{Program.Version}")
                             .AddField(category.Name, new string('=', category.Name.Length));
 
-                        foreach (string[] item in commandOfDescription)
+                        foreach (KeyValuePair<string, string> keyValuePair in commandOfDescription)
                         {
-                            embed.AddField(item[0], item[1]);
+                            embed.AddField(keyValuePair.Key, keyValuePair.Value);
                         }
                     }
                     else
@@ -159,14 +163,17 @@ namespace YukoBot.Commands
 
                     bool countOverloads = command.Overloads.Count > 1;
 
+                    string resOptionsSection = Resources.UserCommand_Help_OptionsSection;
+                    string resAliasesSection = Resources.UserCommand_Help_AliasesSection;
+                    string resArgumentsSection = Resources.UserCommand_Help_ArgumentsSection;
+                    string resOptionalArgument = Resources.UserCommand_Help_OptionalArgument;
+
                     for (int i = 0; i < command.Overloads.Count; i++)
                     {
                         CommandOverload commandOverload = command.Overloads[i];
 
                         if (countOverloads)
-                        {
-                            descriptionBuilder.AppendLine($"**__Вариант {i + 1}__**");
-                        }
+                            descriptionBuilder.AppendFormat(resOptionsSection, i + 1);
 
                         descriptionBuilder
                             .AppendLine(
@@ -178,7 +185,7 @@ namespace YukoBot.Commands
 
                         if (command.Aliases?.Count != 0)
                         {
-                            descriptionBuilder.AppendLine("**Алиасы:**");
+                            descriptionBuilder.AppendLine(resAliasesSection);
                             foreach (string alias in command.Aliases)
                             {
                                 descriptionBuilder.Append($"{alias} ");
@@ -188,11 +195,11 @@ namespace YukoBot.Commands
 
                         if (commandOverload.Arguments.Count != 0)
                         {
-                            descriptionBuilder.AppendLine("**Аргументы:**");
+                            descriptionBuilder.AppendLine(resArgumentsSection);
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
                                 string defaultValue = (argument.DefaultValue != null)
-                                    ? $" (Необязательно, по умолчанию: {argument.DefaultValue})"
+                                    ? string.Format(resOptionalArgument, argument.DefaultValue)
                                     : string.Empty;
                                 descriptionBuilder.AppendLine(
                                     $"`{argument.Name}`: {argument.Description}{defaultValue}");
@@ -213,8 +220,7 @@ namespace YukoBot.Commands
                 IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                     .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                // TODO: use HashSet, not use List
-                Dictionary<string, List<string>> sortedCommands = new Dictionary<string, List<string>>();
+                Dictionary<string, HashSet<string>> sortedCommands = new Dictionary<string, HashSet<string>>();
 
                 foreach (Command command in commands)
                 {
@@ -226,7 +232,7 @@ namespace YukoBot.Commands
                         continue;
 
                     if (!sortedCommands.ContainsKey(categoryName))
-                        sortedCommands.Add(categoryName, new List<string>());
+                        sortedCommands.Add(categoryName, new HashSet<string>());
 
                     string aliases = string.Empty;
                     if (command.Aliases.Count > 0)
@@ -243,10 +249,9 @@ namespace YukoBot.Commands
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    embed.AddField(
-                        fieldName,
-                        sortedCommands.ContainsKey(categoryName)
-                            ? string.Join(' ', sortedCommands[categoryName])
+                    embed.AddField(fieldName,
+                        sortedCommands.TryGetValue(categoryName, out HashSet<string> value)
+                            ? string.Join(' ', value)
                             : mInfo.AccessError);
                 }
 

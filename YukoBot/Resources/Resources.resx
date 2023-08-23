@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="BotDescription" xml:space="preserve">
+        <value>Привет, для того что бы узнать больше информации обо мне выполни команду `{0}info`.</value>
+    </data>
+    <data name="UserCommand.Register.DmTitle.Register" xml:space="preserve">
+        <value>Регистрация прошла успешно!</value>
+    </data>
+    <data name="UserCommand.Register.DmTitle.PasswordChange" xml:space="preserve">
+        <value>Пароль сменен!</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.Login" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmDescription.Login" xml:space="preserve">
+        <value>Используй **{0}** или **{1}**</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.Password" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.NewPassword" xml:space="preserve">
+        <value>Новый пароль</value>
+    </data>
+    <data name="UserCommand.Register.Description.Register" xml:space="preserve">
+        <value>Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС.</value>
+    </data>
+    <data name="UserCommand.Register.Description.PasswordChange" xml:space="preserve">
+        <value>Новый пароль от учетной записи отправлен в ЛС.</value>
+    </data>
+    <data name="UserCommand.Help.OptionsSection" xml:space="preserve">
+        <value>**__Вариант {0}__**</value>
+    </data>
+    <data name="UserCommand.Help.AliasesSection" xml:space="preserve">
+        <value>**Алиасы:**</value>
+    </data>
+    <data name="UserCommand.Help.ArgumentsSection" xml:space="preserve">
+        <value>**Аргументы:**</value>
+    </data>
+    <data name="UserCommand.Help.OptionalArgument" xml:space="preserve">
+        <value> Необязательно, по умолчанию: {0}</value>
+    </data>
+</root>
