@@ -106,8 +106,7 @@ namespace YukoBot.Commands
                                  .HelpCommand.Equals(categoryOrCommand) &&
                                  !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                    // TODO: use dictionary
-                    List<string[]> commandOfDescription = new List<string[]>();
+                    SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();
 
                     foreach (Command command in commands)
                     {
@@ -117,23 +116,23 @@ namespace YukoBot.Commands
 
                         string fieldTitle = $"{command.Name}{aliases}";
 
-                        commandOfDescription.Add(new string[] { fieldTitle, command.Description });
+                        descriptionByCommand.Add(fieldTitle, command.Description);
                     }
 
                     DiscordEmbedBuilder embed;
 
                     Category category = GetCategoryByHelpCommand(categoryOrCommand);
 
-                    if (commandOfDescription.Count > 0)
+                    if (descriptionByCommand.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
                             .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
                             .WithFooter($"v{Program.Version}")
                             .AddField(category.Name, new string('=', category.Name.Length));
 
-                        foreach (string[] item in commandOfDescription)
+                        foreach (KeyValuePair<string, string> item in descriptionByCommand)
                         {
-                            embed.AddField(item[0], item[1]);
+                            embed.AddField(item.Key, item.Value);
                         }
                     }
                     else
@@ -213,8 +212,8 @@ namespace YukoBot.Commands
                 IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                     .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                // TODO: use HashSet, not use List
-                Dictionary<string, List<string>> sortedCommands = new Dictionary<string, List<string>>();
+                Dictionary<string, SortedSet<string>> sortedCommandsByCategory =
+                    new Dictionary<string, SortedSet<string>>();
 
                 foreach (Command command in commands)
                 {
@@ -225,14 +224,14 @@ namespace YukoBot.Commands
                     if (string.IsNullOrEmpty(categoryName))
                         continue;
 
-                    if (!sortedCommands.ContainsKey(categoryName))
-                        sortedCommands.Add(categoryName, new List<string>());
+                    if (!sortedCommandsByCategory.ContainsKey(categoryName))
+                        sortedCommandsByCategory.Add(categoryName, new SortedSet<string>());
 
                     string aliases = string.Empty;
                     if (command.Aliases.Count > 0)
                         aliases = $" ({string.Join(' ', command.Aliases)})";
 
-                    sortedCommands[categoryName].Add($"`{command.Name}{aliases}`");
+                    sortedCommandsByCategory[categoryName].Add($"`{command.Name}{aliases}`");
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
@@ -245,8 +244,8 @@ namespace YukoBot.Commands
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
                     embed.AddField(
                         fieldName,
-                        sortedCommands.ContainsKey(categoryName)
-                            ? string.Join(' ', sortedCommands[categoryName])
+                        sortedCommandsByCategory.TryGetValue(categoryName, out var sortedCommands)
+                            ? string.Join(' ', sortedCommands)
                             : mInfo.AccessError);
                 }
 
@@ -279,6 +278,22 @@ namespace YukoBot.Commands
                     "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
                 .WithFooter($"v{Program.Version}");
+
+            await ctx.RespondAsync(discordEmbed);
+        }
+
+        [Command("avatar")]
+        [Aliases("ava")]
+        [Description("Получить аватар пользователя")]
+        public async Task Avatar(
+            CommandContext ctx,
+            [Description("Участник сервера")]
+            DiscordMember member)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor)
+                .WithImageUrl(member.AvatarUrl);
 
             await ctx.RespondAsync(discordEmbed);
         }
