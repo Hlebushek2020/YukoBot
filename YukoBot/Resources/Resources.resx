@@ -57,4 +57,37 @@
     <data name="UserCommand.Help.OptionalArgument" xml:space="preserve">
         <value> Необязательно, по умолчанию: {0}</value>
     </data>
+    <data name="UserCommand.Info.EmbedDescription" xml:space="preserve">
+        <value>Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) для последующего скачивания этих коллекций.</value>
+    </data>
+    <data name="UserCommand.Info.FieldCollectionManagement.Title" xml:space="preserve">
+        <value>Управление коллекциями</value>
+    </data>
+    <data name="UserCommand.Info.FieldCollectionManagement.Description" xml:space="preserve">
+        <value>Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных команд управления коллекциями воспользуйся командой `{0}help {1}`.</value>
+    </data>
+    <data name="UserCommand.Info.FieldPremiumAccess.Title" xml:space="preserve">
+        <value>Премиум доступ</value>
+    </data>
+    <data name="UserCommand.Info.FieldPremiumAccess.Description" xml:space="preserve">
+        <value>Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для скачивания вложений. На данный момент выдается моим хозяином.</value>
+    </data>
+    <data name="UserCommand.Info.FieldLinks.Title" xml:space="preserve">
+        <value>Ссылки</value>
+    </data>
+    <data name="RegisteredUserCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна для зарегистрированных пользователей!</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings.FieldHost.Title" xml:space="preserve">
+        <value>Хост</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings.FieldPort.Title" xml:space="preserve">
+        <value>Порт</value>
+    </data>
+    <data name="RegisteredUserCommand.BanReason.NotBanReason" xml:space="preserve">
+        <value>К сожалению причина бана не была указана!</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings.NotBan" xml:space="preserve">
+        <value>Вы не забанены!</value>
+    </data>
 </root>

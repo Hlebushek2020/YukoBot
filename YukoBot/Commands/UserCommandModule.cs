@@ -70,16 +70,19 @@ namespace YukoBot.Commands
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithHappyTitle(isRegister
-                    ? Resources.UserCommand_Register_DmTitle_Register
-                    : Resources.UserCommand_Register_DmTitle_PasswordChange)
+                .WithHappyTitle(
+                    isRegister
+                        ? Resources.UserCommand_Register_DmTitle_Register
+                        : Resources.UserCommand_Register_DmTitle_PasswordChange)
                 .WithColor(Constants.SuccessColor)
-                .AddField(Resources.UserCommand_Register_FieldDmTitle_Login,
+                .AddField(
+                    Resources.UserCommand_Register_FieldDmTitle_Login,
                     string.Format(Resources.UserCommand_Register_FieldDmDescription_Login, dbUser.Nikname, dbUser.Id))
                 .AddField(
                     isRegister
                         ? Resources.UserCommand_Register_FieldDmTitle_Password
-                        : Resources.UserCommand_Register_FieldDmTitle_NewPassword, password);
+                        : Resources.UserCommand_Register_FieldDmTitle_NewPassword,
+                    password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
             await userMessage.CreateReactionAsync(
                 DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
@@ -249,7 +252,8 @@ namespace YukoBot.Commands
                 {
                     string categoryName = mInfo.Name;
                     string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    embed.AddField(fieldName,
+                    embed.AddField(
+                        fieldName,
                         sortedCommands.TryGetValue(categoryName, out HashSet<string> value)
                             ? string.Join(' ', value)
                             : mInfo.AccessError);
@@ -264,26 +268,37 @@ namespace YukoBot.Commands
         public async Task Info(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(
-                    _yukoSettings.BotPrefix + " | Info",
-                    "Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) " +
-                    "дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) " +
-                    "для последующего скачивания этих коллекций.")
+                .WithHappyMessage($"{_yukoSettings.BotPrefix} | Info", Resources.UserCommand_Info_EmbedDescription)
                 .AddField(
-                    "Управление коллекциями",
-                    "Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных " +
-                    "команд управления коллекциями воспользуйся командой `" + _yukoSettings.BotPrefix + "help " +
-                    Categories.CollectionManagement.HelpCommand + "`.")
+                    Resources.UserCommand_Info_FieldCollectionManagement_Title,
+                    string.Format(
+                        Resources.UserCommand_Info_FieldCollectionManagement_Description,
+                        _yukoSettings.BotPrefix,
+                        Categories.CollectionManagement.HelpCommand))
                 .AddField(
-                    "Премиум доступ",
-                    "Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) " +
-                    "для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для " +
-                    "скачивания вложений. На данный момент выдается моим хозяином.")
+                    Resources.UserCommand_Info_FieldPremiumAccess_Title,
+                    Resources.UserCommand_Info_FieldPremiumAccess_Description)
                 .AddField(
-                    "Ссылки",
+                    Resources.UserCommand_Info_FieldLinks_Title,
                     "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
                 .WithFooter($"v{Program.Version}");
+
+            await ctx.RespondAsync(discordEmbed);
+        }
+
+        [Command("avatar")]
+        [Aliases("ava")]
+        [Description("Получить аватар пользователя")]
+        public async Task Avatar(
+            CommandContext ctx,
+            [Description("Участник сервера")]
+            DiscordMember member)
+        {
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyTitle(ctx.Member.DisplayName)
+                .WithColor(Constants.SuccessColor)
+                .WithImageUrl(member.AvatarUrl);
 
             await ctx.RespondAsync(discordEmbed);
         }

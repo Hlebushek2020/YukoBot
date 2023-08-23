@@ -69,6 +69,51 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, эта команда доступна для зарегистрированных пользователей!.
+        /// </summary>
+        internal static string RegisteredUserCommand_AccessError {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to К сожалению причина бана не была указана!.
+        /// </summary>
+        internal static string RegisteredUserCommand_BanReason_NotBanReason {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BanReason.NotBanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хост.
+        /// </summary>
+        internal static string RegisteredUserCommand_Settings_FieldHost_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Settings.FieldHost.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Порт.
+        /// </summary>
+        internal static string RegisteredUserCommand_Settings_FieldPort_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Settings.FieldPort.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы не забанены!.
+        /// </summary>
+        internal static string RegisteredUserCommand_Settings_NotBan {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Settings.NotBan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **Алиасы:**.
         /// </summary>
         internal static string UserCommand_Help_AliasesSection {
@@ -101,6 +146,60 @@ namespace YukoBot {
         internal static string UserCommand_Help_OptionsSection {
             get {
                 return ResourceManager.GetString("UserCommand.Help.OptionsSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) для последующего скачивания этих коллекций..
+        /// </summary>
+        internal static string UserCommand_Info_EmbedDescription {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.EmbedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных команд управления коллекциями воспользуйся командой `{0}help {1}`..
+        /// </summary>
+        internal static string UserCommand_Info_FieldCollectionManagement_Description {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.FieldCollectionManagement.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управление коллекциями.
+        /// </summary>
+        internal static string UserCommand_Info_FieldCollectionManagement_Title {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.FieldCollectionManagement.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ссылки.
+        /// </summary>
+        internal static string UserCommand_Info_FieldLinks_Title {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.FieldLinks.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для скачивания вложений. На данный момент выдается моим хозяином..
+        /// </summary>
+        internal static string UserCommand_Info_FieldPremiumAccess_Description {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.FieldPremiumAccess.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Премиум доступ.
+        /// </summary>
+        internal static string UserCommand_Info_FieldPremiumAccess_Title {
+            get {
+                return ResourceManager.GetString("UserCommand.Info.FieldPremiumAccess.Title", resourceCulture);
             }
         }
         

@@ -34,7 +34,7 @@ namespace YukoBot.Commands
             IYukoSettings yukoSettings,
             ILogger<RegisteredUserCommandModule> logger) : base(
             Categories.User,
-            "Простите, эта команда доступна для зарегистрированных пользователей!")
+            Resources.RegisteredUserCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;
@@ -43,13 +43,15 @@ namespace YukoBot.Commands
 
         [Command("settings")]
         [Description("Показать настройки для подключения к боту.")]
-        public async Task GetClientSettings(CommandContext ctx)
+        public async Task Settings(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member.DisplayName)
                 .WithColor(Constants.SuccessColor)
-                .AddField("Хост", _yukoSettings.ServerAddress)
-                .AddField("Порт", _yukoSettings.ServerPort.ToString());
+                .AddField(Resources.RegisteredUserCommand_Settings_FieldHost_Title, _yukoSettings.ServerAddress)
+                .AddField(
+                    Resources.RegisteredUserCommand_Settings_FieldPort_Title,
+                    _yukoSettings.ServerPort.ToString());
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -72,19 +74,21 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithColor(Constants.SuccessColor);
 
-            List<DbBan> dbBanList = _dbContext.Bans.Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id)
-                .ToList();
+            List<DbBan> dbBanList = _dbContext.Bans
+                .Where(x => x.ServerId == ctx.Guild.Id && x.UserId == ctx.Member.Id).ToList();
             if (dbBanList.Count > 0)
             {
                 DbBan dbBan = dbBanList[0];
                 discordEmbed.WithSadTitle(ctx.Member.DisplayName);
                 discordEmbed.WithDescription(
-                    string.IsNullOrEmpty(dbBan.Reason) ? "К сожалению причина бана не была указана." : dbBan.Reason);
+                    string.IsNullOrEmpty(dbBan.Reason)
+                        ? Resources.RegisteredUserCommand_BanReason_NotBanReason
+                        : dbBan.Reason);
             }
             else
             {
                 discordEmbed.WithHappyTitle(ctx.Member.DisplayName)
-                    .WithDescription("Вы не забанены!");
+                    .WithDescription(Resources.RegisteredUserCommand_Settings_NotBan);
             }
 
             await ctx.RespondAsync(discordEmbed);
