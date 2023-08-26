@@ -111,7 +111,10 @@ namespace YukoBot.Commands
             }
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, isEnabled ? "Включено!" : "Отключено!");
+                .WithHappyMessage(ctx.Member.DisplayName,
+                    isEnabled
+                        ? Resources.RegisteredUserCommand_InfoMessagesInPM_Description_Enabled
+                        : Resources.RegisteredUserCommand_InfoMessagesInPM_Description_Disabled);
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -129,25 +132,22 @@ namespace YukoBot.Commands
 
             if (_yukoSettings.BugReport)
             {
-                EventId eventId = new EventId(0, $"Command: {ctx.Command.Name}");
                 DiscordMessage discordMessage = ctx.Message;
-
                 DiscordMessage referencedMessage = discordMessage.ReferencedMessage;
 
                 if (referencedMessage == null && discordMessage.Attachments.Count == 0 &&
                     string.IsNullOrEmpty(description))
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(
-                            ctx.Member.DisplayName,
-                            "Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!");
+                        .WithSadMessage(ctx.Member.DisplayName,
+                            Resources.RegisteredUserCommand_BugReport_Description_IsEmpty);
                 }
                 else
                 {
                     DiscordEmbedBuilder reportEmbed = new DiscordEmbedBuilder()
                         .WithColor(Constants.SuccessColor)
                         .WithTitle("Bug-Report")
-                        .AddField("Author", ctx.User.Username + "#" + ctx.User.Discriminator)
+                        .AddField("Author", ctx.User.Username)
                         .AddField("Guild", ctx.Guild.Name)
                         .AddField(
                             "Date",
@@ -193,13 +193,15 @@ namespace YukoBot.Commands
                     await reportChannel.SendMessageAsync(reportMessage);
 
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithHappyMessage(ctx.Member.DisplayName, "Баг-репорт успешно отправлен!");
+                        .WithHappyMessage(ctx.Member.DisplayName,
+                            Resources.RegisteredUserCommand_BugReport_Description_IsSuccess);
                 }
             }
             else
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName, "Ой, эта команда отключена!");
+                    .WithSadMessage(ctx.Member.DisplayName,
+                        Resources.RegisteredUserCommand_BugReport_Description_IsDisabled);
             }
 
             await ctx.RespondAsync(discordEmbed);
@@ -216,21 +218,32 @@ namespace YukoBot.Commands
             DbUser dbUser = await _dbContext.Users.FindAsync(ctx.User.Id);
             bool hasPremiumAccess = dbUser.HasPremiumAccess;
 
+            string fieldPremiumText = dbUser.PremiumAccessExpires.HasValue
+                ? hasPremiumAccess
+                    ? Resources.RegisteredUserCommand_Profile_FieldPremium_Expires
+                    : Resources.RegisteredUserCommand_Profile_FieldPremium_Expired
+                : Resources.RegisteredUserCommand_Profile_FieldPremium_NotSet;
+
+            if (dbUser.PremiumAccessExpires.HasValue)
+            {
+                fieldPremiumText = string.Format(fieldPremiumText,
+                    dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale));
+            }
+
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
+                .AddField(Resources.RegisteredUserCommand_Profile_FieldPremium_Title, fieldPremiumText, true)
                 .AddField(
-                    "Премиум: ",
-                    (hasPremiumAccess ? "Есть" : "Нет") + (dbUser.PremiumAccessExpires.HasValue
-                        ? $"{(hasPremiumAccess ? ". Истекает" : ". Истек")} {
-                            dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale)}"
-                        : ""),
-                    true)
-                .AddField(
-                    "Последний вход в приложение: ",
+                    Resources.RegisteredUserCommand_Profile_FieldLastLogin_Title,
                     dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString(ProfileDtf, locale) : "-",
                     true)
-                .AddField("Необязательные уведомления: ", dbUser.InfoMessages ? "Включены" : "Отключены", true)
+                .AddField(
+                    Resources.RegisteredUserCommand_Profile_FieldOptionalNotifications_Title,
+                    dbUser.InfoMessages
+                        ? Resources.RegisteredUserCommand_Profile_FieldOptionalNotifications_Enabled
+                        : Resources.RegisteredUserCommand_Profile_FieldOptionalNotifications_Disabled,
+                    true)
                 .WithColor(hasPremiumAccess ? Constants.PremiumAccessColor : Constants.SuccessColor);
 
             IList<DbBan> bans = _dbContext.Bans.Where(x => x.UserId == dbUser.Id).ToList();
@@ -242,12 +255,17 @@ namespace YukoBot.Commands
                     banListBuilder.AppendLine();
                 }
                 DiscordGuild discordGuild = ctx.Client.Guilds[ban.ServerId];
-                banListBuilder.Append(discordGuild.Name).Append(" - ")
-                    .Append(string.IsNullOrEmpty(ban.Reason) ? "не указана" : ban.Reason);
+                banListBuilder.Append(discordGuild.Name)
+                    .Append(" - ")
+                    .Append(string.IsNullOrEmpty(ban.Reason)
+                        ? Resources.RegisteredUserCommand_Profile_FieldBanList_ReasonNotSpecified
+                        : ban.Reason);
             }
             embedBuilder.AddField(
-                "Список текущих банов:",
-                banListBuilder.Length > 0 ? banListBuilder.ToString() : "Отсутствуют");
+                Resources.RegisteredUserCommand_Profile_FieldBanList_Title,
+                banListBuilder.Length > 0
+                    ? banListBuilder.ToString()
+                    : Resources.RegisteredUserCommand_Profile_FieldBanList_IsEmpty);
 
             await ctx.RespondAsync(embedBuilder);
         }

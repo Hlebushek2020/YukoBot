@@ -90,4 +90,52 @@
     <data name="RegisteredUserCommand.Settings.NotBan" xml:space="preserve">
         <value>Вы не забанены!</value>
     </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM.Description.Enabled" xml:space="preserve">
+        <value>Включено!</value>
+    </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM.Description.Disabled" xml:space="preserve">
+        <value>Отключено!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsEmpty" xml:space="preserve">
+        <value>Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsSuccess" xml:space="preserve">
+        <value>Баг-репорт успешно отправлен!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsDisabled" xml:space="preserve">
+        <value>Ой, эта команда отключена!</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Title" xml:space="preserve">
+        <value>Премиум:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.NotSet" xml:space="preserve">
+        <value>Нет.</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Expired" xml:space="preserve">
+        <value>Нет. Истек {0}</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Expires" xml:space="preserve">
+        <value>Есть. Истекает {0}</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldLastLogin.Title" xml:space="preserve">
+        <value>Последний вход в приложение:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Title" xml:space="preserve">
+        <value>Необязательные уведомления:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Disabled" xml:space="preserve">
+        <value>Отключены</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Enabled" xml:space="preserve">
+        <value>Включены</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.Title" xml:space="preserve">
+        <value>Список текущих банов:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.ReasonNotSpecified" xml:space="preserve">
+        <value>не указана</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.IsEmpty" xml:space="preserve">
+        <value>Отсутствуют</value>
+    </data>
 </root>

@@ -87,6 +87,150 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ой, эта команда отключена!.
+        /// </summary>
+        internal static string RegisteredUserCommand_BugReport_Description_IsDisabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BugReport.Description.IsDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!.
+        /// </summary>
+        internal static string RegisteredUserCommand_BugReport_Description_IsEmpty {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BugReport.Description.IsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Баг-репорт успешно отправлен!.
+        /// </summary>
+        internal static string RegisteredUserCommand_BugReport_Description_IsSuccess {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BugReport.Description.IsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отключено!.
+        /// </summary>
+        internal static string RegisteredUserCommand_InfoMessagesInPM_Description_Disabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.InfoMessagesInPM.Description.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включено!.
+        /// </summary>
+        internal static string RegisteredUserCommand_InfoMessagesInPM_Description_Enabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.InfoMessagesInPM.Description.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отсутствуют.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldBanList_IsEmpty {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldBanList.IsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to не указана.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldBanList_ReasonNotSpecified {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldBanList.ReasonNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список текущих банов:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldBanList_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldBanList.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Последний вход в приложение:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldLastLogin_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldLastLogin.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отключены.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldOptionalNotifications_Disabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldOptionalNotifications.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включены.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldOptionalNotifications_Enabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldOptionalNotifications.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Необязательные уведомления:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldOptionalNotifications_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldOptionalNotifications.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нет. Истек {0}.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldPremium_Expired {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldPremium.Expired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Есть. Истекает {0}.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldPremium_Expires {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldPremium.Expires", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нет..
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldPremium_NotSet {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldPremium.NotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Премиум:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldPremium_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldPremium.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хост.
         /// </summary>
         internal static string RegisteredUserCommand_Settings_FieldHost_Title {
