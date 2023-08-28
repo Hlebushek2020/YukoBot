@@ -34,9 +34,8 @@ namespace YukoBot.Commands
         public ManagingСollectionsCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
-            ILogger<ManagingСollectionsCommandModule> logger) : base(
-            Categories.CollectionManagement,
-            "Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!")
+            ILogger<ManagingСollectionsCommandModule> logger)
+            : base(Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;
@@ -58,9 +57,8 @@ namespace YukoBot.Commands
 
                 DiscordMessage message = ctx.Message.ReferencedMessage;
                 if (message == null)
-                {
-                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddToCollection_ReferencedMessageNotFound);
 
                 DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, message, nameOrId);
                 await SendSpecialMessage(ctx, discordEmbed);
@@ -113,16 +111,14 @@ namespace YukoBot.Commands
                         throw new IncorrectCommandDataException(
                             "Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!");
                     }
-                    else if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
+                    if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
                     {
                         throw new IncorrectCommandDataException(
                             "Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!");
                     }
-                    else
-                    {
-                        throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в текущем канале!");
-                    }
+
+                    throw new IncorrectCommandDataException(
+                        "Простите, я не смогла найти заданное сообщение в текущем канале!");
                 }
                 catch (UnauthorizedException)
                 {
@@ -366,7 +362,6 @@ namespace YukoBot.Commands
         {
             try
             {
-
                 DbCollection dbCollection =
                     _dbContext.Collections.FirstOrDefault(x => x.Name.Equals(oldName) && x.UserId == ctx.Member.Id);
                 await RenameCollection(ctx, dbCollection, newName);
@@ -657,10 +652,8 @@ namespace YukoBot.Commands
             string nameOrId)
         {
             if (!message.HasImages(_yukoSettings))
-            {
                 throw new IncorrectCommandDataException(
-                    "Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!");
-            }
+                    Resources.ManagingСollectionsCommand_AddToCollection_NoAttachments);
 
             ulong memberId = ctx.Member.Id;
             DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
@@ -680,7 +673,8 @@ namespace YukoBot.Commands
                 }
                 else
                 {
-                    throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddToCollection_CollectionNotFound);
                 }
             }
 

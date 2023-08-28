@@ -90,7 +90,6 @@ namespace YukoBot
             commands.CommandExecuted += Commands_CommandExecuted;
 
             commands.RegisterCommands<OwnerCommandModule>();
-            commands.RegisterCommands<OwnerAndAdminCommandModule>();
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
             commands.RegisterCommands<RegisteredUserCommandModule>();

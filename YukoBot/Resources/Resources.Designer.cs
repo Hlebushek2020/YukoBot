@@ -69,6 +69,42 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AccessError {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, такой коллекции нет!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_NoAttachments {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.NoAttachments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нет вложенного сообщения!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_ReferencedMessageNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.ReferencedMessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, эта команда доступна только владельцу бота!.
         /// </summary>
         internal static string OwnerCommand_AccessError {

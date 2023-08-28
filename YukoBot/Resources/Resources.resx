@@ -168,4 +168,16 @@
     <data name="OwnerCommand.ExtendPremium.MemberNotRegistered" xml:space="preserve">
         <value>Хозяин! Данный участник сервера не зарегистрирован! {0}</value>
     </data>
+    <data name="ManagingСollectionsCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ReferencedMessageNotFound" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.NoAttachments" xml:space="preserve">
+        <value>Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
 </root>
