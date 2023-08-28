@@ -26,9 +26,8 @@ namespace YukoBot.Commands
         private readonly IYukoBot _yukoBot;
         private readonly IYukoSettings _yukoSettings;
 
-        public OwnerCommandModule(IYukoBot yukoBot, IYukoSettings yukoSettings) : base(
-            Categories.Management,
-            "Простите, эта команда доступна только владельцу бота!")
+        public OwnerCommandModule(IYukoBot yukoBot, IYukoSettings yukoSettings)
+            : base(Categories.Management, Resources.OwnerCommand_AccessError)
         {
             _yukoBot = yukoBot;
             _yukoSettings = yukoSettings;
@@ -45,7 +44,8 @@ namespace YukoBot.Commands
             if (string.IsNullOrWhiteSpace(reason))
                 throw new ArgumentException();
 
-            await ctx.RespondAsync($"Хорошо, хозяин! {Constants.HappySmile}");
+            await ctx.RespondAsync(string.Format(
+                Resources.OwnerCommand_Shutdown_EmbedDescription, Constants.HappySmile));
             _yukoBot.Shutdown(reason);
         }
 
@@ -60,13 +60,19 @@ namespace YukoBot.Commands
                 .WithColor(Constants.StatusColor)
                 .AddField("Net", $"v{Environment.Version}")
                 .AddField("DSharpPlus", $"v{ctx.Client.VersionString}")
-                .AddField("Сборка", $"v{Program.Version} {File.GetCreationTime(assemblyLocation):dd.MM.yyyy}")
-                .AddField("Дата запуска", _yukoBot.StartDateTime.ToString("dd.MM.yyyy HH:mm:ss zzz"));
+                .AddField(
+                    Resources.OwnerCommand_Status_FieldAssembly_Title,
+                    $"v{Program.Version} {File.GetCreationTime(assemblyLocation):dd.MM.yyyy}")
+                .AddField(
+                    Resources.OwnerCommand_Status_FieldLaunchDate_Title,
+                    _yukoBot.StartDateTime.ToString("dd.MM.yyyy HH:mm:ss zzz"));
 
             TimeSpan timeSpan = DateTime.Now - _yukoBot.StartDateTime;
             discordEmbed.AddField(
-                "Время работы",
-                $"{timeSpan.Days}d, {timeSpan.Hours}h, {timeSpan.Minutes}m, {timeSpan.Seconds}s");
+                Resources.OwnerCommand_Status_FieldWorkingHours_Title,
+                string.Format(
+                    Resources.OwnerCommand_Status_FieldWorkingHours_Description,
+                    timeSpan.Days, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds));
 
             await ctx.RespondAsync(discordEmbed);
         }
@@ -76,7 +82,8 @@ namespace YukoBot.Commands
         public async Task SetApp(CommandContext ctx, string newlink)
         {
             _yukoSettings.SetApp(newlink);
-            await ctx.RespondAsync($"Хозяин! Ссылка на приложение установлена! {Constants.HappySmile}");
+            await ctx.RespondAsync(string.Format(
+                Resources.OwnerCommand_SetApp_EmbedDescription, Constants.HappySmile));
         }
 
         [Command("extend-premium")]
@@ -98,8 +105,8 @@ namespace YukoBot.Commands
                 !type.Equals(ExtendPremiumMonthFull) && !type.Equals(ExtendPremiumMonthShort) &&
                 !type.Equals(ExtendPremiumYearFull) && !type.Equals(ExtendPremiumYearShort))
             {
-                await ctx.RespondAsync(
-                    $"Хозяин! Пожалуйста, укажите единицу измерения для значения! {Constants.SadSmile}");
+                await ctx.RespondAsync(string.Format(
+                    Resources.OwnerCommand_ExtendPremium_IncorrectUnit, Constants.SadSmile));
             }
             else
             {
@@ -129,12 +136,15 @@ namespace YukoBot.Commands
                     await dbCtx.SaveChangesAsync();
 
                     await ctx.RespondAsync(
-                        $"Хозяин! Премиум доступ для {discordMember.DisplayName} успешно продлен! {Constants.HappySmile
-                        }");
+                        string.Format(
+                            Resources.OwnerCommand_ExtendPremium_IsSuccess,
+                            discordMember.DisplayName,
+                            Constants.HappySmile));
                 }
                 else
                 {
-                    await ctx.RespondAsync($"Хозяин! Данный участник сервера не зарегистрирован! {Constants.SadSmile}");
+                    await ctx.RespondAsync(string.Format(
+                        Resources.OwnerCommand_ExtendPremium_MemberNotRegistered, Constants.SadSmile));
                 }
             }
         }

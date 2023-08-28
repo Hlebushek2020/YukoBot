@@ -32,9 +32,8 @@ namespace YukoBot.Commands
         public RegisteredUserCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
-            ILogger<RegisteredUserCommandModule> logger) : base(
-            Categories.User,
-            Resources.RegisteredUserCommand_AccessError)
+            ILogger<RegisteredUserCommandModule> logger)
+            : base(Categories.User, Resources.RegisteredUserCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;

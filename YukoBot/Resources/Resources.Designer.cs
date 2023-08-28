@@ -69,6 +69,96 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, эта команда доступна только владельцу бота!.
+        /// </summary>
+        internal static string OwnerCommand_AccessError {
+            get {
+                return ResourceManager.GetString("OwnerCommand.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хозяин! Пожалуйста, укажите единицу измерения для значения! {0}.
+        /// </summary>
+        internal static string OwnerCommand_ExtendPremium_IncorrectUnit {
+            get {
+                return ResourceManager.GetString("OwnerCommand.ExtendPremium.IncorrectUnit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хозяин! Премиум доступ для {0} успешно продлен! {1}.
+        /// </summary>
+        internal static string OwnerCommand_ExtendPremium_IsSuccess {
+            get {
+                return ResourceManager.GetString("OwnerCommand.ExtendPremium.IsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хозяин! Данный участник сервера не зарегистрирован! {0}.
+        /// </summary>
+        internal static string OwnerCommand_ExtendPremium_MemberNotRegistered {
+            get {
+                return ResourceManager.GetString("OwnerCommand.ExtendPremium.MemberNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хозяин! Ссылка на приложение установлена! {0}.
+        /// </summary>
+        internal static string OwnerCommand_SetApp_EmbedDescription {
+            get {
+                return ResourceManager.GetString("OwnerCommand.SetApp.EmbedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хорошо, хозяин! {0}.
+        /// </summary>
+        internal static string OwnerCommand_Shutdown_EmbedDescription {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Shutdown.EmbedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сборка.
+        /// </summary>
+        internal static string OwnerCommand_Status_FieldAssembly_Title {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Status.FieldAssembly.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дата запуска.
+        /// </summary>
+        internal static string OwnerCommand_Status_FieldLaunchDate_Title {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Status.FieldLaunchDate.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}d, {1}h, {2}m, {3}s.
+        /// </summary>
+        internal static string OwnerCommand_Status_FieldWorkingHours_Description {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Status.FieldWorkingHours.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Время работы.
+        /// </summary>
+        internal static string OwnerCommand_Status_FieldWorkingHours_Title {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Status.FieldWorkingHours.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, эта команда доступна для зарегистрированных пользователей!.
         /// </summary>
         internal static string RegisteredUserCommand_AccessError {

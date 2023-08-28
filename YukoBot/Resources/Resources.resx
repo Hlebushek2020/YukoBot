@@ -138,4 +138,34 @@
     <data name="RegisteredUserCommand.Profile.FieldBanList.IsEmpty" xml:space="preserve">
         <value>Отсутствуют</value>
     </data>
+    <data name="OwnerCommand.Shutdown.EmbedDescription" xml:space="preserve">
+        <value>Хорошо, хозяин! {0}</value>
+    </data>
+    <data name="OwnerCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна только владельцу бота!</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldAssembly.Title" xml:space="preserve">
+        <value>Сборка</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldLaunchDate.Title" xml:space="preserve">
+        <value>Дата запуска</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldWorkingHours.Title" xml:space="preserve">
+        <value>Время работы</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldWorkingHours.Description" xml:space="preserve">
+        <value>{0}d, {1}h, {2}m, {3}s</value>
+    </data>
+    <data name="OwnerCommand.SetApp.EmbedDescription" xml:space="preserve">
+        <value>Хозяин! Ссылка на приложение установлена! {0}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.IncorrectUnit" xml:space="preserve">
+        <value>Хозяин! Пожалуйста, укажите единицу измерения для значения! {0}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.IsSuccess" xml:space="preserve">
+        <value>Хозяин! Премиум доступ для {0} успешно продлен! {1}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.MemberNotRegistered" xml:space="preserve">
+        <value>Хозяин! Данный участник сервера не зарегистрирован! {0}</value>
+    </data>
 </root>
