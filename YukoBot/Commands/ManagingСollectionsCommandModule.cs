@@ -721,6 +721,9 @@ namespace YukoBot.Commands
                 .WithHappyMessage(ctx.Member.DisplayName, message);
             await ctx.RespondAsync(discordEmbed);
         }
+        
+        // TODO: GetOrCreateCollection
+        // TODO: GetCollection
 
         private async Task SendSpecialMessage(CommandContext ctx, DiscordEmbedBuilder embed)
         {
