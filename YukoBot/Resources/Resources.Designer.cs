@@ -87,6 +87,33 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, во время добавления сообщения в коллекцию &quot;{0}&quot; произошла ошибка. Сообщение не добавлено в коллекцию!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_ErrorAddingItem {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.ErrorAddingItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, данное сообщение уже добавлено в коллекцию &quot;{0}&quot;!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_ExistsInCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.ExistsInCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сообщение добавлено в коллекцию &quot;{0}&quot;!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection_IsSuccess {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.IsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!.
         /// </summary>
         internal static string ManagingСollectionsCommand_AddToCollection_NoAttachments {
@@ -101,6 +128,15 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_AddToCollection_ReferencedMessageNotFound {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.ReferencedMessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, во время добавления сообщения в коллекцию &quot;{0}&quot; произошла ошибка. Добавлены не все сообщения!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_ErrorAddingItem {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.ErrorAddingItem", resourceCulture);
             }
         }
         

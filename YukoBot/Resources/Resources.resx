@@ -180,4 +180,16 @@
     <data name="ManagingСollectionsCommand.AddToCollection.CollectionNotFound" xml:space="preserve">
         <value>Простите, такой коллекции нет!</value>
     </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ExistsInCollection" xml:space="preserve">
+        <value>Простите, данное сообщение уже добавлено в коллекцию "{0}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.IsSuccess" xml:space="preserve">
+        <value>Сообщение добавлено в коллекцию "{0}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ErrorAddingItem" xml:space="preserve">
+        <value>Простите, во время добавления сообщения в коллекцию "{0}" произошла ошибка. Сообщение не добавлено в коллекцию!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.ErrorAddingItem" xml:space="preserve">
+        <value>Простите, во время добавления сообщения в коллекцию "{0}" произошла ошибка. Добавлены не все сообщения!</value>
+    </data>
 </root>
