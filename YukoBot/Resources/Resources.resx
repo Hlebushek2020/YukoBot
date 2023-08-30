@@ -192,4 +192,22 @@
     <data name="ManagingСollectionsCommand.End.ErrorAddingItem" xml:space="preserve">
         <value>Простите, во время добавления сообщения в коллекцию "{0}" произошла ошибка. Добавлены не все сообщения!</value>
     </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.ArtChannelNotFound" xml:space="preserve">
+        <value>Простите, канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundInArtChannel" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundAndArtChannelNotSet" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFound" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в текущем канале!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.NoArtChannelAccess" xml:space="preserve">
+        <value>Простите, у меня нет прав на чтение сообщений в канале для поиска сообщений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.NoChannelAccess" xml:space="preserve">
+        <value>Простите, у меня нет прав на чтение сообщений в текущем канале!</value>
+    </data>
 </root>

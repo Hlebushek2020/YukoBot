@@ -132,6 +132,61 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_ArtChannelNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.ArtChannelNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не смогла найти заданное сообщение в текущем канале!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_MessageNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.MessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundAndArtChannelNotSet {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundAndArtChannelNotSet" +
+                        "", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundInArtChannel {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundInArtChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, у меня нет прав на чтение сообщений в канале для поиска сообщений!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_NoArtChannelAccess {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.NoArtChannelAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, у меня нет прав на чтение сообщений в текущем канале!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById_NoChannelAccess {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById.NoChannelAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, во время добавления сообщения в коллекцию &quot;{0}&quot; произошла ошибка. Добавлены не все сообщения!.
         /// </summary>
         internal static string ManagingСollectionsCommand_End_ErrorAddingItem {

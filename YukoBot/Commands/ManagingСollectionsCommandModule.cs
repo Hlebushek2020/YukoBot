@@ -96,7 +96,7 @@ namespace YukoBot.Commands
                     catch (NotFoundException)
                     {
                         throw new IncorrectCommandDataException(
-                            "Простите, канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!");
+                            Resources.ManagingСollectionsCommand_AddToCollectionById_ArtChannelNotFound);
                     }
                 }
                 DiscordMessage message;
@@ -107,25 +107,22 @@ namespace YukoBot.Commands
                 catch (NotFoundException)
                 {
                     if (artChannel)
-                    {
                         throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!");
-                    }
+                            Resources.ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundInArtChannel);
+
                     if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
-                    {
-                        throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!");
-                    }
+                        throw new IncorrectCommandDataException(Resources
+                            .ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundAndArtChannelNotSet);
 
                     throw new IncorrectCommandDataException(
-                        "Простите, я не смогла найти заданное сообщение в текущем канале!");
+                        Resources.ManagingСollectionsCommand_AddToCollectionById_MessageNotFound);
                 }
                 catch (UnauthorizedException)
                 {
                     throw new IncorrectCommandDataException(
                         artChannel
-                            ? "Простите, у меня нет прав на чтение сообщений в канале для поиска сообщений!"
-                            : "Простите, у меня нет прав на чтение сообщений в текущем канале!");
+                            ? Resources.ManagingСollectionsCommand_AddToCollectionById_NoArtChannelAccess
+                            : Resources.ManagingСollectionsCommand_AddToCollectionById_NoChannelAccess);
                 }
 
                 DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, message, nameOrId);
