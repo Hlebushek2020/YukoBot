@@ -149,16 +149,17 @@ namespace YukoBot.Commands
                 RangeStartInfo rangeStartInfo = new RangeStartInfo(message, ctx.Channel);
                 if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeStartInfo, (k, v) => rangeStartInfo) != null)
                 {
-                    discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Начальное сообщение промежутка заданно!");
+                    discordEmbed.WithHappyMessage(ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_Start_IsSet);
                 }
                 else
                 {
-                    discordEmbed.WithDescription("Простите, не удалось задать начальное сообщение!");
+                    discordEmbed.WithDescription(Resources.ManagingСollectionsCommand_Start_IsNotSet);
                 }
             }
             else
             {
-                discordEmbed.WithDescription("Простите, нет вложенного сообщения!");
+                discordEmbed.WithDescription(Resources.ManagingСollectionsCommand_Start_NoReferencedMessage);
             }
             await ctx.Message.DeleteAsync();
             await SendSpecialMessage(ctx, discordEmbed);
@@ -178,32 +179,31 @@ namespace YukoBot.Commands
 
                 ulong memberId = ctx.Member.Id;
                 if (!_clientRanges.ContainsKey(memberId))
-                {
-                    throw new IncorrectCommandDataException("Пожалуйста задайте начальное сообщение промежутка!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_End_StartMessageIsNotSet);
 
                 if (ctx.Message.ReferencedMessage == null)
-                {
-                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_End_NoReferencedMessage);
 
                 RangeStartInfo rangeStartInfo = _clientRanges[memberId];
                 DiscordChannel channel = ctx.Channel;
+
                 if (channel.Id != rangeStartInfo.Channel.Id)
-                {
                     throw new IncorrectCommandDataException(
-                        "Ой, начальное и конечное сообщение промежутка из разных каналов!");
-                }
+                        Resources.ManagingСollectionsCommand_End_DifferentChannels);
 
                 DbCollection dbCollection = await GetOrCreateCollection(memberId, nameOrId);
 
-                DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                DiscordEmbedBuilder dmEmbed = new DiscordEmbedBuilder()
                     .WithHappyMessage(
                         ctx.Member.DisplayName,
-                        "Пожалуйста подождите, после завершения операции я изменю это сообщение!");
+                        Resources.ManagingСollectionsCommand_End_StartOfExecution);
                 DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
-                DiscordMessage dmMessage = await dmChannel.SendMessageAsync(discordEmbed);
-                discordEmbed.WithDescription($"Сообщения в коллекцию \"{dbCollection.Name}\" успешно добавлены!");
+                DiscordMessage dmMessage = await dmChannel.SendMessageAsync(dmEmbed);
+                dmEmbed.WithDescription(string.Format(
+                    Resources.ManagingСollectionsCommand_End_EndOfExecution,
+                    dbCollection.Name));
 
                 HashSet<ulong> collectionItems = _dbContext.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
@@ -227,7 +227,7 @@ namespace YukoBot.Commands
                             await SaveCollectionItem(
                                 ctx,
                                 discordMessage,
-                                discordEmbed,
+                                dmEmbed,
                                 dbCollection,
                                 hasPremiumAccess);
                         }
@@ -249,7 +249,7 @@ namespace YukoBot.Commands
                     }
                 }
 
-                dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
+                dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(dmEmbed));
                 await dmMessage.CreateReactionAsync(
                     DiscordEmoji.FromName(
                         ctx.Client,
@@ -274,18 +274,16 @@ namespace YukoBot.Commands
             try
             {
                 if (string.IsNullOrEmpty(collectionName))
-                {
-                    throw new IncorrectCommandDataException("Простите, название коллекции не может быть пустым!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddCollection_NameIsEmpty);
 
                 DbCollection collection =
                     _dbContext.Collections.FirstOrDefault(
                         x => x.UserId == ctx.Member.Id && x.Name.Equals(collectionName));
                 if (collection != null)
-                {
-                    throw new IncorrectCommandDataException(
-                        $"Ой, у тебя уже есть такая коллекция! Id: {collection.Id}.");
-                }
+                    throw new IncorrectCommandDataException(string.Format(
+                        Resources.ManagingСollectionsCommand_AddCollection_CollectionExists,
+                        collection.Id));
 
                 collection = new DbCollection
                 {

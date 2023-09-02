@@ -210,4 +210,34 @@
     <data name="ManagingСollectionsCommand.AddToCollectionById.NoChannelAccess" xml:space="preserve">
         <value>Простите, у меня нет прав на чтение сообщений в текущем канале!</value>
     </data>
+    <data name="ManagingСollectionsCommand.Start.IsSet" xml:space="preserve">
+        <value>Начальное сообщение промежутка заданно!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start.IsNotSet" xml:space="preserve">
+        <value>Простите, не удалось задать начальное сообщение!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.StartMessageIsNotSet" xml:space="preserve">
+        <value>Пожалуйста задайте начальное сообщение промежутка!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.DifferentChannels" xml:space="preserve">
+        <value>Ой, начальное и конечное сообщение промежутка из разных каналов!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.StartOfExecution" xml:space="preserve">
+        <value>Пожалуйста подождите, после завершения операции я изменю это сообщение!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.EndOfExecution" xml:space="preserve">
+        <value>Сообщения в коллекцию "{0}" успешно добавлены!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection.NameIsEmpty" xml:space="preserve">
+        <value>Простите, название коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection.CollectionExists" xml:space="preserve">
+        <value>Ой, у тебя уже есть такая коллекция! Id: {0}.</value>
+    </data>
 </root>

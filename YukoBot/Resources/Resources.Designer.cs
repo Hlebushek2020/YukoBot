@@ -78,6 +78,24 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ой, у тебя уже есть такая коллекция! Id: {0}..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddCollection_CollectionExists {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddCollection.CollectionExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, название коллекции не может быть пустым!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddCollection_NameIsEmpty {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddCollection.NameIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, такой коллекции нет!.
         /// </summary>
         internal static string ManagingСollectionsCommand_AddToCollection_CollectionNotFound {
@@ -187,11 +205,83 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ой, начальное и конечное сообщение промежутка из разных каналов!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_DifferentChannels {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.DifferentChannels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сообщения в коллекцию &quot;{0}&quot; успешно добавлены!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_EndOfExecution {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.EndOfExecution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, во время добавления сообщения в коллекцию &quot;{0}&quot; произошла ошибка. Добавлены не все сообщения!.
         /// </summary>
         internal static string ManagingСollectionsCommand_End_ErrorAddingItem {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.End.ErrorAddingItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нет вложенного сообщения!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_NoReferencedMessage {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.NoReferencedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пожалуйста задайте начальное сообщение промежутка!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_StartMessageIsNotSet {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.StartMessageIsNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пожалуйста подождите, после завершения операции я изменю это сообщение!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End_StartOfExecution {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End.StartOfExecution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, не удалось задать начальное сообщение!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_Start_IsNotSet {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.Start.IsNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Начальное сообщение промежутка заданно!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_Start_IsSet {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.Start.IsSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нет вложенного сообщения!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_Start_NoReferencedMessage {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.Start.NoReferencedMessage", resourceCulture);
             }
         }
         
