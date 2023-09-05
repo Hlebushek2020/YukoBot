@@ -595,7 +595,7 @@ namespace YukoBot
                 _binaryReader?.Dispose();
                 _binaryWriter?.Dispose();
                 _tcpClient?.Dispose();
-                _dbContext?.Dispose();
+                //_dbContext?.Dispose();
                 _isDisposed = true;
             }
         }
