@@ -87,6 +87,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Коллекция создана! Id: {0}..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddCollection_Created {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddCollection.Created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, название коллекции не может быть пустым!.
         /// </summary>
         internal static string ManagingСollectionsCommand_AddCollection_NameIsEmpty {
@@ -205,6 +214,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Коллекция &quot;{0}&quot; удалена!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteCollection_Deleted {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteCollection.Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ой, начальное и конечное сообщение промежутка из разных каналов!.
         /// </summary>
         internal static string ManagingСollectionsCommand_End_DifferentChannels {
@@ -255,6 +273,33 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_End_StartOfExecution {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.End.StartOfExecution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, переименовываемая коллекция несуществует!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_RenameCollection_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.RenameCollection.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, коллекция с названием &quot;{0}&quot; уже существует!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_RenameCollection_Exists {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.RenameCollection.Exists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Коллекция &quot;{0}&quot; переименована в &quot;{1}&quot;!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_RenameCollection_Renamed {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.RenameCollection.Renamed", resourceCulture);
             }
         }
         

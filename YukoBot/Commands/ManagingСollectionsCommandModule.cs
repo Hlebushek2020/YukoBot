@@ -294,7 +294,11 @@ namespace YukoBot.Commands
                 await _dbContext.SaveChangesAsync();
 
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция создана! Id: {collection.Id}.");
+                    .WithHappyMessage(
+                        ctx.Member.DisplayName,
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_AddCollection_Created,
+                            collection.Id));
                 await ctx.RespondAsync(discordEmbed);
             }
             catch (IncorrectCommandDataException ex)
@@ -369,7 +373,11 @@ namespace YukoBot.Commands
                 await _dbContext.SaveChangesAsync();
 
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция \"{dbCollection.Name}\" удалена!");
+                    .WithHappyMessage(
+                        ctx.Member.DisplayName,
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteCollection_Deleted,
+                            dbCollection.Name));
             }
             else
             {
@@ -662,18 +670,17 @@ namespace YukoBot.Commands
             string newName)
         {
             if (dbCollection == null)
-            {
-                throw new IncorrectCommandDataException("Простите, переименовываемая коллекция несуществует!");
-            }
+                throw new IncorrectCommandDataException(
+                    Resources.ManagingСollectionsCommand_RenameCollection_CollectionNotFound);
 
             ulong memberId = ctx.Member.Id;
             if (_dbContext.Collections.FirstOrDefault(x => x.Name.Equals(newName) && x.UserId == memberId) != null)
-            {
                 throw new IncorrectCommandDataException(
-                    $"Простите, коллекция с названием \"{newName}\" уже существует!");
-            }
+                    Resources.ManagingСollectionsCommand_RenameCollection_Exists);
 
-            string message = $"Коллекция \"{dbCollection.Name}\" переименована в \"{newName}\"!";
+            string message = string.Format(
+                Resources.ManagingСollectionsCommand_RenameCollection_Renamed,
+                dbCollection.Name, newName);
             dbCollection.Name = newName;
             await _dbContext.SaveChangesAsync();
 

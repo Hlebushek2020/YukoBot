@@ -240,4 +240,19 @@
     <data name="ManagingСollectionsCommand.AddCollection.CollectionExists" xml:space="preserve">
         <value>Ой, у тебя уже есть такая коллекция! Id: {0}.</value>
     </data>
+    <data name="ManagingСollectionsCommand.AddCollection.Created" xml:space="preserve">
+        <value>Коллекция создана! Id: {0}.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, переименовываемая коллекция несуществует!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.Exists" xml:space="preserve">
+        <value>Простите, коллекция с названием "{0}" уже существует!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.Renamed" xml:space="preserve">
+        <value>Коллекция "{0}" переименована в "{1}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection.Deleted" xml:space="preserve">
+        <value>Коллекция "{0}" удалена!</value>
+    </data>
 </root>
