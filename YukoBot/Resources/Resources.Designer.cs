@@ -214,6 +214,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, такой коллекции нет!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteCollection_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteCollection.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Коллекция &quot;{0}&quot; удалена!.
         /// </summary>
         internal static string ManagingСollectionsCommand_DeleteCollection_Deleted {

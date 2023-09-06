@@ -255,4 +255,7 @@
     <data name="ManagingСollectionsCommand.DeleteCollection.Deleted" xml:space="preserve">
         <value>Коллекция "{0}" удалена!</value>
     </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
 </root>

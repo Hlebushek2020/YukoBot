@@ -382,7 +382,9 @@ namespace YukoBot.Commands
             else
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName, "Простите, такой коллекции нет!");
+                    .WithSadMessage(
+                        ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_DeleteCollection_CollectionNotFound);
             }
 
             await ctx.RespondAsync(discordEmbed);
