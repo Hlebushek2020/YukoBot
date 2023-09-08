@@ -289,6 +289,6 @@
         <value>Простите, такой коллекции нет!</value>
     </data>
     <data name="OwnerCommand.Shutdown.ReasonIsEmpty" xml:space="preserve">
-        <value>Простите, причина выключения не указана!</value>
+        <value>Простите, причина выключения не указана! {0}</value>
     </data>
 </root>

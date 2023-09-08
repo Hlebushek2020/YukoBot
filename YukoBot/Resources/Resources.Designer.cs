@@ -475,7 +475,7 @@ namespace YukoBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Простите, причина выключения не указана!.
+        ///   Looks up a localized string similar to Простите, причина выключения не указана! {0}.
         /// </summary>
         internal static string OwnerCommand_Shutdown_ReasonIsEmpty {
             get {
