@@ -138,7 +138,7 @@
     <data name="RegisteredUserCommand.Profile.FieldBanList.IsEmpty" xml:space="preserve">
         <value>Отсутствуют</value>
     </data>
-    <data name="OwnerCommand.Shutdown.EmbedDescription" xml:space="preserve">
+    <data name="OwnerCommand.Shutdown.Response" xml:space="preserve">
         <value>Хорошо, хозяин! {0}</value>
     </data>
     <data name="OwnerCommand.AccessError" xml:space="preserve">
@@ -156,13 +156,13 @@
     <data name="OwnerCommand.Status.FieldWorkingHours.Description" xml:space="preserve">
         <value>{0}d, {1}h, {2}m, {3}s</value>
     </data>
-    <data name="OwnerCommand.SetApp.EmbedDescription" xml:space="preserve">
+    <data name="OwnerCommand.SetApp.Response" xml:space="preserve">
         <value>Хозяин! Ссылка на приложение установлена! {0}</value>
     </data>
     <data name="OwnerCommand.ExtendPremium.IncorrectUnit" xml:space="preserve">
         <value>Хозяин! Пожалуйста, укажите единицу измерения для значения! {0}</value>
     </data>
-    <data name="OwnerCommand.ExtendPremium.IsSuccess" xml:space="preserve">
+    <data name="OwnerCommand.ExtendPremium.Response" xml:space="preserve">
         <value>Хозяин! Премиум доступ для {0} успешно продлен! {1}</value>
     </data>
     <data name="OwnerCommand.ExtendPremium.MemberNotRegistered" xml:space="preserve">
@@ -257,5 +257,38 @@
     </data>
     <data name="ManagingСollectionsCommand.DeleteCollection.CollectionNotFound" xml:space="preserve">
         <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.MessageNotFound" xml:space="preserve">
+        <value>Ой, сообщения {0} и так нет в коллекции!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.Deleted" xml:space="preserve">
+        <value>Сообщение {0} из коллекции "{1}" удалено!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.NameOrIdIsEmpty" xml:space="preserve">
+        <value>Простите, название или id коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.Cleared" xml:space="preserve">
+        <value>Коллекция "{0}" очищена!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowCollections.IsEmpty" xml:space="preserve">
+        <value>Ой, у тебя нет не одной коллекции!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.NameOrIdIsEmpty" xml:space="preserve">
+        <value>Простите, название или id коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.IsEmpty" xml:space="preserve">
+        <value>Ой, эта коллекция пустая!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="OwnerCommand.Shutdown.ReasonIsEmpty" xml:space="preserve">
+        <value>Простите, причина выключения не указана!</value>
     </data>
 </root>

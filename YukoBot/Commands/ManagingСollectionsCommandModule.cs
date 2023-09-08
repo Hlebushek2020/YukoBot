@@ -450,7 +450,7 @@ namespace YukoBot.Commands
                 discordEmbed = new DiscordEmbedBuilder()
                     .WithSadMessage(
                         ctx.Member.DisplayName,
-                        "Простите, название или id коллекции не может быть пустым!");
+                        Resources.ManagingСollectionsCommand_ClearCollection_NameOrIdIsEmpty);
             }
             else
             {
@@ -465,12 +465,18 @@ namespace YukoBot.Commands
                     await _dbContext.SaveChangesAsync();
 
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция \"{collection.Name}\" очищена!");
+                        .WithHappyMessage(
+                            ctx.Member.DisplayName,
+                            string.Format(
+                                Resources.ManagingСollectionsCommand_ClearCollection_Cleared,
+                                collection.Name));
                 }
                 else
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(ctx.Member.DisplayName, "Простите, такой коллекции нет!");
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
+                            Resources.ManagingСollectionsCommand_ClearCollection_CollectionNotFound);
                 }
             }
 
@@ -494,7 +500,9 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(
                     ctx.Member.DisplayName,
-                    stringBuilder.Length > 0 ? stringBuilder.ToString() : "Ой, у тебя нет не одной коллекции!");
+                    stringBuilder.Length > 0
+                        ? stringBuilder.ToString()
+                        : Resources.ManagingСollectionsCommand_ShowCollections_IsEmpty);
             await ctx.RespondAsync(discordEmbed);
         }
 
@@ -502,7 +510,7 @@ namespace YukoBot.Commands
         [Aliases("items")]
         [Description("Показать последние 25 сообщений коллекции.")]
         public async Task ShowItems(
-            CommandContext commandContext,
+            CommandContext ctx,
             [Description("Название или Id коллекции"), RemainingText]
             string nameOrId)
         {
@@ -511,8 +519,8 @@ namespace YukoBot.Commands
             {
                 discordEmbed = new DiscordEmbedBuilder()
                     .WithSadMessage(
-                        commandContext.Member.DisplayName,
-                        "Простите, название или id коллекции не может быть пустым!");
+                        ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_ShowItems_NameOrIdIsEmpty);
             }
             else
             {
@@ -520,8 +528,8 @@ namespace YukoBot.Commands
                     ? await _dbContext.Collections.FindAsync(id)
                     : _dbContext.Collections.FirstOrDefault(
                         x =>
-                            x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId));
-                if (collection != null && collection.UserId == commandContext.Member.Id)
+                            x.UserId == ctx.Member.Id && x.Name.Equals(nameOrId));
+                if (collection != null && collection.UserId == ctx.Member.Id)
                 {
                     // Due to the fact that the EF cannot construct a query to take the last elements, the AsEnumerable
                     // transformation is used, which will execute the query and return an enumeration
@@ -535,17 +543,21 @@ namespace YukoBot.Commands
 
                     discordEmbed = new DiscordEmbedBuilder()
                         .WithHappyMessage(
-                            commandContext.Member.DisplayName,
-                            stringBuilder.Length != 0 ? stringBuilder.ToString() : "Ой, эта коллекция пустая!");
+                            ctx.Member.DisplayName,
+                            stringBuilder.Length != 0
+                                ? stringBuilder.ToString()
+                                : Resources.ManagingСollectionsCommand_ShowItems_IsEmpty);
                 }
                 else
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(commandContext.Member.DisplayName, "Простите, такой коллекции нет!");
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
+                            Resources.ManagingСollectionsCommand_ShowItems_CollectionNotFound);
                 }
             }
 
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
         #endregion
 
@@ -561,9 +573,8 @@ namespace YukoBot.Commands
                 ? await _dbContext.Collections.FindAsync(id)
                 : _dbContext.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
             if (dbCollection == null || dbCollection.UserId != memberId)
-            {
-                throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
-            }
+                throw new IncorrectCommandDataException(
+                    Resources.ManagingСollectionsCommand_DeleteFromCollection_CollectionNotFound);
 
             IList<DbCollectionItem> dbCollectionItems = _dbContext.CollectionItems
                 .Where(x => x.CollectionId == dbCollection.Id && x.MessageId == messageId).ToList();
@@ -574,8 +585,13 @@ namespace YukoBot.Commands
                 .WithHappyMessage(
                     ctx.Member.DisplayName,
                     dbCollectionItems.Count > 0
-                        ? $"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено!"
-                        : $"Ой, сообщения {messageId} и так нет в коллекции!");
+                        ? string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteFromCollection_Deleted,
+                            messageId,
+                            dbCollection.Name)
+                        : string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteFromCollection_MessageNotFound,
+                            messageId));
             await SendSpecialMessage(ctx, discordEmbed);
         }
 
@@ -716,7 +732,6 @@ namespace YukoBot.Commands
             }
             return dbCollection;
         }
-        // TODO: GetCollection
 
         private async Task SendSpecialMessage(CommandContext ctx, DiscordEmbedBuilder embed)
         {

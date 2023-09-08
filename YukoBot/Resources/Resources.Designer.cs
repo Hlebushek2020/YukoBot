@@ -214,6 +214,33 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Коллекция &quot;{0}&quot; очищена!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ClearCollection_Cleared {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ClearCollection.Cleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, такой коллекции нет!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ClearCollection_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ClearCollection.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, название или id коллекции не может быть пустым!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ClearCollection_NameOrIdIsEmpty {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ClearCollection.NameOrIdIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, такой коллекции нет!.
         /// </summary>
         internal static string ManagingСollectionsCommand_DeleteCollection_CollectionNotFound {
@@ -228,6 +255,33 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_DeleteCollection_Deleted {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.DeleteCollection.Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, такой коллекции нет!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollection_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сообщение {0} из коллекции &quot;{1}&quot; удалено!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollection_Deleted {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection.Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ой, сообщения {0} и так нет в коллекции!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollection_MessageNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection.MessageNotFound", resourceCulture);
             }
         }
         
@@ -313,6 +367,42 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ой, у тебя нет не одной коллекции!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowCollections_IsEmpty {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowCollections.IsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, такой коллекции нет!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowItems_CollectionNotFound {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowItems.CollectionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ой, эта коллекция пустая!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowItems_IsEmpty {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowItems.IsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, название или id коллекции не может быть пустым!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowItems_NameOrIdIsEmpty {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowItems.NameOrIdIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, не удалось задать начальное сообщение!.
         /// </summary>
         internal static string ManagingСollectionsCommand_Start_IsNotSet {
@@ -358,15 +448,6 @@ namespace YukoBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Хозяин! Премиум доступ для {0} успешно продлен! {1}.
-        /// </summary>
-        internal static string OwnerCommand_ExtendPremium_IsSuccess {
-            get {
-                return ResourceManager.GetString("OwnerCommand.ExtendPremium.IsSuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Хозяин! Данный участник сервера не зарегистрирован! {0}.
         /// </summary>
         internal static string OwnerCommand_ExtendPremium_MemberNotRegistered {
@@ -376,20 +457,38 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Хозяин! Премиум доступ для {0} успешно продлен! {1}.
+        /// </summary>
+        internal static string OwnerCommand_ExtendPremium_Response {
+            get {
+                return ResourceManager.GetString("OwnerCommand.ExtendPremium.Response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хозяин! Ссылка на приложение установлена! {0}.
         /// </summary>
-        internal static string OwnerCommand_SetApp_EmbedDescription {
+        internal static string OwnerCommand_SetApp_Response {
             get {
-                return ResourceManager.GetString("OwnerCommand.SetApp.EmbedDescription", resourceCulture);
+                return ResourceManager.GetString("OwnerCommand.SetApp.Response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, причина выключения не указана!.
+        /// </summary>
+        internal static string OwnerCommand_Shutdown_ReasonIsEmpty {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Shutdown.ReasonIsEmpty", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Хорошо, хозяин! {0}.
         /// </summary>
-        internal static string OwnerCommand_Shutdown_EmbedDescription {
+        internal static string OwnerCommand_Shutdown_Response {
             get {
-                return ResourceManager.GetString("OwnerCommand.Shutdown.EmbedDescription", resourceCulture);
+                return ResourceManager.GetString("OwnerCommand.Shutdown.Response", resourceCulture);
             }
         }
         

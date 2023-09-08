@@ -42,11 +42,16 @@ namespace YukoBot.Commands
             string reason)
         {
             if (string.IsNullOrWhiteSpace(reason))
-                throw new ArgumentException();
-
-            await ctx.RespondAsync(string.Format(
-                Resources.OwnerCommand_Shutdown_EmbedDescription, Constants.HappySmile));
-            _yukoBot.Shutdown(reason);
+            {
+                await ctx.RespondAsync(string.Format(
+                    Resources.OwnerCommand_Shutdown_ReasonIsEmpty, Constants.SadSmile));
+            }
+            else
+            {
+                await ctx.RespondAsync(string.Format(
+                    Resources.OwnerCommand_Shutdown_Response, Constants.HappySmile));
+                _yukoBot.Shutdown(reason);
+            }
         }
 
         [Command("status")]
@@ -83,7 +88,7 @@ namespace YukoBot.Commands
         {
             _yukoSettings.SetApp(newlink);
             await ctx.RespondAsync(string.Format(
-                Resources.OwnerCommand_SetApp_EmbedDescription, Constants.HappySmile));
+                Resources.OwnerCommand_SetApp_Response, Constants.HappySmile));
         }
 
         [Command("extend-premium")]
@@ -137,7 +142,7 @@ namespace YukoBot.Commands
 
                     await ctx.RespondAsync(
                         string.Format(
-                            Resources.OwnerCommand_ExtendPremium_IsSuccess,
+                            Resources.OwnerCommand_ExtendPremium_Response,
                             discordMember.DisplayName,
                             Constants.HappySmile));
                 }
