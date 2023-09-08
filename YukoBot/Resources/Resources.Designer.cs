@@ -60,6 +60,33 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Простите, эта команда доступна только администратору гильдии!.
+        /// </summary>
+        internal static string AdminCommand_AccessError {
+            get {
+                return ResourceManager.GetString("AdminCommand.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не могу забанить незарегистрированного участника!.
+        /// </summary>
+        internal static string AdminCommand_Ban_MemberIsNotRegistered {
+            get {
+                return ResourceManager.GetString("AdminCommand.Ban.MemberIsNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, самобан запрещен!.
+        /// </summary>
+        internal static string AdminCommand_Ban_Myself {
+            get {
+                return ResourceManager.GetString("AdminCommand.Ban.Myself", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Привет, для того что бы узнать больше информации обо мне выполни команду `{0}info`..
         /// </summary>
         internal static string BotDescription {

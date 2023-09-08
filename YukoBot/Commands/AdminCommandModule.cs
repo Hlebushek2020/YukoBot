@@ -17,8 +17,8 @@ public class AdminCommandModule : CommandModule
 {
     private readonly YukoDbContext _dbContext;
 
-    public AdminCommandModule(YukoDbContext dbContext) :
-        base(Categories.Management, "Простите, эта команда доступна только администратору гильдии!")
+    public AdminCommandModule(YukoDbContext dbContext)
+        : base(Categories.Management, Resources.AdminCommand_AccessError)
     {
         _dbContext = dbContext;
     }
@@ -39,7 +39,7 @@ public class AdminCommandModule : CommandModule
             discordEmbed = new DiscordEmbedBuilder()
                 .WithSadMessage(
                     ctx.Member.DisplayName,
-                    "Простите, самобан запрещен!");
+                    Resources.AdminCommand_Ban_Myself);
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -50,7 +50,7 @@ public class AdminCommandModule : CommandModule
             discordEmbed = new DiscordEmbedBuilder()
                 .WithSadMessage(
                     ctx.Member.DisplayName,
-                    "Простите, я не могу забанить незарегистрированного участника!");
+                    Resources.AdminCommand_Ban_MemberIsNotRegistered);
             await ctx.RespondAsync(discordEmbed);
             return;
         }

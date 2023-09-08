@@ -291,4 +291,13 @@
     <data name="OwnerCommand.Shutdown.ReasonIsEmpty" xml:space="preserve">
         <value>Простите, причина выключения не указана! {0}</value>
     </data>
+    <data name="AdminCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна только администратору гильдии!</value>
+    </data>
+    <data name="AdminCommand.Ban.Myself" xml:space="preserve">
+        <value>Простите, самобан запрещен!</value>
+    </data>
+    <data name="AdminCommand.Ban.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, я не могу забанить незарегистрированного участника!</value>
+    </data>
 </root>
