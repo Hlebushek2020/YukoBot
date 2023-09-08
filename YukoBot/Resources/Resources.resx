@@ -300,4 +300,31 @@
     <data name="AdminCommand.Ban.MemberIsNotRegistered" xml:space="preserve">
         <value>Простите, я не могу забанить незарегистрированного участника!</value>
     </data>
+    <data name="AdminCommand.Ban.MemberIsAlreadyBanned" xml:space="preserve">
+        <value>Участник уже забанен!</value>
+    </data>
+    <data name="AdminCommand.Ban.MemberBanned" xml:space="preserve">
+        <value>Участник успешно забанен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.Myself" xml:space="preserve">
+        <value>Простите, саморазбан запрещен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, я не могу разбанить незарегистрированного участника!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberIsNotBanned" xml:space="preserve">
+        <value>Участник не забанен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberUnbanned" xml:space="preserve">
+        <value>Участник успешно разбанен!</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, участник {0} не зарегистрирован!</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.ReasonForBanIsNotSpecified" xml:space="preserve">
+        <value>К сожалению причина бана не была указана.</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.MemberIsNotBanned" xml:space="preserve">
+        <value>Участник {0} не забанен!</value>
+    </data>
 </root>

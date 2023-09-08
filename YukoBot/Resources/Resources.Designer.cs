@@ -69,6 +69,24 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Участник успешно забанен!.
+        /// </summary>
+        internal static string AdminCommand_Ban_MemberBanned {
+            get {
+                return ResourceManager.GetString("AdminCommand.Ban.MemberBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Участник уже забанен!.
+        /// </summary>
+        internal static string AdminCommand_Ban_MemberIsAlreadyBanned {
+            get {
+                return ResourceManager.GetString("AdminCommand.Ban.MemberIsAlreadyBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, я не могу забанить незарегистрированного участника!.
         /// </summary>
         internal static string AdminCommand_Ban_MemberIsNotRegistered {
@@ -83,6 +101,69 @@ namespace YukoBot {
         internal static string AdminCommand_Ban_Myself {
             get {
                 return ResourceManager.GetString("AdminCommand.Ban.Myself", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Участник {0} не забанен!.
+        /// </summary>
+        internal static string AdminCommand_MemberBanReason_MemberIsNotBanned {
+            get {
+                return ResourceManager.GetString("AdminCommand.MemberBanReason.MemberIsNotBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, участник {0} не зарегистрирован!.
+        /// </summary>
+        internal static string AdminCommand_MemberBanReason_MemberIsNotRegistered {
+            get {
+                return ResourceManager.GetString("AdminCommand.MemberBanReason.MemberIsNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to К сожалению причина бана не была указана..
+        /// </summary>
+        internal static string AdminCommand_MemberBanReason_ReasonForBanIsNotSpecified {
+            get {
+                return ResourceManager.GetString("AdminCommand.MemberBanReason.ReasonForBanIsNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Участник не забанен!.
+        /// </summary>
+        internal static string AdminCommand_UnBan_MemberIsNotBanned {
+            get {
+                return ResourceManager.GetString("AdminCommand.UnBan.MemberIsNotBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не могу разбанить незарегистрированного участника!.
+        /// </summary>
+        internal static string AdminCommand_UnBan_MemberIsNotRegistered {
+            get {
+                return ResourceManager.GetString("AdminCommand.UnBan.MemberIsNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Участник успешно разбанен!.
+        /// </summary>
+        internal static string AdminCommand_UnBan_MemberUnbanned {
+            get {
+                return ResourceManager.GetString("AdminCommand.UnBan.MemberUnbanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, саморазбан запрещен!.
+        /// </summary>
+        internal static string AdminCommand_UnBan_Myself {
+            get {
+                return ResourceManager.GetString("AdminCommand.UnBan.Myself", resourceCulture);
             }
         }
         

@@ -37,9 +37,7 @@ public class AdminCommandModule : CommandModule
         if (ctx.User.Id.Equals(member.Id))
         {
             discordEmbed = new DiscordEmbedBuilder()
-                .WithSadMessage(
-                    ctx.Member.DisplayName,
-                    Resources.AdminCommand_Ban_Myself);
+                .WithSadMessage(ctx.Member.DisplayName, Resources.AdminCommand_Ban_Myself);
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -48,9 +46,7 @@ public class AdminCommandModule : CommandModule
         if (dbUser == null)
         {
             discordEmbed = new DiscordEmbedBuilder()
-                .WithSadMessage(
-                    ctx.Member.DisplayName,
-                    Resources.AdminCommand_Ban_MemberIsNotRegistered);
+                .WithSadMessage(ctx.Member.DisplayName, Resources.AdminCommand_Ban_MemberIsNotRegistered);
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -59,7 +55,7 @@ public class AdminCommandModule : CommandModule
         if (isBanned > 0)
         {
             discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, "Участник уже забанен!");
+                .WithHappyMessage(ctx.Member.DisplayName, Resources.AdminCommand_Ban_MemberIsAlreadyBanned);
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -75,7 +71,7 @@ public class AdminCommandModule : CommandModule
         await _dbContext.SaveChangesAsync();
 
         discordEmbed = new DiscordEmbedBuilder()
-            .WithHappyMessage(ctx.Member.DisplayName, "Участник успешно забанен!");
+            .WithHappyMessage(ctx.Member.DisplayName, Resources.AdminCommand_Ban_MemberBanned);
         await ctx.RespondAsync(discordEmbed);
     }
 
@@ -91,9 +87,7 @@ public class AdminCommandModule : CommandModule
         if (ctx.User.Id.Equals(member.Id))
         {
             discordEmbed = new DiscordEmbedBuilder()
-                .WithSadMessage(
-                    ctx.Member.DisplayName,
-                    "Простите, саморазбан запрещен!");
+                .WithSadMessage(ctx.Member.DisplayName, Resources.AdminCommand_UnBan_Myself);
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -101,13 +95,11 @@ public class AdminCommandModule : CommandModule
         DbUser dbUser = await _dbContext.Users.FindAsync(member.Id);
         if (dbUser == null)
         {
-            discordEmbed.WithSadMessage(
-                ctx.Member.DisplayName,
-                "Простите, я не могу разбанить незарегистрированного участника!");
+            discordEmbed.WithSadMessage(ctx.Member.DisplayName, Resources.AdminCommand_UnBan_MemberIsNotRegistered);
         }
         else
         {
-            discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Участник не забанен!");
+            discordEmbed.WithHappyMessage(ctx.Member.DisplayName, Resources.AdminCommand_UnBan_MemberIsNotBanned);
 
             IReadOnlyList<DbBan> dbBanList = _dbContext.Bans
                 .Where(x => x.ServerId == member.Guild.Id && x.UserId == member.Id).ToList();
@@ -119,7 +111,7 @@ public class AdminCommandModule : CommandModule
                 }
                 await _dbContext.SaveChangesAsync();
 
-                discordEmbed.WithDescription("Участник успешно разбанен!");
+                discordEmbed.WithDescription(Resources.AdminCommand_UnBan_MemberUnbanned);
             }
         }
 
@@ -142,7 +134,9 @@ public class AdminCommandModule : CommandModule
             discordEmbed = new DiscordEmbedBuilder()
                 .WithSadMessage(
                     ctx.Member.DisplayName,
-                    $"Простите, участник {member.DisplayName} не зарегистрирован!");
+                    string.Format(
+                        Resources.AdminCommand_MemberBanReason_MemberIsNotRegistered,
+                        member.DisplayName));
             await ctx.RespondAsync(discordEmbed);
             return;
         }
@@ -158,12 +152,13 @@ public class AdminCommandModule : CommandModule
             DbBan ban = dbBanList[0];
             discordEmbed.WithDescription(
                 string.IsNullOrEmpty(ban.Reason)
-                    ? "К сожалению причина бана не была указана."
+                    ? Resources.AdminCommand_MemberBanReason_ReasonForBanIsNotSpecified
                     : ban.Reason);
         }
         else
         {
-            discordEmbed.WithDescription($"Участник {member.DisplayName} не забанен!");
+            discordEmbed.WithDescription(string.Format(
+                Resources.AdminCommand_MemberBanReason_MemberIsNotBanned, member.DisplayName));
         }
 
         await ctx.RespondAsync(discordEmbed);
