@@ -608,7 +608,7 @@ namespace YukoBot.Commands
             _dbContext.CollectionItems.Add(
                 new DbCollectionItem
                 {
-                    CollectionId = dbCollection.Id,
+                    Collection = dbCollection,
                     MessageId = discordMessage.Id,
                     IsSavedLinks = hasPremiumAccess
                 });
