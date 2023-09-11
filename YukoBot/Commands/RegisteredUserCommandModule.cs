@@ -110,7 +110,8 @@ namespace YukoBot.Commands
             }
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName,
+                .WithHappyMessage(
+                    ctx.Member.DisplayName,
                     isEnabled
                         ? Resources.RegisteredUserCommand_InfoMessagesInPM_Description_Enabled
                         : Resources.RegisteredUserCommand_InfoMessagesInPM_Description_Disabled);
@@ -138,7 +139,8 @@ namespace YukoBot.Commands
                     string.IsNullOrEmpty(description))
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(ctx.Member.DisplayName,
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
                             Resources.RegisteredUserCommand_BugReport_Description_IsEmpty);
                 }
                 else
@@ -169,7 +171,7 @@ namespace YukoBot.Commands
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogWarning($"Failed to download attachment. Message: {ex.Message}.");
+                            _logger.LogWarning($"Failed to download attachment. Exception: {ex.Message}.");
                         }
                     }
 
@@ -192,14 +194,16 @@ namespace YukoBot.Commands
                     await reportChannel.SendMessageAsync(reportMessage);
 
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithHappyMessage(ctx.Member.DisplayName,
+                        .WithHappyMessage(
+                            ctx.Member.DisplayName,
                             Resources.RegisteredUserCommand_BugReport_Description_IsSuccess);
                 }
             }
             else
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName,
+                    .WithSadMessage(
+                        ctx.Member.DisplayName,
                         Resources.RegisteredUserCommand_BugReport_Description_IsDisabled);
             }
 
@@ -225,7 +229,8 @@ namespace YukoBot.Commands
 
             if (dbUser.PremiumAccessExpires.HasValue)
             {
-                fieldPremiumText = string.Format(fieldPremiumText,
+                fieldPremiumText = string.Format(
+                    fieldPremiumText,
                     dbUser.PremiumAccessExpires.Value.ToString(ProfileDtf, locale));
             }
 
@@ -256,9 +261,10 @@ namespace YukoBot.Commands
                 DiscordGuild discordGuild = ctx.Client.Guilds[ban.ServerId];
                 banListBuilder.Append(discordGuild.Name)
                     .Append(" - ")
-                    .Append(string.IsNullOrEmpty(ban.Reason)
-                        ? Resources.RegisteredUserCommand_Profile_FieldBanList_ReasonNotSpecified
-                        : ban.Reason);
+                    .Append(
+                        string.IsNullOrEmpty(ban.Reason)
+                            ? Resources.RegisteredUserCommand_Profile_FieldBanList_ReasonNotSpecified
+                            : ban.Reason);
             }
             embedBuilder.AddField(
                 Resources.RegisteredUserCommand_Profile_FieldBanList_Title,
