@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +11,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
+using Microsoft.Extensions.Logging;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
@@ -19,12 +22,15 @@ namespace YukoBot.Commands
     public class UserCommandModule : CommandModule
     {
         private readonly IYukoSettings _yukoSettings;
+        private readonly ILogger<UserCommandModule> _logger;
 
         private string BotDescription { get; }
 
-        public UserCommandModule(IYukoSettings yukoSettings) : base(Categories.User, null)
+        public UserCommandModule(IYukoSettings yukoSettings, ILogger<UserCommandModule> logger)
+            : base(Categories.User, null)
         {
             _yukoSettings = yukoSettings;
+            _logger = logger;
             BotDescription = $"Привет, для того что бы узнать больше информации обо мне выполни команду `{
                 _yukoSettings.BotPrefix}info`.";
         }
@@ -290,12 +296,41 @@ namespace YukoBot.Commands
             [Description("Участник сервера")]
             DiscordMember member)
         {
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyTitle(ctx.Member.DisplayName)
-                .WithColor(Constants.SuccessColor)
-                .WithImageUrl(member.AvatarUrl);
+            YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
+            DbUser user = await dbCtx.Users.FindAsync(ctx.Member.Id);
 
-            await ctx.RespondAsync(discordEmbed);
+            bool isUseMessage = user != null && user.HasPremiumAccess;
+            if (isUseMessage)
+            {
+                try
+                {
+                    using HttpClient client = new HttpClient();
+                    Stream fileStream = await client.GetStreamAsync(member.AvatarUrl);
+                    string fileName = Path.GetFileName(member.AvatarUrl) ?? Guid.NewGuid().ToString();
+                    if (fileName.Contains('?'))
+                        fileName = fileName.Remove(fileName.IndexOf('?'));
+
+                    DiscordMessageBuilder discordMessage = new DiscordMessageBuilder()
+                        .AddFile(fileName, fileStream);
+
+                    await ctx.RespondAsync(discordMessage);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Failed to download attachment. Exception: {ex.Message}.");
+                    isUseMessage = false;
+                }
+            }
+
+            if (!isUseMessage)
+            {
+                DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                    .WithHappyTitle(ctx.Member.DisplayName)
+                    .WithColor(Constants.SuccessColor)
+                    .WithImageUrl(member.AvatarUrl);
+
+                await ctx.RespondAsync(discordEmbed);
+            }
         }
     }
 }
