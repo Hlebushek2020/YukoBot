@@ -69,6 +69,24 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Отключено!.
+        /// </summary>
+        internal static string AdminCommand_AddCommandResponse_Disabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.AddCommandResponse.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включено!.
+        /// </summary>
+        internal static string AdminCommand_AddCommandResponse_Enabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.AddCommandResponse.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Участник успешно забанен!.
         /// </summary>
         internal static string AdminCommand_Ban_MemberBanned {
@@ -128,6 +146,15 @@ namespace YukoBot {
         internal static string AdminCommand_MemberBanReason_ReasonForBanIsNotSpecified {
             get {
                 return ResourceManager.GetString("AdminCommand.MemberBanReason.ReasonForBanIsNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Канал для поиска сообщений успешно установлен!.
+        /// </summary>
+        internal static string AdminCommand_SetArtChannel_Installed {
+            get {
+                return ResourceManager.GetString("AdminCommand.SetArtChannel.Installed", resourceCulture);
             }
         }
         

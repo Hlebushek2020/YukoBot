@@ -157,8 +157,10 @@ public class AdminCommandModule : CommandModule
         }
         else
         {
-            discordEmbed.WithDescription(string.Format(
-                Resources.AdminCommand_MemberBanReason_MemberIsNotBanned, member.DisplayName));
+            discordEmbed.WithDescription(
+                string.Format(
+                    Resources.AdminCommand_MemberBanReason_MemberIsNotBanned,
+                    member.DisplayName));
         }
 
         await ctx.RespondAsync(discordEmbed);
@@ -188,7 +190,8 @@ public class AdminCommandModule : CommandModule
         await _dbContext.SaveChangesAsync();
 
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            .WithHappyMessage(ctx.Member.DisplayName, "Канал для поиска сообщений успешно установлен!");
+            .WithHappyMessage(ctx.Member.DisplayName, Resources.AdminCommand_SetArtChannel_Installed);
+
         await ctx.RespondAsync(discordEmbed);
     }
 
@@ -218,7 +221,12 @@ public class AdminCommandModule : CommandModule
         await _dbContext.SaveChangesAsync();
 
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            .WithHappyMessage(ctx.Member.DisplayName, isEnabled ? "Включено!" : "Отключено!");
+            .WithHappyMessage(
+                ctx.Member.DisplayName,
+                isEnabled
+                    ? Resources.AdminCommand_AddCommandResponse_Enabled
+                    : Resources.AdminCommand_AddCommandResponse_Disabled);
+
         await ctx.RespondAsync(discordEmbed);
     }
 
@@ -256,7 +264,8 @@ public class AdminCommandModule : CommandModule
         bool isEnabled)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            .WithSadMessage(ctx.Member.DisplayName,
+            .WithSadMessage(
+                ctx.Member.DisplayName,
                 "Простите, я не могу отправлять уведомления о том, когда проснусь. Канал для отправки системных уведомлений не задан!");
 
         DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
@@ -269,7 +278,8 @@ public class AdminCommandModule : CommandModule
                 await _dbContext.SaveChangesAsync();
             }
 
-            discordEmbed.WithHappyMessage(ctx.Member.DisplayName,
+            discordEmbed.WithHappyMessage(
+                ctx.Member.DisplayName,
                 $"Уведомления {(isEnabled ? "включены" : "отключены")}!");
         }
 
@@ -285,7 +295,8 @@ public class AdminCommandModule : CommandModule
         bool isEnabled)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            .WithSadMessage(ctx.Member.DisplayName,
+            .WithSadMessage(
+                ctx.Member.DisplayName,
                 "Простите, я не могу отправлять уведомления о том, когда пойду баиньки. Канал для отправки системных уведомлений не задан!");
 
         DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
@@ -298,7 +309,8 @@ public class AdminCommandModule : CommandModule
                 await _dbContext.SaveChangesAsync();
             }
 
-            discordEmbed.WithHappyMessage(ctx.Member.DisplayName,
+            discordEmbed.WithHappyMessage(
+                ctx.Member.DisplayName,
                 $"Уведомления {(isEnabled ? "включены" : "отключены")}!");
         }
 

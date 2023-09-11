@@ -327,4 +327,13 @@
     <data name="AdminCommand.MemberBanReason.MemberIsNotBanned" xml:space="preserve">
         <value>Участник {0} не забанен!</value>
     </data>
+    <data name="AdminCommand.SetArtChannel.Installed" xml:space="preserve">
+        <value>Канал для поиска сообщений успешно установлен!</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse.Enabled" xml:space="preserve">
+        <value>Включено!</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse.Disabled" xml:space="preserve">
+        <value>Отключено!</value>
+    </data>
 </root>
