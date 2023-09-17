@@ -69,6 +69,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Отправка сообщения об успешности выполнения команды `add` на сервере (сообщение будет приходить в ЛС, а не в канал где выполнена команда)..
+        /// </summary>
+        internal static string AdminCommand_AddCommandResponse {
+            get {
+                return ResourceManager.GetString("AdminCommand.AddCommandResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отключено!.
         /// </summary>
         internal static string AdminCommand_AddCommandResponse_Disabled {
@@ -83,6 +92,15 @@ namespace YukoBot {
         internal static string AdminCommand_AddCommandResponse_Enabled {
             get {
                 return ResourceManager.GetString("AdminCommand.AddCommandResponse.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запретить пользователю скачивать с этого сервера..
+        /// </summary>
+        internal static string AdminCommand_Ban {
+            get {
+                return ResourceManager.GetString("AdminCommand.Ban", resourceCulture);
             }
         }
         
@@ -123,6 +141,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Причина бана участника сервера..
+        /// </summary>
+        internal static string AdminCommand_MemberBanReason {
+            get {
+                return ResourceManager.GetString("AdminCommand.MemberBanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Участник {0} не забанен!.
         /// </summary>
         internal static string AdminCommand_MemberBanReason_MemberIsNotBanned {
@@ -146,6 +173,15 @@ namespace YukoBot {
         internal static string AdminCommand_MemberBanReason_ReasonForBanIsNotSpecified {
             get {
                 return ResourceManager.GetString("AdminCommand.MemberBanReason.ReasonForBanIsNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включить / Отключить уведомление о включении бота..
+        /// </summary>
+        internal static string AdminCommand_ReadyNotification {
+            get {
+                return ResourceManager.GetString("AdminCommand.ReadyNotification", resourceCulture);
             }
         }
         
@@ -177,6 +213,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Установить канал для поиска сообщений для команды `add-by-id`..
+        /// </summary>
+        internal static string AdminCommand_SetArtChannel {
+            get {
+                return ResourceManager.GetString("AdminCommand.SetArtChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Канал для поиска сообщений успешно установлен!.
         /// </summary>
         internal static string AdminCommand_SetArtChannel_Installed {
@@ -186,11 +231,29 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Задать канал для отправки системных уведомлений..
+        /// </summary>
+        internal static string AdminCommand_SetNotificationChannel {
+            get {
+                return ResourceManager.GetString("AdminCommand.SetNotificationChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Канал успешно установлен!.
         /// </summary>
         internal static string AdminCommand_SetNotificationChannel_Installed {
             get {
                 return ResourceManager.GetString("AdminCommand.SetNotificationChannel.Installed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включить / Отключить уведомление о выключении бота..
+        /// </summary>
+        internal static string AdminCommand_ShutdownNotification {
+            get {
+                return ResourceManager.GetString("AdminCommand.ShutdownNotification", resourceCulture);
             }
         }
         
@@ -218,6 +281,15 @@ namespace YukoBot {
         internal static string AdminCommand_ShutdownNotification_NotificationChannelIsNotSet {
             get {
                 return ResourceManager.GetString("AdminCommand.ShutdownNotification.NotificationChannelIsNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера)..
+        /// </summary>
+        internal static string AdminCommand_UnBan {
+            get {
+                return ResourceManager.GetString("AdminCommand.UnBan", resourceCulture);
             }
         }
         
@@ -348,6 +420,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Создать новую коллекцию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ой, у тебя уже есть такая коллекция! Id: {0}..
         /// </summary>
         internal static string ManagingСollectionsCommand_AddCollection_CollectionExists {
@@ -371,6 +452,15 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_AddCollection_NameIsEmpty {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.AddCollection.NameIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection", resourceCulture);
             }
         }
         
@@ -425,6 +515,15 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_AddToCollection_ReferencedMessageNotFound {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollection.ReferencedMessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Добавить указанное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_AddToCollectionById {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.AddToCollectionById", resourceCulture);
             }
         }
         
@@ -484,6 +583,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить все сообщения из коллекции..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ClearCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ClearCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Коллекция &quot;{0}&quot; очищена!.
         /// </summary>
         internal static string ManagingСollectionsCommand_ClearCollection_Cleared {
@@ -511,6 +619,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить коллекцию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, такой коллекции нет!.
         /// </summary>
         internal static string ManagingСollectionsCommand_DeleteCollection_CollectionNotFound {
@@ -525,6 +642,15 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_DeleteCollection_Deleted {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.DeleteCollection.Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить сообщение из коллекции..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection", resourceCulture);
             }
         }
         
@@ -552,6 +678,33 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_DeleteFromCollection_MessageNotFound {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection.MessageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, нет вложенного сообщения!.
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollection_NoReferencedMessage {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollection.NoReferencedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить вложенное сообщение из коллекции..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_DeleteFromCollectionRef {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.DeleteFromCollectionRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Задать вложенное сообщение конечным сообщением для промежутка (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию. Если коллекция не указана сообщения добавляются в коллекцию по умолчанию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_End {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.End", resourceCulture);
             }
         }
         
@@ -610,6 +763,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Переименовать указанную коллекцию..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_RenameCollection {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.RenameCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, переименовываемая коллекция несуществует!.
         /// </summary>
         internal static string ManagingСollectionsCommand_RenameCollection_CollectionNotFound {
@@ -637,11 +799,29 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Показать список коллекций..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowCollections {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowCollections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ой, у тебя нет не одной коллекции!.
         /// </summary>
         internal static string ManagingСollectionsCommand_ShowCollections_IsEmpty {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.ShowCollections.IsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Показать последние 25 сообщений коллекции..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_ShowItems {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.ShowItems", resourceCulture);
             }
         }
         
@@ -669,6 +849,15 @@ namespace YukoBot {
         internal static string ManagingСollectionsCommand_ShowItems_NameOrIdIsEmpty {
             get {
                 return ResourceManager.GetString("ManagingСollectionsCommand.ShowItems.NameOrIdIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Задать вложенное сообщение начальным сообщением для промежутка (входит в промежуток)..
+        /// </summary>
+        internal static string ManagingСollectionsCommand_Start {
+            get {
+                return ResourceManager.GetString("ManagingСollectionsCommand.Start", resourceCulture);
             }
         }
         
@@ -709,6 +898,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Продлить премиум доступ..
+        /// </summary>
+        internal static string OwnerCommand_ExtendPremium {
+            get {
+                return ResourceManager.GetString("OwnerCommand.ExtendPremium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хозяин! Пожалуйста, укажите единицу измерения для значения! {0}.
         /// </summary>
         internal static string OwnerCommand_ExtendPremium_IncorrectUnit {
@@ -736,11 +934,29 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Установить новую ссылку для команды `app`..
+        /// </summary>
+        internal static string OwnerCommand_SetApp {
+            get {
+                return ResourceManager.GetString("OwnerCommand.SetApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хозяин! Ссылка на приложение установлена! {0}.
         /// </summary>
         internal static string OwnerCommand_SetApp_Response {
             get {
                 return ResourceManager.GetString("OwnerCommand.SetApp.Response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выключить бота..
+        /// </summary>
+        internal static string OwnerCommand_Shutdown {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Shutdown", resourceCulture);
             }
         }
         
@@ -759,6 +975,15 @@ namespace YukoBot {
         internal static string OwnerCommand_Shutdown_Response {
             get {
                 return ResourceManager.GetString("OwnerCommand.Shutdown.Response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сведения о боте..
+        /// </summary>
+        internal static string OwnerCommand_Status {
+            get {
+                return ResourceManager.GetString("OwnerCommand.Status", resourceCulture);
             }
         }
         
@@ -808,11 +1033,38 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Причина бана на текущем сервере..
+        /// </summary>
+        internal static string RegisteredUserCommand_BanReason {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы не забанены!.
+        /// </summary>
+        internal static string RegisteredUserCommand_BanReason_NotBan {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BanReason.NotBan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to К сожалению причина бана не была указана!.
         /// </summary>
         internal static string RegisteredUserCommand_BanReason_NotBanReason {
             get {
                 return ResourceManager.GetString("RegisteredUserCommand.BanReason.NotBanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой..
+        /// </summary>
+        internal static string RegisteredUserCommand_BugReport {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.BugReport", resourceCulture);
             }
         }
         
@@ -844,6 +1096,24 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Показать ссылку на скачивание актуальной версии клиента..
+        /// </summary>
+        internal static string RegisteredUserCommand_GetClientApp {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.GetClientApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере).
+        /// </summary>
+        internal static string RegisteredUserCommand_InfoMessagesInPM {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.InfoMessagesInPM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отключено!.
         /// </summary>
         internal static string RegisteredUserCommand_InfoMessagesInPM_Description_Disabled {
@@ -858,6 +1128,15 @@ namespace YukoBot {
         internal static string RegisteredUserCommand_InfoMessagesInPM_Description_Enabled {
             get {
                 return ResourceManager.GetString("RegisteredUserCommand.InfoMessagesInPM.Description.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Показать информацию о моей учетной записи бота..
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile", resourceCulture);
             }
         }
         
@@ -961,6 +1240,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Показать настройки для подключения к боту..
+        /// </summary>
+        internal static string RegisteredUserCommand_Settings {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хост.
         /// </summary>
         internal static string RegisteredUserCommand_Settings_FieldHost_Title {
@@ -975,15 +1263,6 @@ namespace YukoBot {
         internal static string RegisteredUserCommand_Settings_FieldPort_Title {
             get {
                 return ResourceManager.GetString("RegisteredUserCommand.Settings.FieldPort.Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Вы не забанены!.
-        /// </summary>
-        internal static string RegisteredUserCommand_Settings_NotBan {
-            get {
-                return ResourceManager.GetString("RegisteredUserCommand.Settings.NotBan", resourceCulture);
             }
         }
         

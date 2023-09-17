@@ -131,7 +131,7 @@ namespace YukoBot.Commands
 
                         string fieldTitle = $"{command.Name}{aliases}";
 
-                        descriptionByCommand.Add(fieldTitle, command.Description);
+                        descriptionByCommand.Add(fieldTitle, command.GetLocalizedDescription());
                     }
 
                     DiscordEmbedBuilder embed;
@@ -178,6 +178,8 @@ namespace YukoBot.Commands
                     string resArgumentsSection = Resources.UserCommand_Help_ArgumentsSection;
                     string resOptionalArgument = Resources.UserCommand_Help_OptionalArgument;
 
+                    string commandDescription = command.GetLocalizedDescription();
+
                     for (int i = 0; i < command.Overloads.Count; i++)
                     {
                         CommandOverload commandOverload = command.Overloads[i];
@@ -190,7 +192,7 @@ namespace YukoBot.Commands
                                 $"```\n{_yukoSettings.BotPrefix} {command.Name} {string.Join(
                                     ' ',
                                     commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{
-                                    command.Description}")
+                                    commandDescription}")
                             .AppendLine();
 
                         if (command.Aliases?.Count != 0)

@@ -41,7 +41,7 @@ namespace YukoBot.Commands
         }
 
         [Command("settings")]
-        [Description("Показать настройки для подключения к боту.")]
+        [Description("RegisteredUserCommand.Settings")]
         public async Task Settings(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -56,7 +56,7 @@ namespace YukoBot.Commands
         }
 
         [Command("app")]
-        [Description("Показать ссылку на скачивание актуальной версии клиента.")]
+        [Description("RegisteredUserCommand.GetClientApp")]
         public async Task GetClientApp(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -67,7 +67,7 @@ namespace YukoBot.Commands
 
         [Command("ban-reason")]
         [Aliases("reason")]
-        [Description("Причина бана на текущем сервере.")]
+        [Description("RegisteredUserCommand.BanReason")]
         public async Task BanReason(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -87,16 +87,15 @@ namespace YukoBot.Commands
             else
             {
                 discordEmbed.WithHappyTitle(ctx.Member.DisplayName)
-                    .WithDescription(Resources.RegisteredUserCommand_Settings_NotBan);
+                    .WithDescription(Resources.RegisteredUserCommand_BanReason_NotBan);
             }
 
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("info-message-pm")]
-        [Description(
-            "Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)")]
-        public async Task InfoMessagesInPM(
+        [Description("RegisteredUserCommand.InfoMessagesInPM")]
+        public async Task InfoMessagesInPm(
             CommandContext ctx,
             [Description("true - включить / false - отключить")]
             bool isEnabled)
@@ -123,9 +122,7 @@ namespace YukoBot.Commands
         [Description("Сообщить об ошибке.")]
         public async Task BugReport(
             CommandContext ctx,
-            [Description(
-                 "Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой."),
-             RemainingText]
+            [Description("RegisteredUserCommand.BugReport"), RemainingText]
             string description)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -212,7 +209,7 @@ namespace YukoBot.Commands
 
         [Command("profile")]
         [Aliases("me")]
-        [Description("Показать информацию о моей учетной записи бота.")]
+        [Description("RegisteredUserCommand.Profile")]
         public async Task Profile(CommandContext ctx)
         {
             // TODO: ??????????????????????

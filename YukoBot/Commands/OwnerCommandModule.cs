@@ -35,7 +35,7 @@ namespace YukoBot.Commands
 
         [Command("shutdown")]
         [Aliases("sd")]
-        [Description("Выключить бота.")]
+        [Description("OwnerCommand.Shutdown")]
         public async Task Shutdown(
             CommandContext ctx,
             [Description("Причина выключения бота"), RemainingText]
@@ -43,20 +43,24 @@ namespace YukoBot.Commands
         {
             if (string.IsNullOrWhiteSpace(reason))
             {
-                await ctx.RespondAsync(string.Format(
-                    Resources.OwnerCommand_Shutdown_ReasonIsEmpty, Constants.SadSmile));
+                await ctx.RespondAsync(
+                    string.Format(
+                        Resources.OwnerCommand_Shutdown_ReasonIsEmpty,
+                        Constants.SadSmile));
             }
             else
             {
-                await ctx.RespondAsync(string.Format(
-                    Resources.OwnerCommand_Shutdown_Response, Constants.HappySmile));
+                await ctx.RespondAsync(
+                    string.Format(
+                        Resources.OwnerCommand_Shutdown_Response,
+                        Constants.HappySmile));
                 _yukoBot.Shutdown(reason);
             }
         }
 
         [Command("status")]
         [Aliases("stat")]
-        [Description("Сведения о боте.")]
+        [Description("OwnerCommand.Status")]
         public async Task Status(CommandContext ctx)
         {
             string assemblyLocation = Assembly.GetExecutingAssembly().Location;
@@ -77,23 +81,28 @@ namespace YukoBot.Commands
                 Resources.OwnerCommand_Status_FieldWorkingHours_Title,
                 string.Format(
                     Resources.OwnerCommand_Status_FieldWorkingHours_Description,
-                    timeSpan.Days, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds));
+                    timeSpan.Days,
+                    timeSpan.Hours,
+                    timeSpan.Minutes,
+                    timeSpan.Seconds));
 
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("set-app")]
-        [Description("Установить новую ссылку для команды `app`.")]
+        [Description("OwnerCommand.SetApp")]
         public async Task SetApp(CommandContext ctx, string newlink)
         {
             _yukoSettings.SetApp(newlink);
-            await ctx.RespondAsync(string.Format(
-                Resources.OwnerCommand_SetApp_Response, Constants.HappySmile));
+            await ctx.RespondAsync(
+                string.Format(
+                    Resources.OwnerCommand_SetApp_Response,
+                    Constants.HappySmile));
         }
 
         [Command("extend-premium")]
         [Aliases("ep")]
-        [Description("Продлить премиум доступ.")]
+        [Description("OwnerCommand.ExtendPremium")]
         public async Task ExtendPremium(
             CommandContext ctx,
             [Description("Участник сервера (гильдии).")]
@@ -110,8 +119,10 @@ namespace YukoBot.Commands
                 !type.Equals(ExtendPremiumMonthFull) && !type.Equals(ExtendPremiumMonthShort) &&
                 !type.Equals(ExtendPremiumYearFull) && !type.Equals(ExtendPremiumYearShort))
             {
-                await ctx.RespondAsync(string.Format(
-                    Resources.OwnerCommand_ExtendPremium_IncorrectUnit, Constants.SadSmile));
+                await ctx.RespondAsync(
+                    string.Format(
+                        Resources.OwnerCommand_ExtendPremium_IncorrectUnit,
+                        Constants.SadSmile));
             }
             else
             {
@@ -148,8 +159,10 @@ namespace YukoBot.Commands
                 }
                 else
                 {
-                    await ctx.RespondAsync(string.Format(
-                        Resources.OwnerCommand_ExtendPremium_MemberNotRegistered, Constants.SadSmile));
+                    await ctx.RespondAsync(
+                        string.Format(
+                            Resources.OwnerCommand_ExtendPremium_MemberNotRegistered,
+                            Constants.SadSmile));
                 }
             }
         }

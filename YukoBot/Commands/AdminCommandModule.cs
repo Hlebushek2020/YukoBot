@@ -24,7 +24,7 @@ public class AdminCommandModule : CommandModule
     }
 
     [Command("ban")]
-    [Description("Запретить пользователю скачивать с этого сервера.")]
+    [Description("AdminCommand.Ban")]
     public async Task Ban(
         CommandContext ctx,
         [Description("Участник сервера")]
@@ -76,7 +76,7 @@ public class AdminCommandModule : CommandModule
     }
 
     [Command("unban")]
-    [Description("Удалить пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера).")]
+    [Description("AdminCommand.UnBan")]
     public async Task UnBan(
         CommandContext ctx,
         [Description("Участник сервера")]
@@ -120,7 +120,7 @@ public class AdminCommandModule : CommandModule
 
     [Command("member-ban-reason")]
     [Aliases("m-reason")]
-    [Description("Причина бана участника сервера.")]
+    [Description("AdminCommand.MemberBanReason")]
     public async Task MemberBanReason(
         CommandContext ctx,
         [Description("Участник сервера")]
@@ -167,7 +167,7 @@ public class AdminCommandModule : CommandModule
     }
 
     [Command("set-art-channel")]
-    [Description("Установить канал для поиска сообщений для команды `add-by-id`.")]
+    [Description("AdminCommand.SetArtChannel")]
     public async Task SetArtChannel(
         CommandContext ctx,
         [Description("Канал для поиска сообщений")]
@@ -197,8 +197,7 @@ public class AdminCommandModule : CommandModule
 
     [Command("add-command-response")]
     [Aliases("add-response")]
-    [Description(
-        "Отправка сообщения об успешности выполнения команды `add` на сервере (сообщение будет приходить в ЛС, а не в канал где выполнена команда).")]
+    [Description("AdminCommand.AddCommandResponse")]
     public async Task AddCommandResponse(
         CommandContext ctx,
         [Description("true - включить / false - отключить")]
@@ -232,7 +231,7 @@ public class AdminCommandModule : CommandModule
 
     [Command("notification-channel")]
     [Aliases("notif-channel")]
-    [Description("Задать канал для отправки системных уведомлений.")]
+    [Description("AdminCommand.SetNotificationChannel")]
     public async Task SetNotificationChannel(
         CommandContext ctx,
         [Description("Канал")]
@@ -257,7 +256,7 @@ public class AdminCommandModule : CommandModule
 
     [Command("on-notification")]
     [Aliases("on-notif")]
-    [Description("Включить / Отключить уведомление о включении бота.")]
+    [Description("AdminCommand.ReadyNotification")]
     public async Task ReadyNotification(
         CommandContext ctx,
         [Description("true - включить / false - выключить")]
@@ -290,7 +289,7 @@ public class AdminCommandModule : CommandModule
 
     [Command("off-notification")]
     [Aliases("off-notif")]
-    [Description("Включить / Отключить уведомление о выключении бота.")]
+    [Description("AdminCommand.ShutdownNotification")]
     public async Task ShutdownNotification(
         CommandContext ctx,
         [Description("true - включить / false - выключить")]

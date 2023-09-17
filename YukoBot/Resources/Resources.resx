@@ -87,7 +87,7 @@
     <data name="RegisteredUserCommand.BanReason.NotBanReason" xml:space="preserve">
         <value>К сожалению причина бана не была указана!</value>
     </data>
-    <data name="RegisteredUserCommand.Settings.NotBan" xml:space="preserve">
+    <data name="RegisteredUserCommand.BanReason.NotBan" xml:space="preserve">
         <value>Вы не забанены!</value>
     </data>
     <data name="RegisteredUserCommand.InfoMessagesInPM.Description.Enabled" xml:space="preserve">
@@ -380,5 +380,98 @@
     </data>
     <data name="Bot.PingService.MemberIsRegistered" xml:space="preserve">
         <value>**Подбежала и обняла {0}**</value>
+    </data>
+    <data name="AdminCommand.Ban" xml:space="preserve">
+        <value>Запретить пользователю скачивать с этого сервера.</value>
+    </data>
+    <data name="AdminCommand.UnBan" xml:space="preserve">
+        <value>Удалить пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера).</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason" xml:space="preserve">
+        <value>Причина бана участника сервера.</value>
+    </data>
+    <data name="AdminCommand.SetArtChannel" xml:space="preserve">
+        <value>Установить канал для поиска сообщений для команды `add-by-id`.</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse" xml:space="preserve">
+        <value>Отправка сообщения об успешности выполнения команды `add` на сервере (сообщение будет приходить в ЛС, а не в канал где выполнена команда).</value>
+    </data>
+    <data name="AdminCommand.SetNotificationChannel" xml:space="preserve">
+        <value>Задать канал для отправки системных уведомлений.</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification" xml:space="preserve">
+        <value>Включить / Отключить уведомление о включении бота.</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification" xml:space="preserve">
+        <value>Включить / Отключить уведомление о выключении бота.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection" xml:space="preserve">
+        <value>Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById" xml:space="preserve">
+        <value>Добавить указанное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start" xml:space="preserve">
+        <value>Задать вложенное сообщение начальным сообщением для промежутка (входит в промежуток).</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End" xml:space="preserve">
+        <value>Задать вложенное сообщение конечным сообщением для промежутка (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию. Если коллекция не указана сообщения добавляются в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection" xml:space="preserve">
+        <value>Создать новую коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection" xml:space="preserve">
+        <value>Переименовать указанную коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection" xml:space="preserve">
+        <value>Удалить коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection" xml:space="preserve">
+        <value>Удалить сообщение из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollectionRef" xml:space="preserve">
+        <value>Удалить вложенное сообщение из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection" xml:space="preserve">
+        <value>Удалить все сообщения из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowCollections" xml:space="preserve">
+        <value>Показать список коллекций.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems" xml:space="preserve">
+        <value>Показать последние 25 сообщений коллекции.</value>
+    </data>
+    <data name="OwnerCommand.Shutdown" xml:space="preserve">
+        <value>Выключить бота.</value>
+    </data>
+    <data name="OwnerCommand.Status" xml:space="preserve">
+        <value>Сведения о боте.</value>
+    </data>
+    <data name="OwnerCommand.SetApp" xml:space="preserve">
+        <value>Установить новую ссылку для команды `app`.</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium" xml:space="preserve">
+        <value>Продлить премиум доступ.</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings" xml:space="preserve">
+        <value>Показать настройки для подключения к боту.</value>
+    </data>
+    <data name="RegisteredUserCommand.GetClientApp" xml:space="preserve">
+        <value>Показать ссылку на скачивание актуальной версии клиента.</value>
+    </data>
+    <data name="RegisteredUserCommand.BanReason" xml:space="preserve">
+        <value>Причина бана на текущем сервере.</value>
+    </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM" xml:space="preserve">
+        <value>Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport" xml:space="preserve">
+        <value>Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой.</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile" xml:space="preserve">
+        <value>Показать информацию о моей учетной записи бота.</value>
     </data>
 </root>
