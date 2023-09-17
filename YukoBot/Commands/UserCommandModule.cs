@@ -32,7 +32,7 @@ namespace YukoBot.Commands
             _yukoSettings = yukoSettings;
             _logger = logger;
 
-            BotDescription = string.Format(Resources.BotDescription, _yukoSettings.BotPrefix);
+            BotDescription = string.Format(Resources.Bot_Description, _yukoSettings.BotPrefix);
         }
 
         [Command("register")]

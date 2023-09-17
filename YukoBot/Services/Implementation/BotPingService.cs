@@ -45,12 +45,15 @@ namespace YukoBot.Services.Implementation
 
                 if (isOwner || await _dbContext.Users.FindAsync(e.Message.Author.Id) != null)
                 {
-                    await e.Message.RespondAsync($"**Подбежала и обняла {messageAuthorMember.DisplayName}**");
+                    await e.Message.RespondAsync(
+                        string.Format(
+                            Resources.Bot_PingService_MemberIsRegistered,
+                            messageAuthorMember.DisplayName));
                 }
                 else
                 {
                     DiscordUser botOwnerUser = discordApplication.Owners.First();
-                    string botOwner = $"{botOwnerUser.Username}#{botOwnerUser.Discriminator}";
+                    string botOwner = botOwnerUser.Username;
 
                     try
                     {
@@ -63,7 +66,10 @@ namespace YukoBot.Services.Implementation
                     }
 
                     await e.Message.RespondAsync(
-                        $"**Спряталась за {botOwner} и смотрит на {messageAuthorMember.DisplayName}**");
+                        string.Format(
+                            Resources.Bot_PingService_MemberIsNotRegistered,
+                            botOwner,
+                            messageAuthorMember.DisplayName));
                 }
             }
         }

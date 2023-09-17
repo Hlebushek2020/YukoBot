@@ -60,6 +60,8 @@ namespace YukoBot
 
             _discordClient.Ready += DiscordClient_Ready;
 
+            _logger.LogInformation("Initializing services");
+
             _services = new ServiceCollection()
                 .AddLogging(lb => lb.AddSerilog(dispose: true))
                 .AddSingleton(_discordClient)
@@ -77,6 +79,8 @@ namespace YukoBot
 
             _dbContext = _services.GetService<YukoDbContext>();
             _notificationsService = _services.GetService<IBotNotificationsService>();
+
+            _logger.LogInformation("Initializing commands");
 
             CommandsNextExtension commands = _discordClient.UseCommandsNext(
                 new CommandsNextConfiguration
@@ -96,6 +100,7 @@ namespace YukoBot
             commands.RegisterCommands<ManagingСollectionsCommandModule>();
 
             _logger.LogInformation("Server initialization");
+
             _tcpListener = new TcpListener(
                 IPAddress.Parse(_yukoSettings.ServerInternalAddress),
                 _yukoSettings.ServerPort);
@@ -104,17 +109,11 @@ namespace YukoBot
         private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
             await sender.UpdateStatusAsync(
                 new DiscordActivity(
-                    $"на тебя {Constants.HappySmile} | {_yukoSettings.BotPrefix}help",
+                    string.Format(
+                        Resources.Bot_Activity,
+                        Constants.HappySmile,
+                        _yukoSettings.BotPrefix),
                     ActivityType.Watching));
-
-        /*
-        private Task DiscordClient_SocketErrored(DiscordClient sender, SocketErrorEventArgs e)
-        {
-            _defaultLogger.LogCritical(new EventId(0, "Discord Client: Socket Errored"), e.Exception, "");
-            Environment.Exit(1);
-            return Task.CompletedTask;
-        }
-        */
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
@@ -136,14 +135,19 @@ namespace YukoBot
 
             if (exception is ArgumentException)
             {
-                embed.WithDescription($"Простите, в команде `{command.Name}` ошибка!");
+                embed.WithDescription(string.Format(Resources.Bot_CommandErrored_ArgumentException, command.Name));
+
                 _logger.LogWarning(
-                    $"Error when executing the {e.Command.Name} command. Type: ArgumentException. Message: {
+                    $"Error when executing the {command.Name} command. Type: ArgumentException. Message: {
                         exception.Message}");
             }
             else if (exception is CommandNotFoundException commandNotFoundEx)
             {
-                embed.WithDescription($"Простите, я не знаю команды `{commandNotFoundEx.CommandName}`!");
+                embed.WithDescription(
+                    string.Format(
+                        Resources.Bot_CommandErrored_CommandNotFoundException,
+                        commandNotFoundEx.CommandName));
+
                 _logger.LogWarning(
                     $"Error when executing the {commandNotFoundEx.CommandName
                     } command. Type: CommandNotFoundException. Message: {exception.Message}");
@@ -163,8 +167,8 @@ namespace YukoBot
             }
             else
             {
-                embed.WithDescription(
-                    "Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!");
+                embed.WithDescription(Resources.Bot_CommandErrored_UnknownException);
+
                 _logger.LogError(exception, $"Error when executing the: {e.Command?.Name ?? "Unknown"}");
             }
 
@@ -176,9 +180,7 @@ namespace YukoBot
             {
                 DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
-                {
                     sendToCurrentChannel = dbGuildSettings.AddCommandResponse;
-                }
             }
 
             if (sendToCurrentChannel)

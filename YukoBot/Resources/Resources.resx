@@ -18,7 +18,7 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="BotDescription" xml:space="preserve">
+    <data name="Bot.Description" xml:space="preserve">
         <value>Привет, для того что бы узнать больше информации обо мне выполни команду `{0}info`.</value>
     </data>
     <data name="UserCommand.Register.DmTitle.Register" xml:space="preserve">
@@ -335,5 +335,50 @@
     </data>
     <data name="AdminCommand.AddCommandResponse.Disabled" xml:space="preserve">
         <value>Отключено!</value>
+    </data>
+    <data name="AdminCommand.SetNotificationChannel.Installed" xml:space="preserve">
+        <value>Канал успешно установлен!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.NotificationChannelIsNotSet" xml:space="preserve">
+        <value>Простите, я не могу отправлять уведомления о том, когда проснусь. Канал для отправки системных уведомлений не задан!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.Enabled" xml:space="preserve">
+        <value>Уведомления включены!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.Disabled" xml:space="preserve">
+        <value>Уведомления отключены!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.NotificationChannelIsNotSet" xml:space="preserve">
+        <value>Простите, я не могу отправлять уведомления о том, когда пойду баиньки. Канал для отправки системных уведомлений не задан!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.Enabled" xml:space="preserve">
+        <value>Уведомления включены!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.Disabled" xml:space="preserve">
+        <value>Уведомления отключены!</value>
+    </data>
+    <data name="Bot.Activity" xml:space="preserve">
+        <value>на тебя {0} | {1}help</value>
+    </data>
+    <data name="Bot.CommandErrored.ArgumentException" xml:space="preserve">
+        <value>Простите, в команде `{0}` ошибка!</value>
+    </data>
+    <data name="Bot.CommandErrored.CommandNotFoundException" xml:space="preserve">
+        <value>Простите, я не знаю команды `{0}`!</value>
+    </data>
+    <data name="Bot.CommandErrored.UnknownException" xml:space="preserve">
+        <value>Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!</value>
+    </data>
+    <data name="Bot.NotificationsService.Ready" xml:space="preserve">
+        <value>Новый день - новая возможность! Я готова вас радовать!</value>
+    </data>
+    <data name="Bot.NotificationsService.Shutdown" xml:space="preserve">
+        <value>Хорошего дня (вечера)! Хозяин сказал мне отдыхать по причине: {0}</value>
+    </data>
+    <data name="Bot.PingService.MemberIsNotRegistered" xml:space="preserve">
+        <value>**Спряталась за {0} и смотрит на {1}**</value>
+    </data>
+    <data name="Bot.PingService.MemberIsRegistered" xml:space="preserve">
+        <value>**Подбежала и обняла {0}**</value>
     </data>
 </root>

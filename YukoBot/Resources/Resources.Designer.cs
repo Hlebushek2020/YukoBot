@@ -150,11 +150,74 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Уведомления отключены!.
+        /// </summary>
+        internal static string AdminCommand_ReadyNotification_Disabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.ReadyNotification.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Уведомления включены!.
+        /// </summary>
+        internal static string AdminCommand_ReadyNotification_Enabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.ReadyNotification.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не могу отправлять уведомления о том, когда проснусь. Канал для отправки системных уведомлений не задан!.
+        /// </summary>
+        internal static string AdminCommand_ReadyNotification_NotificationChannelIsNotSet {
+            get {
+                return ResourceManager.GetString("AdminCommand.ReadyNotification.NotificationChannelIsNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Канал для поиска сообщений успешно установлен!.
         /// </summary>
         internal static string AdminCommand_SetArtChannel_Installed {
             get {
                 return ResourceManager.GetString("AdminCommand.SetArtChannel.Installed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Канал успешно установлен!.
+        /// </summary>
+        internal static string AdminCommand_SetNotificationChannel_Installed {
+            get {
+                return ResourceManager.GetString("AdminCommand.SetNotificationChannel.Installed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Уведомления отключены!.
+        /// </summary>
+        internal static string AdminCommand_ShutdownNotification_Disabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.ShutdownNotification.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Уведомления включены!.
+        /// </summary>
+        internal static string AdminCommand_ShutdownNotification_Enabled {
+            get {
+                return ResourceManager.GetString("AdminCommand.ShutdownNotification.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не могу отправлять уведомления о том, когда пойду баиньки. Канал для отправки системных уведомлений не задан!.
+        /// </summary>
+        internal static string AdminCommand_ShutdownNotification_NotificationChannelIsNotSet {
+            get {
+                return ResourceManager.GetString("AdminCommand.ShutdownNotification.NotificationChannelIsNotSet", resourceCulture);
             }
         }
         
@@ -195,11 +258,83 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to на тебя {0} | {1}help.
+        /// </summary>
+        internal static string Bot_Activity {
+            get {
+                return ResourceManager.GetString("Bot.Activity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, в команде `{0}` ошибка!.
+        /// </summary>
+        internal static string Bot_CommandErrored_ArgumentException {
+            get {
+                return ResourceManager.GetString("Bot.CommandErrored.ArgumentException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, я не знаю команды `{0}`!.
+        /// </summary>
+        internal static string Bot_CommandErrored_CommandNotFoundException {
+            get {
+                return ResourceManager.GetString("Bot.CommandErrored.CommandNotFoundException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!.
+        /// </summary>
+        internal static string Bot_CommandErrored_UnknownException {
+            get {
+                return ResourceManager.GetString("Bot.CommandErrored.UnknownException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Привет, для того что бы узнать больше информации обо мне выполни команду `{0}info`..
         /// </summary>
-        internal static string BotDescription {
+        internal static string Bot_Description {
             get {
-                return ResourceManager.GetString("BotDescription", resourceCulture);
+                return ResourceManager.GetString("Bot.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новый день - новая возможность! Я готова вас радовать!.
+        /// </summary>
+        internal static string Bot_NotificationsService_Ready {
+            get {
+                return ResourceManager.GetString("Bot.NotificationsService.Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хорошего дня (вечера)! Хозяин сказал мне отдыхать по причине: {0}.
+        /// </summary>
+        internal static string Bot_NotificationsService_Shutdown {
+            get {
+                return ResourceManager.GetString("Bot.NotificationsService.Shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **Спряталась за {0} и смотрит на {1}**.
+        /// </summary>
+        internal static string Bot_PingService_MemberIsNotRegistered {
+            get {
+                return ResourceManager.GetString("Bot.PingService.MemberIsNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **Подбежала и обняла {0}**.
+        /// </summary>
+        internal static string Bot_PingService_MemberIsRegistered {
+            get {
+                return ResourceManager.GetString("Bot.PingService.MemberIsRegistered", resourceCulture);
             }
         }
         

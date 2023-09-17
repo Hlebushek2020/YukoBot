@@ -239,7 +239,7 @@ public class AdminCommandModule : CommandModule
         DiscordChannel target)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-            .WithHappyMessage(ctx.Member.DisplayName, "Канал успешно установлен!");
+            .WithHappyMessage(ctx.Member.DisplayName, Resources.AdminCommand_SetNotificationChannel_Installed);
 
         DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
         if (guildSettings == null)
@@ -266,7 +266,7 @@ public class AdminCommandModule : CommandModule
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
             .WithSadMessage(
                 ctx.Member.DisplayName,
-                "Простите, я не могу отправлять уведомления о том, когда проснусь. Канал для отправки системных уведомлений не задан!");
+                Resources.AdminCommand_ReadyNotification_NotificationChannelIsNotSet);
 
         DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
 
@@ -280,7 +280,9 @@ public class AdminCommandModule : CommandModule
 
             discordEmbed.WithHappyMessage(
                 ctx.Member.DisplayName,
-                $"Уведомления {(isEnabled ? "включены" : "отключены")}!");
+                isEnabled
+                    ? Resources.AdminCommand_ReadyNotification_Enabled
+                    : Resources.AdminCommand_ReadyNotification_Disabled);
         }
 
         await ctx.RespondAsync(discordEmbed);
@@ -297,7 +299,7 @@ public class AdminCommandModule : CommandModule
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
             .WithSadMessage(
                 ctx.Member.DisplayName,
-                "Простите, я не могу отправлять уведомления о том, когда пойду баиньки. Канал для отправки системных уведомлений не задан!");
+                Resources.AdminCommand_ShutdownNotification_NotificationChannelIsNotSet);
 
         DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
 
@@ -311,7 +313,9 @@ public class AdminCommandModule : CommandModule
 
             discordEmbed.WithHappyMessage(
                 ctx.Member.DisplayName,
-                $"Уведомления {(isEnabled ? "включены" : "отключены")}!");
+                isEnabled
+                    ? Resources.AdminCommand_ShutdownNotification_Enabled
+                    : Resources.AdminCommand_ShutdownNotification_Disabled);
         }
 
         await ctx.RespondAsync(discordEmbed);
