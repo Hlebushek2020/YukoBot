@@ -411,6 +411,51 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Команды этой категории доступны для зарегистрированных и не забаненых (на этом сервере) пользователей..
+        /// </summary>
+        internal static string CommandCategory_CollectionManagement_AccessError {
+            get {
+                return ResourceManager.GetString("CommandCategory.CollectionManagement.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управление коллекциями.
+        /// </summary>
+        internal static string CommandCategory_CollectionManagement_Title {
+            get {
+                return ResourceManager.GetString("CommandCategory.CollectionManagement.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команды этой категории доступны администратору гильдии и владельцу бота..
+        /// </summary>
+        internal static string CommandCategory_Management_AccessError {
+            get {
+                return ResourceManager.GetString("CommandCategory.Management.AccessError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команды управления.
+        /// </summary>
+        internal static string CommandCategory_Management_Title {
+            get {
+                return ResourceManager.GetString("CommandCategory.Management.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пользовательские команды.
+        /// </summary>
+        internal static string CommandCategory_User_Title {
+            get {
+                return ResourceManager.GetString("CommandCategory.User.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!.
         /// </summary>
         internal static string ManagingСollectionsCommand_AccessError {
@@ -1267,6 +1312,24 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Получить аватар пользователя.
+        /// </summary>
+        internal static string UserCommand_Avatar {
+            get {
+                return ResourceManager.GetString("UserCommand.Avatar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание..
+        /// </summary>
+        internal static string UserCommand_Help {
+            get {
+                return ResourceManager.GetString("UserCommand.Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **Алиасы:**.
         /// </summary>
         internal static string UserCommand_Help_AliasesSection {
@@ -1299,6 +1362,15 @@ namespace YukoBot {
         internal static string UserCommand_Help_OptionsSection {
             get {
                 return ResourceManager.GetString("UserCommand.Help.OptionsSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Информация о боте и его возможностях..
+        /// </summary>
+        internal static string UserCommand_Info {
+            get {
+                return ResourceManager.GetString("UserCommand.Info", resourceCulture);
             }
         }
         
@@ -1353,6 +1425,15 @@ namespace YukoBot {
         internal static string UserCommand_Info_FieldPremiumAccess_Title {
             get {
                 return ResourceManager.GetString("UserCommand.Info.FieldPremiumAccess.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль..
+        /// </summary>
+        internal static string UserCommand_Register {
+            get {
+                return ResourceManager.GetString("UserCommand.Register", resourceCulture);
             }
         }
         

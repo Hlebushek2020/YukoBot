@@ -474,4 +474,31 @@
     <data name="RegisteredUserCommand.Profile" xml:space="preserve">
         <value>Показать информацию о моей учетной записи бота.</value>
     </data>
+    <data name="CommandCategory.User.Title" xml:space="preserve">
+        <value>Пользовательские команды</value>
+    </data>
+    <data name="CommandCategory.Management.Title" xml:space="preserve">
+        <value>Команды управления</value>
+    </data>
+    <data name="CommandCategory.CollectionManagement.Title" xml:space="preserve">
+        <value>Управление коллекциями</value>
+    </data>
+    <data name="CommandCategory.Management.AccessError" xml:space="preserve">
+        <value>Команды этой категории доступны администратору гильдии и владельцу бота.</value>
+    </data>
+    <data name="CommandCategory.CollectionManagement.AccessError" xml:space="preserve">
+        <value>Команды этой категории доступны для зарегистрированных и не забаненых (на этом сервере) пользователей.</value>
+    </data>
+    <data name="UserCommand.Register" xml:space="preserve">
+        <value>Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.</value>
+    </data>
+    <data name="UserCommand.Help" xml:space="preserve">
+        <value>Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.</value>
+    </data>
+    <data name="UserCommand.Info" xml:space="preserve">
+        <value>Информация о боте и его возможностях.</value>
+    </data>
+    <data name="UserCommand.Avatar" xml:space="preserve">
+        <value>Получить аватар пользователя</value>
+    </data>
 </root>

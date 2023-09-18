@@ -37,8 +37,7 @@ namespace YukoBot.Commands
 
         [Command("register")]
         [Aliases("reg")]
-        [Description(
-            "Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
+        [Description("UserCommand.Register")]
         public async Task Register(CommandContext ctx)
         {
             YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
@@ -104,8 +103,7 @@ namespace YukoBot.Commands
         }
 
         [Command("help")]
-        [Description(
-            "Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
+        [Description("UserCommand.Help")]
         public async Task Help(
             CommandContext ctx,
             [Description("Категория или команда")]
@@ -113,13 +111,18 @@ namespace YukoBot.Commands
         {
             if (!string.IsNullOrWhiteSpace(categoryOrCommand))
             {
-                if (CheckHelpCategoryCommand(categoryOrCommand))
+                if (TryGetRegisteredСategory(categoryOrCommand, out Category category))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                         .Where(
-                            x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category
-                                 .HelpCommand.Equals(categoryOrCommand) &&
-                                 !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
+                            x =>
+                            {
+                                BaseCommandModule baseCommandModule = (x.Module as SingletonCommandModule)?.Instance;
+                                Category commandCategory = (baseCommandModule as CommandModule)?.Category;
+
+                                return category.Equals(commandCategory) && !x.IsHidden &&
+                                       !x.RunChecksAsync(ctx, true).Result.Any();
+                            });
 
                     SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();
 
@@ -135,8 +138,6 @@ namespace YukoBot.Commands
                     }
 
                     DiscordEmbedBuilder embed;
-
-                    Category category = GetCategoryByHelpCommand(categoryOrCommand);
 
                     if (descriptionByCommand.Count > 0)
                     {
@@ -237,21 +238,21 @@ namespace YukoBot.Commands
 
                 foreach (Command command in commands)
                 {
-                    CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
+                    CommandModule yukoModule = (command.Module as SingletonCommandModule)?.Instance as CommandModule;
 
-                    string categoryName = yukoModule.Category.Name;
+                    string categoryName = yukoModule?.Category.Name;
 
-                    if (string.IsNullOrEmpty(categoryName))
-                        continue;
+                    if (!string.IsNullOrEmpty(categoryName))
+                    {
+                        if (!sortedCommandsByCategory.ContainsKey(categoryName))
+                            sortedCommandsByCategory.Add(categoryName, new SortedSet<string>());
 
-                    if (!sortedCommandsByCategory.ContainsKey(categoryName))
-                        sortedCommandsByCategory.Add(categoryName, new SortedSet<string>());
+                        string aliases = string.Empty;
+                        if (command.Aliases.Count > 0)
+                            aliases = $" ({string.Join(' ', command.Aliases)})";
 
-                    string aliases = string.Empty;
-                    if (command.Aliases.Count > 0)
-                        aliases = $" ({string.Join(' ', command.Aliases)})";
-
-                    sortedCommandsByCategory[categoryName].Add($"`{command.Name}{aliases}`");
+                        sortedCommandsByCategory[categoryName].Add($"`{command.Name}{aliases}`");
+                    }
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
@@ -261,7 +262,7 @@ namespace YukoBot.Commands
                 foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
-                    string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
+                    string fieldName = $"{categoryName} ({_yukoSettings.BotPrefix}help {mInfo.HelpCommand})";
                     embed.AddField(
                         fieldName,
                         sortedCommandsByCategory.TryGetValue(categoryName, out SortedSet<string> sortedCommands)
@@ -274,7 +275,7 @@ namespace YukoBot.Commands
         }
 
         [Command("info")]
-        [Description("Информация о боте и его возможностях.")]
+        [Description("UserCommand.Info")]
         public async Task Info(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -299,7 +300,7 @@ namespace YukoBot.Commands
 
         [Command("avatar")]
         [Aliases("ava")]
-        [Description("Получить аватар пользователя")]
+        [Description("UserCommand.Avatar")]
         public async Task Avatar(
             CommandContext ctx,
             [Description("Участник сервера")]
