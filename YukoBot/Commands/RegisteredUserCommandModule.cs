@@ -119,7 +119,7 @@ namespace YukoBot.Commands
         }
 
         [Command("bug-report")]
-        [Description("Сообщить об ошибке.")]
+        [Description("RegisteredUserCommand.BugReport")]
         public async Task BugReport(
             CommandContext ctx,
             [Description("RegisteredUserCommand.BugReport"), RemainingText]

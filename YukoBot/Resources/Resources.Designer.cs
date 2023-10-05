@@ -1105,7 +1105,7 @@ namespace YukoBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой..
+        ///   Looks up a localized string similar to Сообщить об ошибке..
         /// </summary>
         internal static string RegisteredUserCommand_BugReport {
             get {
