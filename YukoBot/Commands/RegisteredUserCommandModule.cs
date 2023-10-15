@@ -97,7 +97,7 @@ namespace YukoBot.Commands
         [Description("RegisteredUserCommand.InfoMessagesInPM")]
         public async Task InfoMessagesInPm(
             CommandContext ctx,
-            [Description("true - включить / false - отключить")]
+            [Description("CommandArg.IsEnabled")]
             bool isEnabled)
         {
             DbUser dbUser = await _dbContext.Users.FindAsync(ctx.Member.Id);
@@ -122,7 +122,7 @@ namespace YukoBot.Commands
         [Description("RegisteredUserCommand.BugReport")]
         public async Task BugReport(
             CommandContext ctx,
-            [Description("RegisteredUserCommand.BugReport"), RemainingText]
+            [Description("CommandArg.BugReportDescription"), RemainingText]
             string description)
         {
             DiscordEmbedBuilder discordEmbed = null;

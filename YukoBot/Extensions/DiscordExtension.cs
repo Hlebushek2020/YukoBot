@@ -50,10 +50,16 @@ namespace YukoBot.Extensions
                 .WithColor(Constants.ErrorColor)
                 .WithDescription(description);
 
-        public static string GetLocalizedDescription(this Command command)
+        public static string GetLocalizedDescription(this Command command) =>
+            GetLocalizedDescription(command.Description);
+
+        public static string GetLocalizedDescription(this CommandArgument commandArgument) =>
+            GetLocalizedDescription(commandArgument.Description);
+
+        private static string GetLocalizedDescription(string key)
         {
-            string localizedDescription = Resources.ResourceManager.GetString(command.Description);
-            return string.IsNullOrWhiteSpace(localizedDescription) ? command.Description : localizedDescription;
+            string localizedDescription = Resources.ResourceManager.GetString(key);
+            return string.IsNullOrWhiteSpace(localizedDescription) ? key : localizedDescription;
         }
     }
 }

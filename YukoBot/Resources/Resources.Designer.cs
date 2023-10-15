@@ -411,6 +411,150 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Канал для поиска сообщений.
+        /// </summary>
+        internal static string CommandArg_ArtChannel {
+            get {
+                return ResourceManager.GetString("CommandArg.ArtChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой..
+        /// </summary>
+        internal static string CommandArg_BugReportDescription {
+            get {
+                return ResourceManager.GetString("CommandArg.BugReportDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Категория или команда.
+        /// </summary>
+        internal static string CommandArg_CategoryOrCommand {
+            get {
+                return ResourceManager.GetString("CommandArg.CategoryOrCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Канал.
+        /// </summary>
+        internal static string CommandArg_Channel {
+            get {
+                return ResourceManager.GetString("CommandArg.Channel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id коллекции.
+        /// </summary>
+        internal static string CommandArg_CollectionId {
+            get {
+                return ResourceManager.GetString("CommandArg.CollectionId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Название коллекции.
+        /// </summary>
+        internal static string CommandArg_CollectionName {
+            get {
+                return ResourceManager.GetString("CommandArg.CollectionName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новое название коллекции.
+        /// </summary>
+        internal static string CommandArg_CollectionNewName_v1 {
+            get {
+                return ResourceManager.GetString("CommandArg.CollectionNewName_v1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: &quot;.
+        /// </summary>
+        internal static string CommandArg_CollectionNewName_v2 {
+            get {
+                return ResourceManager.GetString("CommandArg.CollectionNewName_v2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: &quot;.
+        /// </summary>
+        internal static string CommandArg_CollectionOldName {
+            get {
+                return ResourceManager.GetString("CommandArg.CollectionOldName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение..
+        /// </summary>
+        internal static string CommandArg_ExtendPremiumValue {
+            get {
+                return ResourceManager.GetString("CommandArg.ExtendPremiumValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год..
+        /// </summary>
+        internal static string CommandArg_ExtendPremiumValueType {
+            get {
+                return ResourceManager.GetString("CommandArg.ExtendPremiumValueType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to true - включить / false - отключить.
+        /// </summary>
+        internal static string CommandArg_IsEnabled {
+            get {
+                return ResourceManager.GetString("CommandArg.IsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Участник сервера.
+        /// </summary>
+        internal static string CommandArg_Member {
+            get {
+                return ResourceManager.GetString("CommandArg.Member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id сообщения.
+        /// </summary>
+        internal static string CommandArg_MessageId {
+            get {
+                return ResourceManager.GetString("CommandArg.MessageId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Название или Id коллекции.
+        /// </summary>
+        internal static string CommandArg_NameOrIdCollection {
+            get {
+                return ResourceManager.GetString("CommandArg.NameOrIdCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Причина.
+        /// </summary>
+        internal static string CommandArg_Reason {
+            get {
+                return ResourceManager.GetString("CommandArg.Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Команды этой категории доступны для зарегистрированных и не забаненых (на этом сервере) пользователей..
         /// </summary>
         internal static string CommandCategory_CollectionManagement_AccessError {

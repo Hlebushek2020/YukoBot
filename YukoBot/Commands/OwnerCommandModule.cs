@@ -38,7 +38,7 @@ namespace YukoBot.Commands
         [Description("OwnerCommand.Shutdown")]
         public async Task Shutdown(
             CommandContext ctx,
-            [Description("Причина выключения бота"), RemainingText]
+            [Description("CommandArg.Reason"), RemainingText]
             string reason)
         {
             if (string.IsNullOrWhiteSpace(reason))
@@ -105,13 +105,11 @@ namespace YukoBot.Commands
         [Description("OwnerCommand.ExtendPremium")]
         public async Task ExtendPremium(
             CommandContext ctx,
-            [Description("Участник сервера (гильдии).")]
+            [Description("CommandArg.Member")]
             DiscordMember discordMember,
-            [Description(
-                "Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.")]
+            [Description("CommandArg.ExtendPremiumValue")]
             int count,
-            [Description(
-                "Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.")]
+            [Description("CommandArg.ExtendPremiumValueType")]
             string type)
         {
             type = type.ToLower();

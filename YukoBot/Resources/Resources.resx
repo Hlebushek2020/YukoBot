@@ -501,4 +501,52 @@
     <data name="UserCommand.Avatar" xml:space="preserve">
         <value>Получить аватар пользователя</value>
     </data>
+    <data name="CommandArg.Member" xml:space="preserve">
+        <value>Участник сервера</value>
+    </data>
+    <data name="CommandArg.Reason" xml:space="preserve">
+        <value>Причина</value>
+    </data>
+    <data name="CommandArg.ArtChannel" xml:space="preserve">
+        <value>Канал для поиска сообщений</value>
+    </data>
+    <data name="CommandArg.IsEnabled" xml:space="preserve">
+        <value>true - включить / false - отключить</value>
+    </data>
+    <data name="CommandArg.Channel" xml:space="preserve">
+        <value>Канал</value>
+    </data>
+    <data name="CommandArg.NameOrIdCollection" xml:space="preserve">
+        <value>Название или Id коллекции</value>
+    </data>
+    <data name="CommandArg.MessageId" xml:space="preserve">
+        <value>Id сообщения</value>
+    </data>
+    <data name="CommandArg.CollectionName" xml:space="preserve">
+        <value>Название коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionId" xml:space="preserve">
+        <value>Id коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionNewName_v1" xml:space="preserve">
+        <value>Новое название коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionNewName_v2" xml:space="preserve">
+        <value>Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: "</value>
+    </data>
+    <data name="CommandArg.CollectionOldName" xml:space="preserve">
+        <value>Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: "</value>
+    </data>
+    <data name="CommandArg.ExtendPremiumValue" xml:space="preserve">
+        <value>Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.</value>
+    </data>
+    <data name="CommandArg.ExtendPremiumValueType" xml:space="preserve">
+        <value>Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.</value>
+    </data>
+    <data name="CommandArg.BugReportDescription" xml:space="preserve">
+        <value>Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой.</value>
+    </data>
+    <data name="CommandArg.CategoryOrCommand" xml:space="preserve">
+        <value>Категория или команда</value>
+    </data>
 </root>

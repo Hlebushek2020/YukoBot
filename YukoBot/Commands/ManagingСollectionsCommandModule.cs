@@ -47,7 +47,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddToCollection")]
         public async Task AddToCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -74,9 +74,9 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddToCollectionById")]
         public async Task AddToCollectionById(
             CommandContext ctx,
-            [Description("Id сообщения")]
+            [Description("CommandArg.MessageId")]
             ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -169,7 +169,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.End")]
         public async Task End(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -268,7 +268,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddCollection")]
         public async Task AddCollection(
             CommandContext ctx,
-            [Description("Название коллекции"), RemainingText]
+            [Description("CommandArg.CollectionNameи"), RemainingText]
             string collectionName)
         {
             try
@@ -314,9 +314,9 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.RenameCollection")]
         public async Task RenameCollection(
             CommandContext ctx,
-            [Description("Id коллекции")]
+            [Description("CommandArg.CollectionId")]
             ulong collectionId,
-            [Description("Новое название коллекции"), RemainingText]
+            [Description("CommandArg.CollectionNewName_v1"), RemainingText]
             string newName)
         {
             try
@@ -334,11 +334,9 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.RenameCollection")]
         public async Task RenameCollection(
             CommandContext ctx,
-            [Description(
-                "Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")]
+            [Description("CommandArg.CollectionOldName")]
             string oldName,
-            [Description(
-                "Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")]
+            [Description("CommandArg.CollectionNewName_v2")]
             string newName)
         {
             try
@@ -360,7 +358,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteCollection")]
         public async Task DeleteCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -395,9 +393,9 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteFromCollection")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("Id сообщения")]
+            [Description("CommandArg.MessageId")]
             ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -415,7 +413,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteFromCollectionRef")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -441,7 +439,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.ClearCollection")]
         public async Task ClearCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -511,7 +509,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.ShowItems")]
         public async Task ShowItems(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;

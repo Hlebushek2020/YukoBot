@@ -106,7 +106,7 @@ namespace YukoBot.Commands
         [Description("UserCommand.Help")]
         public async Task Help(
             CommandContext ctx,
-            [Description("Категория или команда")]
+            [Description("CommandArg.CategoryOrCommand")]
             string categoryOrCommand = "")
         {
             if (!string.IsNullOrWhiteSpace(categoryOrCommand))
@@ -215,7 +215,7 @@ namespace YukoBot.Commands
                                     ? string.Format(resOptionalArgument, argument.DefaultValue)
                                     : string.Empty;
                                 descriptionBuilder.AppendLine(
-                                    $"`{argument.Name}`: {argument.Description}{defaultValue}");
+                                    $"`{argument.Name}`: {argument.GetLocalizedDescription()}{defaultValue}");
                             }
                             descriptionBuilder.AppendLine();
                         }
@@ -303,7 +303,7 @@ namespace YukoBot.Commands
         [Description("UserCommand.Avatar")]
         public async Task Avatar(
             CommandContext ctx,
-            [Description("Участник сервера")]
+            [Description("CommandArg.Member")]
             DiscordMember member)
         {
             YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);

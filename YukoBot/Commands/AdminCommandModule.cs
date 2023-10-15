@@ -27,9 +27,9 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.Ban")]
     public async Task Ban(
         CommandContext ctx,
-        [Description("Участник сервера")]
+        [Description("CommandArg.Member")]
         DiscordMember member,
-        [Description("Причина"), RemainingText]
+        [Description("CommandArg.Reason"), RemainingText]
         string reason = "")
     {
         DiscordEmbedBuilder discordEmbed = null;
@@ -79,7 +79,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.UnBan")]
     public async Task UnBan(
         CommandContext ctx,
-        [Description("Участник сервера")]
+        [Description("CommandArg.Member")]
         DiscordMember member)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder();
@@ -123,7 +123,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.MemberBanReason")]
     public async Task MemberBanReason(
         CommandContext ctx,
-        [Description("Участник сервера")]
+        [Description("CommandArg.Member")]
         DiscordMember member)
     {
         DiscordEmbedBuilder discordEmbed = null;
@@ -170,7 +170,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.SetArtChannel")]
     public async Task SetArtChannel(
         CommandContext ctx,
-        [Description("Канал для поиска сообщений")]
+        [Description("CommandArg.ArtChannel")]
         DiscordChannel сhannel)
     {
         DbGuildSettings guildArtChannel = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
@@ -200,7 +200,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.AddCommandResponse")]
     public async Task AddCommandResponse(
         CommandContext ctx,
-        [Description("true - включить / false - отключить")]
+        [Description("CommandArg.IsEnabled")]
         bool isEnabled)
     {
         DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
@@ -234,7 +234,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.SetNotificationChannel")]
     public async Task SetNotificationChannel(
         CommandContext ctx,
-        [Description("Канал")]
+        [Description("CommandArg.Channel")]
         DiscordChannel target)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -259,7 +259,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.ReadyNotification")]
     public async Task ReadyNotification(
         CommandContext ctx,
-        [Description("true - включить / false - выключить")]
+        [Description("CommandArg.IsEnabled")]
         bool isEnabled)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -292,7 +292,7 @@ public class AdminCommandModule : CommandModule
     [Description("AdminCommand.ShutdownNotification")]
     public async Task ShutdownNotification(
         CommandContext ctx,
-        [Description("true - включить / false - выключить")]
+        [Description("CommandArg.IsEnabled")]
         bool isEnabled)
     {
         DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
