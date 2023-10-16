@@ -170,8 +170,6 @@ namespace YukoBot.Commands
                     if (failedChecks.Any())
                         throw new ChecksFailedException(command, ctx, failedChecks);
 
-                    StringBuilder descriptionBuilder = new StringBuilder();
-
                     bool countOverloads = command.Overloads.Count > 1;
 
                     string resOptionsSection = Resources.UserCommand_Help_OptionsSection;
@@ -179,22 +177,20 @@ namespace YukoBot.Commands
                     string resArgumentsSection = Resources.UserCommand_Help_ArgumentsSection;
                     string resOptionalArgument = Resources.UserCommand_Help_OptionalArgument;
 
-                    string commandDescription = command.GetLocalizedDescription();
+                    StringBuilder descriptionBuilder = new StringBuilder();
+                    descriptionBuilder.AppendLine(command.GetLocalizedDescription());
 
                     for (int i = 0; i < command.Overloads.Count; i++)
                     {
                         CommandOverload commandOverload = command.Overloads[i];
 
                         if (countOverloads)
-                            descriptionBuilder.AppendFormat(resOptionsSection, i + 1);
+                            descriptionBuilder.AppendLine().AppendFormat(resOptionsSection, i + 1);
 
-                        descriptionBuilder
-                            .AppendLine(
-                                $"```\n{_yukoSettings.BotPrefix} {command.Name} {string.Join(
-                                    ' ',
-                                    commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{
-                                    commandDescription}")
-                            .AppendLine();
+                        descriptionBuilder.AppendLine(
+                            $"```{_yukoSettings.BotPrefix}{command.Name} {string.Join(
+                                ' ',
+                                commandOverload.Arguments.Select(x => $"[{x.Name}]"))}```");
 
                         if (command.Aliases?.Count != 0)
                         {
