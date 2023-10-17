@@ -173,12 +173,21 @@ namespace YukoBot.Commands
                     bool countOverloads = command.Overloads.Count > 1;
 
                     string resOptionsSection = Resources.UserCommand_Help_OptionsSection;
-                    string resAliasesSection = Resources.UserCommand_Help_AliasesSection;
                     string resArgumentsSection = Resources.UserCommand_Help_ArgumentsSection;
                     string resOptionalArgument = Resources.UserCommand_Help_OptionalArgument;
 
                     StringBuilder descriptionBuilder = new StringBuilder();
                     descriptionBuilder.AppendLine(command.GetLocalizedDescription());
+
+                    if (command.Aliases?.Count != 0)
+                    {
+                        descriptionBuilder.AppendLine()
+                            .AppendLine(Resources.UserCommand_Help_AliasesSection);
+                        foreach (string alias in command.Aliases)
+                        {
+                            descriptionBuilder.Append($"{alias} ");
+                        }
+                    }
 
                     for (int i = 0; i < command.Overloads.Count; i++)
                     {
@@ -192,16 +201,6 @@ namespace YukoBot.Commands
                                 ' ',
                                 commandOverload.Arguments.Select(x => $"[{x.Name}]"))}```");
 
-                        if (command.Aliases?.Count != 0)
-                        {
-                            descriptionBuilder.AppendLine(resAliasesSection);
-                            foreach (string alias in command.Aliases)
-                            {
-                                descriptionBuilder.Append($"{alias} ");
-                            }
-                            descriptionBuilder.AppendLine().AppendLine();
-                        }
-
                         if (commandOverload.Arguments.Count != 0)
                         {
                             descriptionBuilder.AppendLine(resArgumentsSection);
@@ -213,7 +212,6 @@ namespace YukoBot.Commands
                                 descriptionBuilder.AppendLine(
                                     $"`{argument.Name}`: {argument.GetLocalizedDescription()}{defaultValue}");
                             }
-                            descriptionBuilder.AppendLine();
                         }
                     }
 
