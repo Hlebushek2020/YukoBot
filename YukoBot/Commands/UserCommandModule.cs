@@ -182,11 +182,8 @@ namespace YukoBot.Commands
                     if (command.Aliases?.Count != 0)
                     {
                         descriptionBuilder.AppendLine()
-                            .AppendLine(Resources.UserCommand_Help_AliasesSection);
-                        foreach (string alias in command.Aliases)
-                        {
-                            descriptionBuilder.Append($"{alias} ");
-                        }
+                            .AppendLine(Resources.UserCommand_Help_AliasesSection)
+                            .AppendLine(string.Join(", ", command.Aliases));
                     }
 
                     for (int i = 0; i < command.Overloads.Count; i++)
@@ -194,7 +191,7 @@ namespace YukoBot.Commands
                         CommandOverload commandOverload = command.Overloads[i];
 
                         if (countOverloads)
-                            descriptionBuilder.AppendLine().AppendFormat(resOptionsSection, i + 1);
+                            descriptionBuilder.AppendLine().AppendFormat(resOptionsSection, i + 1).AppendLine();
 
                         descriptionBuilder.AppendLine(
                             $"```{_yukoSettings.BotPrefix}{command.Name} {string.Join(
