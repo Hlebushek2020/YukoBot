@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 
 namespace YukoBot.Extensions
@@ -48,5 +49,17 @@ namespace YukoBot.Extensions
             discordEmbedBuilder.WithTitle($"{title} {Constants.SadSmile}")
                 .WithColor(Constants.ErrorColor)
                 .WithDescription(description);
+
+        public static string GetLocalizedDescription(this Command command) =>
+            GetLocalizedDescription(command.Description);
+
+        public static string GetLocalizedDescription(this CommandArgument commandArgument) =>
+            GetLocalizedDescription(commandArgument.Description);
+
+        private static string GetLocalizedDescription(string key)
+        {
+            string localizedDescription = Resources.ResourceManager.GetString(key);
+            return string.IsNullOrWhiteSpace(localizedDescription) ? key : localizedDescription;
+        }
     }
 }

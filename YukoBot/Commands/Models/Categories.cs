@@ -1,12 +1,17 @@
 ﻿namespace YukoBot.Commands.Models
 {
-    internal sealed class Categories
+    internal static class Categories
     {
-        public static Category User { get; } = new Category("Пользовательские команды", "users");
-        public static Category Management { get; } = new Category("Команды управления", "management",
-            "Команды этой категории доступны администратору гильдии и владельцу бота.");
-        public static Category CollectionManagement { get; } = new Category("Управление коллекциями",
+        public static Category User { get; } = new Category(Resources.CommandCategory_User_Title, "users");
+
+        public static Category Management { get; } = new Category(
+            Resources.CommandCategory_Management_Title,
+            "management",
+            Resources.CommandCategory_Management_AccessError);
+
+        public static Category CollectionManagement { get; } = new Category(
+            Resources.CommandCategory_CollectionManagement_Title,
             "collection-management",
-            "Команды этой категории доступны для зарегистрированных и не забаненых (на этом сервере) пользователей.");
+            Resources.CommandCategory_CollectionManagement_AccessError);
     }
 }

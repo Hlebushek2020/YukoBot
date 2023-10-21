@@ -8,7 +8,7 @@
         <Copyright>Sergey Govorunov</Copyright>
         <AssemblyVersion>6.0.0</AssemblyVersion>
         <FileVersion>6.0.0</FileVersion>
-        <InformationalVersion>6.0.0-alfa-r6</InformationalVersion>
+        <InformationalVersion>6.0.0-alfa-r7</InformationalVersion>
         <AssemblyName>YukoBot</AssemblyName>
     </PropertyGroup>
 
@@ -23,5 +23,20 @@
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Resources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
 
 </Project>

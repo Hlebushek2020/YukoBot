@@ -1,0 +1,552 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Bot.Description" xml:space="preserve">
+        <value>Привет, для того что бы узнать больше информации обо мне выполни команду `{0}info`.</value>
+    </data>
+    <data name="UserCommand.Register.DmTitle.Register" xml:space="preserve">
+        <value>Регистрация прошла успешно!</value>
+    </data>
+    <data name="UserCommand.Register.DmTitle.PasswordChange" xml:space="preserve">
+        <value>Пароль сменен!</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.Login" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmDescription.Login" xml:space="preserve">
+        <value>Используй **{0}** или **{1}**</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.Password" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="UserCommand.Register.FieldDmTitle.NewPassword" xml:space="preserve">
+        <value>Новый пароль</value>
+    </data>
+    <data name="UserCommand.Register.Description.Register" xml:space="preserve">
+        <value>Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС.</value>
+    </data>
+    <data name="UserCommand.Register.Description.PasswordChange" xml:space="preserve">
+        <value>Новый пароль от учетной записи отправлен в ЛС.</value>
+    </data>
+    <data name="UserCommand.Help.OptionsSection" xml:space="preserve">
+        <value>**__Вариант {0}__**</value>
+    </data>
+    <data name="UserCommand.Help.AliasesSection" xml:space="preserve">
+        <value>**Алиасы:**</value>
+    </data>
+    <data name="UserCommand.Help.ArgumentsSection" xml:space="preserve">
+        <value>**Аргументы:**</value>
+    </data>
+    <data name="UserCommand.Help.OptionalArgument" xml:space="preserve">
+        <value> Необязательно, по умолчанию: {0}</value>
+    </data>
+    <data name="UserCommand.Info.EmbedDescription" xml:space="preserve">
+        <value>Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) для последующего скачивания этих коллекций.</value>
+    </data>
+    <data name="UserCommand.Info.FieldCollectionManagement.Title" xml:space="preserve">
+        <value>Управление коллекциями</value>
+    </data>
+    <data name="UserCommand.Info.FieldCollectionManagement.Description" xml:space="preserve">
+        <value>Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных команд управления коллекциями воспользуйся командой `{0}help {1}`.</value>
+    </data>
+    <data name="UserCommand.Info.FieldPremiumAccess.Title" xml:space="preserve">
+        <value>Премиум доступ</value>
+    </data>
+    <data name="UserCommand.Info.FieldPremiumAccess.Description" xml:space="preserve">
+        <value>Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для скачивания вложений. На данный момент выдается моим хозяином.</value>
+    </data>
+    <data name="UserCommand.Info.FieldLinks.Title" xml:space="preserve">
+        <value>Ссылки</value>
+    </data>
+    <data name="RegisteredUserCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна для зарегистрированных пользователей!</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings.FieldHost.Title" xml:space="preserve">
+        <value>Хост</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings.FieldPort.Title" xml:space="preserve">
+        <value>Порт</value>
+    </data>
+    <data name="RegisteredUserCommand.BanReason.NotBanReason" xml:space="preserve">
+        <value>К сожалению причина бана не была указана!</value>
+    </data>
+    <data name="RegisteredUserCommand.BanReason.NotBan" xml:space="preserve">
+        <value>Вы не забанены!</value>
+    </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM.Description.Enabled" xml:space="preserve">
+        <value>Включено!</value>
+    </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM.Description.Disabled" xml:space="preserve">
+        <value>Отключено!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsEmpty" xml:space="preserve">
+        <value>Простите, нельзя отправлять пустой баг-репорт! Баг-репорт должен содержать описание и/или вложения и/или быть ответом на другое сообщение!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsSuccess" xml:space="preserve">
+        <value>Баг-репорт успешно отправлен!</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport.Description.IsDisabled" xml:space="preserve">
+        <value>Ой, эта команда отключена!</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Title" xml:space="preserve">
+        <value>Премиум:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.NotSet" xml:space="preserve">
+        <value>Нет.</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Expired" xml:space="preserve">
+        <value>Нет. Истек {0}</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldPremium.Expires" xml:space="preserve">
+        <value>Есть. Истекает {0}</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldLastLogin.Title" xml:space="preserve">
+        <value>Последний вход в приложение:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Title" xml:space="preserve">
+        <value>Необязательные уведомления:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Disabled" xml:space="preserve">
+        <value>Отключены</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldOptionalNotifications.Enabled" xml:space="preserve">
+        <value>Включены</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.Title" xml:space="preserve">
+        <value>Список текущих банов:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.ReasonNotSpecified" xml:space="preserve">
+        <value>не указана</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.FieldBanList.IsEmpty" xml:space="preserve">
+        <value>Отсутствуют</value>
+    </data>
+    <data name="OwnerCommand.Shutdown.Response" xml:space="preserve">
+        <value>Хорошо, хозяин! {0}</value>
+    </data>
+    <data name="OwnerCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна только владельцу бота!</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldAssembly.Title" xml:space="preserve">
+        <value>Сборка</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldLaunchDate.Title" xml:space="preserve">
+        <value>Дата запуска</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldWorkingHours.Title" xml:space="preserve">
+        <value>Время работы</value>
+    </data>
+    <data name="OwnerCommand.Status.FieldWorkingHours.Description" xml:space="preserve">
+        <value>{0}d, {1}h, {2}m, {3}s</value>
+    </data>
+    <data name="OwnerCommand.SetApp.Response" xml:space="preserve">
+        <value>Хозяин! Ссылка на приложение установлена! {0}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.IncorrectUnit" xml:space="preserve">
+        <value>Хозяин! Пожалуйста, укажите единицу измерения для значения! {0}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.Response" xml:space="preserve">
+        <value>Хозяин! Премиум доступ для {0} успешно продлен! {1}</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium.MemberNotRegistered" xml:space="preserve">
+        <value>Хозяин! Данный участник сервера не зарегистрирован! {0}</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ReferencedMessageNotFound" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.NoAttachments" xml:space="preserve">
+        <value>Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ExistsInCollection" xml:space="preserve">
+        <value>Простите, данное сообщение уже добавлено в коллекцию "{0}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.IsSuccess" xml:space="preserve">
+        <value>Сообщение добавлено в коллекцию "{0}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection.ErrorAddingItem" xml:space="preserve">
+        <value>Простите, во время добавления сообщения в коллекцию "{0}" произошла ошибка. Сообщение не добавлено в коллекцию!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.ErrorAddingItem" xml:space="preserve">
+        <value>Простите, во время добавления сообщения в коллекцию "{0}" произошла ошибка. Добавлены не все сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.ArtChannelNotFound" xml:space="preserve">
+        <value>Простите, канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundInArtChannel" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFoundAndArtChannelNotSet" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.MessageNotFound" xml:space="preserve">
+        <value>Простите, я не смогла найти заданное сообщение в текущем канале!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.NoArtChannelAccess" xml:space="preserve">
+        <value>Простите, у меня нет прав на чтение сообщений в канале для поиска сообщений!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById.NoChannelAccess" xml:space="preserve">
+        <value>Простите, у меня нет прав на чтение сообщений в текущем канале!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start.IsSet" xml:space="preserve">
+        <value>Начальное сообщение промежутка заданно!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start.IsNotSet" xml:space="preserve">
+        <value>Простите, не удалось задать начальное сообщение!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.StartMessageIsNotSet" xml:space="preserve">
+        <value>Пожалуйста задайте начальное сообщение промежутка!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.DifferentChannels" xml:space="preserve">
+        <value>Ой, начальное и конечное сообщение промежутка из разных каналов!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.StartOfExecution" xml:space="preserve">
+        <value>Пожалуйста подождите, после завершения операции я изменю это сообщение!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End.EndOfExecution" xml:space="preserve">
+        <value>Сообщения в коллекцию "{0}" успешно добавлены!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection.NameIsEmpty" xml:space="preserve">
+        <value>Простите, название коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection.CollectionExists" xml:space="preserve">
+        <value>Ой, у тебя уже есть такая коллекция! Id: {0}.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection.Created" xml:space="preserve">
+        <value>Коллекция создана! Id: {0}.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, переименовываемая коллекция несуществует!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.Exists" xml:space="preserve">
+        <value>Простите, коллекция с названием "{0}" уже существует!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection.Renamed" xml:space="preserve">
+        <value>Коллекция "{0}" переименована в "{1}"!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection.Deleted" xml:space="preserve">
+        <value>Коллекция "{0}" удалена!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.MessageNotFound" xml:space="preserve">
+        <value>Ой, сообщения {0} и так нет в коллекции!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.Deleted" xml:space="preserve">
+        <value>Сообщение {0} из коллекции "{1}" удалено!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.NameOrIdIsEmpty" xml:space="preserve">
+        <value>Простите, название или id коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection.Cleared" xml:space="preserve">
+        <value>Коллекция "{0}" очищена!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowCollections.IsEmpty" xml:space="preserve">
+        <value>Ой, у тебя нет не одной коллекции!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.NameOrIdIsEmpty" xml:space="preserve">
+        <value>Простите, название или id коллекции не может быть пустым!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.IsEmpty" xml:space="preserve">
+        <value>Ой, эта коллекция пустая!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems.CollectionNotFound" xml:space="preserve">
+        <value>Простите, такой коллекции нет!</value>
+    </data>
+    <data name="OwnerCommand.Shutdown.ReasonIsEmpty" xml:space="preserve">
+        <value>Простите, причина выключения не указана! {0}</value>
+    </data>
+    <data name="AdminCommand.AccessError" xml:space="preserve">
+        <value>Простите, эта команда доступна только администратору гильдии!</value>
+    </data>
+    <data name="AdminCommand.Ban.Myself" xml:space="preserve">
+        <value>Простите, самобан запрещен!</value>
+    </data>
+    <data name="AdminCommand.Ban.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, я не могу забанить незарегистрированного участника!</value>
+    </data>
+    <data name="AdminCommand.Ban.MemberIsAlreadyBanned" xml:space="preserve">
+        <value>Участник уже забанен!</value>
+    </data>
+    <data name="AdminCommand.Ban.MemberBanned" xml:space="preserve">
+        <value>Участник успешно забанен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.Myself" xml:space="preserve">
+        <value>Простите, саморазбан запрещен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, я не могу разбанить незарегистрированного участника!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberIsNotBanned" xml:space="preserve">
+        <value>Участник не забанен!</value>
+    </data>
+    <data name="AdminCommand.UnBan.MemberUnbanned" xml:space="preserve">
+        <value>Участник успешно разбанен!</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.MemberIsNotRegistered" xml:space="preserve">
+        <value>Простите, участник {0} не зарегистрирован!</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.ReasonForBanIsNotSpecified" xml:space="preserve">
+        <value>К сожалению причина бана не была указана.</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason.MemberIsNotBanned" xml:space="preserve">
+        <value>Участник {0} не забанен!</value>
+    </data>
+    <data name="AdminCommand.SetArtChannel.Installed" xml:space="preserve">
+        <value>Канал для поиска сообщений успешно установлен!</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse.Enabled" xml:space="preserve">
+        <value>Включено!</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse.Disabled" xml:space="preserve">
+        <value>Отключено!</value>
+    </data>
+    <data name="AdminCommand.SetNotificationChannel.Installed" xml:space="preserve">
+        <value>Канал успешно установлен!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.NotificationChannelIsNotSet" xml:space="preserve">
+        <value>Простите, я не могу отправлять уведомления о том, когда проснусь. Канал для отправки системных уведомлений не задан!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.Enabled" xml:space="preserve">
+        <value>Уведомления включены!</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification.Disabled" xml:space="preserve">
+        <value>Уведомления отключены!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.NotificationChannelIsNotSet" xml:space="preserve">
+        <value>Простите, я не могу отправлять уведомления о том, когда пойду баиньки. Канал для отправки системных уведомлений не задан!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.Enabled" xml:space="preserve">
+        <value>Уведомления включены!</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification.Disabled" xml:space="preserve">
+        <value>Уведомления отключены!</value>
+    </data>
+    <data name="Bot.Activity" xml:space="preserve">
+        <value>на тебя {0} | {1}help</value>
+    </data>
+    <data name="Bot.CommandErrored.ArgumentException" xml:space="preserve">
+        <value>Простите, в команде `{0}` ошибка!</value>
+    </data>
+    <data name="Bot.CommandErrored.CommandNotFoundException" xml:space="preserve">
+        <value>Простите, я не знаю команды `{0}`!</value>
+    </data>
+    <data name="Bot.CommandErrored.UnknownException" xml:space="preserve">
+        <value>Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!</value>
+    </data>
+    <data name="Bot.NotificationsService.Ready" xml:space="preserve">
+        <value>Новый день - новая возможность! Я готова вас радовать!</value>
+    </data>
+    <data name="Bot.NotificationsService.Shutdown" xml:space="preserve">
+        <value>Хорошего дня (вечера)! Хозяин сказал мне отдыхать по причине: {0}</value>
+    </data>
+    <data name="Bot.PingService.MemberIsNotRegistered" xml:space="preserve">
+        <value>**Спряталась за {0} и смотрит на {1}**</value>
+    </data>
+    <data name="Bot.PingService.MemberIsRegistered" xml:space="preserve">
+        <value>**Подбежала и обняла {0}**</value>
+    </data>
+    <data name="AdminCommand.Ban" xml:space="preserve">
+        <value>Запретить пользователю скачивать с этого сервера.</value>
+    </data>
+    <data name="AdminCommand.UnBan" xml:space="preserve">
+        <value>Удалить пользователя из забаненых (пользователю снова разрешено скачивать с этого сервера).</value>
+    </data>
+    <data name="AdminCommand.MemberBanReason" xml:space="preserve">
+        <value>Причина бана участника сервера.</value>
+    </data>
+    <data name="AdminCommand.SetArtChannel" xml:space="preserve">
+        <value>Установить канал для поиска сообщений для команды `add-by-id`.</value>
+    </data>
+    <data name="AdminCommand.AddCommandResponse" xml:space="preserve">
+        <value>Отправка сообщения об успешности выполнения команды `add` на сервере (сообщение будет приходить в ЛС, а не в канал где выполнена команда).</value>
+    </data>
+    <data name="AdminCommand.SetNotificationChannel" xml:space="preserve">
+        <value>Задать канал для отправки системных уведомлений.</value>
+    </data>
+    <data name="AdminCommand.ReadyNotification" xml:space="preserve">
+        <value>Включить / Отключить уведомление о включении бота.</value>
+    </data>
+    <data name="AdminCommand.ShutdownNotification" xml:space="preserve">
+        <value>Включить / Отключить уведомление о выключении бота.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollection" xml:space="preserve">
+        <value>Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddToCollectionById" xml:space="preserve">
+        <value>Добавить указанное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.Start" xml:space="preserve">
+        <value>Задать вложенное сообщение начальным сообщением для промежутка (входит в промежуток).</value>
+    </data>
+    <data name="ManagingСollectionsCommand.End" xml:space="preserve">
+        <value>Задать вложенное сообщение конечным сообщением для промежутка (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию. Если коллекция не указана сообщения добавляются в коллекцию по умолчанию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.AddCollection" xml:space="preserve">
+        <value>Создать новую коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.RenameCollection" xml:space="preserve">
+        <value>Переименовать указанную коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteCollection" xml:space="preserve">
+        <value>Удалить коллекцию.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection" xml:space="preserve">
+        <value>Удалить сообщение из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollectionRef" xml:space="preserve">
+        <value>Удалить вложенное сообщение из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ClearCollection" xml:space="preserve">
+        <value>Удалить все сообщения из коллекции.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.DeleteFromCollection.NoReferencedMessage" xml:space="preserve">
+        <value>Простите, нет вложенного сообщения!</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowCollections" xml:space="preserve">
+        <value>Показать список коллекций.</value>
+    </data>
+    <data name="ManagingСollectionsCommand.ShowItems" xml:space="preserve">
+        <value>Показать последние 25 сообщений коллекции.</value>
+    </data>
+    <data name="OwnerCommand.Shutdown" xml:space="preserve">
+        <value>Выключить бота.</value>
+    </data>
+    <data name="OwnerCommand.Status" xml:space="preserve">
+        <value>Сведения о боте.</value>
+    </data>
+    <data name="OwnerCommand.SetApp" xml:space="preserve">
+        <value>Установить новую ссылку для команды `app`.</value>
+    </data>
+    <data name="OwnerCommand.ExtendPremium" xml:space="preserve">
+        <value>Продлить премиум доступ.</value>
+    </data>
+    <data name="RegisteredUserCommand.Settings" xml:space="preserve">
+        <value>Показать настройки для подключения к боту.</value>
+    </data>
+    <data name="RegisteredUserCommand.GetClientApp" xml:space="preserve">
+        <value>Показать ссылку на скачивание актуальной версии клиента.</value>
+    </data>
+    <data name="RegisteredUserCommand.BanReason" xml:space="preserve">
+        <value>Причина бана на текущем сервере.</value>
+    </data>
+    <data name="RegisteredUserCommand.InfoMessagesInPM" xml:space="preserve">
+        <value>Отправка сообщения об успешности выполнения команды `add` в ЛС (работает если сообщения об успешности выполнения команды `add` отключены на сервере)</value>
+    </data>
+    <data name="RegisteredUserCommand.BugReport" xml:space="preserve">
+        <value>Сообщить об ошибке.</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile" xml:space="preserve">
+        <value>Показать информацию о моей учетной записи бота.</value>
+    </data>
+    <data name="CommandCategory.User.Title" xml:space="preserve">
+        <value>Пользовательские команды</value>
+    </data>
+    <data name="CommandCategory.Management.Title" xml:space="preserve">
+        <value>Команды управления</value>
+    </data>
+    <data name="CommandCategory.CollectionManagement.Title" xml:space="preserve">
+        <value>Управление коллекциями</value>
+    </data>
+    <data name="CommandCategory.Management.AccessError" xml:space="preserve">
+        <value>Команды этой категории доступны администратору гильдии и владельцу бота.</value>
+    </data>
+    <data name="CommandCategory.CollectionManagement.AccessError" xml:space="preserve">
+        <value>Команды этой категории доступны для зарегистрированных и не забаненых (на этом сервере) пользователей.</value>
+    </data>
+    <data name="UserCommand.Register" xml:space="preserve">
+        <value>Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.</value>
+    </data>
+    <data name="UserCommand.Help" xml:space="preserve">
+        <value>Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.</value>
+    </data>
+    <data name="UserCommand.Info" xml:space="preserve">
+        <value>Информация о боте и его возможностях.</value>
+    </data>
+    <data name="UserCommand.Avatar" xml:space="preserve">
+        <value>Получить аватар пользователя</value>
+    </data>
+    <data name="CommandArg.Member" xml:space="preserve">
+        <value>Участник сервера</value>
+    </data>
+    <data name="CommandArg.Reason" xml:space="preserve">
+        <value>Причина</value>
+    </data>
+    <data name="CommandArg.ArtChannel" xml:space="preserve">
+        <value>Канал для поиска сообщений</value>
+    </data>
+    <data name="CommandArg.IsEnabled" xml:space="preserve">
+        <value>true - включить / false - отключить</value>
+    </data>
+    <data name="CommandArg.Channel" xml:space="preserve">
+        <value>Канал</value>
+    </data>
+    <data name="CommandArg.NameOrIdCollection" xml:space="preserve">
+        <value>Название или Id коллекции</value>
+    </data>
+    <data name="CommandArg.MessageId" xml:space="preserve">
+        <value>Id сообщения</value>
+    </data>
+    <data name="CommandArg.CollectionName" xml:space="preserve">
+        <value>Название коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionId" xml:space="preserve">
+        <value>Id коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionNewName_v1" xml:space="preserve">
+        <value>Новое название коллекции</value>
+    </data>
+    <data name="CommandArg.CollectionNewName_v2" xml:space="preserve">
+        <value>Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: "</value>
+    </data>
+    <data name="CommandArg.CollectionOldName" xml:space="preserve">
+        <value>Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: "</value>
+    </data>
+    <data name="CommandArg.ExtendPremiumValue" xml:space="preserve">
+        <value>Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.</value>
+    </data>
+    <data name="CommandArg.ExtendPremiumValueType" xml:space="preserve">
+        <value>Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.</value>
+    </data>
+    <data name="CommandArg.BugReportDescription" xml:space="preserve">
+        <value>Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой.</value>
+    </data>
+    <data name="CommandArg.CategoryOrCommand" xml:space="preserve">
+        <value>Категория или команда</value>
+    </data>
+</root>

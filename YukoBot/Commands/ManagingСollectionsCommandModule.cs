@@ -34,9 +34,8 @@ namespace YukoBot.Commands
         public ManagingСollectionsCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
-            ILogger<ManagingСollectionsCommandModule> logger) : base(
-            Categories.CollectionManagement,
-            "Простите, эта команда доступна для зарегистрированных и не забаненых (на этом сервере) пользователей!")
+            ILogger<ManagingСollectionsCommandModule> logger)
+            : base(Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;
@@ -45,11 +44,10 @@ namespace YukoBot.Commands
 
         #region Command: add (Message)
         [Command("add")]
-        [Description(
-            "Добавить вложенное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
+        [Description("ManagingСollectionsCommand.AddToCollection")]
         public async Task AddToCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -58,9 +56,8 @@ namespace YukoBot.Commands
 
                 DiscordMessage message = ctx.Message.ReferencedMessage;
                 if (message == null)
-                {
-                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddToCollection_ReferencedMessageNotFound);
 
                 DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, message, nameOrId);
                 await SendSpecialMessage(ctx, discordEmbed);
@@ -74,13 +71,12 @@ namespace YukoBot.Commands
 
         #region Command: add-by-id (Message)
         [Command("add-by-id")]
-        [Description(
-            "Добавить указанное сообщение в указанную коллекцию. Если коллекция не указана сообщение добавляется в коллекцию по умолчанию.")]
+        [Description("ManagingСollectionsCommand.AddToCollectionById")]
         public async Task AddToCollectionById(
             CommandContext ctx,
-            [Description("Id сообщения")]
+            [Description("CommandArg.MessageId")]
             ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -98,7 +94,7 @@ namespace YukoBot.Commands
                     catch (NotFoundException)
                     {
                         throw new IncorrectCommandDataException(
-                            "Простите, канал для поиска сообщений по умолчанию не найден, обратитесь к администратору сервера!");
+                            Resources.ManagingСollectionsCommand_AddToCollectionById_ArtChannelNotFound);
                     }
                 }
                 DiscordMessage message;
@@ -109,27 +105,23 @@ namespace YukoBot.Commands
                 catch (NotFoundException)
                 {
                     if (artChannel)
-                    {
                         throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в канале для поиска сообщений!");
-                    }
-                    else if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
-                    {
+                            Resources.ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundInArtChannel);
+
+                    if (guildSettings == null || !guildSettings.ArtChannelId.HasValue)
                         throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в текущем канале! Канал для поиска сообщений по умолчанию не установлен, пожалуйста обратитесь к администратору сервера!");
-                    }
-                    else
-                    {
-                        throw new IncorrectCommandDataException(
-                            "Простите, я не смогла найти заданное сообщение в текущем канале!");
-                    }
+                            Resources
+                                .ManagingСollectionsCommand_AddToCollectionById_MessageNotFoundAndArtChannelNotSet);
+
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddToCollectionById_MessageNotFound);
                 }
                 catch (UnauthorizedException)
                 {
                     throw new IncorrectCommandDataException(
                         artChannel
-                            ? "Простите, у меня нет прав на чтение сообщений в канале для поиска сообщений!"
-                            : "Простите, у меня нет прав на чтение сообщений в текущем канале!");
+                            ? Resources.ManagingСollectionsCommand_AddToCollectionById_NoArtChannelAccess
+                            : Resources.ManagingСollectionsCommand_AddToCollectionById_NoChannelAccess);
                 }
 
                 DiscordEmbedBuilder discordEmbed = await AddToCollection(ctx, message, nameOrId);
@@ -144,7 +136,7 @@ namespace YukoBot.Commands
 
         #region Command add-range (Message)
         [Command("start")]
-        [Description("Задать вложенное сообщение начальным сообщением для промежутка (входит в промежуток).")]
+        [Description("ManagingСollectionsCommand.Start")]
         public async Task Start(CommandContext ctx)
         {
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
@@ -156,27 +148,28 @@ namespace YukoBot.Commands
                 RangeStartInfo rangeStartInfo = new RangeStartInfo(message, ctx.Channel);
                 if (_clientRanges.AddOrUpdate(ctx.Member.Id, rangeStartInfo, (k, v) => rangeStartInfo) != null)
                 {
-                    discordEmbed.WithHappyMessage(ctx.Member.DisplayName, "Начальное сообщение промежутка заданно!");
+                    discordEmbed.WithHappyMessage(
+                        ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_Start_IsSet);
                 }
                 else
                 {
-                    discordEmbed.WithDescription("Простите, не удалось задать начальное сообщение!");
+                    discordEmbed.WithDescription(Resources.ManagingСollectionsCommand_Start_IsNotSet);
                 }
             }
             else
             {
-                discordEmbed.WithDescription("Простите, нет вложенного сообщения!");
+                discordEmbed.WithDescription(Resources.ManagingСollectionsCommand_Start_NoReferencedMessage);
             }
             await ctx.Message.DeleteAsync();
             await SendSpecialMessage(ctx, discordEmbed);
         }
 
         [Command("end")]
-        [Description(
-            "Задать вложенное сообщение конечным сообщением для промежутка (входит в промежуток) и добавить входящие в промежуток сообщения в заданную коллекцию. Если коллекция не указана сообщения добавляются в коллекцию по умолчанию.")]
+        [Description("ManagingСollectionsCommand.End")]
         public async Task End(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -185,51 +178,32 @@ namespace YukoBot.Commands
 
                 ulong memberId = ctx.Member.Id;
                 if (!_clientRanges.ContainsKey(memberId))
-                {
-                    throw new IncorrectCommandDataException("Пожалуйста задайте начальное сообщение промежутка!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_End_StartMessageIsNotSet);
 
                 if (ctx.Message.ReferencedMessage == null)
-                {
-                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_End_NoReferencedMessage);
 
                 RangeStartInfo rangeStartInfo = _clientRanges[memberId];
                 DiscordChannel channel = ctx.Channel;
+
                 if (channel.Id != rangeStartInfo.Channel.Id)
-                {
                     throw new IncorrectCommandDataException(
-                        "Ой, начальное и конечное сообщение промежутка из разных каналов!");
-                }
+                        Resources.ManagingСollectionsCommand_End_DifferentChannels);
 
-                DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
-                    ? await _dbContext.Collections.FindAsync(id)
-                    : _dbContext.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
-                if (dbCollection == null)
-                {
-                    if (DefaultCollection.Equals(nameOrId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        dbCollection = new DbCollection
-                        {
-                            UserId = memberId,
-                            Name = DefaultCollection
-                        };
-                        _dbContext.Collections.Add(dbCollection);
-                        await _dbContext.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
-                    }
-                }
+                DbCollection dbCollection = await GetOrCreateCollection(memberId, nameOrId);
 
-                DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                DiscordEmbedBuilder dmEmbed = new DiscordEmbedBuilder()
                     .WithHappyMessage(
                         ctx.Member.DisplayName,
-                        "Пожалуйста подождите, после завершения операции я изменю это сообщение!");
+                        Resources.ManagingСollectionsCommand_End_StartOfExecution);
                 DiscordDmChannel dmChannel = await ctx.Member.CreateDmChannelAsync();
-                DiscordMessage dmMessage = await dmChannel.SendMessageAsync(discordEmbed);
-                discordEmbed.WithDescription($"Сообщения в коллекцию \"{dbCollection.Name}\" успешно добавлены!");
+                DiscordMessage dmMessage = await dmChannel.SendMessageAsync(dmEmbed);
+                dmEmbed.WithDescription(
+                    string.Format(
+                        Resources.ManagingСollectionsCommand_End_EndOfExecution,
+                        dbCollection.Name));
 
                 HashSet<ulong> collectionItems = _dbContext.CollectionItems
                     .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
@@ -253,7 +227,7 @@ namespace YukoBot.Commands
                             await SaveCollectionItem(
                                 ctx,
                                 discordMessage,
-                                discordEmbed,
+                                dmEmbed,
                                 dbCollection,
                                 hasPremiumAccess);
                         }
@@ -275,7 +249,7 @@ namespace YukoBot.Commands
                     }
                 }
 
-                dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(discordEmbed));
+                dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(dmEmbed));
                 await dmMessage.CreateReactionAsync(
                     DiscordEmoji.FromName(
                         ctx.Client,
@@ -291,27 +265,26 @@ namespace YukoBot.Commands
 
         #region Command: add (Collection)
         [Command("add-collection")]
-        [Description("Создать новую коллекцию.")]
+        [Description("ManagingСollectionsCommand.AddCollection")]
         public async Task AddCollection(
             CommandContext ctx,
-            [Description("Название коллекции"), RemainingText]
+            [Description("CommandArg.CollectionNameи"), RemainingText]
             string collectionName)
         {
             try
             {
                 if (string.IsNullOrEmpty(collectionName))
-                {
-                    throw new IncorrectCommandDataException("Простите, название коллекции не может быть пустым!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddCollection_NameIsEmpty);
 
                 DbCollection collection =
                     _dbContext.Collections.FirstOrDefault(
                         x => x.UserId == ctx.Member.Id && x.Name.Equals(collectionName));
                 if (collection != null)
-                {
                     throw new IncorrectCommandDataException(
-                        $"Ой, у тебя уже есть такая коллекция! Id: {collection.Id}.");
-                }
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_AddCollection_CollectionExists,
+                            collection.Id));
 
                 collection = new DbCollection
                 {
@@ -322,7 +295,11 @@ namespace YukoBot.Commands
                 await _dbContext.SaveChangesAsync();
 
                 DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция создана! Id: {collection.Id}.");
+                    .WithHappyMessage(
+                        ctx.Member.DisplayName,
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_AddCollection_Created,
+                            collection.Id));
                 await ctx.RespondAsync(discordEmbed);
             }
             catch (IncorrectCommandDataException ex)
@@ -334,12 +311,12 @@ namespace YukoBot.Commands
 
         #region Command: rename-collection (Collection)
         [Command("rename-collection")]
-        [Description("Переименовать указанную коллекцию.")]
+        [Description("ManagingСollectionsCommand.RenameCollection")]
         public async Task RenameCollection(
             CommandContext ctx,
-            [Description("Id коллекции")]
+            [Description("CommandArg.CollectionId")]
             ulong collectionId,
-            [Description("Новое название коллекции"), RemainingText]
+            [Description("CommandArg.CollectionNewName_v1"), RemainingText]
             string newName)
         {
             try
@@ -354,19 +331,16 @@ namespace YukoBot.Commands
         }
 
         [Command("rename-collection")]
-        [Description("Переименовать указанную коллекцию.")]
+        [Description("ManagingСollectionsCommand.RenameCollection")]
         public async Task RenameCollection(
             CommandContext ctx,
-            [Description(
-                "Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")]
+            [Description("CommandArg.CollectionOldName")]
             string oldName,
-            [Description(
-                "Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки: \")")]
+            [Description("CommandArg.CollectionNewName_v2")]
             string newName)
         {
             try
             {
-
                 DbCollection dbCollection =
                     _dbContext.Collections.FirstOrDefault(x => x.Name.Equals(oldName) && x.UserId == ctx.Member.Id);
                 await RenameCollection(ctx, dbCollection, newName);
@@ -381,10 +355,10 @@ namespace YukoBot.Commands
         #region Command: remove-collection/item
         [Command("remove-collection")]
         [Aliases("rm-collection")]
-        [Description("Удалить коллекцию.")]
+        [Description("ManagingСollectionsCommand.DeleteCollection")]
         public async Task DeleteCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -398,24 +372,30 @@ namespace YukoBot.Commands
                 await _dbContext.SaveChangesAsync();
 
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция \"{dbCollection.Name}\" удалена!");
+                    .WithHappyMessage(
+                        ctx.Member.DisplayName,
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteCollection_Deleted,
+                            dbCollection.Name));
             }
             else
             {
                 discordEmbed = new DiscordEmbedBuilder()
-                    .WithSadMessage(ctx.Member.DisplayName, "Простите, такой коллекции нет!");
+                    .WithSadMessage(
+                        ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_DeleteCollection_CollectionNotFound);
             }
 
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("remove-item")]
-        [Description("Удалить сообщение из коллекции.")]
+        [Description("ManagingСollectionsCommand.DeleteFromCollection")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("Id сообщения")]
+            [Description("CommandArg.MessageId")]
             ulong messageId,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -430,10 +410,10 @@ namespace YukoBot.Commands
 
         [Command("remove")]
         [Aliases("rm")]
-        [Description("Удалить вложенное сообщение из коллекции.")]
+        [Description("ManagingСollectionsCommand.DeleteFromCollectionRef")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
             try
@@ -442,9 +422,8 @@ namespace YukoBot.Commands
 
                 DiscordMessage message = ctx.Message.ReferencedMessage;
                 if (message == null)
-                {
-                    throw new IncorrectCommandDataException("Простите, нет вложенного сообщения!");
-                }
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_DeleteFromCollection_NoReferencedMessage);
 
                 await PrivateDeleteFromCollection(ctx, message.Id, nameOrId);
             }
@@ -457,10 +436,10 @@ namespace YukoBot.Commands
 
         #region Command: clear-collection
         [Command("clear-collection")]
-        [Description("Удалить все сообщения из коллекции.")]
+        [Description("ManagingСollectionsCommand.ClearCollection")]
         public async Task ClearCollection(
             CommandContext ctx,
-            [Description("Название или Id коллекции"), RemainingText]
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -469,7 +448,7 @@ namespace YukoBot.Commands
                 discordEmbed = new DiscordEmbedBuilder()
                     .WithSadMessage(
                         ctx.Member.DisplayName,
-                        "Простите, название или id коллекции не может быть пустым!");
+                        Resources.ManagingСollectionsCommand_ClearCollection_NameOrIdIsEmpty);
             }
             else
             {
@@ -484,12 +463,18 @@ namespace YukoBot.Commands
                     await _dbContext.SaveChangesAsync();
 
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithHappyMessage(ctx.Member.DisplayName, $"Коллекция \"{collection.Name}\" очищена!");
+                        .WithHappyMessage(
+                            ctx.Member.DisplayName,
+                            string.Format(
+                                Resources.ManagingСollectionsCommand_ClearCollection_Cleared,
+                                collection.Name));
                 }
                 else
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(ctx.Member.DisplayName, "Простите, такой коллекции нет!");
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
+                            Resources.ManagingСollectionsCommand_ClearCollection_CollectionNotFound);
                 }
             }
 
@@ -500,7 +485,7 @@ namespace YukoBot.Commands
         #region Command: show-collections/items
         [Command("show-collections")]
         [Aliases("collections")]
-        [Description("Показать список коллекций.")]
+        [Description("ManagingСollectionsCommand.ShowCollections")]
         public async Task ShowCollections(CommandContext ctx)
         {
             IQueryable<DbCollection> collections = _dbContext.Collections.Where(x => x.UserId == ctx.Member.Id);
@@ -513,16 +498,18 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
                 .WithHappyMessage(
                     ctx.Member.DisplayName,
-                    stringBuilder.Length > 0 ? stringBuilder.ToString() : "Ой, у тебя нет не одной коллекции!");
+                    stringBuilder.Length > 0
+                        ? stringBuilder.ToString()
+                        : Resources.ManagingСollectionsCommand_ShowCollections_IsEmpty);
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("show-items")]
         [Aliases("items")]
-        [Description("Показать последние 25 сообщений коллекции.")]
+        [Description("ManagingСollectionsCommand.ShowItems")]
         public async Task ShowItems(
-            CommandContext commandContext,
-            [Description("Название или Id коллекции"), RemainingText]
+            CommandContext ctx,
+            [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId)
         {
             DiscordEmbedBuilder discordEmbed = null;
@@ -530,8 +517,8 @@ namespace YukoBot.Commands
             {
                 discordEmbed = new DiscordEmbedBuilder()
                     .WithSadMessage(
-                        commandContext.Member.DisplayName,
-                        "Простите, название или id коллекции не может быть пустым!");
+                        ctx.Member.DisplayName,
+                        Resources.ManagingСollectionsCommand_ShowItems_NameOrIdIsEmpty);
             }
             else
             {
@@ -539,8 +526,8 @@ namespace YukoBot.Commands
                     ? await _dbContext.Collections.FindAsync(id)
                     : _dbContext.Collections.FirstOrDefault(
                         x =>
-                            x.UserId == commandContext.Member.Id && x.Name.Equals(nameOrId));
-                if (collection != null && collection.UserId == commandContext.Member.Id)
+                            x.UserId == ctx.Member.Id && x.Name.Equals(nameOrId));
+                if (collection != null && collection.UserId == ctx.Member.Id)
                 {
                     // Due to the fact that the EF cannot construct a query to take the last elements, the AsEnumerable
                     // transformation is used, which will execute the query and return an enumeration
@@ -554,17 +541,21 @@ namespace YukoBot.Commands
 
                     discordEmbed = new DiscordEmbedBuilder()
                         .WithHappyMessage(
-                            commandContext.Member.DisplayName,
-                            stringBuilder.Length != 0 ? stringBuilder.ToString() : "Ой, эта коллекция пустая!");
+                            ctx.Member.DisplayName,
+                            stringBuilder.Length != 0
+                                ? stringBuilder.ToString()
+                                : Resources.ManagingСollectionsCommand_ShowItems_IsEmpty);
                 }
                 else
                 {
                     discordEmbed = new DiscordEmbedBuilder()
-                        .WithSadMessage(commandContext.Member.DisplayName, "Простите, такой коллекции нет!");
+                        .WithSadMessage(
+                            ctx.Member.DisplayName,
+                            Resources.ManagingСollectionsCommand_ShowItems_CollectionNotFound);
                 }
             }
 
-            await commandContext.RespondAsync(discordEmbed);
+            await ctx.RespondAsync(discordEmbed);
         }
         #endregion
 
@@ -580,9 +571,8 @@ namespace YukoBot.Commands
                 ? await _dbContext.Collections.FindAsync(id)
                 : _dbContext.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
             if (dbCollection == null || dbCollection.UserId != memberId)
-            {
-                throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
-            }
+                throw new IncorrectCommandDataException(
+                    Resources.ManagingСollectionsCommand_DeleteFromCollection_CollectionNotFound);
 
             IList<DbCollectionItem> dbCollectionItems = _dbContext.CollectionItems
                 .Where(x => x.CollectionId == dbCollection.Id && x.MessageId == messageId).ToList();
@@ -593,8 +583,13 @@ namespace YukoBot.Commands
                 .WithHappyMessage(
                     ctx.Member.DisplayName,
                     dbCollectionItems.Count > 0
-                        ? $"Сообщение {messageId} из коллекции \"{dbCollection.Name}\" удалено!"
-                        : $"Ой, сообщения {messageId} и так нет в коллекции!");
+                        ? string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteFromCollection_Deleted,
+                            messageId,
+                            dbCollection.Name)
+                        : string.Format(
+                            Resources.ManagingСollectionsCommand_DeleteFromCollection_MessageNotFound,
+                            messageId));
             await SendSpecialMessage(ctx, discordEmbed);
         }
 
@@ -623,7 +618,7 @@ namespace YukoBot.Commands
                 };
                 _dbContext.Messages.Add(dbMessage);
             }
-            dbMessage.Link = string.Join(";", discordMessage.GetImages(_yukoSettings));
+            dbMessage.Link = string.Join(Constants.LinkSeparator, discordMessage.GetImages(_yukoSettings));
 
             try
             {
@@ -638,15 +633,15 @@ namespace YukoBot.Commands
                 if (ctx.Command.Name.Equals("end"))
                 {
                     discordEmbed.WithSadTitle(ctx.Member.DisplayName).WithDescription(
-                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name
-                        }\" произошла ошибка. Добавлены не все сообщения!");
+                        string.Format(Resources.ManagingСollectionsCommand_End_ErrorAddingItem, dbCollection.Name));
                 }
                 else
                 {
                     discordEmbed.WithSadMessage(
                         ctx.Member.DisplayName,
-                        $"Простите, во время добавления сообщения в коллекцию \"{dbCollection.Name
-                        }\" произошла ошибка. Сообщение не добавлено в коллекцию!");
+                        string.Format(
+                            Resources.ManagingСollectionsCommand_AddToCollection_ErrorAddingItem,
+                            dbCollection.Name));
                 }
             }
         }
@@ -657,12 +652,64 @@ namespace YukoBot.Commands
             string nameOrId)
         {
             if (!message.HasImages(_yukoSettings))
-            {
                 throw new IncorrectCommandDataException(
-                    "Простите, нельзя добавлять сообщение в коллекцию если у него нет вложений!");
-            }
+                    Resources.ManagingСollectionsCommand_AddToCollection_NoAttachments);
 
             ulong memberId = ctx.Member.Id;
+
+            DbCollection dbCollection = await GetOrCreateCollection(memberId, nameOrId);
+
+            DbCollectionItem dbCollectionItem =
+                _dbContext.CollectionItems.FirstOrDefault(
+                    x => x.CollectionId == dbCollection.Id && x.MessageId == message.Id);
+
+            if (dbCollectionItem != null)
+                throw new IncorrectCommandDataException(
+                    string.Format(
+                        Resources.ManagingСollectionsCommand_AddToCollection_ExistsInCollection,
+                        dbCollection.Name));
+
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(
+                    ctx.Member.DisplayName,
+                    string.Format(
+                        Resources.ManagingСollectionsCommand_AddToCollection_IsSuccess,
+                        dbCollection.Name));
+
+            bool hasPremiumAccess = (await _dbContext.Users.FindAsync(memberId)).HasPremiumAccess;
+            await SaveCollectionItem(ctx, message, discordEmbed, dbCollection, hasPremiumAccess);
+
+            return discordEmbed;
+        }
+
+        private async Task RenameCollection(
+            CommandContext ctx,
+            DbCollection dbCollection,
+            string newName)
+        {
+            if (dbCollection == null)
+                throw new IncorrectCommandDataException(
+                    Resources.ManagingСollectionsCommand_RenameCollection_CollectionNotFound);
+
+            ulong memberId = ctx.Member.Id;
+            if (_dbContext.Collections.FirstOrDefault(x => x.Name.Equals(newName) && x.UserId == memberId) != null)
+                throw new IncorrectCommandDataException(
+                    Resources.ManagingСollectionsCommand_RenameCollection_Exists);
+
+            string message = string.Format(
+                Resources.ManagingСollectionsCommand_RenameCollection_Renamed,
+                dbCollection.Name,
+                newName);
+            dbCollection.Name = newName;
+            await _dbContext.SaveChangesAsync();
+
+            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                .WithHappyMessage(ctx.Member.DisplayName, message);
+            await ctx.RespondAsync(discordEmbed);
+        }
+
+        private async Task<DbCollection> GetOrCreateCollection(ulong memberId, string nameOrId)
+        {
             DbCollection dbCollection = ulong.TryParse(nameOrId, out ulong id)
                 ? await _dbContext.Collections.FindAsync(id)
                 : _dbContext.Collections.FirstOrDefault(x => x.Name == nameOrId && x.UserId == memberId);
@@ -680,52 +727,11 @@ namespace YukoBot.Commands
                 }
                 else
                 {
-                    throw new IncorrectCommandDataException("Простите, такой коллекции нет!");
+                    throw new IncorrectCommandDataException(
+                        Resources.ManagingСollectionsCommand_AddToCollection_CollectionNotFound);
                 }
             }
-
-            DbCollectionItem dbCollectionItem =
-                _dbContext.CollectionItems.FirstOrDefault(
-                    x => x.CollectionId == dbCollection.Id && x.MessageId == message.Id);
-            if (dbCollectionItem != null)
-            {
-                throw new IncorrectCommandDataException(
-                    $"Простите, данное сообщение уже добавлено в коллекцию \"{dbCollection.Name}\"!");
-            }
-
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, $"Сообщение добавлено в коллекцию \"{dbCollection.Name}\"!");
-
-            bool hasPremiumAccess = (await _dbContext.Users.FindAsync(memberId)).HasPremiumAccess;
-            await SaveCollectionItem(ctx, message, discordEmbed, dbCollection, hasPremiumAccess);
-
-            return discordEmbed;
-        }
-
-        private async Task RenameCollection(
-            CommandContext ctx,
-            DbCollection dbCollection,
-            string newName)
-        {
-            if (dbCollection == null)
-            {
-                throw new IncorrectCommandDataException("Простите, переименовываемая коллекция несуществует!");
-            }
-
-            ulong memberId = ctx.Member.Id;
-            if (_dbContext.Collections.FirstOrDefault(x => x.Name.Equals(newName) && x.UserId == memberId) != null)
-            {
-                throw new IncorrectCommandDataException(
-                    $"Простите, коллекция с названием \"{newName}\" уже существует!");
-            }
-
-            string message = $"Коллекция \"{dbCollection.Name}\" переименована в \"{newName}\"!";
-            dbCollection.Name = newName;
-            await _dbContext.SaveChangesAsync();
-
-            DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName, message);
-            await ctx.RespondAsync(discordEmbed);
+            return dbCollection;
         }
 
         private async Task SendSpecialMessage(CommandContext ctx, DiscordEmbedBuilder embed)

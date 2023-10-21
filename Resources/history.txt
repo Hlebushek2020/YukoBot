@@ -1,0 +1,31 @@
+﻿Avatar; member; Участник сервера
+Help; categoryOrCommand; Категория или команда
+BugReport; description; Описание ошибки. Убедительная просьба прикладывать как можно больше информации об ошибке (действия которые к ней привели, скриншоты и т.д.) к сообщению с данной командой.
+InfoMessagesInPm; isEnabled; true - включить / false - отключить
+ExtendPremium; type; Единица измерения для значения. Возможные значения: day / d - день; month / m - месяц; year / y - год.
+ExtendPremium; count; Значение, на которое нужно продлить премиум доступ. Если премиум доступ нужно уменьшить, то вводится отрицательное значение.
+ExtendPremium; discordMember; Участник сервера (гильдии).
+Shutdown; reason; Причина выключения бота
+ShowItems; nameOrId; Название или Id коллекции
+ClearCollection; nameOrId; Название или Id коллекции
+DeleteFromCollection; nameOrId; Название или Id коллекции
+DeleteFromCollection; messageId; Id сообщения
+DeleteCollection; nameOrId; Название или Id коллекции
+RenameCollection; newName; Новое название коллекции (если название коллекции содержит пробелы заключите его в кавычки:
+RenameCollection; oldName; Старое название коллекции (если название коллекции содержит пробелы заключите его в кавычки:
+RenameCollection; newName; Новое название коллекции
+RenameCollection; collectionId; Id коллекции
+AddCollection; collectionName; Название коллекции
+End; nameOrId; Название или Id коллекции
+AddToCollectionById; nameOrId; Название или Id коллекции
+AddToCollectionById; messageId; Id сообщения
+AddToCollection; nameOrId; Название или Id коллекции
+ShutdownNotification; isEnabled; true - включить / false - выключить
+ReadyNotification; isEnabled; true - включить / false - выключить
+SetNotificationChannel; target; Канал
+AddCommandResponse; isEnabled; true - включить / false - отключить
+SetArtChannel; сhannel; Канал для поиска сообщений
+MemberBanReason; member; Участник сервера
+UnBan; member; Участник сервера
+Ban; reason; Причина
+Ban; member; Участник сервера
