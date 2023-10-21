@@ -20,6 +20,7 @@ using YukoBot.Models.Database.JoinedEntities;
 using YukoBot.Models.Web;
 using YukoBot.Models.Web.Requests;
 using YukoBot.Models.Web.Responses;
+using YukoBot.Services;
 
 namespace YukoBot
 {
@@ -34,6 +35,7 @@ namespace YukoBot
         private readonly TcpClient _tcpClient;
         private readonly IYukoSettings _yukoSettings;
         private readonly YukoDbContext _dbContext;
+        private readonly IMessageRequestQueueService _messageRequestQueue;
         private readonly int _messageLimit;
         private readonly int _messageLimitSleepMs;
         private readonly int _messageLimitSleepMsForOne;
@@ -56,6 +58,7 @@ namespace YukoBot
             _logger = services.GetService<ILogger<YukoClient>>();
             _dbContext = services.GetService<YukoDbContext>();
             _yukoSettings = services.GetService<IYukoSettings>();
+            _messageRequestQueue = services.GetService<IMessageRequestQueueService>();
 
             _messageLimit = _yukoSettings.DiscordMessageLimit;
             _messageLimitSleepMs = _yukoSettings.DiscordMessageLimitSleepMs;

@@ -71,6 +71,7 @@ namespace YukoBot
                 .AddSingleton<IBotNotificationsService, BotNotificationsService>()
                 .AddSingleton<IBotPingService, BotPingService>()
                 .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
+                .AddSingleton<IMessageRequestQueueService, MessageRequestQueueService>()
                 .BuildServiceProvider();
 
             // Initializing services that won't be called anywhere
