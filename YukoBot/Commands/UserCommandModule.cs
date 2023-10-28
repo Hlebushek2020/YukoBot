@@ -21,14 +21,19 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
+        private readonly YukoDbContext _yukoDbContext;
         private readonly IYukoSettings _yukoSettings;
         private readonly ILogger<UserCommandModule> _logger;
 
         private string BotDescription { get; }
 
-        public UserCommandModule(IYukoSettings yukoSettings, ILogger<UserCommandModule> logger)
+        public UserCommandModule(
+            YukoDbContext yukoDbContext,
+            IYukoSettings yukoSettings,
+            ILogger<UserCommandModule> logger)
             : base(Categories.User, null)
         {
+            _yukoDbContext = yukoDbContext;
             _yukoSettings = yukoSettings;
             _logger = logger;
 
@@ -40,8 +45,7 @@ namespace YukoBot.Commands
         [Description("UserCommand.Register")]
         public async Task Register(CommandContext ctx)
         {
-            YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
-            DbUser dbUser = await dbCtx.Users.FindAsync(ctx.User.Id);
+            DbUser dbUser = await _yukoDbContext.Users.FindAsync(ctx.User.Id);
             bool isRegister = false;
             if (dbUser == null)
             {
@@ -51,7 +55,7 @@ namespace YukoBot.Commands
                     Id = ctx.User.Id,
                     Nikname = ctx.User.Username
                 };
-                dbCtx.Users.Add(dbUser);
+                _yukoDbContext.Users.Add(dbUser);
             }
 
             string password = "";
@@ -72,7 +76,7 @@ namespace YukoBot.Commands
                 dbUser.Password = hashBuilder.ToString();
             }
 
-            await dbCtx.SaveChangesAsync();
+            await _yukoDbContext.SaveChangesAsync();
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
@@ -297,9 +301,7 @@ namespace YukoBot.Commands
             [Description("CommandArg.Member")]
             DiscordMember member)
         {
-            YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
-            DbUser user = await dbCtx.Users.FindAsync(ctx.Member.Id);
-
+            DbUser user = await _yukoDbContext.Users.FindAsync(ctx.Member.Id);
             bool isUseMessage = user != null && user.HasPremiumAccess;
             if (isUseMessage)
             {

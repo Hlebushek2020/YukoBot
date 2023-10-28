@@ -36,9 +36,6 @@ namespace YukoBot
         private readonly IYukoSettings _yukoSettings;
         private readonly YukoDbContext _dbContext;
         private readonly IMessageRequestQueueService _messageRequestQueue;
-        private readonly int _messageLimit;
-        private readonly int _messageLimitSleepMs;
-        private readonly int _messageLimitSleepMsForOne;
         private readonly string _endPoint;
 
         private bool _isDisposed = false;
@@ -59,11 +56,6 @@ namespace YukoBot
             _dbContext = services.GetService<YukoDbContext>();
             _yukoSettings = services.GetService<IYukoSettings>();
             _messageRequestQueue = services.GetService<IMessageRequestQueueService>();
-
-            _messageLimit = _yukoSettings.DiscordMessageLimit;
-            _messageLimitSleepMs = _yukoSettings.DiscordMessageLimitSleepMs;
-            _messageLimitSleepMsForOne = _yukoSettings.DiscordMessageLimitSleepMs /
-                                         _yukoSettings.DiscordMessageLimitSleepMsDividerForOne;
         }
 
         public async void Process(object args)
@@ -87,9 +79,9 @@ namespace YukoBot
                 {
                     Guid userToken = Guid.Parse(baseRequest.Token);
                     _currentDbUser = await _dbContext.Users.FindAsync(
-                        _userTokens.ContainsKey(userToken)
-                            ? _userTokens[userToken]
-                            : ulong.MinValue);
+                                                                      _userTokens.ContainsKey(userToken)
+                                                                          ? _userTokens[userToken]
+                                                                          : ulong.MinValue);
                     if (_currentDbUser == null || baseRequest.Token == null)
                     {
                         Response baseResponse = new Response
@@ -197,8 +189,9 @@ namespace YukoBot
         {
             ServerRequest serverRequest = ServerRequest.FromJson(json);
             DbBan ban = _dbContext.Bans.FirstOrDefault(
-                x =>
-                    x.UserId == _currentDbUser.Id && x.ServerId == serverRequest.Id);
+                                                       x =>
+                                                           x.UserId == _currentDbUser.Id &&
+                                                           x.ServerId == serverRequest.Id);
             if (ban == null)
             {
                 DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
@@ -275,20 +268,21 @@ namespace YukoBot
                     Id = dbCollection.Id
                 };
                 IQueryable<DbMessage> dbCollectionItems = _dbContext.CollectionItems
-                    .Where(x => x.CollectionId == dbCollection.Id)
-                    .Join(
-                        _dbContext.Messages,
-                        ci => ci.MessageId,
-                        m => m.Id,
-                        (ci, m) => new DbMessage { Id = m.Id, ChannelId = m.ChannelId });
+                                                                    .Where(x => x.CollectionId == dbCollection.Id)
+                                                                    .Join(
+                                                                          _dbContext.Messages,
+                                                                          ci => ci.MessageId,
+                                                                          m => m.Id,
+                                                                          (ci, m) => new DbMessage
+                                                                              { Id = m.Id, ChannelId = m.ChannelId });
                 foreach (DbMessage dbMessage in dbCollectionItems)
                 {
                     collection.Items.Add(
-                        new MessageCollectionItemWeb
-                        {
-                            ChannelId = dbMessage.ChannelId,
-                            MessageId = dbMessage.Id
-                        });
+                                         new MessageCollectionItemWeb
+                                         {
+                                             ChannelId = dbMessage.ChannelId,
+                                             MessageId = dbMessage.Id
+                                         });
                 }
                 response.MessageCollections.Add(collection);
             }
@@ -302,15 +296,15 @@ namespace YukoBot
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
                 .Join(
-                    _dbContext.Messages,
-                    ci => ci.MessageId,
-                    m => m.Id,
-                    (ci, m) => new CollectionItemJoinMessage
-                    {
-                        MessageId = m.Id,
-                        Link = m.Link,
-                        IsSavedLinks = ci.IsSavedLinks
-                    })
+                      _dbContext.Messages,
+                      ci => ci.MessageId,
+                      m => m.Id,
+                      (ci, m) => new CollectionItemJoinMessage
+                      {
+                          MessageId = m.Id,
+                          Link = m.Link,
+                          IsSavedLinks = ci.IsSavedLinks
+                      })
                 .ToDictionary(k => k.MessageId);
             List<ulong> channelNotFound = new List<ulong>();
             List<ulong> messageNotFound = new List<ulong>();
@@ -338,7 +332,7 @@ namespace YukoBot
 
                         if (!collectionItem.IsSavedLinks)
                         {
-                            Thread.Sleep(_messageLimitSleepMsForOne);
+                            Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
                         }
                     }
                     else
@@ -348,7 +342,7 @@ namespace YukoBot
                             if (discordChannel == null)
                                 discordChannel =
                                     await _discordClient.GetChannelAsync(
-                                        groupEnumerator.Current.Key);
+                                                                         groupEnumerator.Current.Key);
                             try
                             {
                                 DiscordMessage discordMessage =
@@ -361,7 +355,7 @@ namespace YukoBot
                             {
                                 messageNotFound.Add(groupItemEnumerator.Current.MessageId);
                             }
-                            Thread.Sleep(_messageLimitSleepMsForOne);
+                            Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
                         }
                         catch (NotFoundException)
                         {
@@ -413,8 +407,8 @@ namespace YukoBot
                     {
                         Permissions userPermission = channel.PermissionsFor(isContainsMember);
                         if (userPermission.HasPermission(
-                                Permissions.AccessChannels |
-                                Permissions.ReadMessageHistory))
+                                                         Permissions.AccessChannels |
+                                                         Permissions.ReadMessageHistory))
                         {
                             ChannelWeb channelResponse = new ChannelWeb
                             {
@@ -445,7 +439,7 @@ namespace YukoBot
         {
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = _messageLimit;
+            int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
             while (request.Count != 0)
             {
@@ -460,12 +454,10 @@ namespace YukoBot
                 }
 
                 IReadOnlyList<DiscordMessage> messages =
-                    await discordChannel.GetMessagesAfterAsync(request.MessageId, limit);
+                    await _messageRequestQueue.GetMessagesAfterAsync(discordChannel, request.MessageId, limit);
 
-                if (messages.Count < _messageLimit)
-                {
+                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
                     request.Count = 0;
-                }
 
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
@@ -477,7 +469,7 @@ namespace YukoBot
                 if (messages.Count > 0)
                 {
                     request.MessageId = messages.First().Id;
-                    Thread.Sleep(_messageLimitSleepMs);
+                    //Thread.Sleep(_messageLimitSleepMs);
                 }
             }
         }
@@ -486,7 +478,7 @@ namespace YukoBot
         {
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = _messageLimit;
+            int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
             while (request.Count != 0)
             {
@@ -501,12 +493,10 @@ namespace YukoBot
                 }
 
                 IReadOnlyList<DiscordMessage> messages =
-                    await discordChannel.GetMessagesBeforeAsync(request.MessageId, limit);
+                    await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                if (messages.Count < _messageLimit)
-                {
+                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
                     request.Count = 0;
-                }
 
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
                 foreach (DiscordMessage message in messages)
@@ -518,7 +508,7 @@ namespace YukoBot
                 if (messages.Count > 0)
                 {
                     request.MessageId = messages.First().Id;
-                    Thread.Sleep(_messageLimitSleepMs);
+                    //Thread.Sleep(_messageLimitSleepMs);
                 }
             }
         }
@@ -527,7 +517,7 @@ namespace YukoBot
         {
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
-            int limit = _messageLimit;
+            int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
             if (request.Count >= limit)
             {
@@ -539,7 +529,7 @@ namespace YukoBot
                 request.Count = 0;
             }
 
-            IReadOnlyList<DiscordMessage> messages = await discordChannel.GetMessagesAsync(limit);
+            IReadOnlyList<DiscordMessage> messages = await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
 
             UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
             foreach (DiscordMessage message in messages)
@@ -562,11 +552,11 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                Thread.Sleep(_messageLimitSleepMs);
+                //Thread.Sleep(_messageLimitSleepMs);
 
-                messages = await discordChannel.GetMessagesBeforeAsync(endId, limit);
+                messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, endId, limit);
 
-                if (messages.Count < _messageLimit)
+                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
                 {
                     request.Count = 0;
                 }

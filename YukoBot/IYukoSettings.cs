@@ -20,9 +20,8 @@ namespace YukoBot
         string ServerInternalAddress { get; }
         int ServerPort { get; }
         string ClientActualApp { get; }
-        int DiscordMessageLimit { get; }
-        int DiscordMessageLimitSleepMs { get; }
-        int DiscordMessageLimitSleepMsDividerForOne { get; }
+        int NumberOfMessagesPerRequest { get; }
+        int IntervalBetweenMessageRequests { get; }
         IReadOnlyList<string> Filters { get; }
         #endregion
 

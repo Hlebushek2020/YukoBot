@@ -24,10 +24,8 @@ namespace YukoBot
         public string ServerInternalAddress { get; set; }
         public int ServerPort { get; set; }
         public string ClientActualApp { get; set; }
-        public int DiscordMessageLimit { get; set; }
-        public int DiscordMessageLimitSleepMs { get; set; }
-        public int DiscordMessageLimitSleepMsDividerForOne { get; set; }
-        public LogLevel DiscordApiLogLevel { get; set; }
+        public int NumberOfMessagesPerRequest { get; set; }
+        public int IntervalBetweenMessageRequests { get; set; }
         public LogLevel BotLogLevel { get; set; }
         public IReadOnlyList<string> Filters { get; set; }
         #endregion
@@ -36,10 +34,8 @@ namespace YukoBot
         {
             BotPrefix = "yuko!";
             BotLogLevel = LogLevel.Information;
-            DiscordMessageLimit = 100;
-            DiscordMessageLimitSleepMs = 1000;
-            DiscordMessageLimitSleepMsDividerForOne = 10;
-            DiscordApiLogLevel = LogLevel.Information;
+            NumberOfMessagesPerRequest = 25;
+            IntervalBetweenMessageRequests = 500;
         }
 
         public void SetApp(string appLink)

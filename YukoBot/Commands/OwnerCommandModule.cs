@@ -23,12 +23,14 @@ namespace YukoBot.Commands
         private const string ExtendPremiumYearShort = "y";
         #endregion
 
+        private readonly YukoDbContext _yukoDbContext;
         private readonly IYukoBot _yukoBot;
         private readonly IYukoSettings _yukoSettings;
 
-        public OwnerCommandModule(IYukoBot yukoBot, IYukoSettings yukoSettings)
+        public OwnerCommandModule(YukoDbContext yukoDbContext, IYukoBot yukoBot, IYukoSettings yukoSettings)
             : base(Categories.Management, Resources.OwnerCommand_AccessError)
         {
+            _yukoDbContext = yukoDbContext;
             _yukoBot = yukoBot;
             _yukoSettings = yukoSettings;
         }
@@ -124,8 +126,7 @@ namespace YukoBot.Commands
             }
             else
             {
-                YukoDbContext dbCtx = new YukoDbContext(_yukoSettings);
-                DbUser dbUser = await dbCtx.Users.FindAsync(discordMember.Id);
+                DbUser dbUser = await _yukoDbContext.Users.FindAsync(discordMember.Id);
                 if (dbUser != null)
                 {
                     DateTime forAdding = DateTime.Now;
@@ -147,7 +148,7 @@ namespace YukoBot.Commands
                             break;
                     }
                     dbUser.PremiumAccessExpires = forAdding;
-                    await dbCtx.SaveChangesAsync();
+                    await _yukoDbContext.SaveChangesAsync();
 
                     await ctx.RespondAsync(
                         string.Format(

@@ -176,8 +176,8 @@ namespace YukoBot
             bool sendToCurrentChannel = true;
             if (dMember != null && command != null &&
                 (command.Name.Equals("add", StringComparison.OrdinalIgnoreCase) ||
-                 command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
-                 command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
+                    command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
+                    command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
                 DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
@@ -231,7 +231,9 @@ namespace YukoBot
                                 }
                             }
                         }
-                        catch (TaskCanceledException) { }
+                        catch (TaskCanceledException)
+                        {
+                        }
                     },
                     processToken);
             }

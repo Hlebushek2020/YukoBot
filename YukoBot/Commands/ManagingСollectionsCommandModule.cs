@@ -241,7 +241,7 @@ namespace YukoBot.Commands
                     {
                         messages = await channel.GetMessagesAfterAsync(messageStartId, limit);
                         isCompleted = messages.Count < limit;
-                        Thread.Sleep(_yukoSettings.DiscordMessageLimitSleepMs / 20);
+                        Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
                         if (!isCompleted)
                         {
                             messageStartId = messages.First().Id;
