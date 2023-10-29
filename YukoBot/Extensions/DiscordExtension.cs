@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 
@@ -60,6 +61,15 @@ namespace YukoBot.Extensions
         {
             string localizedDescription = Resources.ResourceManager.GetString(key);
             return string.IsNullOrWhiteSpace(localizedDescription) ? key : localizedDescription;
+        }
+
+        public static async Task<IReadOnlyList<DiscordMessage>> ToList(
+            this IAsyncEnumerable<DiscordMessage> asyncEnumerable)
+        {
+            List<DiscordMessage> messageList = new List<DiscordMessage>();
+            await foreach (DiscordMessage discordMessage in asyncEnumerable)
+                messageList.Add(discordMessage);
+            return messageList;
         }
     }
 }

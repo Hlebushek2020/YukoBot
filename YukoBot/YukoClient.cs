@@ -79,9 +79,9 @@ namespace YukoBot
                 {
                     Guid userToken = Guid.Parse(baseRequest.Token);
                     _currentDbUser = await _dbContext.Users.FindAsync(
-                                                                      _userTokens.ContainsKey(userToken)
-                                                                          ? _userTokens[userToken]
-                                                                          : ulong.MinValue);
+                        _userTokens.ContainsKey(userToken)
+                            ? _userTokens[userToken]
+                            : ulong.MinValue);
                     if (_currentDbUser == null || baseRequest.Token == null)
                     {
                         Response baseResponse = new Response
@@ -189,9 +189,9 @@ namespace YukoBot
         {
             ServerRequest serverRequest = ServerRequest.FromJson(json);
             DbBan ban = _dbContext.Bans.FirstOrDefault(
-                                                       x =>
-                                                           x.UserId == _currentDbUser.Id &&
-                                                           x.ServerId == serverRequest.Id);
+                x =>
+                    x.UserId == _currentDbUser.Id &&
+                    x.ServerId == serverRequest.Id);
             if (ban == null)
             {
                 DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
@@ -216,7 +216,7 @@ namespace YukoBot
                                     await GetAttachmentsAfter(scriptRequest);
                                     break;
                                 case ScriptMode.Before:
-                                    await GetAttacmentsBefore(scriptRequest);
+                                    await GetAttachmentsBefore(scriptRequest);
                                     break;
                                 case ScriptMode.End:
                                     await GetAttachments(scriptRequest);
@@ -268,21 +268,21 @@ namespace YukoBot
                     Id = dbCollection.Id
                 };
                 IQueryable<DbMessage> dbCollectionItems = _dbContext.CollectionItems
-                                                                    .Where(x => x.CollectionId == dbCollection.Id)
-                                                                    .Join(
-                                                                          _dbContext.Messages,
-                                                                          ci => ci.MessageId,
-                                                                          m => m.Id,
-                                                                          (ci, m) => new DbMessage
-                                                                              { Id = m.Id, ChannelId = m.ChannelId });
+                    .Where(x => x.CollectionId == dbCollection.Id)
+                    .Join(
+                        _dbContext.Messages,
+                        ci => ci.MessageId,
+                        m => m.Id,
+                        (ci, m) => new DbMessage
+                            { Id = m.Id, ChannelId = m.ChannelId });
                 foreach (DbMessage dbMessage in dbCollectionItems)
                 {
                     collection.Items.Add(
-                                         new MessageCollectionItemWeb
-                                         {
-                                             ChannelId = dbMessage.ChannelId,
-                                             MessageId = dbMessage.Id
-                                         });
+                        new MessageCollectionItemWeb
+                        {
+                            ChannelId = dbMessage.ChannelId,
+                            MessageId = dbMessage.Id
+                        });
                 }
                 response.MessageCollections.Add(collection);
             }
@@ -296,15 +296,15 @@ namespace YukoBot
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
                 .Join(
-                      _dbContext.Messages,
-                      ci => ci.MessageId,
-                      m => m.Id,
-                      (ci, m) => new CollectionItemJoinMessage
-                      {
-                          MessageId = m.Id,
-                          Link = m.Link,
-                          IsSavedLinks = ci.IsSavedLinks
-                      })
+                    _dbContext.Messages,
+                    ci => ci.MessageId,
+                    m => m.Id,
+                    (ci, m) => new CollectionItemJoinMessage
+                    {
+                        MessageId = m.Id,
+                        Link = m.Link,
+                        IsSavedLinks = ci.IsSavedLinks
+                    })
                 .ToDictionary(k => k.MessageId);
             List<ulong> channelNotFound = new List<ulong>();
             List<ulong> messageNotFound = new List<ulong>();
@@ -342,7 +342,7 @@ namespace YukoBot
                             if (discordChannel == null)
                                 discordChannel =
                                     await _discordClient.GetChannelAsync(
-                                                                         groupEnumerator.Current.Key);
+                                        groupEnumerator.Current.Key);
                             try
                             {
                                 DiscordMessage discordMessage =
@@ -407,8 +407,8 @@ namespace YukoBot
                     {
                         Permissions userPermission = channel.PermissionsFor(isContainsMember);
                         if (userPermission.HasPermission(
-                                                         Permissions.AccessChannels |
-                                                         Permissions.ReadMessageHistory))
+                                Permissions.AccessChannels |
+                                Permissions.ReadMessageHistory))
                         {
                             ChannelWeb channelResponse = new ChannelWeb
                             {
@@ -453,28 +453,30 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                IReadOnlyList<DiscordMessage> messages =
+                IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesAfterAsync(discordChannel, request.MessageId, limit);
 
-                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
-                    request.Count = 0;
-
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
-                foreach (DiscordMessage message in messages)
-                {
-                    response.Urls.AddRange(message.GetImages(_yukoSettings));
-                }
-                _binaryWriter.Write(response.ToString());
 
-                if (messages.Count > 0)
+                bool saveFirst = false;
+                await foreach (DiscordMessage message in messages)
                 {
-                    request.MessageId = messages.First().Id;
-                    //Thread.Sleep(_messageLimitSleepMs);
+                    if (!saveFirst)
+                    {
+                        request.MessageId = message.Id;
+                        saveFirst = true;
+                    }
+
+                    response.Urls.AddRange(message.GetImages(_yukoSettings));
+
+                    request.Count--;
                 }
+
+                _binaryWriter.Write(response.ToString());
             }
         }
 
-        private async Task GetAttacmentsBefore(ExecuteScriptRequest request)
+        private async Task GetAttachmentsBefore(ExecuteScriptRequest request)
         {
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
 
@@ -492,24 +494,26 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                IReadOnlyList<DiscordMessage> messages =
+                IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
-                    request.Count = 0;
-
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
-                foreach (DiscordMessage message in messages)
-                {
-                    response.Urls.AddRange(message.GetImages(_yukoSettings));
-                }
-                _binaryWriter.Write(response.ToString());
 
-                if (messages.Count > 0)
+                bool saveFirst = false;
+                await foreach (DiscordMessage message in messages)
                 {
-                    request.MessageId = messages.First().Id;
-                    //Thread.Sleep(_messageLimitSleepMs);
+                    if (!saveFirst)
+                    {
+                        request.MessageId = message.Id;
+                        saveFirst = true;
+                    }
+
+                    response.Urls.AddRange(message.GetImages(_yukoSettings));
+
+                    request.Count--;
                 }
+
+                _binaryWriter.Write(response.ToString());
             }
         }
 
@@ -529,16 +533,20 @@ namespace YukoBot
                 request.Count = 0;
             }
 
-            IReadOnlyList<DiscordMessage> messages = await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
+            IAsyncEnumerable<DiscordMessage> messages =
+                await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
 
             UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
-            foreach (DiscordMessage message in messages)
+
+            await foreach (DiscordMessage message in messages)
             {
                 response.Urls.AddRange(message.GetImages(_yukoSettings));
-            }
-            _binaryWriter.Write(response.ToString());
 
-            ulong endId = messages.Last().Id;
+                request.MessageId = message.Id;
+                request.Count--;
+            }
+
+            _binaryWriter.Write(response.ToString());
 
             while (request.Count != 0)
             {
@@ -552,24 +560,24 @@ namespace YukoBot
                     request.Count = 0;
                 }
 
-                //Thread.Sleep(_messageLimitSleepMs);
-
-                messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, endId, limit);
-
-                if (messages.Count < _yukoSettings.NumberOfMessagesPerRequest)
-                {
-                    request.Count = 0;
-                }
-                else
-                {
-                    endId = messages.Last().Id;
-                }
+                messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
                 response = new UrlsResponse { Next = request.Count > 0 };
-                foreach (DiscordMessage message in messages)
+
+                bool saveFirst = false;
+                await foreach (DiscordMessage message in messages)
                 {
+                    if (!saveFirst)
+                    {
+                        request.MessageId = message.Id;
+                        saveFirst = true;
+                    }
+
                     response.Urls.AddRange(message.GetImages(_yukoSettings));
+
+                    request.Count--;
                 }
+
                 _binaryWriter.Write(response.ToString());
             }
         }

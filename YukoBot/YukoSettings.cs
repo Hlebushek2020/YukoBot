@@ -34,7 +34,7 @@ namespace YukoBot
         {
             BotPrefix = "yuko!";
             BotLogLevel = LogLevel.Information;
-            NumberOfMessagesPerRequest = 25;
+            NumberOfMessagesPerRequest = 10;
             IntervalBetweenMessageRequests = 500;
         }
 

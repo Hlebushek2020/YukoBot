@@ -74,8 +74,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddToCollectionById")]
         public async Task AddToCollectionById(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")]
-            ulong messageId,
+            [Description("CommandArg.MessageId")] ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
@@ -84,7 +83,7 @@ namespace YukoBot.Commands
                 DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
                 DiscordChannel discordChannel = ctx.Channel;
                 bool artChannel = guildSettings != null && guildSettings.ArtChannelId.HasValue &&
-                                  discordChannel.Id != guildSettings.ArtChannelId;
+                    discordChannel.Id != guildSettings.ArtChannelId;
                 if (artChannel)
                 {
                     try
@@ -231,21 +230,23 @@ namespace YukoBot.Commands
                                 dbCollection,
                                 hasPremiumAccess);
                         }
-                        if (discordMessage.Id == messageEndId)
-                        {
-                            numMessage = -1;
-                            isCompleted = true;
-                        }
+
+                        if (discordMessage.Id != messageEndId)
+                            continue;
+
+                        numMessage = -1;
+                        isCompleted = true;
                     }
+
+                    if (isCompleted)
+                        continue;
+
+                    messages = await channel.GetMessagesAfterAsync(messageStartId, limit).ToList();
+                    isCompleted = messages.Count < limit;
+                    Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
                     if (!isCompleted)
                     {
-                        messages = await channel.GetMessagesAfterAsync(messageStartId, limit);
-                        isCompleted = messages.Count < limit;
-                        Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
-                        if (!isCompleted)
-                        {
-                            messageStartId = messages.First().Id;
-                        }
+                        messageStartId = messages.First().Id;
                     }
                 }
 
@@ -393,8 +394,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteFromCollection")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")]
-            ulong messageId,
+            [Description("CommandArg.MessageId")] ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {

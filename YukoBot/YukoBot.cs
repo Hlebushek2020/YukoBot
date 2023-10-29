@@ -58,7 +58,7 @@ namespace YukoBot
                     Intents = DiscordIntents.All
                 });
 
-            _discordClient.Ready += DiscordClient_Ready;
+            _discordClient.SessionCreated += DiscordClient_OnSessionCreated;
 
             _logger.LogInformation("Initializing services");
 
@@ -107,14 +107,16 @@ namespace YukoBot
                 _yukoSettings.ServerPort);
         }
 
-        private async Task DiscordClient_Ready(DiscordClient sender, ReadyEventArgs e) =>
-            await sender.UpdateStatusAsync(
+        private async Task DiscordClient_OnSessionCreated(DiscordClient sender, SessionReadyEventArgs args)
+        {
+            await _discordClient.UpdateStatusAsync(
                 new DiscordActivity(
                     string.Format(
                         Resources.Bot_Activity,
                         Constants.HappySmile,
                         _yukoSettings.BotPrefix),
                     ActivityType.Watching));
+        }
 
         private Task Commands_CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
         {
