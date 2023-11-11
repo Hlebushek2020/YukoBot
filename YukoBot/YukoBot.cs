@@ -24,8 +24,6 @@ namespace YukoBot
 {
     public class YukoBot : IYukoBot, IDisposable
     {
-        public DateTime StartDateTime { get; private set; }
-
         #region Fields
         private readonly DiscordClient _discordClient;
         private readonly TcpListener _tcpListener;
@@ -37,7 +35,12 @@ namespace YukoBot
 
         private Task _processTask;
         private CancellationTokenSource _processCts;
-        private bool _isDisposed = false;
+        private bool _isDisposed;
+        #endregion
+
+        #region Property
+        public DateTime StartDateTime { get; private set; }
+        public bool IsShutdown => _processCts is { IsCancellationRequested: true };
         #endregion
 
         public YukoBot(IYukoSettings yukoSettings)
@@ -178,8 +181,8 @@ namespace YukoBot
             bool sendToCurrentChannel = true;
             if (dMember != null && command != null &&
                 (command.Name.Equals("add", StringComparison.OrdinalIgnoreCase) ||
-                    command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
-                    command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
+                 command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
+                 command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
                 DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
@@ -233,9 +236,7 @@ namespace YukoBot
                                 }
                             }
                         }
-                        catch (TaskCanceledException)
-                        {
-                        }
+                        catch (TaskCanceledException) { }
                     },
                     processToken);
             }
@@ -245,6 +246,11 @@ namespace YukoBot
         public void Shutdown(string reason = null)
         {
             _logger.LogInformation("Shutdown");
+            _discordClient.UpdateStatusAsync(
+                new DiscordActivity(
+                    Resources.Bot_Shutdown,
+                    ActivityType.Custom),
+                UserStatus.DoNotDisturb).Wait();
 
             _logger.LogInformation("Server stopping listener");
             if (_processCts != null && !_processTask.IsCompleted)
@@ -256,9 +262,7 @@ namespace YukoBot
 
             _logger.LogInformation("Waiting for clients to disconnect");
             while (YukoClient.Availability)
-            {
                 Task.Delay(100);
-            }
 
             if (!string.IsNullOrEmpty(reason))
                 _notificationsService.SendShutdownNotifications(reason).Wait();

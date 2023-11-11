@@ -411,6 +411,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Спатеньки.
+        /// </summary>
+        internal static string Bot_Shutdown {
+            get {
+                return ResourceManager.GetString("Bot.Shutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Канал для поиска сообщений.
         /// </summary>
         internal static string CommandArg_ArtChannel {

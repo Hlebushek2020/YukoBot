@@ -549,4 +549,7 @@
     <data name="CommandArg.CategoryOrCommand" xml:space="preserve">
         <value>Категория или команда</value>
     </data>
+    <data name="Bot.Shutdown" xml:space="preserve">
+        <value>Спатеньки</value>
+    </data>
 </root>
