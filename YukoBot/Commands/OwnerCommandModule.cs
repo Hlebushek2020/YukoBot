@@ -24,14 +24,12 @@ namespace YukoBot.Commands
         #endregion
 
         private readonly YukoDbContext _yukoDbContext;
-        private readonly IYukoBot _yukoBot;
         private readonly IYukoSettings _yukoSettings;
 
         public OwnerCommandModule(YukoDbContext yukoDbContext, IYukoBot yukoBot, IYukoSettings yukoSettings)
-            : base(Categories.Management, Resources.OwnerCommand_AccessError)
+            : base(yukoBot, Categories.Management, Resources.OwnerCommand_AccessError)
         {
             _yukoDbContext = yukoDbContext;
-            _yukoBot = yukoBot;
             _yukoSettings = yukoSettings;
         }
 
@@ -56,7 +54,7 @@ namespace YukoBot.Commands
                     string.Format(
                         Resources.OwnerCommand_Shutdown_Response,
                         Constants.HappySmile));
-                _yukoBot.Shutdown(reason);
+                Bot.Shutdown(reason);
             }
         }
 
@@ -76,9 +74,9 @@ namespace YukoBot.Commands
                     $"v{Program.Version} {File.GetCreationTime(assemblyLocation):dd.MM.yyyy}")
                 .AddField(
                     Resources.OwnerCommand_Status_FieldLaunchDate_Title,
-                    _yukoBot.StartDateTime.ToString("dd.MM.yyyy HH:mm:ss zzz"));
+                    Bot.StartDateTime.ToString("dd.MM.yyyy HH:mm:ss zzz"));
 
-            TimeSpan timeSpan = DateTime.Now - _yukoBot.StartDateTime;
+            TimeSpan timeSpan = DateTime.Now - Bot.StartDateTime;
             discordEmbed.AddField(
                 Resources.OwnerCommand_Status_FieldWorkingHours_Title,
                 string.Format(

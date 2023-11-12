@@ -34,8 +34,9 @@ namespace YukoBot.Commands
         public ManagingСollectionsCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
+            IYukoBot yukoBot,
             ILogger<ManagingСollectionsCommandModule> logger)
-            : base(Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
+            : base(yukoBot, Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;
@@ -74,7 +75,8 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddToCollectionById")]
         public async Task AddToCollectionById(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")] ulong messageId,
+            [Description("CommandArg.MessageId")]
+            ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
@@ -83,7 +85,7 @@ namespace YukoBot.Commands
                 DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
                 DiscordChannel discordChannel = ctx.Channel;
                 bool artChannel = guildSettings != null && guildSettings.ArtChannelId.HasValue &&
-                    discordChannel.Id != guildSettings.ArtChannelId;
+                                  discordChannel.Id != guildSettings.ArtChannelId;
                 if (artChannel)
                 {
                     try
@@ -394,7 +396,8 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteFromCollection")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")] ulong messageId,
+            [Description("CommandArg.MessageId")]
+            ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {

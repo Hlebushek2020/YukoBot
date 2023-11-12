@@ -17,8 +17,8 @@ public class AdminCommandModule : CommandModule
 {
     private readonly YukoDbContext _dbContext;
 
-    public AdminCommandModule(YukoDbContext dbContext)
-        : base(Categories.Management, Resources.AdminCommand_AccessError)
+    public AdminCommandModule(IYukoBot yukoBot, YukoDbContext dbContext)
+        : base(yukoBot, Categories.Management, Resources.AdminCommand_AccessError)
     {
         _dbContext = dbContext;
     }

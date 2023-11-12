@@ -30,8 +30,9 @@ namespace YukoBot.Commands
         public UserCommandModule(
             YukoDbContext yukoDbContext,
             IYukoSettings yukoSettings,
+            IYukoBot yukoBot,
             ILogger<UserCommandModule> logger)
-            : base(Categories.User, null)
+            : base(yukoBot, Categories.User, null)
         {
             _yukoDbContext = yukoDbContext;
             _yukoSettings = yukoSettings;

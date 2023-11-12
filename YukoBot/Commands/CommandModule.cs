@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
+using YukoBot.Commands.Exceptions;
 using YukoBot.Commands.Models;
 
 namespace YukoBot.Commands
@@ -11,8 +14,12 @@ namespace YukoBot.Commands
         public Category Category { get; }
         public string CommandAccessError { get; }
 
-        protected CommandModule(Category category, string commandAccessError)
+        protected IYukoBot Bot { get; }
+
+        protected CommandModule(IYukoBot yukoBot, Category category, string commandAccessError)
         {
+            Bot = yukoBot;
+
             // register category
             _registeredСategories.TryAdd(category.HelpCommand, category);
 
@@ -23,6 +30,14 @@ namespace YukoBot.Commands
         protected static bool TryGetRegisteredСategory(string helpCommand, out Category category) =>
             _registeredСategories.TryGetValue(helpCommand, out category);
 
-        protected static IReadOnlyCollection<Category> GetCategories() => _registeredСategories.Values;
+        protected static IEnumerable<Category> GetCategories() => _registeredСategories.Values;
+
+        public override Task BeforeExecutionAsync(CommandContext ctx)
+        {
+            if (Bot.IsShutdown)
+                throw new ShutdownBotException();
+
+            return Task.CompletedTask;
+        }
     }
 }

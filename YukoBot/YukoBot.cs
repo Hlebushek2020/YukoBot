@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using YukoBot.Commands;
+using YukoBot.Commands.Exceptions;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
@@ -32,10 +33,13 @@ namespace YukoBot
         private readonly IYukoSettings _yukoSettings;
         private readonly YukoDbContext _dbContext;
         private readonly IBotNotificationsService _notificationsService;
+        private readonly IMessageRequestQueueService _mrqService;
 
         private Task _processTask;
         private CancellationTokenSource _processCts;
         private bool _isDisposed;
+
+        private volatile bool _isOff;
         #endregion
 
         #region Property
@@ -83,6 +87,7 @@ namespace YukoBot
 
             _dbContext = _services.GetService<YukoDbContext>();
             _notificationsService = _services.GetService<IBotNotificationsService>();
+            _mrqService = _services.GetService<IMessageRequestQueueService>();
 
             _logger.LogInformation("Initializing commands");
 
@@ -171,6 +176,7 @@ namespace YukoBot
                     $"Error when executing the {checksFailedEx.Command.Name
                     } command. Type: CommandNotFoundException. Message: {exception.Message}");
             }
+            else if (exception is ShutdownBotException) { }
             else
             {
                 embed.WithDescription(Resources.Bot_CommandErrored_UnknownException);
@@ -232,8 +238,15 @@ namespace YukoBot
                                 }
                                 else
                                 {
-                                    await Task.Delay(200, processToken);
+                                    // ReSharper disable once MethodSupportsCancellation
+                                    await Task.Delay(200);
                                 }
+                            }
+
+                            while (!_isOff)
+                            {
+                                // ReSharper disable once MethodSupportsCancellation
+                                await Task.Delay(200);
                             }
                         }
                         catch (TaskCanceledException) { }
@@ -256,13 +269,18 @@ namespace YukoBot
             if (_processCts != null && !_processTask.IsCompleted)
             {
                 _processCts.Cancel();
-                _processTask.Wait();
+                // _processTask.Wait();
             }
             _tcpListener?.Stop();
 
+            Task.Delay(1000000000).Wait();
+
             _logger.LogInformation("Waiting for clients to disconnect");
             while (YukoClient.Availability)
-                Task.Delay(100);
+                Task.Delay(100).Wait();
+
+            _logger.LogInformation("Stopping the message request service");
+            _mrqService.StopProcessing().Wait();
 
             if (!string.IsNullOrEmpty(reason))
                 _notificationsService.SendShutdownNotifications(reason).Wait();
@@ -272,6 +290,8 @@ namespace YukoBot
                 _logger.LogInformation("Disconnect discord client");
                 _discordClient.DisconnectAsync().Wait();
             }
+
+            _isOff = true;
         }
 
         protected virtual void Dispose(bool disposing)
