@@ -16,6 +16,7 @@ using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
+using YukoBot.Services;
 
 namespace YukoBot.Commands
 {
@@ -29,17 +30,20 @@ namespace YukoBot.Commands
 
         private readonly YukoDbContext _dbContext;
         private readonly IYukoSettings _yukoSettings;
+        private readonly IMessageRequestQueueService _mrqService;
         private readonly ILogger<ManagingСollectionsCommandModule> _logger;
 
         public ManagingСollectionsCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
             IYukoBot yukoBot,
+            IMessageRequestQueueService mrqService,
             ILogger<ManagingСollectionsCommandModule> logger)
             : base(yukoBot, Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
         {
             _dbContext = dbContext;
             _yukoSettings = yukoSettings;
+            _mrqService = mrqService;
             _logger = logger;
         }
 
@@ -212,7 +216,6 @@ namespace YukoBot.Commands
                 DbUser dbUser = await _dbContext.Users.FindAsync(memberId);
                 bool hasPremiumAccess = dbUser.HasPremiumAccess;
 
-                const int limit = 10;
                 bool isCompleted = false;
                 DiscordMessage discordMessage = ctx.Message.ReferencedMessage;
                 ulong messageEndId = discordMessage.Id;
@@ -243,13 +246,9 @@ namespace YukoBot.Commands
                     if (isCompleted)
                         continue;
 
-                    messages = await channel.GetMessagesAfterAsync(messageStartId, limit).ToList();
-                    isCompleted = messages.Count < limit;
-                    Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
-                    if (!isCompleted)
-                    {
-                        messageStartId = messages.First().Id;
-                    }
+                    messages = await (await _mrqService.GetMessagesAfterAsync(channel, messageStartId,
+                        _yukoSettings.NumberOfMessagesPerRequest)).ToList();
+                    messageStartId = messages.First().Id;
                 }
 
                 dmMessage = await dmMessage.ModifyAsync(Optional.FromValue<DiscordEmbed>(dmEmbed));
