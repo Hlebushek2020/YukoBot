@@ -550,9 +550,9 @@
         <value>Категория или команда</value>
     </data>
     <data name="Bot.Shutdown" xml:space="preserve">
-        <value>Спатеньки</value>
+        <value>Готовиться ко сну</value>
     </data>
     <data name="Bot.CommandErrored.ShutdownBotException" xml:space="preserve">
-        <value>Завершение работы бота, команда `{0}` не может быть выполнена!</value>
+        <value>Простите, сейчас я не могу выполнять команды!</value>
     </data>
 </root>

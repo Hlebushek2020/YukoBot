@@ -357,7 +357,7 @@ namespace YukoBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Завершение работы бота, команда `{0}` не может быть выполнена!.
+        ///   Looks up a localized string similar to Простите, сейчас я не могу выполнять команды!.
         /// </summary>
         internal static string Bot_CommandErrored_ShutdownBotException {
             get {
@@ -420,7 +420,7 @@ namespace YukoBot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Спатеньки.
+        ///   Looks up a localized string similar to Готовиться ко сну.
         /// </summary>
         internal static string Bot_Shutdown {
             get {

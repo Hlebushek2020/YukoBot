@@ -179,7 +179,7 @@ namespace YukoBot
             }
             else if (exception is ShutdownBotException)
             {
-                embed.WithDescription(string.Format(Resources.Bot_CommandErrored_ShutdownBotException, e.Command.Name));
+                embed.WithDescription(Resources.Bot_CommandErrored_ShutdownBotException);
 
                 _logger.LogWarning($"Bot shutdown, command {e.Command.Name} cannot be executed.");
             }
