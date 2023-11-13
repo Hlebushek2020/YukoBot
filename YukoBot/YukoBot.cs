@@ -208,51 +208,52 @@ namespace YukoBot
 
         public Task RunAsync()
         {
-            if (_processCts == null || _processTask.IsCompleted)
-            {
-                _processCts = new CancellationTokenSource();
-                CancellationToken processToken = _processCts.Token;
-                _processTask = Task.Run(
-                    async () =>
+            if (_processCts != null && !_processTask.IsCompleted)
+                throw new Exception();
+
+            _processCts = new CancellationTokenSource();
+            CancellationToken processToken = _processCts.Token;
+            _processTask = Task.Run(
+                async () =>
+                {
+                    try
                     {
-                        try
+                        _logger.LogInformation("Discord client connect");
+                        await _discordClient.ConnectAsync();
+                        StartDateTime = DateTime.Now;
+
+                        await _notificationsService.SendReadyNotifications();
+
+                        _tcpListener.Start();
+                        _logger.LogInformation("Server listening");
+
+                        while (!processToken.IsCancellationRequested)
                         {
-                            _logger.LogInformation("Discord client connect");
-                            await _discordClient.ConnectAsync();
-                            StartDateTime = DateTime.Now;
-
-                            await _notificationsService.SendReadyNotifications();
-
-                            _tcpListener.Start();
-                            _logger.LogInformation("Server listening");
-
-                            while (!processToken.IsCancellationRequested)
+                            if (_tcpListener.Pending())
                             {
-                                if (_tcpListener.Pending())
-                                {
-                                    YukoClient yukoClient =
-                                        new YukoClient(
-                                            _services,
-                                            await _tcpListener.AcceptTcpClientAsync(processToken));
-                                    ThreadPool.QueueUserWorkItem(yukoClient.Process);
-                                }
-                                else
-                                {
-                                    // ReSharper disable once MethodSupportsCancellation
-                                    await Task.Delay(200);
-                                }
+                                YukoClient yukoClient =
+                                    new YukoClient(
+                                        _services,
+                                        await _tcpListener.AcceptTcpClientAsync(processToken));
+                                ThreadPool.QueueUserWorkItem(yukoClient.Process);
                             }
-
-                            while (!_isOff)
+                            else
                             {
                                 // ReSharper disable once MethodSupportsCancellation
                                 await Task.Delay(200);
                             }
                         }
-                        catch (TaskCanceledException) { }
-                    },
-                    processToken);
-            }
+
+                        while (!_isOff)
+                        {
+                            // ReSharper disable once MethodSupportsCancellation
+                            await Task.Delay(200);
+                        }
+                    }
+                    catch (TaskCanceledException) { }
+                },
+                processToken);
+
             return _processTask;
         }
 
@@ -267,13 +268,8 @@ namespace YukoBot
 
             _logger.LogInformation("Server stopping listener");
             if (_processCts != null && !_processTask.IsCompleted)
-            {
                 _processCts.Cancel();
-                // _processTask.Wait();
-            }
             _tcpListener?.Stop();
-
-            Task.Delay(1000000000).Wait();
 
             _logger.LogInformation("Waiting for clients to disconnect");
             while (YukoClient.Availability)
