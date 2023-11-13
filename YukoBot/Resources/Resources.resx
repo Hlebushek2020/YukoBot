@@ -552,4 +552,7 @@
     <data name="Bot.Shutdown" xml:space="preserve">
         <value>Спатеньки</value>
     </data>
+    <data name="Bot.CommandErrored.ShutdownBotException" xml:space="preserve">
+        <value>Завершение работы бота, команда `{0}` не может быть выполнена!</value>
+    </data>
 </root>

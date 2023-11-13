@@ -357,6 +357,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Завершение работы бота, команда `{0}` не может быть выполнена!.
+        /// </summary>
+        internal static string Bot_CommandErrored_ShutdownBotException {
+            get {
+                return ResourceManager.GetString("Bot.CommandErrored.ShutdownBotException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Простите, при выполнении команды произошла неизвестная ошибка, попробуйте обратиться к моему создателю!.
         /// </summary>
         internal static string Bot_CommandErrored_UnknownException {

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using YukoBot.Commands;
 using YukoBot.Commands.Exceptions;
+using YukoBot.Exceptions;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
@@ -174,9 +175,14 @@ namespace YukoBot
 
                 _logger.LogWarning(
                     $"Error when executing the {checksFailedEx.Command.Name
-                    } command. Type: CommandNotFoundException. Message: {exception.Message}");
+                    } command. Type: ChecksFailedException. Message: {exception.Message}");
             }
-            else if (exception is ShutdownBotException) { }
+            else if (exception is ShutdownBotException)
+            {
+                embed.WithDescription(string.Format(Resources.Bot_CommandErrored_ShutdownBotException, e.Command.Name));
+
+                _logger.LogWarning($"Bot shutdown, command {e.Command.Name} cannot be executed.");
+            }
             else
             {
                 embed.WithDescription(Resources.Bot_CommandErrored_UnknownException);
@@ -209,7 +215,7 @@ namespace YukoBot
         public Task RunAsync()
         {
             if (_processCts != null && !_processTask.IsCompleted)
-                throw new Exception();
+                throw new BotIsRunningException();
 
             _processCts = new CancellationTokenSource();
             CancellationToken processToken = _processCts.Token;
