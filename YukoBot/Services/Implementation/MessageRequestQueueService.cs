@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using Microsoft.Extensions.Logging;
+using YukoBot.Exceptions;
 
 namespace YukoBot.Services.Implementation;
 
@@ -43,7 +44,7 @@ public class MessageRequestQueueService : IMessageRequestQueueService
     private Task<IAsyncEnumerable<DiscordMessage>> GetMessagesInternal(QueueEntry queueEntry)
     {
         if (_cts.IsCancellationRequested)
-            throw new Exception("MessageRequestQueueService STOP");
+            throw new MessageRequestQueueServiceStoppedException();
 
         _items.Enqueue(queueEntry);
         _processTask ??= Task.Run(Process, _cts.Token);
