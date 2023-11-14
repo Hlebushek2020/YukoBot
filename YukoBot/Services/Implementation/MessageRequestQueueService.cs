@@ -90,7 +90,7 @@ public class MessageRequestQueueService : IMessageRequestQueueService
 
         public Task<IAsyncEnumerable<DiscordMessage>> ResultTask() => _tcs.Task;
 
-        public async void ExecuteAsync()
+        public void ExecuteAsync()
         {
             try
             {
