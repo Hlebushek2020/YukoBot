@@ -67,30 +67,23 @@ namespace YukoBot
                 NetworkStream networkStream = _tcpClient.GetStream();
                 _binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 _binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
-                string requestString = _binaryReader.ReadString();
-                _logger.LogDebug($"[{_endPoint}] Request: {requestString}");
-                BaseRequest baseRequest = BaseRequest.FromJson(requestString);
-                if (baseRequest.Type == RequestType.Authorization)
+                RequestType requestType = (RequestType)_binaryReader.ReadInt32();
+                _logger.LogDebug($"[{_endPoint}] Request type: {requestType}");
+                if (requestType != RequestType.Authorization)
                 {
-                    AuthorizationResponse response = await ClientAuthorization(requestString);
-                    _binaryWriter.Write(response.ToString());
-                }
-                else
-                {
-                    Guid userToken = Guid.Parse(baseRequest.Token);
+                    Guid userToken = Guid.Parse(_binaryReader.ReadString());
                     _currentDbUser = await _dbContext.Users.FindAsync(
-                        _userTokens.ContainsKey(userToken)
-                            ? _userTokens[userToken]
-                            : ulong.MinValue);
-                    if (_currentDbUser == null || baseRequest.Token == null)
+                        _userTokens.TryGetValue(userToken, out ulong userId) ? userId : ulong.MinValue);
+                    if (_currentDbUser == null)
                     {
-                        Response baseResponse = new Response
-                            { ErrorMessage = "Вы не авторизованы!" };
-                        _binaryWriter.Write(baseResponse.ToString());
+                        _binaryWriter.Write(new BaseResponse
+                        {
+                            Error = new ErrorResponse { Code = ClientErrorCodes.NotAuthorized }
+                        }.ToString());
                     }
                     else
                     {
-                        switch (baseRequest.Type)
+                        switch (requestType)
                         {
                             case RequestType.GetServer:
                                 await ClientGetServer(requestString);
@@ -110,6 +103,10 @@ namespace YukoBot
                         }
                     }
                 }
+                else
+                {
+                    await ClientAuthorization();
+                }
             }
             catch (Exception ex)
             {
@@ -124,53 +121,53 @@ namespace YukoBot
         }
 
         #region Requests
-        private async Task<AuthorizationResponse> ClientAuthorization(string json)
+        private async Task ClientAuthorization()
         {
-            AuthorizationRequest request = AuthorizationRequest.FromJson(json);
-            DbUser dbUser = _dbContext.Users.FirstOrDefault(x => x.Nikname == request.Login);
+            AuthorizationRequest request = AuthorizationRequest.FromJson(_binaryReader.ReadString());
+            DbUser dbUser = _dbContext.Users.FirstOrDefault(x => x.Username == request.Login);
             if (dbUser is null)
             {
                 if (ulong.TryParse(request.Login, out ulong id))
-                {
                     dbUser = _dbContext.Users.FirstOrDefault(x => x.Id == id);
-                }
             }
             if (dbUser == null || !dbUser.Password.Equals(request.Password))
             {
-                return new AuthorizationResponse
+                _binaryWriter.Write(new AuthorizationBaseResponse
                 {
-                    ErrorMessage = "Неверный логин или пароль!",
-                    Token = null
-                };
+                    Error = new ErrorResponse { Code = ClientErrorCodes.InvalidCredentials }
+                }.ToString());
             }
-            // save db
-            Guid userToken = Guid.NewGuid();
-            dbUser.LoginTime = DateTime.Now;
-            await _dbContext.SaveChangesAsync();
-            // add token to dictionary
-            _userTokens.AddOrUpdate(userToken, x => dbUser.Id, (x, y) => dbUser.Id);
-            // response build
-            DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
-            return new AuthorizationResponse
+            else
             {
-                Id = discordUser.Id,
-                Nikname = discordUser.Username + "#" + discordUser.Discriminator,
-                AvatarUri = discordUser.AvatarUrl,
-                Token = userToken.ToString()
-            };
+                // save db
+                dbUser.LastLogin = DateTime.Now;
+                await _dbContext.SaveChangesAsync();
+                // add token to dictionary
+                Guid userToken = Guid.NewGuid();
+                _userTokens.AddOrUpdate(userToken, x => dbUser.Id, (x, y) => dbUser.Id);
+                // response build
+                DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
+                _binaryWriter.Write(new AuthorizationBaseResponse
+                {
+                    Id = discordUser.Id,
+                    Username = discordUser.Username,
+                    AvatarUri = discordUser.AvatarUrl,
+                    Token = userToken
+                }.ToString());
+            }
         }
 
         private async Task ClientGetServer(string json)
         {
             ServerRequest request = ServerRequest.FromJson(json);
             DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
-            ServerResponse response = ServerResponse.FromServerWeb(await GetServer(guild));
-            _binaryWriter.Write(response.ToString());
+            ServerBaseResponse baseResponse = ServerBaseResponse.FromServerWeb(await GetServer(guild));
+            _binaryWriter.Write(baseResponse.ToString());
         }
 
         private async Task ClientGetServers()
         {
-            ServersResponse response = new ServersResponse();
+            ServersBaseResponse baseResponse = new ServersBaseResponse();
             foreach (KeyValuePair<ulong, DiscordGuild> guild in _discordClient.Guilds)
             {
                 if (guild.Value.Members.Any(x => x.Value.Id == _currentDbUser.Id))
@@ -178,11 +175,11 @@ namespace YukoBot
                     ServerWeb server = await GetServer(guild.Value);
                     if (server != null)
                     {
-                        response.Servers.Add(server);
+                        baseResponse.Servers.Add(server);
                     }
                 }
             }
-            _binaryWriter.Write(response.ToString());
+            _binaryWriter.Write(baseResponse.ToString());
         }
 
         private async Task ClientExecuteScripts(string json)
@@ -198,7 +195,7 @@ namespace YukoBot
                 DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id);
                 if (isContainsMember != null)
                 {
-                    _binaryWriter.Write(new Response().ToString());
+                    _binaryWriter.Write(new BaseResponse().ToString());
                     ExecuteScriptRequest scriptRequest;
                     do
                     {
@@ -229,16 +226,16 @@ namespace YukoBot
                         }
                         catch (Exception ex)
                         {
-                            Response response = new Response { ErrorMessage = ex.Message };
-                            _binaryWriter.Write(response.ToString());
+                            BaseResponse baseResponse = new BaseResponse { ErrorMessage = ex.Message };
+                            _binaryWriter.Write(baseResponse.ToString());
                             _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
                         }
                     } while (scriptRequest.HasNext);
                 }
                 else
                 {
-                    Response response = new Response { ErrorMessage = "Вас нет на этом сервере!" };
-                    _binaryWriter.Write(response.ToString());
+                    BaseResponse baseResponse = new BaseResponse { ErrorMessage = "Вас нет на этом сервере!" };
+                    _binaryWriter.Write(baseResponse.ToString());
                 }
             }
             else
@@ -246,12 +243,12 @@ namespace YukoBot
                 string reason = string.IsNullOrEmpty(ban.Reason)
                     ? ""
                     : $" Причина бана: {ban.Reason}.";
-                Response response = new Response
+                BaseResponse baseResponse = new BaseResponse
                 {
                     ErrorMessage =
                         $"Вы забанены на этом сервере, для разбана обратитесь к администратору сервера.{reason}"
                 };
-                _binaryWriter.Write(response.ToString());
+                _binaryWriter.Write(baseResponse.ToString());
             }
         }
 
@@ -259,7 +256,7 @@ namespace YukoBot
         {
             IReadOnlyList<DbCollection> dbCollections =
                 _dbContext.Collections.Where(x => x.UserId == _currentDbUser.Id).ToList();
-            MessageCollectionsResponse response = new MessageCollectionsResponse();
+            MessageCollectionsBaseResponse baseResponse = new MessageCollectionsBaseResponse();
             foreach (DbCollection dbCollection in dbCollections)
             {
                 MessageCollectionWeb collection = new MessageCollectionWeb
@@ -284,14 +281,14 @@ namespace YukoBot
                             MessageId = dbMessage.Id
                         });
                 }
-                response.MessageCollections.Add(collection);
+                baseResponse.MessageCollections.Add(collection);
             }
-            _binaryWriter.Write(response.ToString());
+            _binaryWriter.Write(baseResponse.ToString());
         }
 
         private async Task ClientGetUrls(string requestString)
         {
-            UrlsResponse response;
+            UrlsBaseResponse baseResponse;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
@@ -310,7 +307,7 @@ namespace YukoBot
             List<ulong> messageNotFound = new List<ulong>();
             using IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator =
                 request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
-            _binaryWriter.Write(new Response().ToString());
+            _binaryWriter.Write(new BaseResponse().ToString());
             while (groupEnumerator.MoveNext())
             {
                 using IEnumerator<MessageCollectionItemWeb> groupItemEnumerator =
@@ -323,12 +320,12 @@ namespace YukoBot
                     {
                         CollectionItemJoinMessage collectionItem = collectionItems[messageId];
 
-                        response = new UrlsResponse
+                        baseResponse = new UrlsBaseResponse
                         {
                             Next = true,
                             Urls = collectionItem.Link.Split(";").ToList()
                         };
-                        _binaryWriter.Write(response.ToString());
+                        _binaryWriter.Write(baseResponse.ToString());
 
                         if (!collectionItem.IsSavedLinks)
                         {
@@ -347,9 +344,9 @@ namespace YukoBot
                             {
                                 DiscordMessage discordMessage =
                                     await discordChannel.GetMessageAsync(messageId);
-                                response = new UrlsResponse { Next = true };
-                                response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
-                                _binaryWriter.Write(response.ToString());
+                                baseResponse = new UrlsBaseResponse { Next = true };
+                                baseResponse.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
+                                _binaryWriter.Write(baseResponse.ToString());
                             }
                             catch (NotFoundException)
                             {
@@ -364,7 +361,7 @@ namespace YukoBot
                     }
                 }
             }
-            response = new UrlsResponse
+            baseResponse = new UrlsBaseResponse
             {
                 Next = false,
                 ErrorMessage = string.Empty
@@ -373,20 +370,20 @@ namespace YukoBot
             {
                 if (channelNotFound.Count > 0)
                 {
-                    response.ErrorMessage +=
+                    baseResponse.ErrorMessage +=
                         $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
                 }
                 if (messageNotFound.Count > 0)
                 {
-                    if (response.ErrorMessage.Length > 0)
+                    if (baseResponse.ErrorMessage.Length > 0)
                     {
-                        response.ErrorMessage += '\n';
+                        baseResponse.ErrorMessage += '\n';
                     }
-                    response.ErrorMessage +=
+                    baseResponse.ErrorMessage +=
                         $"Следующие сообщения были не найдены: {string.Join(',', messageNotFound)}.";
                 }
             }
-            _binaryWriter.Write(response.ToString());
+            _binaryWriter.Write(baseResponse.ToString());
         }
 
         private async Task<ServerWeb> GetServer(DiscordGuild guild)
@@ -430,9 +427,9 @@ namespace YukoBot
         {
             DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
             DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
-            UrlsResponse response = new UrlsResponse();
-            response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
-            _binaryWriter.Write(response.ToString());
+            UrlsBaseResponse baseResponse = new UrlsBaseResponse();
+            baseResponse.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
+            _binaryWriter.Write(baseResponse.ToString());
         }
 
         private async Task GetAttachmentsAfter(ExecuteScriptRequest request)
@@ -456,7 +453,7 @@ namespace YukoBot
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesAfterAsync(discordChannel, request.MessageId, limit);
 
-                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+                UrlsBaseResponse baseResponse = new UrlsBaseResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
                 await foreach (DiscordMessage message in messages)
@@ -467,12 +464,12 @@ namespace YukoBot
                         saveFirst = true;
                     }
 
-                    response.Urls.AddRange(message.GetImages(_yukoSettings));
+                    baseResponse.Urls.AddRange(message.GetImages(_yukoSettings));
 
                     request.Count--;
                 }
 
-                _binaryWriter.Write(response.ToString());
+                _binaryWriter.Write(baseResponse.ToString());
             }
         }
 
@@ -497,7 +494,7 @@ namespace YukoBot
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+                UrlsBaseResponse baseResponse = new UrlsBaseResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
                 await foreach (DiscordMessage message in messages)
@@ -508,12 +505,12 @@ namespace YukoBot
                         saveFirst = true;
                     }
 
-                    response.Urls.AddRange(message.GetImages(_yukoSettings));
+                    baseResponse.Urls.AddRange(message.GetImages(_yukoSettings));
 
                     request.Count--;
                 }
 
-                _binaryWriter.Write(response.ToString());
+                _binaryWriter.Write(baseResponse.ToString());
             }
         }
 
@@ -536,17 +533,17 @@ namespace YukoBot
             IAsyncEnumerable<DiscordMessage> messages =
                 await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
 
-            UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+            UrlsBaseResponse baseResponse = new UrlsBaseResponse { Next = request.Count > 0 };
 
             await foreach (DiscordMessage message in messages)
             {
-                response.Urls.AddRange(message.GetImages(_yukoSettings));
+                baseResponse.Urls.AddRange(message.GetImages(_yukoSettings));
 
                 request.MessageId = message.Id;
                 request.Count--;
             }
 
-            _binaryWriter.Write(response.ToString());
+            _binaryWriter.Write(baseResponse.ToString());
 
             while (request.Count != 0)
             {
@@ -562,7 +559,7 @@ namespace YukoBot
 
                 messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                response = new UrlsResponse { Next = request.Count > 0 };
+                baseResponse = new UrlsBaseResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
                 await foreach (DiscordMessage message in messages)
@@ -573,12 +570,12 @@ namespace YukoBot
                         saveFirst = true;
                     }
 
-                    response.Urls.AddRange(message.GetImages(_yukoSettings));
+                    baseResponse.Urls.AddRange(message.GetImages(_yukoSettings));
 
                     request.Count--;
                 }
 
-                _binaryWriter.Write(response.ToString());
+                _binaryWriter.Write(baseResponse.ToString());
             }
         }
         #endregion

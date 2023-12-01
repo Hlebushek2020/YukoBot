@@ -2,23 +2,38 @@
 
 public enum ClientErrorCodes
 {
+    /// <summary>
+    /// No errors occurred.
+    /// </summary>
     None = 0,
 
-    //"Вы не авторизованы!"
+    /// <summary>
+    /// The user is not authorized or the token has expired.
+    /// </summary>
     NotAuthorized = 1,
 
-    //"Неверный логин или пароль!",
+    /// <summary>
+    /// The user is not authenticated. Wrong login or password.
+    /// </summary>
     InvalidCredentials = 2,
 
-    //"Вас нет на этом сервере!"
+    /// <summary>
+    /// This user is not a member of a particular server (guild) or does not have access to a specific channel.
+    /// </summary>
     MemberNotFound = 3,
 
-    //$"Вы забанены на этом сервере, для разбана обратитесь к администратору сервера.{reason}"
+    /// <summary>
+    /// This user is banned on a specific server (meaning a ban in a bot).
+    /// </summary>
     MemberBanned = 4,
 
-    //$"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
+    /// <summary>
+    /// This channel was not found.
+    /// </summary>
     ChannelNotFound = 5,
 
-    //$"Следующие сообщения были не найдены: {string.Join(',', messageNotFound)}."
+    /// <summary>
+    /// This message was not found.
+    /// </summary>
     MessageNotFound = 6
 }

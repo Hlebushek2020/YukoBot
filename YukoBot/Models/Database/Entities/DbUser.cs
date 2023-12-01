@@ -20,12 +20,12 @@ namespace YukoBot.Models.Database.Entities
         public ulong Id { get; set; }
 
         /// <summary>
-        /// Username with discriminator. Required field.
+        /// Username. Required field.
         /// </summary>
         [Required]
         [MaxLength(64)]
-        [Column("nikname")]
-        public string Nikname { get; set; }
+        [Column("nickname")]
+        public string Username { get; set; }
 
         /// <summary>
         /// Hash of the user's password. Required field.
@@ -36,10 +36,17 @@ namespace YukoBot.Models.Database.Entities
         public string Password { get; set; }
 
         /// <summary>
+        /// Date of registration. Required field.
+        /// </summary>
+        [Required]
+        [Column("registered")]
+        public DateTime Registered { get; set; }
+
+        /// <summary>
         /// The time and date of the last login to the application. Default value: null.
         /// </summary>
-        [Column("login_time")]
-        public DateTime? LoginTime { get; set; }
+        [Column("last_login")]
+        public DateTime? LastLogin { get; set; }
 
         /// <summary>
         /// Sending optional messages to private messages with the following commands: add, start, end. Default value: true.

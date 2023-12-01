@@ -1,4 +1,4 @@
-﻿using YukoBot.Enums;
+﻿using System;
 
 namespace YukoBot.Models.Web.Requests
 {
@@ -8,7 +8,6 @@ namespace YukoBot.Models.Web.Requests
 
     public class BaseRequest<T> : Request<T>
     {
-        public string Token { get; set; }
-        public RequestType Type { get; set; }
+        public Guid Token { get; set; }
     }
 }

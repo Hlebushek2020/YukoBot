@@ -238,7 +238,7 @@ namespace YukoBot.Commands
                 .AddField(Resources.RegisteredUserCommand_Profile_FieldPremium_Title, fieldPremiumText, true)
                 .AddField(
                     Resources.RegisteredUserCommand_Profile_FieldLastLogin_Title,
-                    dbUser.LoginTime.HasValue ? dbUser.LoginTime.Value.ToString(ProfileDtf, locale) : "-",
+                    dbUser.LastLogin.HasValue ? dbUser.LastLogin.Value.ToString(ProfileDtf, locale) : "-",
                     true)
                 .AddField(
                     Resources.RegisteredUserCommand_Profile_FieldOptionalNotifications_Title,

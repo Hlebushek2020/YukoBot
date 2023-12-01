@@ -54,7 +54,8 @@ namespace YukoBot.Commands
                 dbUser = new DbUser
                 {
                     Id = ctx.User.Id,
-                    Nikname = ctx.User.Username
+                    Username = ctx.User.Username,
+                    Registered = DateTime.Now
                 };
                 _yukoDbContext.Users.Add(dbUser);
             }
@@ -63,7 +64,7 @@ namespace YukoBot.Commands
             Random random = new Random();
             while (password.Length != 10)
             {
-                password += (char) random.Next(33, 127);
+                password += (char)random.Next(33, 127);
             }
 
             using (SHA256 sha256 = SHA256.Create())
@@ -88,7 +89,7 @@ namespace YukoBot.Commands
                 .WithColor(Constants.SuccessColor)
                 .AddField(
                     Resources.UserCommand_Register_FieldDmTitle_Login,
-                    string.Format(Resources.UserCommand_Register_FieldDmDescription_Login, dbUser.Nikname, dbUser.Id))
+                    string.Format(Resources.UserCommand_Register_FieldDmDescription_Login, dbUser.Username, dbUser.Id))
                 .AddField(
                     isRegister
                         ? Resources.UserCommand_Register_FieldDmTitle_Password
@@ -126,7 +127,7 @@ namespace YukoBot.Commands
                                 Category commandCategory = (baseCommandModule as CommandModule)?.Category;
 
                                 return category.Equals(commandCategory) && !x.IsHidden &&
-                                       !x.RunChecksAsync(ctx, true).Result.Any();
+                                    !x.RunChecksAsync(ctx, true).Result.Any();
                             });
 
                     SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();
@@ -299,8 +300,7 @@ namespace YukoBot.Commands
         [Description("UserCommand.Avatar")]
         public async Task Avatar(
             CommandContext ctx,
-            [Description("CommandArg.Member")]
-            DiscordMember member)
+            [Description("CommandArg.Member")] DiscordMember member)
         {
             DbUser user = await _yukoDbContext.Users.FindAsync(ctx.Member.Id);
             bool isUseMessage = user != null && user.HasPremiumAccess;
