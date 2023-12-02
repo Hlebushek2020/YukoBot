@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace YukoBot.Models.Web
+namespace YukoBot.Models.Json
 {
-    public class ServerWeb
+    public class ServerJson
     {
         public ulong Id { get; set; }
         public string IconUri { get; set; }
         public string Name { get; set; }
-        public List<ChannelWeb> Channels { get; set; } = new List<ChannelWeb>();
+        public List<ChannelJson> Channels { get; set; } = new List<ChannelJson>();
     }
 }

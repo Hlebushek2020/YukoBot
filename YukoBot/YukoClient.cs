@@ -17,9 +17,9 @@ using YukoBot.Extensions;
 using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Database.JoinedEntities;
-using YukoBot.Models.Web;
-using YukoBot.Models.Web.Requests;
-using YukoBot.Models.Web.Responses;
+using YukoBot.Models.Json;
+using YukoBot.Models.Json.Requests;
+using YukoBot.Models.Json.Responses;
 using YukoBot.Services;
 
 namespace YukoBot
@@ -86,7 +86,7 @@ namespace YukoBot
                         switch (requestType)
                         {
                             case RequestType.GetServer:
-                                await ClientGetServer(requestString);
+                                await ClientGetServer();
                                 break;
                             case RequestType.GetServers:
                                 await ClientGetServers();
@@ -157,11 +157,11 @@ namespace YukoBot
             }
         }
 
-        private async Task ClientGetServer(string json)
+        private async Task ClientGetServer()
         {
-            ServerRequest request = ServerRequest.FromJson(json);
+            ServerRequest request = ServerRequest.FromJson(_binaryReader.ReadString());
             DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
-            ServerBaseResponse baseResponse = ServerBaseResponse.FromServerWeb(await GetServer(guild));
+            ServerBaseResponse baseResponse = ServerBaseResponse.FromServerJson(await GetServer(guild));
             _binaryWriter.Write(baseResponse.ToString());
         }
 
@@ -172,27 +172,38 @@ namespace YukoBot
             {
                 if (guild.Value.Members.Any(x => x.Value.Id == _currentDbUser.Id))
                 {
-                    ServerWeb server = await GetServer(guild.Value);
+                    ServerJson server = await GetServer(guild.Value);
                     if (server != null)
-                    {
                         baseResponse.Servers.Add(server);
-                    }
                 }
             }
             _binaryWriter.Write(baseResponse.ToString());
         }
 
-        private async Task ClientExecuteScripts(string json)
+        private async Task ClientExecuteScripts()
         {
-            ServerRequest serverRequest = ServerRequest.FromJson(json);
+            ServerRequest serverRequest = ServerRequest.FromJson(_binaryReader.ReadString());
             DbBan ban = _dbContext.Bans.FirstOrDefault(
                 x =>
                     x.UserId == _currentDbUser.Id &&
                     x.ServerId == serverRequest.Id);
-            if (ban == null)
+            if (ban != null)
             {
+                _binaryWriter.Write(new BaseResponse
+                {
+                    Error = new RequestScriptErr
+                    {
+                        Code = ClientErrorCodes.MemberBanned,
+                        Reason = ban.Reason
+                    }
+                }.ToString());
+            }
+            else
+            {
+                _binaryWriter.Write(new BaseResponse().ToString());
                 DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
-                DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id);
+                DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id, true);
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (isContainsMember != null)
                 {
                     _binaryWriter.Write(new BaseResponse().ToString());
@@ -237,18 +248,6 @@ namespace YukoBot
                     BaseResponse baseResponse = new BaseResponse { ErrorMessage = "Вас нет на этом сервере!" };
                     _binaryWriter.Write(baseResponse.ToString());
                 }
-            }
-            else
-            {
-                string reason = string.IsNullOrEmpty(ban.Reason)
-                    ? ""
-                    : $" Причина бана: {ban.Reason}.";
-                BaseResponse baseResponse = new BaseResponse
-                {
-                    ErrorMessage =
-                        $"Вы забанены на этом сервере, для разбана обратитесь к администратору сервера.{reason}"
-                };
-                _binaryWriter.Write(baseResponse.ToString());
             }
         }
 
@@ -386,12 +385,12 @@ namespace YukoBot
             _binaryWriter.Write(baseResponse.ToString());
         }
 
-        private async Task<ServerWeb> GetServer(DiscordGuild guild)
+        private async Task<ServerJson> GetServer(DiscordGuild guild)
         {
             DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id);
             if (isContainsMember != null)
             {
-                ServerWeb serverResponse = new ServerWeb
+                ServerJson serverResponse = new ServerJson
                 {
                     Id = guild.Id,
                     Name = guild.Name,
@@ -407,7 +406,7 @@ namespace YukoBot
                                 Permissions.AccessChannels |
                                 Permissions.ReadMessageHistory))
                         {
-                            ChannelWeb channelResponse = new ChannelWeb
+                            ChannelJson channelResponse = new ChannelJson
                             {
                                 Id = channel.Id,
                                 Name = channel.Name

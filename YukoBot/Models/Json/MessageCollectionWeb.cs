@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YukoBot.Models.Web
+namespace YukoBot.Models.Json
 {
     public class MessageCollectionWeb
     {

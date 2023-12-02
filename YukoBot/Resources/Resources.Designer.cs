@@ -1447,6 +1447,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Зарегистрирован:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_FieldRegistered_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.FieldRegistered.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Показать настройки для подключения к боту..
         /// </summary>
         internal static string RegisteredUserCommand_Settings {

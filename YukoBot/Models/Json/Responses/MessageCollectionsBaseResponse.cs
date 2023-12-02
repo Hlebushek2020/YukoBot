@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YukoBot.Models.Web.Responses
+namespace YukoBot.Models.Json.Responses
 {
     public class MessageCollectionsBaseResponse : BaseResponse
     {

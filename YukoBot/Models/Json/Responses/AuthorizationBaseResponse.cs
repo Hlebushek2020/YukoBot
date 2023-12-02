@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YukoBot.Models.Web.Responses
+namespace YukoBot.Models.Json.Responses
 {
     public class AuthorizationBaseResponse : BaseResponse
     {

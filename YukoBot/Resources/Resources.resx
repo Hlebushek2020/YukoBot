@@ -555,4 +555,7 @@
     <data name="Bot.CommandErrored.ShutdownBotException" xml:space="preserve">
         <value>Простите, сейчас я не могу выполнять команды!</value>
     </data>
+    <data name="RegisteredUserCommand.Profile.FieldRegistered.Title" xml:space="preserve">
+        <value>Зарегистрирован:</value>
+    </data>
 </root>

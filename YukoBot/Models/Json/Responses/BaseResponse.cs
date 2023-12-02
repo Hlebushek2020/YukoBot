@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace YukoBot.Models.Web.Responses
+namespace YukoBot.Models.Json.Responses
 {
     public class BaseResponse
     {

@@ -1,4 +1,4 @@
-﻿namespace YukoBot.Models.Web
+﻿namespace YukoBot.Models.Json
 {
     public class MessageCollectionItemWeb
     {

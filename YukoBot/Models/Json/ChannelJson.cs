@@ -1,6 +1,6 @@
-﻿namespace YukoBot.Models.Web
+﻿namespace YukoBot.Models.Json
 {
-    public class ChannelWeb
+    public class ChannelJson
     {
         public ulong Id { get; set; }
         public string Name { get; set; }

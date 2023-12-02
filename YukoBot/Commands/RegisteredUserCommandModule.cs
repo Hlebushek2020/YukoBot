@@ -98,8 +98,7 @@ namespace YukoBot.Commands
         [Description("RegisteredUserCommand.InfoMessagesInPM")]
         public async Task InfoMessagesInPm(
             CommandContext ctx,
-            [Description("CommandArg.IsEnabled")]
-            bool isEnabled)
+            [Description("CommandArg.IsEnabled")] bool isEnabled)
         {
             DbUser dbUser = await _dbContext.Users.FindAsync(ctx.Member.Id);
 
@@ -213,7 +212,6 @@ namespace YukoBot.Commands
         [Description("RegisteredUserCommand.Profile")]
         public async Task Profile(CommandContext ctx)
         {
-            // TODO: ??????????????????????
             CultureInfo locale = CultureInfo.GetCultureInfo("ru-RU");
 
             DbUser dbUser = await _dbContext.Users.FindAsync(ctx.User.Id);
@@ -235,6 +233,9 @@ namespace YukoBot.Commands
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
                 .WithHappyTitle(ctx.Member != null ? ctx.Member.DisplayName : ctx.User.Username)
                 .WithThumbnail(ctx.User.AvatarUrl)
+                .AddField(
+                    Resources.RegisteredUserCommand_Profile_FieldRegistered_Title,
+                    dbUser.Registered.ToString(ProfileDtf, locale))
                 .AddField(Resources.RegisteredUserCommand_Profile_FieldPremium_Title, fieldPremiumText, true)
                 .AddField(
                     Resources.RegisteredUserCommand_Profile_FieldLastLogin_Title,

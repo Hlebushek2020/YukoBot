@@ -263,7 +263,7 @@ namespace YukoBot.Commands
                     embed.AddField(
                         fieldName,
                         sortedCommandsByCategory.TryGetValue(categoryName, out SortedSet<string> sortedCommands)
-                            ? string.Join(' ', sortedCommands)
+                            ? string.Join("; ", sortedCommands)
                             : mInfo.AccessError);
                 }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YukoBot.Models.Web.Requests
+namespace YukoBot.Models.Json.Requests
 {
     public class UrlsRequest : BaseRequest<UrlsRequest>
     {
