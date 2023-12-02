@@ -2,7 +2,7 @@
 
 namespace YukoBot.Models.Json.Responses
 {
-    public class ServersBaseResponse : BaseResponse
+    public class ServersResponse : Response<BaseErrorJson>
     {
         public List<ServerJson> Servers { get; set; } = new List<ServerJson>();
     }

@@ -1,8 +1,8 @@
 ﻿using YukoBot.Enums;
 
-namespace YukoBot.Models.Json.Responses;
+namespace YukoBot.Models.Json;
 
-public interface IErrorBaseJson
+public class BaseErrorJson
 {
     public ClientErrorCodes Code { get; set; }
 }

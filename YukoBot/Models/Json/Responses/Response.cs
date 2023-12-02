@@ -2,9 +2,9 @@
 
 namespace YukoBot.Models.Json.Responses
 {
-    public class BaseResponse
+    public class Response<TError> where TError : BaseErrorJson
     {
-        public ErrorResponse Error { get; set; }
+        public TError Error { get; set; }
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }

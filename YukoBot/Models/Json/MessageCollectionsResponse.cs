@@ -2,7 +2,7 @@
 
 namespace YukoBot.Models.Json.Responses
 {
-    public class MessageCollectionsBaseResponse : BaseResponse
+    public class MessageCollectionsResponse : Response
     {
         public List<MessageCollectionWeb> MessageCollections { get; set; } = new List<MessageCollectionWeb>();
     }

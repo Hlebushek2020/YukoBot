@@ -3,18 +3,18 @@ using YukoBot.Enums;
 
 namespace YukoBot.Models.Json.Responses
 {
-    public class ServerBaseResponse : BaseResponse
+    public class ServerResponse : Response<BaseErrorJson>
     {
         public string IconUri { get; set; }
         public string Name { get; set; }
         public List<ChannelJson> Channels { get; set; } = new List<ChannelJson>();
 
-        public static ServerBaseResponse FromServerJson(ServerJson serverJson)
+        public static ServerResponse FromServerJson(ServerJson serverJson)
         {
             if (serverJson == null)
-                return new ServerBaseResponse { Error = new ErrorResponse { Code = ClientErrorCodes.MemberNotFound } };
+                return new ServerResponse { Error = new BaseErrorJson { Code = ClientErrorCodes.MemberNotFound } };
 
-            return new ServerBaseResponse
+            return new ServerResponse
             {
                 IconUri = serverJson.IconUri,
                 Name = serverJson.Name,
