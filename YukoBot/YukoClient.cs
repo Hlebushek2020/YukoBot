@@ -236,8 +236,11 @@ namespace YukoBot
                         }
                         catch (Exception ex)
                         {
-                            Response response = new Response { ErrorMessage = ex.Message };
-                            _binaryWriter.Write(response.ToString());
+                            _binaryWriter.Write(new UrlsResponse
+                            {
+                                Next = false,
+                                Error = new UrlsErrorJson { Code = ClientErrorCodes.UnhandledException }
+                            }.ToString());
                             _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
                         }
                     } while (scriptRequest.HasNext);
@@ -428,8 +431,44 @@ namespace YukoBot
         #region Attacments
         private async Task GetAttachment(ExecuteScriptRequest request)
         {
-            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
-            DiscordMessage discordMessage = await discordChannel.GetMessageAsync(request.MessageId);
+            DiscordChannel discordChannel;
+            try
+            {
+                discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            }
+            catch (NotFoundException)
+            {
+                _binaryWriter.Write(new UrlsResponse
+                {
+                    Next = false,
+                    Error = new UrlsErrorJson
+                    {
+                        Code = ClientErrorCodes.ChannelNotFound,
+                        ChannelId = request.ChannelId
+                    }
+                }.ToString());
+                return;
+            }
+
+            DiscordMessage discordMessage;
+            try
+            {
+                discordMessage = await _messageRequestQueue.GetMessageAsync(discordChannel, request.MessageId);
+            }
+            catch (NotFoundException)
+            {
+                _binaryWriter.Write(new UrlsResponse
+                {
+                    Next = false,
+                    Error = new UrlsErrorJson
+                    {
+                        Code = ClientErrorCodes.MessageNotFound,
+                        MessageId = request.MessageId
+                    }
+                }.ToString());
+                return;
+            }
+
             UrlsResponse response = new UrlsResponse();
             response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
             _binaryWriter.Write(response.ToString());
@@ -441,17 +480,10 @@ namespace YukoBot
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
-            while (request.Count != 0)
+            while (request.Count > 0)
             {
-                if (request.Count >= limit)
-                {
-                    request.Count -= limit;
-                }
-                else
-                {
+                if (request.Count < limit)
                     limit = request.Count;
-                    request.Count = 0;
-                }
 
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesAfterAsync(discordChannel, request.MessageId, limit);
@@ -459,6 +491,7 @@ namespace YukoBot
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
+                int messageCount = 0;
                 await foreach (DiscordMessage message in messages)
                 {
                     if (!saveFirst)
@@ -469,8 +502,12 @@ namespace YukoBot
 
                     response.Urls.AddRange(message.GetImages(_yukoSettings));
 
-                    request.Count--;
+                    messageCount++;
                 }
+
+                request.Count -= messageCount;
+                if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
+                    request.Count = 0;
 
                 _binaryWriter.Write(response.ToString());
             }
@@ -482,17 +519,10 @@ namespace YukoBot
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
-            while (request.Count != 0)
+            while (request.Count > 0)
             {
-                if (request.Count >= limit)
-                {
-                    request.Count -= limit;
-                }
-                else
-                {
+                if (request.Count < limit)
                     limit = request.Count;
-                    request.Count = 0;
-                }
 
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
@@ -500,6 +530,7 @@ namespace YukoBot
                 UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
+                int messageCount = 0;
                 await foreach (DiscordMessage message in messages)
                 {
                     if (!saveFirst)
@@ -510,8 +541,12 @@ namespace YukoBot
 
                     response.Urls.AddRange(message.GetImages(_yukoSettings));
 
-                    request.Count--;
+                    messageCount++;
                 }
+
+                request.Count -= messageCount;
+                if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
+                    request.Count = 0;
 
                 _binaryWriter.Write(response.ToString());
             }
@@ -523,48 +558,40 @@ namespace YukoBot
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
-            if (request.Count >= limit)
-            {
-                request.Count -= limit;
-            }
-            else
-            {
+            if (request.Count < limit)
                 limit = request.Count;
-                request.Count = 0;
-            }
 
             IAsyncEnumerable<DiscordMessage> messages =
                 await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
 
             UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
 
+            int messageCount = 0;
             await foreach (DiscordMessage message in messages)
             {
                 response.Urls.AddRange(message.GetImages(_yukoSettings));
 
                 request.MessageId = message.Id;
-                request.Count--;
+                messageCount++;
             }
+
+            request.Count -= messageCount;
+            if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
+                request.Count = 0;
 
             _binaryWriter.Write(response.ToString());
 
-            while (request.Count != 0)
+            while (request.Count > 0)
             {
-                if (request.Count >= limit)
-                {
-                    request.Count -= limit;
-                }
-                else
-                {
+                if (request.Count < limit)
                     limit = request.Count;
-                    request.Count = 0;
-                }
 
                 messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
                 response = new UrlsResponse { Next = request.Count > 0 };
 
                 bool saveFirst = false;
+                messageCount = 0;
                 await foreach (DiscordMessage message in messages)
                 {
                     if (!saveFirst)
@@ -575,7 +602,7 @@ namespace YukoBot
 
                     response.Urls.AddRange(message.GetImages(_yukoSettings));
 
-                    request.Count--;
+                    messageCount++;
                 }
 
                 _binaryWriter.Write(response.ToString());

@@ -3,9 +3,9 @@
 public enum ClientErrorCodes
 {
     /// <summary>
-    /// No errors occurred.
+    /// Essentially this code indicates that the error was not handled properly
     /// </summary>
-    None = 0,
+    UnhandledException = 0,
 
     /// <summary>
     /// The user is not authorized or the token has expired.

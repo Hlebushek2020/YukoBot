@@ -41,6 +41,17 @@ public class MessageRequestQueueService : IMessageRequestQueueService
     public Task<IAsyncEnumerable<DiscordMessage>> GetMessagesAsync(DiscordChannel channel, int limit) =>
         GetMessagesInternal(new QueueEntry(channel, limit, null, null));
 
+    public Task<DiscordMessage> GetMessageAsync(DiscordChannel channel, ulong messageId)
+    {
+        if (_cts.IsCancellationRequested)
+            throw new MessageRequestQueueServiceStoppedException();
+
+        QueueEntry queueEntry = new QueueEntry(channel, 0, null, null, messageId);
+        _items.Enqueue(queueEntry);
+        _processTask ??= Task.Run(Process, _cts.Token);
+        return queueEntry.ResultTask();
+    }
+
     private Task<IAsyncEnumerable<DiscordMessage>> GetMessagesInternal(QueueEntry queueEntry)
     {
         if (_cts.IsCancellationRequested)
@@ -48,7 +59,7 @@ public class MessageRequestQueueService : IMessageRequestQueueService
 
         _items.Enqueue(queueEntry);
         _processTask ??= Task.Run(Process, _cts.Token);
-        return queueEntry.ResultTask();
+        return queueEntry.ResultTaskEnumerable();
     }
 
     public Task StopProcessing()
@@ -75,43 +86,69 @@ public class MessageRequestQueueService : IMessageRequestQueueService
         private readonly int _limit;
         private readonly ulong? _before;
         private readonly ulong? _after;
+        private readonly ulong? _message;
 
-        private readonly TaskCompletionSource<IAsyncEnumerable<DiscordMessage>> _tcs;
+        private readonly TaskCompletionSource<IAsyncEnumerable<DiscordMessage>> _tcsE;
+        private readonly TaskCompletionSource<DiscordMessage> _tcs;
 
-        public QueueEntry(DiscordChannel discordChannel, int limit, ulong? before, ulong? after)
+        public QueueEntry(
+            DiscordChannel discordChannel,
+            int limit,
+            ulong? before,
+            ulong? after,
+            ulong? message = null)
         {
             _discordChannel = discordChannel;
             _limit = limit;
             _before = before;
             _after = after;
+            _message = message;
 
-            _tcs = new TaskCompletionSource<IAsyncEnumerable<DiscordMessage>>();
+            if (_message != null)
+            {
+                _tcsE = null;
+                _tcs = new TaskCompletionSource<DiscordMessage>();
+            }
+            else
+            {
+                _tcsE = new TaskCompletionSource<IAsyncEnumerable<DiscordMessage>>();
+                _tcs = null;
+            }
         }
 
-        public Task<IAsyncEnumerable<DiscordMessage>> ResultTask() => _tcs.Task;
+        public Task<IAsyncEnumerable<DiscordMessage>> ResultTaskEnumerable() => _tcsE.Task;
+        public Task<DiscordMessage> ResultTask() => _tcs.Task;
 
-        public void ExecuteAsync()
+        public async void ExecuteAsync()
         {
             try
             {
-                IAsyncEnumerable<DiscordMessage> messages;
-                if (_before.HasValue)
+                if (_message != null)
                 {
-                    messages = _discordChannel.GetMessagesBeforeAsync(_before.Value, _limit);
-                }
-                else if (_after.HasValue)
-                {
-                    messages = _discordChannel.GetMessagesAfterAsync(_after.Value, _limit);
+                    _tcs.SetResult(await _discordChannel.GetMessageAsync(_message.Value));
                 }
                 else
                 {
-                    messages = _discordChannel.GetMessagesAsync(_limit);
+                    IAsyncEnumerable<DiscordMessage> messages;
+                    if (_before.HasValue)
+                    {
+                        messages = _discordChannel.GetMessagesBeforeAsync(_before.Value, _limit);
+                    }
+                    else if (_after.HasValue)
+                    {
+                        messages = _discordChannel.GetMessagesAfterAsync(_after.Value, _limit);
+                    }
+                    else
+                    {
+                        messages = _discordChannel.GetMessagesAsync(_limit);
+                    }
+                    _tcsE.SetResult(messages);
                 }
-                _tcs.SetResult(messages);
             }
             catch (Exception e)
             {
-                _tcs.SetException(e);
+                _tcsE?.SetException(e);
+                _tcs?.SetException(e);
             }
         }
     }
