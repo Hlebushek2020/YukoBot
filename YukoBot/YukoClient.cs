@@ -92,7 +92,7 @@ namespace YukoBot
                                 await ClientGetServers();
                                 break;
                             case RequestType.ExecuteScripts:
-                                await ClientExecuteScripts(requestString);
+                                await ClientExecuteScripts();
                                 break;
                             case RequestType.GetMessageCollections:
                                 ClientGetMessageCollections();
@@ -476,7 +476,24 @@ namespace YukoBot
 
         private async Task GetAttachmentsAfter(ExecuteScriptRequest request)
         {
-            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel;
+            try
+            {
+                discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            }
+            catch (NotFoundException)
+            {
+                _binaryWriter.Write(new UrlsResponse
+                {
+                    Next = false,
+                    Error = new UrlsErrorJson
+                    {
+                        Code = ClientErrorCodes.ChannelNotFound,
+                        ChannelId = request.ChannelId
+                    }
+                }.ToString());
+                return;
+            }
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
@@ -488,7 +505,7 @@ namespace YukoBot
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesAfterAsync(discordChannel, request.MessageId, limit);
 
-                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse();
 
                 bool saveFirst = false;
                 int messageCount = 0;
@@ -509,13 +526,32 @@ namespace YukoBot
                 if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
                     request.Count = 0;
 
+                response.Next = request.Count > 0;
+
                 _binaryWriter.Write(response.ToString());
             }
         }
 
         private async Task GetAttachmentsBefore(ExecuteScriptRequest request)
         {
-            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel;
+            try
+            {
+                discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            }
+            catch (NotFoundException)
+            {
+                _binaryWriter.Write(new UrlsResponse
+                {
+                    Next = false,
+                    Error = new UrlsErrorJson
+                    {
+                        Code = ClientErrorCodes.ChannelNotFound,
+                        ChannelId = request.ChannelId
+                    }
+                }.ToString());
+                return;
+            }
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
@@ -527,7 +563,7 @@ namespace YukoBot
                 IAsyncEnumerable<DiscordMessage> messages =
                     await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+                UrlsResponse response = new UrlsResponse();
 
                 bool saveFirst = false;
                 int messageCount = 0;
@@ -548,13 +584,32 @@ namespace YukoBot
                 if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
                     request.Count = 0;
 
+                response.Next = request.Count > 0;
+
                 _binaryWriter.Write(response.ToString());
             }
         }
 
         private async Task GetAttachments(ExecuteScriptRequest request)
         {
-            DiscordChannel discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            DiscordChannel discordChannel;
+            try
+            {
+                discordChannel = await _discordClient.GetChannelAsync(request.ChannelId);
+            }
+            catch (NotFoundException)
+            {
+                _binaryWriter.Write(new UrlsResponse
+                {
+                    Next = false,
+                    Error = new UrlsErrorJson
+                    {
+                        Code = ClientErrorCodes.ChannelNotFound,
+                        ChannelId = request.ChannelId
+                    }
+                }.ToString());
+                return;
+            }
 
             int limit = _yukoSettings.NumberOfMessagesPerRequest;
 
@@ -564,7 +619,7 @@ namespace YukoBot
             IAsyncEnumerable<DiscordMessage> messages =
                 await _messageRequestQueue.GetMessagesAsync(discordChannel, limit);
 
-            UrlsResponse response = new UrlsResponse { Next = request.Count > 0 };
+            UrlsResponse response = new UrlsResponse();
 
             int messageCount = 0;
             await foreach (DiscordMessage message in messages)
@@ -579,6 +634,8 @@ namespace YukoBot
             if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
                 request.Count = 0;
 
+            response.Next = request.Count > 0;
+
             _binaryWriter.Write(response.ToString());
 
             while (request.Count > 0)
@@ -588,7 +645,7 @@ namespace YukoBot
 
                 messages = await _messageRequestQueue.GetMessagesBeforeAsync(discordChannel, request.MessageId, limit);
 
-                response = new UrlsResponse { Next = request.Count > 0 };
+                response = new UrlsResponse();
 
                 bool saveFirst = false;
                 messageCount = 0;
@@ -604,6 +661,12 @@ namespace YukoBot
 
                     messageCount++;
                 }
+
+                request.Count -= messageCount;
+                if (messageCount < _yukoSettings.NumberOfMessagesPerRequest)
+                    request.Count = 0;
+
+                response.Next = request.Count > 0;
 
                 _binaryWriter.Write(response.ToString());
             }
