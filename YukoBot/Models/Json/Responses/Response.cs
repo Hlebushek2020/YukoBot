@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using YukoBot.Models.Json.Errors;
 
 namespace YukoBot.Models.Json.Responses
 {

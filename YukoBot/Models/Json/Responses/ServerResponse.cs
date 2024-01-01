@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using YukoBot.Enums;
+using YukoBot.Models.Json.Errors;
 
 namespace YukoBot.Models.Json.Responses
 {

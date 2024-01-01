@@ -1,4 +1,4 @@
-﻿namespace YukoBot.Models.Json;
+﻿namespace YukoBot.Models.Json.Errors;
 
 public class UrlsErrorJson : BaseErrorJson
 {

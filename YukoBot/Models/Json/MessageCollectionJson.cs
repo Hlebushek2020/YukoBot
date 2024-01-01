@@ -2,10 +2,10 @@
 
 namespace YukoBot.Models.Json
 {
-    public class MessageCollectionWeb
+    public class MessageCollectionJson
     {
         public ulong Id { get; set; }
         public string Name { get; set; }
-        public List<MessageCollectionItemWeb> Items { get; set; } = new List<MessageCollectionItemWeb>();
+        public List<MessageCollectionItemJson> Items { get; set; } = new List<MessageCollectionItemJson>();
     }
 }

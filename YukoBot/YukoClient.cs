@@ -18,6 +18,7 @@ using YukoBot.Models.Database;
 using YukoBot.Models.Database.Entities;
 using YukoBot.Models.Database.JoinedEntities;
 using YukoBot.Models.Json;
+using YukoBot.Models.Json.Errors;
 using YukoBot.Models.Json.Requests;
 using YukoBot.Models.Json.Responses;
 using YukoBot.Services;
@@ -67,7 +68,7 @@ namespace YukoBot
                 NetworkStream networkStream = _tcpClient.GetStream();
                 _binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 _binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
-                RequestType requestType = (RequestType)_binaryReader.ReadInt32();
+                RequestType requestType = (RequestType) _binaryReader.ReadInt32();
                 _logger.LogDebug($"[{_endPoint}] Request type: {requestType}");
                 if (requestType != RequestType.Authorization)
                 {
@@ -98,7 +99,7 @@ namespace YukoBot
                                 ClientGetMessageCollections();
                                 break;
                             case RequestType.GetUrls:
-                                await ClientGetUrls(requestString);
+                                await ClientGetUrls();
                                 break;
                         }
                     }
@@ -265,7 +266,7 @@ namespace YukoBot
             MessageCollectionsResponse response = new MessageCollectionsResponse();
             foreach (DbCollection dbCollection in dbCollections)
             {
-                MessageCollectionWeb collection = new MessageCollectionWeb
+                MessageCollectionJson collection = new MessageCollectionJson
                 {
                     Name = dbCollection.Name,
                     Id = dbCollection.Id
@@ -281,7 +282,7 @@ namespace YukoBot
                 foreach (DbMessage dbMessage in dbCollectionItems)
                 {
                     collection.Items.Add(
-                        new MessageCollectionItemWeb
+                        new MessageCollectionItemJson
                         {
                             ChannelId = dbMessage.ChannelId,
                             MessageId = dbMessage.Id
@@ -311,12 +312,11 @@ namespace YukoBot
                 .ToDictionary(k => k.MessageId);
             List<ulong> channelNotFound = new List<ulong>();
             List<ulong> messageNotFound = new List<ulong>();
-            using IEnumerator<IGrouping<ulong, MessageCollectionItemWeb>> groupEnumerator =
+            using IEnumerator<IGrouping<ulong, MessageCollectionItemJson>> groupEnumerator =
                 request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
-            _binaryWriter.Write(new Response().ToString());
             while (groupEnumerator.MoveNext())
             {
-                using IEnumerator<MessageCollectionItemWeb> groupItemEnumerator =
+                using IEnumerator<MessageCollectionItemJson> groupItemEnumerator =
                     groupEnumerator.Current.GetEnumerator();
                 DiscordChannel discordChannel = null;
                 while (groupItemEnumerator.MoveNext())

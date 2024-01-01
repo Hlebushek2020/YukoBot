@@ -1,4 +1,5 @@
 ﻿using System;
+using YukoBot.Models.Json.Errors;
 
 namespace YukoBot.Models.Json.Responses
 {

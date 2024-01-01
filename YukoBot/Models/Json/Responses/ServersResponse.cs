@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using YukoBot.Models.Json.Errors;
 
 namespace YukoBot.Models.Json.Responses
 {
