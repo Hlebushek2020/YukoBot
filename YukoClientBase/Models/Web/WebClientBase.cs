@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,24 +17,25 @@ namespace YukoClientBase.Models.Web
         public const int ReceiveTimeout = 30000;
 
         #region Token
-        protected string token;
+        protected Guid? token;
 
-        public bool TokenAvailability { get { return !string.IsNullOrEmpty(token); } }
+        public bool TokenAvailability => token.HasValue;
         #endregion
 
-        protected T Request<T>(Request request)
+        protected T Request<T>(Request request, RequestType requestType)
         {
-            using (TcpClient tcpClient = new TcpClient
+            using (TcpClient tcpClient = new TcpClient())
             {
-                SendTimeout = SendTimeout,
-                ReceiveTimeout = ReceiveTimeout
-            })
-            {
+                tcpClient.SendTimeout = SendTimeout;
+                tcpClient.ReceiveTimeout = ReceiveTimeout;
                 tcpClient.Connect(Settings.Current.Host, Settings.Current.Port);
                 NetworkStream stream = tcpClient.GetStream();
                 BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
                 BinaryWriter writter = new BinaryWriter(stream, Encoding.UTF8);
                 // request
+                writter.Write((int) requestType);
+                if (requestType != RequestType.Authorization)
+                    writter.Write(token.ToString());
                 writter.Write(request.ToString());
                 // response
                 return JsonConvert.DeserializeObject<T>(reader.ReadString());
@@ -45,24 +47,25 @@ namespace YukoClientBase.Models.Web
             AuthorizationResponse response;
             try
             {
-                AuthorizationRequest request = new AuthorizationRequest
-                {
-                    Login = idOrNikname,
-                    Type = RequestType.Authorization
-                };
+                AuthorizationRequest request = new AuthorizationRequest { Login = idOrNikname };
                 // hash password
                 using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
                 {
                     byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                     StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
                     foreach (byte code in hashBytes)
-                    {
                         hashBuilder.Append(code.ToString("X2"));
-                    }
                     request.Password = hashBuilder.ToString();
                 }
                 // request
-                response = Request<AuthorizationResponse>(request);
+                response = Request<AuthorizationResponse>(request, RequestType.Authorization);
+
+                // throw error
+                if (response.Error != null)
+                {
+                    
+                }
+
                 token = response.Token;
             }
             catch (Exception ex)
