@@ -240,7 +240,7 @@ namespace YukoBot
                             _binaryWriter.Write(new UrlsResponse
                             {
                                 Next = false,
-                                Error = new UrlsErrorJson { Code = ClientErrorCodes.UnhandledException }
+                                Error = new BaseErrorJson { Code = ClientErrorCodes.UnhandledException }
                             }.ToString());
                             _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
                         }
@@ -295,7 +295,6 @@ namespace YukoBot
 
         private async Task ClientGetUrls(string requestString)
         {
-            UrlsResponse response;
             UrlsRequest request = UrlsRequest.FromJson(requestString);
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
@@ -310,86 +309,77 @@ namespace YukoBot
                         IsSavedLinks = ci.IsSavedLinks
                     })
                 .ToDictionary(k => k.MessageId);
-            List<ulong> channelNotFound = new List<ulong>();
-            List<ulong> messageNotFound = new List<ulong>();
             using IEnumerator<IGrouping<ulong, MessageCollectionItemJson>> groupEnumerator =
                 request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
+            int countSleep = _yukoSettings.NumberOfMessagesPerRequest;
             while (groupEnumerator.MoveNext())
             {
                 using IEnumerator<MessageCollectionItemJson> groupItemEnumerator =
                     groupEnumerator.Current.GetEnumerator();
+                bool isNotFoundChannel = false;
                 DiscordChannel discordChannel = null;
                 while (groupItemEnumerator.MoveNext())
                 {
-                    ulong messageId = groupItemEnumerator.Current.MessageId;
-                    if (collectionItems.ContainsKey(messageId))
+                    UrlsResponse response = new UrlsResponse
                     {
-                        CollectionItemJoinMessage collectionItem = collectionItems[messageId];
+                        Next = true,
+                        ChannelId = groupEnumerator.Current.Key,
+                        MessageId = groupItemEnumerator.Current.MessageId
+                    };
 
-                        response = new UrlsResponse
-                        {
-                            Next = true,
-                            Urls = collectionItem.Link.Split(";").ToList()
-                        };
+                    if (collectionItems.TryGetValue(response.MessageId, out CollectionItemJoinMessage collectionItem))
+                    {
+                        response.Urls = collectionItem.Link.Split(";").ToList();
+
                         _binaryWriter.Write(response.ToString());
 
                         if (!collectionItem.IsSavedLinks)
                         {
-                            Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
+                            countSleep--;
+                            if (countSleep <= 0)
+                            {
+                                countSleep = _yukoSettings.NumberOfMessagesPerRequest;
+                                Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
+                            }
                         }
                     }
                     else
                     {
                         try
                         {
-                            if (discordChannel == null)
+                            if (discordChannel == null && !isNotFoundChannel)
                                 discordChannel =
                                     await _discordClient.GetChannelAsync(
                                         groupEnumerator.Current.Key);
-                            try
-                            {
-                                DiscordMessage discordMessage =
-                                    await discordChannel.GetMessageAsync(messageId);
-                                response = new UrlsResponse { Next = true };
-                                response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
-                                _binaryWriter.Write(response.ToString());
-                            }
-                            catch (NotFoundException)
-                            {
-                                messageNotFound.Add(groupItemEnumerator.Current.MessageId);
-                            }
-                            Thread.Sleep(_yukoSettings.IntervalBetweenMessageRequests);
                         }
                         catch (NotFoundException)
                         {
-                            channelNotFound.Add(groupEnumerator.Current.Key);
+                            isNotFoundChannel = true;
                         }
+
+                        if (isNotFoundChannel)
+                        {
+                            response.Error = new BaseErrorJson { Code = ClientErrorCodes.ChannelNotFound };
+                        }
+                        else
+                        {
+                            try
+                            {
+                                DiscordMessage discordMessage =
+                                    await _messageRequestQueue.GetMessageAsync(discordChannel, response.MessageId);
+                                response.Urls.AddRange(discordMessage.GetImages(_yukoSettings));
+                            }
+                            catch (NotFoundException)
+                            {
+                                response.Error = new BaseErrorJson { Code = ClientErrorCodes.MessageNotFound };
+                            }
+                        }
+
+                        _binaryWriter.Write(response.ToString());
                     }
                 }
             }
-            response = new UrlsResponse
-            {
-                Next = false,
-                ErrorMessage = string.Empty
-            };
-            if (channelNotFound.Count > 0 || messageNotFound.Count > 0)
-            {
-                if (channelNotFound.Count > 0)
-                {
-                    response.ErrorMessage +=
-                        $"Следующие каналы были не найдены: {string.Join(',', channelNotFound)}.";
-                }
-                if (messageNotFound.Count > 0)
-                {
-                    if (response.ErrorMessage.Length > 0)
-                    {
-                        response.ErrorMessage += '\n';
-                    }
-                    response.ErrorMessage +=
-                        $"Следующие сообщения были не найдены: {string.Join(',', messageNotFound)}.";
-                }
-            }
-            _binaryWriter.Write(response.ToString());
+            _binaryWriter.Write(new UrlsResponse { Next = false }.ToString());
         }
 
         private async Task<ServerJson> GetServer(DiscordGuild guild)
