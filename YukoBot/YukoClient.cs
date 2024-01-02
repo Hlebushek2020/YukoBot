@@ -293,9 +293,9 @@ namespace YukoBot
             _binaryWriter.Write(response.ToString());
         }
 
-        private async Task ClientGetUrls(string requestString)
+        private async Task ClientGetUrls()
         {
-            UrlsRequest request = UrlsRequest.FromJson(requestString);
+            UrlsRequest request = UrlsRequest.FromJson(_binaryReader.ReadString());
             Dictionary<ulong, CollectionItemJoinMessage> collectionItems = _dbContext.CollectionItems
                 .Where(ci => ci.CollectionId == request.Id)
                 .Join(
@@ -431,11 +431,8 @@ namespace YukoBot
                 _binaryWriter.Write(new UrlsResponse
                 {
                     Next = false,
-                    Error = new UrlsErrorJson
-                    {
-                        Code = ClientErrorCodes.ChannelNotFound,
-                        ChannelId = request.ChannelId
-                    }
+                    ChannelId = request.ChannelId,
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.ChannelNotFound }
                 }.ToString());
                 return;
             }
@@ -450,11 +447,9 @@ namespace YukoBot
                 _binaryWriter.Write(new UrlsResponse
                 {
                     Next = false,
-                    Error = new UrlsErrorJson
-                    {
-                        Code = ClientErrorCodes.MessageNotFound,
-                        MessageId = request.MessageId
-                    }
+                    ChannelId = request.ChannelId,
+                    MessageId = request.MessageId,
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.MessageNotFound }
                 }.ToString());
                 return;
             }
@@ -476,11 +471,8 @@ namespace YukoBot
                 _binaryWriter.Write(new UrlsResponse
                 {
                     Next = false,
-                    Error = new UrlsErrorJson
-                    {
-                        Code = ClientErrorCodes.ChannelNotFound,
-                        ChannelId = request.ChannelId
-                    }
+                    ChannelId = request.ChannelId,
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.ChannelNotFound }
                 }.ToString());
                 return;
             }
@@ -534,11 +526,8 @@ namespace YukoBot
                 _binaryWriter.Write(new UrlsResponse
                 {
                     Next = false,
-                    Error = new UrlsErrorJson
-                    {
-                        Code = ClientErrorCodes.ChannelNotFound,
-                        ChannelId = request.ChannelId
-                    }
+                    ChannelId = request.ChannelId,
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.ChannelNotFound }
                 }.ToString());
                 return;
             }
@@ -592,11 +581,8 @@ namespace YukoBot
                 _binaryWriter.Write(new UrlsResponse
                 {
                     Next = false,
-                    Error = new UrlsErrorJson
-                    {
-                        Code = ClientErrorCodes.ChannelNotFound,
-                        ChannelId = request.ChannelId
-                    }
+                    ChannelId = request.ChannelId,
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.ChannelNotFound }
                 }.ToString());
                 return;
             }
