@@ -7,17 +7,14 @@ using YukoClient.Models.Web;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
     public class AuthorizationViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Propirties
-        public string Title
-        {
-            get => App.Name;
-        }
+        public string Titlet => App.Name;
         public Action Close { get; set; }
         public string Login { get; set; }
         public Func<string> Password { get; set; }
@@ -34,28 +31,33 @@ namespace YukoClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    SUI.Dialogs.MessageBox.Show("Сначала настройте программу! Значок в правом нижнем углу.", App.Name,
+                    MessageBox.Show("Сначала настройте программу! Значок в правом нижнем углу.", App.Name,
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password()))
                 {
-                    SUI.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK,
+                    MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
                 }
-                AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
-                if (!string.IsNullOrEmpty(response.ErrorMessage))
+
+                try
                 {
-                    SUI.Dialogs.MessageBox.Show(response.ErrorMessage, App.Name, MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                }
-                else
-                {
+                    AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
+
+                    if (response.Error != null) { }
+
                     Storage.Current.AvatarUri = response.AvatarUri;
-                    Storage.Current.Id = response.Id;
-                    Storage.Current.Nikname = response.Nikname;
+                    Storage.Current.UserId = response.UserId;
+                    Storage.Current.Username = response.Username;
+
                     Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             });
             SettingsCommand = new DelegateCommand(() =>

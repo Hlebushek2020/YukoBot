@@ -44,37 +44,18 @@ namespace YukoClientBase.Models.Web
 
         public AuthorizationResponse Authorization(string idOrNikname, string password)
         {
-            AuthorizationResponse response;
-            try
+            AuthorizationRequest request = new AuthorizationRequest { Login = idOrNikname };
+            // hash password
+            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
             {
-                AuthorizationRequest request = new AuthorizationRequest { Login = idOrNikname };
-                // hash password
-                using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-                {
-                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                    StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
-                    foreach (byte code in hashBytes)
-                        hashBuilder.Append(code.ToString("X2"));
-                    request.Password = hashBuilder.ToString();
-                }
-                // request
-                response = Request<AuthorizationResponse>(request, RequestType.Authorization);
-
-                // throw error
-                if (response.Error != null)
-                {
-                    
-                }
-
-                token = response.Token;
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
+                foreach (byte code in hashBytes)
+                    hashBuilder.Append(code.ToString("X2"));
+                request.Password = hashBuilder.ToString();
             }
-            catch (Exception ex)
-            {
-                response = new AuthorizationResponse
-                {
-                    ErrorMessage = ex.Message
-                };
-            }
+            AuthorizationResponse response = Request<AuthorizationResponse>(request, RequestType.Authorization);
+            token = response.Token;
             return response;
         }
     }
