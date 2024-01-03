@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows;
 using YukoClient.Models.Web;
 using YukoClientBase.Models;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient
 {
@@ -16,17 +16,19 @@ namespace YukoClient
     {
         public const int BinaryFileVersion = 20211009;
 
-        public static string Name { get; } = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
+        public static string Name { get; } =
+            Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
-        private static Mutex yukoClientMutex;
+        private static Mutex _yukoClientMutex;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             SwitchTheme(null);
-            yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
+            _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
             MainWindow = new MainWindow();
@@ -53,7 +55,7 @@ namespace YukoClient
                     settings.Theme = theme.Value;
                     uri = ThemeUri.Get(theme.Value);
                 }
-                ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
+                ResourceDictionary resource = (ResourceDictionary) LoadComponent(uri);
                 Current.Resources.MergedDictionaries.Clear();
                 Current.Resources.MergedDictionaries.Add(resource);
             }
