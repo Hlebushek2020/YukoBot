@@ -14,7 +14,7 @@ namespace YukoClient.ViewModels
     public class AuthorizationViewModel : BindableBase, ICloseableView, IViewTitle
     {
         #region Propirties
-        public string Titlet => App.Name;
+        public string Title => App.Name;
         public Action Close { get; set; }
         public string Login { get; set; }
         public Func<string> Password { get; set; }
