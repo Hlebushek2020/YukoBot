@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using YukoClient.Models;
 using YukoClient.Models.Web;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
@@ -47,7 +48,8 @@ namespace YukoClient.ViewModels
                 {
                     AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
 
-                    if (response.Error != null) { }
+                    if (response.Error != null)
+                        throw new ClientCodeException(response.Error.Code);
 
                     Storage.Current.AvatarUri = response.AvatarUri;
                     Storage.Current.UserId = response.UserId;

@@ -8,71 +8,54 @@ using System.Windows.Media;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
 using YukoClientBase.Interfaces;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using WinForm = System.Windows.Forms;
 
 namespace YukoClient.ViewModels
 {
     public class MainViewModel : BindableBase, ICloseableView, IViewTitle
     {
-        #region Fields
-        private Server selectedServer;
-        #endregion
+        private Server _selectedServer;
 
         #region Propirties
-        public string Title
-        {
-            get => App.Name;
-        }
+        public string Title => App.Name;
         public Action Close { get; set; }
-        public ImageBrush Avatar
-        {
-            get { return Storage.Current.Avatar; }
-        }
-        public string Nikname
-        {
-            get { return Storage.Current.Nikname; }
-        }
-        public string Id
-        {
-            get { return Storage.Current.Id.ToString(); }
-        }
-        public ObservableCollection<Server> Servers
-        {
-            get { return Storage.Current.Servers; }
-        }
+        public ImageBrush Avatar => Storage.Current.Avatar;
+        public string Username => Storage.Current.Username;
+        public string UserId => Storage.Current.UserId.ToString();
+        public ObservableCollection<Server> Servers => Storage.Current.Servers;
+
         public Server SelectedServer
         {
-            get { return selectedServer; }
+            get { return _selectedServer; }
             set
             {
-                selectedServer = value;
-                if (selectedServer != null)
+                _selectedServer = value;
+                if (_selectedServer != null)
                 {
-                    RaisePropertyChanged("Scripts");
-                    RaisePropertyChanged("Urls");
+                    RaisePropertyChanged(nameof(Scripts));
+                    RaisePropertyChanged(nameof(Urls));
                 }
             }
         }
-        public ObservableCollection<Script> Scripts
-        {
-            get { return selectedServer?.Scripts; }
-        }
+
+        public ObservableCollection<Script> Scripts => _selectedServer?.Scripts;
         public Script SelectedScript { get; set; }
-        public ObservableCollection<string> Urls
-        {
-            get { return selectedServer?.Urls; }
-        }
+        public ObservableCollection<string> Urls => _selectedServer?.Urls;
         public string SelectedUrl { get; set; }
         #endregion
 
         #region Commands
         public DelegateCommand WindowLoadedCommand { get; }
+
         // User Commands
         public DelegateCommand AppSettingsCommand { get; }
+
         // Server Commands
         public DelegateCommand ServerSettingsCommand { get; }
         public DelegateCommand RemoveServerCommand { get; }
         public DelegateCommand UpdateServerCollectionCommand { get; }
+
         // Script Commands
         public DelegateCommand AddScriptCommand { get; }
         public DelegateCommand RemoveScriptCommand { get; }
@@ -80,6 +63,7 @@ namespace YukoClient.ViewModels
         public DelegateCommand ExportScriptsCommand { get; }
         public DelegateCommand ImportScriptsCommand { get; }
         public DelegateCommand RunScriptsCommand { get; }
+
         // Url Command
         public DelegateCommand RemoveUrlCommand { get; }
         public DelegateCommand ClearUrlsCommand { get; }
@@ -106,7 +90,7 @@ namespace YukoClient.ViewModels
             // Server Commands
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = SUI.Dialogs.MessageBox.Show(
+                MessageBoxResult messageResult = MessageBox.Show(
                     "Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.",
                     App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
@@ -118,20 +102,20 @@ namespace YukoClient.ViewModels
             });
             RemoveServerCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (_selectedServer != null)
                 {
-                    if (SUI.Dialogs.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name,
+                    if (MessageBox.Show($"Удалить сервер {_selectedServer.Name} из списка?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        Storage.Current.Servers.Remove(selectedServer);
+                        Storage.Current.Servers.Remove(_selectedServer);
                     }
                 }
             });
             ServerSettingsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (_selectedServer != null)
                 {
-                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(selectedServer);
+                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(_selectedServer);
                     serverSettings.ShowDialog();
                     // save data
                     Task.Run(() => Storage.Current.Save());
@@ -140,14 +124,14 @@ namespace YukoClient.ViewModels
             // Script Commands
             AddScriptCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (_selectedServer != null)
                 {
-                    AddScriptWindow addScript = new AddScriptWindow(selectedServer);
+                    AddScriptWindow addScript = new AddScriptWindow(_selectedServer);
                     addScript.ShowDialog();
                 }
                 else
                 {
-                    SUI.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
+                    MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
                         MessageBoxImage.Information);
                 }
             });
@@ -155,43 +139,42 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedScript != null)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Scripts.Remove(SelectedScript);
+                        _selectedServer?.Scripts.Remove(SelectedScript);
                     }
                 }
                 else
                 {
-                    SUI.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
+                    MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
                         MessageBoxImage.Information);
                 }
             });
             ClearScriptsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (_selectedServer != null && _selectedServer.Scripts.Count > 0)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Scripts.Clear();
+                        _selectedServer.Scripts.Clear();
                     }
                 }
             });
             ExportScriptsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (_selectedServer != null && _selectedServer.Scripts.Count > 0)
                 {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "Yuko Script|*.yukoscript",
-                               DefaultExt = "yukoscript"
-                           })
+                    using (WinForm.SaveFileDialog saveFileDialog = new WinForm.SaveFileDialog())
                     {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        saveFileDialog.Filter = "Yuko Script|*.yukoscript";
+                        saveFileDialog.DefaultExt = "yukoscript";
+                        if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
-                            ProgressWindow progressWindow = new ProgressWindow(new ExportScripts(selectedServer.Scripts,
-                                selectedServer.Id, saveFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(new ExportScripts(
+                                _selectedServer.Scripts,
+                                _selectedServer.Id, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -199,26 +182,25 @@ namespace YukoClient.ViewModels
             });
             ImportScriptsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (_selectedServer != null)
                 {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "Yuko Script|*.yukoscript",
-                               DefaultExt = "yukoscript"
-                           })
+                    using (WinForm.OpenFileDialog openFileDialog = new WinForm.OpenFileDialog())
                     {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        openFileDialog.Filter = "Yuko Script|*.yukoscript";
+                        openFileDialog.DefaultExt = "yukoscript";
+                        if (openFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
-                            if (selectedServer.Scripts.Count > 0)
+                            if (_selectedServer.Scripts.Count > 0)
                             {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
+                                if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
                                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
-                                    selectedServer.Scripts.Clear();
+                                    _selectedServer.Scripts.Clear();
                                 }
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(new ImportScripts(selectedServer.Scripts,
-                                selectedServer.Id, openFileDialog.FileName));
+                            ProgressWindow progressWindow = new ProgressWindow(new ImportScripts(
+                                _selectedServer.Scripts,
+                                _selectedServer.Id, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -226,9 +208,9 @@ namespace YukoClient.ViewModels
             });
             RunScriptsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                if (_selectedServer != null && _selectedServer.Scripts.Count > 0)
                 {
-                    ProgressWindow progress = new ProgressWindow(new ExecuteScripts(selectedServer));
+                    ProgressWindow progress = new ProgressWindow(new ExecuteScripts(_selectedServer));
                     progress.ShowDialog();
                 }
             });
@@ -237,38 +219,36 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedUrl != null)
                 {
-                    if (SUI.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
+                    if (MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Urls.Remove(SelectedUrl);
+                        _selectedServer?.Urls.Remove(SelectedUrl);
                     }
                 }
             });
             ClearUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (_selectedServer != null && _selectedServer.Urls.Count > 0)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Urls.Clear();
+                        _selectedServer.Urls.Clear();
                     }
                 }
             });
             ExportUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (_selectedServer != null && _selectedServer.Urls.Count > 0)
                 {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
-                           })
+                    using (WinForm.SaveFileDialog saveFileDialog = new WinForm.SaveFileDialog())
                     {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        saveFileDialog.Filter = "Текстовый докуент|*.txt";
+                        saveFileDialog.DefaultExt = "txt";
+                        if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ExportUrls(selectedServer.Urls, saveFileDialog.FileName));
+                                new ProgressWindow(new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -276,26 +256,24 @@ namespace YukoClient.ViewModels
             });
             ImportUrlsCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null)
+                if (_selectedServer != null)
                 {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
-                           })
+                    using (WinForm.OpenFileDialog openFileDialog = new WinForm.OpenFileDialog())
                     {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        openFileDialog.Filter = "Текстовый докуент|*.txt";
+                        openFileDialog.DefaultExt = "txt";
+                        if (openFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
-                            if (selectedServer.Urls.Count > 0)
+                            if (_selectedServer.Urls.Count > 0)
                             {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
+                                if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
                                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                                 {
-                                    selectedServer.Urls.Clear();
+                                    _selectedServer.Urls.Clear();
                                 }
                             }
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ImportUrls(selectedServer.Urls, openFileDialog.FileName));
+                                new ProgressWindow(new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -303,14 +281,14 @@ namespace YukoClient.ViewModels
             });
             DownloadFilesCommand = new DelegateCommand(() =>
             {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
+                if (_selectedServer != null && _selectedServer.Urls.Count > 0)
                 {
                     System.Windows.Forms.FolderBrowserDialog folderBrowserDialog =
                         new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         ProgressWindow progressWindow = new ProgressWindow(
-                            new Download(selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
+                            new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
                         progressWindow.ShowDialog();
                     }
                 }
