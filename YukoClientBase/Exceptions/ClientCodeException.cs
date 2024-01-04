@@ -12,5 +12,11 @@ namespace YukoClientBase.Exceptions
         {
             ClientErrorCode = clientErrorCode;
         }
+
+        public ClientCodeException(ClientErrorCodes clientErrorCode, params object[] args)
+            : base(clientErrorCode.GetText(args))
+        {
+            ClientErrorCode = clientErrorCode;
+        }
     }
 }

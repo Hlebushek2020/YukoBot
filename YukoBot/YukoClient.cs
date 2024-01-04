@@ -161,8 +161,14 @@ namespace YukoBot
         private async Task ClientGetServer()
         {
             ServerRequest request = ServerRequest.FromJson(_binaryReader.ReadString());
-            DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
-            ServerResponse response = ServerResponse.FromServerJson(await GetServer(guild));
+            ServerResponse response = new ServerResponse
+                { Error = new BaseErrorJson { Code = ClientErrorCodes.GuildNotFound } };
+            try
+            {
+                DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
+                response = ServerResponse.FromServerJson(await GetServer(guild));
+            }
+            catch { }
             _binaryWriter.Write(response.ToString());
         }
 

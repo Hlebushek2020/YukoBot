@@ -18,23 +18,28 @@
         InvalidCredentials = 2,
 
         /// <summary>
+        /// This guild was not found.
+        /// </summary>
+        GuildNotFound = 3,
+
+        /// <summary>
         /// This user is not a member of a particular server (guild) or does not have access to a specific channel.
         /// </summary>
-        MemberNotFound = 3,
+        MemberNotFound = 4,
 
         /// <summary>
         /// This user is banned on a specific server (meaning a ban in a bot).
         /// </summary>
-        MemberBanned = 4,
+        MemberBanned = 5,
 
         /// <summary>
         /// This channel was not found.
         /// </summary>
-        ChannelNotFound = 5,
+        ChannelNotFound = 6,
 
         /// <summary>
         /// This message was not found.
         /// </summary>
-        MessageNotFound = 6
+        MessageNotFound = 7
     }
 }

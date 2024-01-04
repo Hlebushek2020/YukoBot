@@ -14,22 +14,8 @@ namespace YukoClient.Models.Web
         public static WebClient Current { get; } = new WebClient();
         #endregion
 
-        public ServerResponse GetServer(ulong serverId)
-        {
-            try
-            {
-                return Request<ServerResponse>(new ServerRequest
-                {
-                    Type = RequestType.GetServer,
-                    Token = token,
-                    Id = serverId
-                });
-            }
-            catch (Exception ex)
-            {
-                return new ServerResponse { ErrorMessage = ex.Message };
-            }
-        }
+        public ServerResponse GetServer(ulong serverId) =>
+            Request<ServerResponse>(new ServerRequest { Id = serverId }, RequestType.GetServer);
 
         public ServersResponse GetServers()
         {
