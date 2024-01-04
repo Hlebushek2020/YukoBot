@@ -36,7 +36,8 @@ namespace YukoClientBase.Models.Web
                 writter.Write((int) requestType);
                 if (requestType != RequestType.Authorization)
                     writter.Write(token.ToString());
-                writter.Write(request.ToString());
+                if (request != null)
+                    writter.Write(request.ToString());
                 // response
                 return JsonConvert.DeserializeObject<T>(reader.ReadString());
             }

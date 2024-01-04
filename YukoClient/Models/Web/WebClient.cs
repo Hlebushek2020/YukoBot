@@ -17,21 +17,7 @@ namespace YukoClient.Models.Web
         public ServerResponse GetServer(ulong serverId) =>
             Request<ServerResponse>(new ServerRequest { Id = serverId }, RequestType.GetServer);
 
-        public ServersResponse GetServers()
-        {
-            try
-            {
-                return Request<ServersResponse>(new BaseRequest
-                {
-                    Type = RequestType.GetServers,
-                    Token = token
-                });
-            }
-            catch (Exception ex)
-            {
-                return new ServersResponse { ErrorMessage = ex.Message };
-            }
-        }
+        public ServersResponse GetServers() => Request<ServersResponse>(null, RequestType.GetServers);
 
         public ExecuteScriptProvider ExecuteScripts(ulong serverId, int scriptCount)
         {
