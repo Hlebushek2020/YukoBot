@@ -19,9 +19,7 @@ namespace YukoClient.Models.Web
 
         public ServersResponse GetServers() => Request<ServersResponse>(null, RequestType.GetServers);
 
-        public ExecuteScriptProvider ExecuteScripts(ulong serverId, int scriptCount)
-        {
-            return new ExecuteScriptProvider(token, serverId, scriptCount);
-        }
+        public ExecuteScriptProvider ExecuteScripts(ulong serverId, int scriptCount) =>
+            new ExecuteScriptProvider(token.ToString(), serverId, scriptCount);
     }
 }
