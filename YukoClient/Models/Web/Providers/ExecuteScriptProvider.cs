@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using YukoClient.Exceptions;
+using YukoClient.Models.Web.Errors;
 using YukoClient.Models.Web.Requests;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
@@ -23,7 +24,11 @@ namespace YukoClient.Models.Web.Providers
         private readonly BinaryReader _clientReader;
         private readonly BinaryWriter _clientWriter;
 
-        public ExecuteScriptProvider(string token, ulong serverId, int scriptsCount)
+        public ExecuteScriptProvider(
+            string token,
+            ulong serverId,
+            int scriptsCount,
+            out Response<ExecuteScriptErrorJson> response)
         {
             _countScripts = scriptsCount;
             _client = new TcpClient
@@ -39,6 +44,8 @@ namespace YukoClient.Models.Web.Providers
             _clientWriter.Write((int) RequestType.ExecuteScripts);
             _clientWriter.Write(token);
             _clientWriter.Write(new ServerRequest { Id = serverId }.ToString());
+            // response
+            response = JsonConvert.DeserializeObject<Response<ExecuteScriptErrorJson>>(_clientReader.ReadString());
         }
 
         public void ExecuteScript(Script script)

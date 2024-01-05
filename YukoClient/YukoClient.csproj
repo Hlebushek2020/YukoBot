@@ -103,6 +103,7 @@
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
     <Compile Include="Models\Progresses\StorageInitialization.cs" />
+    <Compile Include="Models\Web\Errors\ExecuteScriptErrorJson.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
     <Compile Include="Models\Web\Requests\ExecuteScriptRequest.cs" />
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />

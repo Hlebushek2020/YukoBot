@@ -204,65 +204,73 @@ namespace YukoBot
                         Reason = ban.Reason
                     }
                 }.ToString());
+                return;
             }
-            else
+
+            DiscordGuild guild;
+            try
             {
-                DiscordGuild guild = await _discordClient.GetGuildAsync(serverRequest.Id);
-                DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id, true);
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (isContainsMember != null)
-                {
-                    _binaryWriter.Write(new Response<BaseErrorJson>().ToString());
-                    ExecuteScriptRequest scriptRequest;
-                    do
-                    {
-                        string jsonString = _binaryReader.ReadString();
-                        scriptRequest = ExecuteScriptRequest.FromJson(jsonString);
-                        _logger.LogDebug($"[{_endPoint}] Execute script request: {jsonString}");
-                        try
-                        {
-                            switch (scriptRequest.Mode)
-                            {
-                                case ScriptMode.One:
-                                    await GetAttachment(scriptRequest);
-                                    break;
-                                case ScriptMode.After:
-                                    await GetAttachmentsAfter(scriptRequest);
-                                    break;
-                                case ScriptMode.Before:
-                                    await GetAttachmentsBefore(scriptRequest);
-                                    break;
-                                case ScriptMode.End:
-                                    await GetAttachments(scriptRequest);
-                                    break;
-                                case ScriptMode.All:
-                                    scriptRequest.Count = int.MaxValue;
-                                    await GetAttachments(scriptRequest);
-                                    break;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _binaryWriter.Write(new UrlsResponse
-                            {
-                                Next = false,
-                                Error = new BaseErrorJson { Code = ClientErrorCodes.UnhandledException }
-                            }.ToString());
-                            _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
-                        }
-                    } while (scriptRequest.HasNext);
-                }
-                else
-                {
-                    _binaryWriter.Write(new Response<BaseErrorJson>
-                    {
-                        Error = new BaseErrorJson
-                        {
-                            Code = ClientErrorCodes.MemberNotFound
-                        }
-                    }.ToString());
-                }
+                guild = await _discordClient.GetGuildAsync(serverRequest.Id);
             }
+            catch (Exception ex)
+            {
+                _binaryWriter.Write(new Response<ExecuteScriptErrorJson>
+                {
+                    Error = new ExecuteScriptErrorJson { Code = ClientErrorCodes.GuildNotFound }
+                }.ToString());
+                return;
+            }
+
+            DiscordMember isContainsMember = await guild.GetMemberAsync(_currentDbUser.Id, true);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (isContainsMember == null)
+            {
+                _binaryWriter.Write(new Response<ExecuteScriptErrorJson>
+                {
+                    Error = new ExecuteScriptErrorJson { Code = ClientErrorCodes.MemberNotFound }
+                }.ToString());
+                return;
+            }
+
+            _binaryWriter.Write(new Response<BaseErrorJson>().ToString());
+            ExecuteScriptRequest scriptRequest;
+            do
+            {
+                string jsonString = _binaryReader.ReadString();
+                scriptRequest = ExecuteScriptRequest.FromJson(jsonString);
+                _logger.LogDebug($"[{_endPoint}] Execute script request: {jsonString}");
+                try
+                {
+                    switch (scriptRequest.Mode)
+                    {
+                        case ScriptMode.One:
+                            await GetAttachment(scriptRequest);
+                            break;
+                        case ScriptMode.After:
+                            await GetAttachmentsAfter(scriptRequest);
+                            break;
+                        case ScriptMode.Before:
+                            await GetAttachmentsBefore(scriptRequest);
+                            break;
+                        case ScriptMode.End:
+                            await GetAttachments(scriptRequest);
+                            break;
+                        case ScriptMode.All:
+                            scriptRequest.Count = int.MaxValue;
+                            await GetAttachments(scriptRequest);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _binaryWriter.Write(new UrlsResponse
+                    {
+                        Next = false,
+                        Error = new BaseErrorJson { Code = ClientErrorCodes.UnhandledException }
+                    }.ToString());
+                    _logger.LogError(ex, $"[{_endPoint}] [{_currentDbUser.Id}] {ex.Message}");
+                }
+            } while (scriptRequest.HasNext);
         }
 
         private void ClientGetMessageCollections()
