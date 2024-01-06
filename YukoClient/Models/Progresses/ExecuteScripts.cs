@@ -4,7 +4,10 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
+using YukoClient.Models.Web.Errors;
 using YukoClient.Models.Web.Providers;
+using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
 using SUI = Sergey.UI.Extension;
@@ -19,13 +22,21 @@ namespace YukoClient.Models.Progress
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
-            dispatcher.Invoke(() => State = "Подключение");
-            using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(_server.Id, _server.Scripts.Count))
+            try
             {
-                dispatcher.Invoke(() => State = "Аутентификация");
-                UrlsResponse response = provider.ReadBlock();
-                if (string.IsNullOrEmpty(response.ErrorMessage))
+                dispatcher.Invoke(() => State = "Подключение");
+                using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(
+                           _server.Id, _server.Scripts.Count, out Response<ExecuteScriptErrorJson> response))
                 {
+                    if (response.Error != null)
+                    {
+                        if (response.Error.Code == ClientErrorCodes.MemberBanned)
+                            throw new ClientCodeException(ClientErrorCodes.MemberBanned, response.Error.Reason);
+
+                        throw new ClientCodeException(response.Error.Code);
+                    }
+
+                    UrlsResponse urlsResponse;
                     StringBuilder errorMessages = new StringBuilder();
                     foreach (Script script in _server.Scripts)
                     {
@@ -41,19 +52,19 @@ namespace YukoClient.Models.Progress
                                 (Action<int>) ((int _block) => State = $"Получение данных (Блок: {_block})"),
                                 blockCounter);
                             blockCounter++;
-                            response = provider.ReadBlock();
-                            if (string.IsNullOrEmpty(response.ErrorMessage))
+                            urlsResponse = provider.ReadBlock();
+                            if (string.IsNullOrEmpty(urlsResponse.ErrorMessage))
                             {
-                                foreach (string url in response.Urls)
+                                foreach (string url in urlsResponse.Urls)
                                 {
                                     dispatcher.Invoke((Action<string>) ((string iUrl) => _server.Urls.Add(iUrl)), url);
                                 }
                             }
                             else
                             {
-                                errorMessages.AppendLine(response.ErrorMessage);
+                                errorMessages.AppendLine(urlsResponse.ErrorMessage);
                             }
-                        } while (response.Next);
+                        } while (urlsResponse.Next);
                     }
                     if (errorMessages.Length != 0)
                     {
@@ -63,13 +74,13 @@ namespace YukoClient.Models.Progress
                             $"Правила были выполнены со следующими ошибками:{Environment.NewLine}{errorMessages}");
                     }
                 }
-                else
-                {
-                    dispatcher.Invoke(
-                        (Action<string>) ((string errorMessage) =>
-                            SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
-                                MessageBoxImage.Error)), response.ErrorMessage);
-                }
+            }
+            catch (Exception ex)
+            {
+                dispatcher.Invoke(
+                    (Action<string>) ((string errorMessage) =>
+                        SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
+                            MessageBoxImage.Error)), urlsResponse.ErrorMessage);
             }
         }
     }
