@@ -10,7 +10,7 @@ using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient.Models.Progress
 {
@@ -77,10 +77,8 @@ namespace YukoClient.Models.Progress
             }
             catch (Exception ex)
             {
-                dispatcher.Invoke(
-                    (Action<string>) ((string errorMessage) =>
-                        SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
-                            MessageBoxImage.Error)), urlsResponse.ErrorMessage);
+                dispatcher.Invoke((Action<string>) ((string errorMessage) =>
+                    MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), ex.Message);
             }
         }
     }
