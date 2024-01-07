@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using YukoClientBase.Enums;
+﻿using YukoClientBase.Enums;
 using YukoClientBase.Models.Web;
-using YukoClientBase.Models.Web.Requests;
 using YukoCollectionsClient.Models.Web.Providers;
 using YukoCollectionsClient.Models.Web.Responses;
 
@@ -14,23 +11,9 @@ namespace YukoCollectionsClient.Models.Web
         public static WebClient Current { get; } = new WebClient();
         #endregion
 
-        public MessageCollectionsResponse GetMessageCollections()
-        {
-            try
-            {
-                return Request<MessageCollectionsResponse>(new BaseRequest
-                {
-                    Type = RequestType.GetMessageCollections,
-                    Token = token
-                });
-            }
-            catch (Exception ex)
-            {
-                return new MessageCollectionsResponse { ErrorMessage = ex.Message };
-            }
-        }
+        public MessageCollectionsResponse GetMessageCollections() =>
+            Request<MessageCollectionsResponse>(null, RequestType.GetMessageCollections);
 
-        public UrlsProvider GetUrls(MessageCollection messageCollection) =>
-            new UrlsProvider(token, messageCollection);
+        public UrlsProvider GetUrls(MessageCollection messageCollection) => new UrlsProvider(token, messageCollection);
     }
 }
