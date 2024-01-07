@@ -40,8 +40,10 @@ namespace YukoClient.Models.Progress
                     {
                         dispatcher.Invoke(
                             (Action<ulong, string>) ((ulong channelId, string mode) =>
-                                State = $"Выполнение правила (Канал: {channelId}; тип запроса: {mode})"),
-                            script.Channel.Id, script.Mode.Title);
+                            {
+                                State = $"Выполнение правила (Канал: {channelId}; тип запроса: {mode})";
+                                script.Errors.Clear();
+                            }), script.Channel.Id, script.Mode.Title);
                         provider.ExecuteScript(script);
                         int blockCounter = 1;
                         UrlsResponse urlsResponse = null;
