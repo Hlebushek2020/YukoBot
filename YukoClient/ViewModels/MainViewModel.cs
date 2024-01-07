@@ -1,10 +1,10 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Prism.Commands;
+using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
 using YukoClientBase.Interfaces;
@@ -63,6 +63,7 @@ namespace YukoClient.ViewModels
         public DelegateCommand ExportScriptsCommand { get; }
         public DelegateCommand ImportScriptsCommand { get; }
         public DelegateCommand RunScriptsCommand { get; }
+        public DelegateCommand ShowExecutionErrorsCommand { get; }
 
         // Url Command
         public DelegateCommand RemoveUrlCommand { get; }
@@ -212,6 +213,14 @@ namespace YukoClient.ViewModels
                 {
                     ProgressWindow progress = new ProgressWindow(new ExecuteScripts(_selectedServer));
                     progress.ShowDialog();
+                }
+            });
+            ShowExecutionErrorsCommand = new DelegateCommand(() =>
+            {
+                if (SelectedScript != null)
+                {
+                    ExecutionErrorsWindow executionErrorsWindow = new ExecutionErrorsWindow(SelectedScript);
+                    executionErrorsWindow.ShowDialog();
                 }
             });
             // Url Command

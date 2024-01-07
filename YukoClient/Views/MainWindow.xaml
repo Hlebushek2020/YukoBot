@@ -148,6 +148,10 @@
                                 Command="{Binding RunScriptsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-start-32.png" />
                         </Button>
+                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Просмотреть ошибки"
+                                Command="{Binding ShowExecutionErrorsCommand}">
+                            <Image Source="/Resources/menu-error-32.png" />
+                        </Button>
                     </StackPanel>
                     <ListView Margin="0,26,0,0" SelectionMode="Single"
                               ItemsSource="{Binding Scripts, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
