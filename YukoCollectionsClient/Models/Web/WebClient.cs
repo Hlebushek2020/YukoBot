@@ -14,6 +14,7 @@ namespace YukoCollectionsClient.Models.Web
         public MessageCollectionsResponse GetMessageCollections() =>
             Request<MessageCollectionsResponse>(null, RequestType.GetMessageCollections);
 
-        public UrlsProvider GetUrls(MessageCollection messageCollection) => new UrlsProvider(token, messageCollection);
+        public UrlsProvider GetUrls(MessageCollection messageCollection) =>
+            new UrlsProvider(token.ToString(), messageCollection);
     }
 }

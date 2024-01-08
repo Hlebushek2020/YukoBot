@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using Newtonsoft.Json;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Requests;
 
@@ -23,26 +23,25 @@ namespace YukoCollectionsClient.Models.Web.Providers
         {
             _client = new TcpClient
             {
-                SendTimeout = WebClient.SendTimeout,
-                ReceiveTimeout = WebClient.ReceiveTimeout
+                SendTimeout = WebClientBase.SendTimeout,
+                ReceiveTimeout = WebClientBase.ReceiveTimeout
             };
             _client.Connect(Settings.Current.Host, Settings.Current.Port);
             NetworkStream networkStream = _client.GetStream();
             _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
-            UrlsRequest request = new UrlsRequest
-            {
-                Type = RequestType.GetUrls,
-                Token = token,
-                Items = messageCollection.Items,
-                Id = messageCollection.Id
-            };
-            _clientWriter.Write(request.ToString());
+            _clientWriter.Write((int) RequestType.GetUrls);
+            _clientWriter.Write(token);
+            _clientWriter.Write(
+                new UrlsRequest
+                {
+                    Items = messageCollection.Items,
+                    Id = messageCollection.Id
+                }.ToString());
         }
 
-        public UrlsResponse ReadBlock() =>
-            JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());
+        public UrlsResponse ReadBlock() => JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());
 
         public void Dispose()
         {
