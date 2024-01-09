@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
+using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoCollectionsClient.Models.Progress
 {
@@ -22,46 +25,37 @@ namespace YukoCollectionsClient.Models.Progress
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
-            dispatcher.Invoke(() => State = "Подключение");
-            using (UrlsProvider provider = WebClient.Current.GetUrls(_messageCollection))
+            try
             {
-                dispatcher.Invoke(() => State = "Аутентификация");
-                UrlsResponse response = provider.ReadBlock();
-                if (string.IsNullOrEmpty(response.ErrorMessage))
+                dispatcher.Invoke(() => State = "Подключение");
+                using (UrlsProvider provider = WebClient.Current.GetUrls(
+                           _messageCollection, out Response<BaseErrorJson> response))
                 {
+                    if (response.Error != null)
+                        throw new ClientCodeException(response.Error.Code);
+
                     dispatcher.Invoke(() => State = "Обработка");
-                    StringBuilder errorMessages = new StringBuilder();
+                    UrlsResponse urlsResponse;
                     do
                     {
-                        response = provider.ReadBlock();
-                        if (string.IsNullOrEmpty(response.ErrorMessage))
-                        {
-                            foreach (string url in response.Urls)
-                            {
-                                dispatcher.Invoke(() => _messageCollection.Urls.Add(url));
-                            }
-                        }
-                        else
-                        {
-                            errorMessages.AppendLine(response.ErrorMessage);
-                        }
+                        urlsResponse = provider.ReadBlock();
 
-                    } while (response.Next && !cancellationToken.IsCancellationRequested);
-                    if (errorMessages.Length != 0)
-                    {
-                        dispatcher.Invoke(
-                            (Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage,
-                                App.Name, MessageBoxButton.OK, MessageBoxImage.Warning)),
-                            $"При получении ссылок возникли следующие ошибки:{Environment.NewLine}{errorMessages}");
-                    }
+                        foreach (string url in urlsResponse.Urls)
+                            dispatcher.Invoke(() => _messageCollection.Urls.Add(url));
+
+                        MessageCollectionItem mcItem = _messageCollection.Items
+                            .First(item => item.MessageId == urlsResponse.MessageId);
+                        mcItem.IsChannelNotFound = urlsResponse.Error != null &&
+                            urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
+                        mcItem.IsMessageNotFound = urlsResponse.Error != null &&
+                            urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
+                    } while (urlsResponse.Next && !cancellationToken.IsCancellationRequested);
                 }
-                else
-                {
-                    dispatcher.Invoke(
-                        (Action<string>)((string errorMessage) =>
-                            SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
-                                MessageBoxImage.Error)), response.ErrorMessage);
-                }
+            }
+            catch (Exception ex)
+            {
+                dispatcher.Invoke((Action<string>)((string errorMessage) =>
+                    MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), ex.Message);
             }
         }
     }

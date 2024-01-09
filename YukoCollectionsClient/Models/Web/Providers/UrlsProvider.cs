@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
+using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Requests;
 
@@ -19,7 +20,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
         private readonly BinaryReader _clientReader;
         private readonly BinaryWriter _clientWriter;
 
-        public UrlsProvider(string token, MessageCollection messageCollection)
+        public UrlsProvider(string token, MessageCollection messageCollection, out Response<BaseErrorJson> response)
         {
             _client = new TcpClient
             {
@@ -31,7 +32,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
             _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
-            _clientWriter.Write((int) RequestType.GetUrls);
+            _clientWriter.Write((int)RequestType.GetUrls);
             _clientWriter.Write(token);
             _clientWriter.Write(
                 new UrlsRequest
@@ -39,6 +40,8 @@ namespace YukoCollectionsClient.Models.Web.Providers
                     Items = messageCollection.Items,
                     Id = messageCollection.Id
                 }.ToString());
+            // response
+            response = JsonConvert.DeserializeObject<Response<BaseErrorJson>>(_clientReader.ReadString());
         }
 
         public UrlsResponse ReadBlock() => JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());

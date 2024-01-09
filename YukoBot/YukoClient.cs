@@ -68,7 +68,7 @@ namespace YukoBot
                 NetworkStream networkStream = _tcpClient.GetStream();
                 _binaryReader = new BinaryReader(networkStream, Encoding.UTF8, true);
                 _binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
-                RequestType requestType = (RequestType) _binaryReader.ReadInt32();
+                RequestType requestType = (RequestType)_binaryReader.ReadInt32();
                 _logger.LogDebug($"[{_endPoint}] Request type: {requestType}");
                 if (requestType != RequestType.Authorization)
                 {
@@ -168,7 +168,9 @@ namespace YukoBot
                 DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
                 response = ServerResponse.FromServerJson(await GetServer(guild));
             }
-            catch { }
+            catch
+            {
+            }
             _binaryWriter.Write(response.ToString());
         }
 
@@ -325,6 +327,7 @@ namespace YukoBot
                 .ToDictionary(k => k.MessageId);
             using IEnumerator<IGrouping<ulong, MessageCollectionItemJson>> groupEnumerator =
                 request.Items.GroupBy(x => x.ChannelId).GetEnumerator();
+            _binaryWriter.Write(new Response<BaseErrorJson>().ToString());
             int countSleep = _yukoSettings.NumberOfMessagesPerRequest;
             while (groupEnumerator.MoveNext())
             {
