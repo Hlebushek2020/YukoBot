@@ -80,6 +80,7 @@ namespace YukoBot
                 .AddSingleton<IBotPingService, BotPingService>()
                 .AddSingleton<IDeletingMessagesByEmojiService, DeletingMessagesByEmojiService>()
                 .AddSingleton<IMessageRequestQueueService, MessageRequestQueueService>()
+                .AddSingleton<ITokenService, TokenService>()
                 .BuildServiceProvider();
 
             // Initializing services that won't be called anywhere
@@ -193,8 +194,8 @@ namespace YukoBot
             bool sendToCurrentChannel = true;
             if (dMember != null && command != null &&
                 (command.Name.Equals("add", StringComparison.OrdinalIgnoreCase) ||
-                 command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
-                 command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
+                    command.Name.Equals("start", StringComparison.OrdinalIgnoreCase) ||
+                    command.Name.Equals("end", StringComparison.OrdinalIgnoreCase)))
             {
                 DbGuildSettings dbGuildSettings = await _dbContext.GuildsSettings.FindAsync(context.Guild.Id);
                 if (dbGuildSettings != null)
@@ -256,7 +257,9 @@ namespace YukoBot
                             await Task.Delay(200);
                         }
                     }
-                    catch (TaskCanceledException) { }
+                    catch (TaskCanceledException)
+                    {
+                    }
                 },
                 processToken);
 

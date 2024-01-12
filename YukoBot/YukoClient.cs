@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +28,6 @@ namespace YukoBot
     {
         #region Fields
         private static volatile int _countClient = 0;
-        private static readonly ConcurrentDictionary<Guid, ulong> _userTokens = new ConcurrentDictionary<Guid, ulong>();
 
         private readonly DiscordClient _discordClient;
         private readonly ILogger<YukoClient> _logger;
@@ -37,6 +35,7 @@ namespace YukoBot
         private readonly IYukoSettings _yukoSettings;
         private readonly YukoDbContext _dbContext;
         private readonly IMessageRequestQueueService _messageRequestQueue;
+        private readonly ITokenService _tokenService;
         private readonly string _endPoint;
 
         private bool _isDisposed = false;
@@ -50,13 +49,14 @@ namespace YukoBot
         public YukoClient(IServiceProvider services, TcpClient tcpClient)
         {
             _tcpClient = tcpClient;
-            _endPoint = _tcpClient.Client.RemoteEndPoint.ToString();
+            _endPoint = _tcpClient.Client.RemoteEndPoint?.ToString() ?? "???.???.???.???";
 
             _discordClient = services.GetService<DiscordClient>();
             _logger = services.GetService<ILogger<YukoClient>>();
             _dbContext = services.GetService<YukoDbContext>();
             _yukoSettings = services.GetService<IYukoSettings>();
             _messageRequestQueue = services.GetService<IMessageRequestQueueService>();
+            _tokenService = services.GetService<ITokenService>();
         }
 
         public async void Process(object args)
@@ -72,9 +72,20 @@ namespace YukoBot
                 _logger.LogDebug($"[{_endPoint}] Request type: {requestType}");
                 if (requestType != RequestType.Authorization)
                 {
-                    Guid userToken = Guid.Parse(_binaryReader.ReadString());
-                    _currentDbUser = await _dbContext.Users.FindAsync(
-                        _userTokens.TryGetValue(userToken, out ulong userId) ? userId : ulong.MinValue);
+                    if (_tokenService.GetUserId(_binaryReader.ReadString(), out ulong userId, out bool isExpired))
+                    {
+                        if (isExpired)
+                        {
+                            _binaryWriter.Write(new Response<BaseErrorJson>
+                            {
+                                Error = new BaseErrorJson { Code = ClientErrorCodes.TokenHasExpired }
+                            }.ToString());
+                        }
+                        else
+                        {
+                            _currentDbUser = await _dbContext.Users.FindAsync(userId);
+                        }
+                    }
                     if (_currentDbUser == null)
                     {
                         _binaryWriter.Write(new Response<BaseErrorJson>
@@ -86,6 +97,9 @@ namespace YukoBot
                     {
                         switch (requestType)
                         {
+                            case RequestType.RefreshToken:
+                                _binaryWriter.Write(_tokenService.RefreshUserToken(_binaryReader.ReadString()));
+                                break;
                             case RequestType.GetServer:
                                 await ClientGetServer();
                                 break;
@@ -143,9 +157,6 @@ namespace YukoBot
                 // save db
                 dbUser.LastLogin = DateTime.Now;
                 await _dbContext.SaveChangesAsync();
-                // add token to dictionary
-                Guid userToken = Guid.NewGuid();
-                _userTokens.AddOrUpdate(userToken, x => dbUser.Id, (x, y) => dbUser.Id);
                 // response build
                 DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
                 _binaryWriter.Write(new AuthorizationResponse
@@ -153,7 +164,7 @@ namespace YukoBot
                     UserId = discordUser.Id,
                     Username = discordUser.Username,
                     AvatarUri = discordUser.AvatarUrl,
-                    Token = userToken
+                    Token = _tokenService.NewUserToken(discordUser.Id)
                 }.ToString());
             }
         }
@@ -161,15 +172,15 @@ namespace YukoBot
         private async Task ClientGetServer()
         {
             ServerRequest request = ServerRequest.FromJson(_binaryReader.ReadString());
-            ServerResponse response = new ServerResponse
-                { Error = new BaseErrorJson { Code = ClientErrorCodes.GuildNotFound } };
+            ServerResponse response;
             try
             {
                 DiscordGuild guild = await _discordClient.GetGuildAsync(request.Id);
                 response = ServerResponse.FromServerJson(await GetServer(guild));
             }
-            catch
+            catch (NotFoundException)
             {
+                response = new ServerResponse { Error = new BaseErrorJson { Code = ClientErrorCodes.GuildNotFound } };
             }
             _binaryWriter.Write(response.ToString());
         }
@@ -674,14 +685,13 @@ namespace YukoBot
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_isDisposed && disposing)
-            {
-                _binaryReader?.Dispose();
-                _binaryWriter?.Dispose();
-                _tcpClient?.Dispose();
-                //_dbContext?.Dispose();
-                _isDisposed = true;
-            }
+            if (_isDisposed || !disposing)
+                return;
+
+            _binaryReader?.Dispose();
+            _binaryWriter?.Dispose();
+            _tcpClient?.Dispose();
+            _isDisposed = true;
         }
     }
 }

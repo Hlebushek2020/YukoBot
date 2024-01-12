@@ -22,6 +22,8 @@ namespace YukoBot
         string ClientActualApp { get; }
         int NumberOfMessagesPerRequest { get; }
         int IntervalBetweenMessageRequests { get; }
+        int UserTokenExpirationTime { get; }
+        int UserTokenRemovalTime { get; }
         IReadOnlyList<string> Filters { get; }
         #endregion
 

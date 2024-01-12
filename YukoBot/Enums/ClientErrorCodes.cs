@@ -3,42 +3,47 @@
 public enum ClientErrorCodes
 {
     /// <summary>
-    /// Essentially this code indicates that the error was not handled properly
+    /// Essentially this code indicates that the error was not handled properly.
     /// </summary>
     UnhandledException = 0,
 
     /// <summary>
-    /// The user is not authorized or the token has expired.
+    /// The user token has expired but has not yet been deleted.
     /// </summary>
-    NotAuthorized = 1,
+    TokenHasExpired = 1,
+
+    /// <summary>
+    /// The user is not authorized.
+    /// </summary>
+    NotAuthorized = 2,
 
     /// <summary>
     /// The user is not authenticated. Wrong login or password.
     /// </summary>
-    InvalidCredentials = 2,
+    InvalidCredentials = 3,
 
     /// <summary>
     /// This guild was not found.
     /// </summary>
-    GuildNotFound = 3,
+    GuildNotFound = 4,
 
     /// <summary>
     /// This user is not a member of a particular server (guild) or does not have access to a specific channel.
     /// </summary>
-    MemberNotFound = 4,
+    MemberNotFound = 5,
 
     /// <summary>
     /// This user is banned on a specific server (meaning a ban in a bot).
     /// </summary>
-    MemberBanned = 5,
+    MemberBanned = 6,
 
     /// <summary>
     /// This channel was not found.
     /// </summary>
-    ChannelNotFound = 6,
+    ChannelNotFound = 7,
 
     /// <summary>
     /// This message was not found.
     /// </summary>
-    MessageNotFound = 7
+    MessageNotFound = 8
 }
