@@ -225,7 +225,7 @@ namespace YukoBot
             {
                 guild = await _discordClient.GetGuildAsync(serverRequest.Id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _binaryWriter.Write(new Response<ExecuteScriptErrorJson>
                 {

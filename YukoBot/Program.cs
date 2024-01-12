@@ -32,6 +32,9 @@ namespace YukoBot
                 Version version = currentAssembly.GetName().Version;
                 Version = $"{version.Major}.{version.Minor}.{version.Build}";
             }
+            #if DEBUG
+            Version += " [DEBUG]";
+            #endif
         }
 
         static async Task<int> Main(string[] args)
