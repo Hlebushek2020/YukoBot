@@ -86,14 +86,14 @@ namespace YukoBot
                             _currentDbUser = await _dbContext.Users.FindAsync(userId);
                         }
                     }
-                    if (_currentDbUser == null)
+                    if (_currentDbUser == null && !isExpired)
                     {
                         _binaryWriter.Write(new Response<BaseErrorJson>
                         {
                             Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
                         }.ToString());
                     }
-                    else
+                    else if (!isExpired)
                     {
                         switch (requestType)
                         {
