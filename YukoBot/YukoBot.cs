@@ -108,7 +108,7 @@ namespace YukoBot
             commands.RegisterCommands<AdminCommandModule>();
             commands.RegisterCommands<UserCommandModule>();
             commands.RegisterCommands<RegisteredUserCommandModule>();
-            commands.RegisterCommands<ManagingСollectionsCommandModule>();
+            commands.RegisterCommands<ManagingCollectionsCommandModule>();
 
             _logger.LogInformation("Server initialization");
 

@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -21,24 +20,23 @@ using YukoBot.Services;
 namespace YukoBot.Commands
 {
     [RequireRegisteredAndNoBan]
-    public class ManagingСollectionsCommandModule : CommandModule
+    public class ManagingCollectionsCommandModule : CommandModule
     {
         private const string DefaultCollection = "Default";
 
-        private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges =
-            new ConcurrentDictionary<ulong, RangeStartInfo>();
+        private static readonly ConcurrentDictionary<ulong, RangeStartInfo> _clientRanges = new();
 
         private readonly YukoDbContext _dbContext;
         private readonly IYukoSettings _yukoSettings;
         private readonly IMessageRequestQueueService _mrqService;
-        private readonly ILogger<ManagingСollectionsCommandModule> _logger;
+        private readonly ILogger<ManagingCollectionsCommandModule> _logger;
 
-        public ManagingСollectionsCommandModule(
+        public ManagingCollectionsCommandModule(
             YukoDbContext dbContext,
             IYukoSettings yukoSettings,
             IYukoBot yukoBot,
             IMessageRequestQueueService mrqService,
-            ILogger<ManagingСollectionsCommandModule> logger)
+            ILogger<ManagingCollectionsCommandModule> logger)
             : base(yukoBot, Categories.CollectionManagement, Resources.ManagingСollectionsCommand_AccessError)
         {
             _dbContext = dbContext;
@@ -79,8 +77,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.AddToCollectionById")]
         public async Task AddToCollectionById(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")]
-            ulong messageId,
+            [Description("CommandArg.MessageId")] ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
@@ -89,7 +86,7 @@ namespace YukoBot.Commands
                 DbGuildSettings guildSettings = await _dbContext.GuildsSettings.FindAsync(ctx.Guild.Id);
                 DiscordChannel discordChannel = ctx.Channel;
                 bool artChannel = guildSettings != null && guildSettings.ArtChannelId.HasValue &&
-                                  discordChannel.Id != guildSettings.ArtChannelId;
+                    discordChannel.Id != guildSettings.ArtChannelId;
                 if (artChannel)
                 {
                     try
@@ -210,8 +207,8 @@ namespace YukoBot.Commands
                         Resources.ManagingСollectionsCommand_End_EndOfExecution,
                         dbCollection.Name));
 
-                HashSet<ulong> collectionItems = _dbContext.CollectionItems
-                    .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
+                //HashSet<ulong> collectionItems = _dbContext.CollectionItems
+                //    .Where(x => x.CollectionId == dbCollection.Id).Select(x => x.MessageId).ToHashSet();
 
                 DbUser dbUser = await _dbContext.Users.FindAsync(memberId);
                 bool hasPremiumAccess = dbUser.HasPremiumAccess;
@@ -226,7 +223,11 @@ namespace YukoBot.Commands
                     for (int numMessage = messages.Count - 1; numMessage >= 0; numMessage--)
                     {
                         discordMessage = messages[numMessage];
-                        if (discordMessage.HasImages(_yukoSettings) && !collectionItems.Contains(discordMessage.Id))
+
+                        DbCollectionItem containItem = _dbContext.CollectionItems
+                            .FirstOrDefault(x => x.CollectionId == dbCollection.Id && x.MessageId == discordMessage.Id);
+
+                        if (discordMessage.HasImages(_yukoSettings) && containItem is null)
                         {
                             await SaveCollectionItem(
                                 ctx,
@@ -395,8 +396,7 @@ namespace YukoBot.Commands
         [Description("ManagingСollectionsCommand.DeleteFromCollection")]
         public async Task DeleteFromCollection(
             CommandContext ctx,
-            [Description("CommandArg.MessageId")]
-            ulong messageId,
+            [Description("CommandArg.MessageId")] ulong messageId,
             [Description("CommandArg.NameOrIdCollection"), RemainingText]
             string nameOrId = DefaultCollection)
         {
