@@ -558,4 +558,7 @@
     <data name="RegisteredUserCommand.Profile.FieldRegistered.Title" xml:space="preserve">
         <value>Зарегистрирован:</value>
     </data>
+    <data name="Client.2faCode" xml:space="preserve">
+        <value>Код: {0}</value>
+    </data>
 </root>

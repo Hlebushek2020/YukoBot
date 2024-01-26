@@ -429,6 +429,15 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Код: {0}.
+        /// </summary>
+        internal static string Client_2faCode {
+            get {
+                return ResourceManager.GetString("Client.2faCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Канал для поиска сообщений.
         /// </summary>
         internal static string CommandArg_ArtChannel {

@@ -98,7 +98,7 @@ namespace YukoBot
                         switch (requestType)
                         {
                             case RequestType.RefreshToken:
-                                _binaryWriter.Write(_tokenService.RefreshUserToken(_binaryReader.ReadString()));
+                                await ClientRefreshToken();
                                 break;
                             case RequestType.GetServer:
                                 await ClientGetServer();
@@ -154,17 +154,78 @@ namespace YukoBot
             }
             else
             {
-                // save db
-                dbUser.LastLogin = DateTime.Now;
-                await _dbContext.SaveChangesAsync();
-                // response build
+                Random random = new Random();
+
                 DiscordUser discordUser = await _discordClient.GetUserAsync(dbUser.Id);
-                _binaryWriter.Write(new AuthorizationResponse
+                bool isContinue = !dbUser.TwoFactorAuthentication;
+                if (dbUser.TwoFactorAuthentication)
                 {
-                    UserId = discordUser.Id,
-                    Username = discordUser.Username,
-                    AvatarUri = discordUser.AvatarUrl,
-                    Token = _tokenService.NewUserToken(discordUser.Id)
+                    _binaryWriter.Write(new AuthorizationResponse { TwoFactorAuthentication = true }.ToString());
+
+                    int code = random.Next() * 100000;
+                    code += random.Next() * 10000;
+                    code += random.Next() * 1000;
+                    code += random.Next() * 100;
+                    code += random.Next() * 10;
+                    code += random.Next();
+
+                    DiscordDmChannel dmChannel = await ((DiscordMember)discordUser).CreateDmChannelAsync();
+                    await dmChannel.SendMessageAsync(new DiscordEmbedBuilder()
+                        .WithHappyMessage(discordUser.Username, string.Format(Resources.Client_2faCode, code)));
+
+                    _tcpClient.ReceiveTimeout = 60000;
+                    _tcpClient.SendTimeout = 60000;
+
+                    if (code.Equals(_binaryReader.ReadInt32()))
+                        isContinue = true;
+                    else
+                    {
+                        _binaryWriter.Write(new AuthorizationResponse
+                        {
+                            Error = new BaseErrorJson { Code = ClientErrorCodes.InvalidCredentials }
+                        }.ToString());
+                    }
+                }
+                if (isContinue)
+                {
+                    // save db
+                    dbUser.RefreshToken = _tokenService.NewRefreshToken(out string refreshToken);
+                    dbUser.LastLogin = DateTime.Now;
+                    await _dbContext.SaveChangesAsync();
+                    // response build
+                    _binaryWriter.Write(new AuthorizationResponse
+                    {
+                        UserId = discordUser.Id,
+                        Username = discordUser.Username,
+                        AvatarUri = discordUser.AvatarUrl,
+                        RefreshToken = refreshToken,
+                        Token = _tokenService.NewUserToken(discordUser.Id)
+                    }.ToString());
+                }
+            }
+        }
+
+        private async Task ClientRefreshToken()
+        {
+            RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.FromJson(_binaryReader.ReadString());
+            if (_tokenService.RefreshTokenCheck(refreshTokenRequest.RefreshToken, _currentDbUser.RefreshToken))
+            {
+                // save db
+                _currentDbUser.RefreshToken = _tokenService.NewRefreshToken(out string refreshToken);
+                _currentDbUser.LastLogin = DateTime.Now;
+                await _dbContext.SaveChangesAsync();
+
+                _binaryWriter.Write(new RefreshTokenResponse
+                {
+                    Token = _tokenService.NewUserToken(_currentDbUser.Id),
+                    RefreshToken = refreshToken
+                }.ToString());
+            }
+            else
+            {
+                _binaryWriter.Write(new RefreshTokenResponse
+                {
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.InvalidCredentials }
                 }.ToString());
             }
         }

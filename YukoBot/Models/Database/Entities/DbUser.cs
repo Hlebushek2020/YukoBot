@@ -61,6 +61,13 @@ namespace YukoBot.Models.Database.Entities
         [Column("premium_access_expires")]
         public DateTime? PremiumAccessExpires { get; set; }
 
+        [Required]
+        [Column("two_factor_authentication")]
+        public bool TwoFactorAuthentication { get; set; } = true;
+
+        [Column("refresh_token")]
+        public string RefreshToken { get; set; }
+
         /// <summary>
         /// Indicates whether the user has premium access or not. Isn't column.
         /// </summary>

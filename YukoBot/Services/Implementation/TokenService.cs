@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using YukoBot.Exceptions;
@@ -77,6 +79,29 @@ public class TokenService : ITokenService
         Metadata metadata = new Metadata(oldMetadata.UserId);
         _userTokens.TryUpdate(newUserToken, metadata, metadata);
         return newUserToken;
+    }
+
+    public string NewRefreshToken(out string refreshToken)
+    {
+        Random random = new Random();
+
+        StringBuilder refreshTokenSb = new StringBuilder();
+        while (refreshTokenSb.Length != 32)
+            refreshTokenSb.Append((char)random.Next(33, 127));
+        refreshToken = refreshTokenSb.ToString();
+
+        return CreateHash(refreshToken);
+    }
+
+    public bool RefreshTokenCheck(string rtRequest, string rtDb) => rtDb.Equals(CreateHash(rtRequest));
+
+    private static string CreateHash(string source)
+    {
+        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(source));
+        StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
+        foreach (byte code in hashBytes)
+            hashBuilder.Append(code.ToString("X2"));
+        return hashBuilder.ToString();
     }
 
     private struct Metadata
