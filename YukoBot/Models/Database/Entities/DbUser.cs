@@ -66,6 +66,7 @@ namespace YukoBot.Models.Database.Entities
         public bool TwoFactorAuthentication { get; set; } = true;
 
         [Column("refresh_token")]
+        [MaxLength(64)]
         public string RefreshToken { get; set; }
 
         /// <summary>
