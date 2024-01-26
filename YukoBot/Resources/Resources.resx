@@ -561,4 +561,22 @@
     <data name="Client.2faCode" xml:space="preserve">
         <value>Код: {0}</value>
     </data>
+    <data name="RegisteredUserCommand.TwoFactorAuthentication" xml:space="preserve">
+        <value>Включить или отключить двухфакторную аутентификацию в приложении.</value>
+    </data>
+    <data name="RegisteredUserCommand.TwoFactorAuthentication.Enabled" xml:space="preserve">
+        <value>Включена!</value>
+    </data>
+    <data name="RegisteredUserCommand.TwoFactorAuthentication.Disabled" xml:space="preserve">
+        <value>Отключена!</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.Field2fa.Enabled" xml:space="preserve">
+        <value>Включена</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.Field2fa.Title" xml:space="preserve">
+        <value>2FA:</value>
+    </data>
+    <data name="RegisteredUserCommand.Profile.Field2fa.Disabled" xml:space="preserve">
+        <value>Отключена</value>
+    </data>
 </root>

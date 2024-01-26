@@ -208,7 +208,15 @@ namespace YukoBot
         private async Task ClientRefreshToken()
         {
             RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.FromJson(_binaryReader.ReadString());
-            if (_tokenService.RefreshTokenCheck(refreshTokenRequest.RefreshToken, _currentDbUser.RefreshToken))
+            if (_currentDbUser.LastLogin.HasValue == false ||
+                _currentDbUser.LastLogin.Value.AddHours(_yukoSettings.RefreshTokenLifeInHours) <= DateTime.Now)
+            {
+                _binaryWriter.Write(new RefreshTokenResponse
+                {
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
+                }.ToString());
+            }
+            else if (_tokenService.RefreshTokenCheck(refreshTokenRequest.RefreshToken, _currentDbUser.RefreshToken))
             {
                 // save db
                 _currentDbUser.RefreshToken = _tokenService.NewRefreshToken(out string refreshToken);

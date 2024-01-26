@@ -1357,6 +1357,33 @@ namespace YukoBot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Отключена.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_Field2fa_Disabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.Field2fa.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включена.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_Field2fa_Enabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.Field2fa.Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2FA:.
+        /// </summary>
+        internal static string RegisteredUserCommand_Profile_Field2fa_Title {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.Profile.Field2fa.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отсутствуют.
         /// </summary>
         internal static string RegisteredUserCommand_Profile_FieldBanList_IsEmpty {
@@ -1488,6 +1515,33 @@ namespace YukoBot {
         internal static string RegisteredUserCommand_Settings_FieldPort_Title {
             get {
                 return ResourceManager.GetString("RegisteredUserCommand.Settings.FieldPort.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включить или отключить двухфакторную аутентификацию в приложении..
+        /// </summary>
+        internal static string RegisteredUserCommand_TwoFactorAuthentication {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.TwoFactorAuthentication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отключена!.
+        /// </summary>
+        internal static string RegisteredUserCommand_TwoFactorAuthentication_Disabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.TwoFactorAuthentication.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включена!.
+        /// </summary>
+        internal static string RegisteredUserCommand_TwoFactorAuthentication_Enabled {
+            get {
+                return ResourceManager.GetString("RegisteredUserCommand.TwoFactorAuthentication.Enabled", resourceCulture);
             }
         }
         

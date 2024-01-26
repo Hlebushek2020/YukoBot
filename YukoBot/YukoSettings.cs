@@ -26,8 +26,8 @@ namespace YukoBot
         public string ClientActualApp { get; set; }
         public int NumberOfMessagesPerRequest { get; set; }
         public int IntervalBetweenMessageRequests { get; set; }
-        public int UserTokenExpirationTime { get; set; }
-        public int UserTokenRemovalTime { get; set; }
+        public int TokenLifeInMinutes { get; set; }
+        public int RefreshTokenLifeInHours { get; set; }
         public LogLevel BotLogLevel { get; set; }
         public IReadOnlyList<string> Filters { get; set; }
         #endregion
@@ -38,8 +38,8 @@ namespace YukoBot
             BotLogLevel = LogLevel.Information;
             NumberOfMessagesPerRequest = 10;
             IntervalBetweenMessageRequests = 500;
-            UserTokenExpirationTime = 20;
-            UserTokenRemovalTime = 25;
+            TokenLifeInMinutes = 60;
+            RefreshTokenLifeInHours = 12;
         }
 
         public void SetApp(string appLink)

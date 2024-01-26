@@ -18,7 +18,7 @@ public class TokenService : ITokenService
 
     public TokenService(IYukoSettings yukoSettings, ILogger<TokenService> logger)
     {
-        if (yukoSettings.UserTokenRemovalTime < yukoSettings.UserTokenExpirationTime)
+        if (yukoSettings.RefreshTokenLifeInHours * 60 < yukoSettings.TokenLifeInMinutes)
             throw new InvalidTokenLifetimeValueException();
 
         _yukoSettings = yukoSettings;
@@ -26,7 +26,7 @@ public class TokenService : ITokenService
 
         _userTokens = new ConcurrentDictionary<string, Metadata>();
 
-        long dueTime = yukoSettings.UserTokenExpirationTime * 60000;
+        long dueTime = yukoSettings.TokenLifeInMinutes * 60000;
         _timer = new Timer(Action, null, dueTime, 120000);
 
         _logger.LogInformation($"{nameof(BotPingService)} loaded.");
@@ -39,7 +39,7 @@ public class TokenService : ITokenService
         DateTime currentDateTime = DateTime.UtcNow;
         foreach (KeyValuePair<string, Metadata> userToken in _userTokens)
         {
-            DateTime forCompare = userToken.Value.StartUse.AddMinutes(_yukoSettings.UserTokenRemovalTime);
+            DateTime forCompare = userToken.Value.StartUse.AddMinutes(_yukoSettings.RefreshTokenLifeInHours);
             if (forCompare >= currentDateTime)
             {
                 _userTokens.TryRemove(userToken.Key, out _);
@@ -57,7 +57,7 @@ public class TokenService : ITokenService
             return false;
 
         userId = metadata.UserId;
-        isExpired = metadata.StartUse.AddMinutes(_yukoSettings.UserTokenExpirationTime) >= DateTime.UtcNow;
+        isExpired = metadata.StartUse.AddMinutes(_yukoSettings.TokenLifeInMinutes) >= DateTime.UtcNow;
 
         return true;
     }

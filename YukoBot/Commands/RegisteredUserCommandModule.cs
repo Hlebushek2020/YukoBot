@@ -235,7 +235,14 @@ namespace YukoBot.Commands
                 .WithThumbnail(ctx.User.AvatarUrl)
                 .AddField(
                     Resources.RegisteredUserCommand_Profile_FieldRegistered_Title,
-                    dbUser.Registered.ToString(ProfileDtf, locale))
+                    dbUser.Registered.ToString(ProfileDtf, locale),
+                    true)
+                .AddField(
+                    Resources.RegisteredUserCommand_Profile_Field2fa_Title,
+                    dbUser.TwoFactorAuthentication
+                        ? Resources.RegisteredUserCommand_Profile_Field2fa_Enabled
+                        : Resources.RegisteredUserCommand_Profile_Field2fa_Disabled,
+                    true)
                 .AddField(Resources.RegisteredUserCommand_Profile_FieldPremium_Title, fieldPremiumText, true)
                 .AddField(
                     Resources.RegisteredUserCommand_Profile_FieldLastLogin_Title,
@@ -272,6 +279,28 @@ namespace YukoBot.Commands
                     : Resources.RegisteredUserCommand_Profile_FieldBanList_IsEmpty);
 
             await ctx.RespondAsync(embedBuilder);
+        }
+
+        [Command("2fa")]
+        [Description("RegisteredUserCommand.TwoFactorAuthentication")]
+        public async Task TwoFactorAuthentication(
+            CommandContext ctx,
+            [Description("CommandArg.IsEnabled")] bool isEnabled)
+        {
+            DbUser dbUser = await _dbContext.Users.FindAsync(ctx.User.Id);
+
+            if (dbUser.TwoFactorAuthentication != isEnabled)
+            {
+                dbUser.TwoFactorAuthentication = isEnabled;
+                await _dbContext.SaveChangesAsync();
+            }
+
+            await ctx.RespondAsync(new DiscordEmbedBuilder()
+                .WithHappyMessage(
+                    ctx.Member.DisplayName,
+                    isEnabled
+                        ? Resources.RegisteredUserCommand_TwoFactorAuthentication_Enabled
+                        : Resources.RegisteredUserCommand_TwoFactorAuthentication_Disabled));
         }
     }
 }
