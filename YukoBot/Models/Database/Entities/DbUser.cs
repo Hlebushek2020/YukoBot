@@ -61,10 +61,16 @@ namespace YukoBot.Models.Database.Entities
         [Column("premium_access_expires")]
         public DateTime? PremiumAccessExpires { get; set; }
 
+        /// <summary>
+        /// Two-factor authentication. Default value: true.
+        /// </summary>
         [Required]
         [Column("two_factor_authentication")]
         public bool TwoFactorAuthentication { get; set; } = true;
 
+        /// <summary>
+        /// Token hash to update the access token.
+        /// </summary>
         [Column("refresh_token")]
         [MaxLength(64)]
         public string RefreshToken { get; set; }

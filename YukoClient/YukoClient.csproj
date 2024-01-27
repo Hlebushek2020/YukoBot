@@ -58,7 +58,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\program-icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -118,9 +118,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ProgressViewModel.cs" />
-      <Compile Include="Views\ExecutionErrorsWindow.xaml.cs">
-          <DependentUpon>ExecutionErrorsWindow.xaml</DependentUpon>
-      </Compile>
+    <Compile Include="Views\ExecutionErrorsWindow.xaml.cs">
+      <DependentUpon>ExecutionErrorsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RenameChannelWindow.xaml.cs">
       <DependentUpon>RenameChannelWindow.xaml</DependentUpon>
     </Compile>
@@ -129,7 +129,7 @@
     <Compile Include="Views\ServerSettingsWindow.xaml.cs">
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
-      <Page Include="Views\ExecutionErrorsWindow.xaml"/>
+    <Page Include="Views\ExecutionErrorsWindow.xaml" />
     <Page Include="Views\RenameChannelWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -200,21 +200,12 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -226,16 +217,16 @@
     <Resource Include="Resources\menu-edit-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\YukoClientBase\YukoClientBase.csproj">
       <Project>{1b6cb967-f823-43f4-99f7-f9e53b0da362}</Project>
       <Name>YukoClientBase</Name>
     </ProjectReference>
   </ItemGroup>
-    <ItemGroup>
-        <Resource Include="Resources\menu-error-32.png"/>
-    </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\menu-error-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\program-icon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

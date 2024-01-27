@@ -1,7 +1,10 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Prism.Commands;
+using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Web;
 using YukoClientBase.Exceptions;
@@ -19,6 +22,24 @@ namespace YukoClient.ViewModels
         public Action Close { get; set; }
         public string Login { get; set; }
         public Func<string> Password { get; set; }
+        public ImageBrush Logo
+        {
+            get
+            {
+                var decoder = BitmapDecoder.Create(
+                    new Uri("pack://application:,,,/Resources/program-icon.ico"),
+                    BitmapCreateOptions.DelayCreation,
+                    BitmapCacheOption.OnDemand);
+
+                var result = decoder.Frames.Where(f => f.Width <= 256)
+                        .OrderByDescending(f => f.Width).FirstOrDefault() ??
+                    decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
+                ImageBrush ib = new ImageBrush();
+                ib.Stretch = Stretch.Uniform;
+                ib.ImageSource = result;
+                return ib;
+            }
+        }
         #endregion
 
         #region Commands
