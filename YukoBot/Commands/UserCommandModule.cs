@@ -63,24 +63,20 @@ namespace YukoBot.Commands
             string password = "";
             Random random = new Random();
             while (password.Length != 10)
-            {
                 password += (char)random.Next(33, 127);
-            }
 
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
-                foreach (byte code in hashBytes)
-                {
-                    hashBuilder.Append(code.ToString("X2"));
-                }
-                dbUser.Password = hashBuilder.ToString();
-            }
+            byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
+            foreach (byte code in hashBytes)
+                hashBuilder.Append(code.ToString("X2"));
+            dbUser.Password = hashBuilder.ToString();
+
+            DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
+
+            dbUser.DmChannelId = userChat.Id;
 
             await _yukoDbContext.SaveChangesAsync();
 
-            DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
                 .WithHappyTitle(
                     isRegister

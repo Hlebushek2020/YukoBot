@@ -162,21 +162,16 @@ namespace YukoBot
                 {
                     _binaryWriter.Write(new AuthorizationResponse { TwoFactorAuthentication = true }.ToString());
 
-                    int code = random.Next() * 100000;
-                    code += random.Next() * 10000;
-                    code += random.Next() * 1000;
-                    code += random.Next() * 100;
-                    code += random.Next() * 10;
-                    code += random.Next();
+                    string code = random.Next(1000000).ToString("000000");
 
-                    DiscordDmChannel dmChannel = await ((DiscordMember)discordUser).CreateDmChannelAsync();
+                    DiscordChannel dmChannel = await _discordClient.GetChannelAsync(dbUser.DmChannelId);
                     await dmChannel.SendMessageAsync(new DiscordEmbedBuilder()
                         .WithHappyMessage(discordUser.Username, string.Format(Resources.Client_2faCode, code)));
 
                     _tcpClient.ReceiveTimeout = 60000;
                     _tcpClient.SendTimeout = 60000;
 
-                    if (code.Equals(_binaryReader.ReadInt32()))
+                    if (code.Equals(_binaryReader.ReadString()))
                         isContinue = true;
                     else
                     {

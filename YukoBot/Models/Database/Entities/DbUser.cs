@@ -42,6 +42,10 @@ namespace YukoBot.Models.Database.Entities
         [Column("registered")]
         public DateTime Registered { get; set; }
 
+        [Required]
+        [Column("dm_channel_id")]
+        public ulong DmChannelId { get; set; }
+
         /// <summary>
         /// The time and date of the last login to the application. Default value: null.
         /// </summary>
