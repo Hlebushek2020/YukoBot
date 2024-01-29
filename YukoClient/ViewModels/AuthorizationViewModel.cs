@@ -22,6 +22,7 @@ namespace YukoClient.ViewModels
         public Action Close { get; set; }
         public string Login { get; set; }
         public Func<string> Password { get; set; }
+
         public ImageBrush Logo
         {
             get
@@ -40,6 +41,8 @@ namespace YukoClient.ViewModels
                 return ib;
             }
         }
+
+        public bool IsRemember { get; set; }
         #endregion
 
         #region Commands
