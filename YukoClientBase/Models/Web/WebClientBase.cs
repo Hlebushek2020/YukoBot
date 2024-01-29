@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
+using YukoClient;
 using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Web.Requests;
 using YukoClientBase.Models.Web.Responses;
 
@@ -16,11 +17,10 @@ namespace YukoClientBase.Models.Web
         public const int SendTimeout = 30000;
         public const int ReceiveTimeout = 30000;
 
-        #region Token
-        protected Guid? token;
+        protected string Token;
+        protected string RefreshToken;
 
-        public bool TokenAvailability => token.HasValue;
-        #endregion
+        public bool TokenAvailability => !string.IsNullOrWhiteSpace(Token);
 
         protected T Request<T>(Request request, RequestType requestType)
         {
@@ -33,9 +33,9 @@ namespace YukoClientBase.Models.Web
                 BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
                 BinaryWriter writter = new BinaryWriter(stream, Encoding.UTF8);
                 // request
-                writter.Write((int) requestType);
+                writter.Write((int)requestType);
                 if (requestType != RequestType.Authorization)
-                    writter.Write(token.ToString());
+                    writter.Write(Token);
                 if (request != null)
                     writter.Write(request.ToString());
                 // response
@@ -43,9 +43,9 @@ namespace YukoClientBase.Models.Web
             }
         }
 
-        public AuthorizationResponse Authorization(string idOrNikname, string password)
+        public AuthorizationResponse Authorization(string idOrUsername, string password)
         {
-            AuthorizationRequest request = new AuthorizationRequest { Login = idOrNikname };
+            AuthorizationRequest request = new AuthorizationRequest { Login = idOrUsername };
             // hash password
             using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
             {
@@ -55,8 +55,45 @@ namespace YukoClientBase.Models.Web
                     hashBuilder.Append(code.ToString("X2"));
                 request.Password = hashBuilder.ToString();
             }
-            AuthorizationResponse response = Request<AuthorizationResponse>(request, RequestType.Authorization);
-            token = response.Token;
+
+            AuthorizationResponse response;
+            using (TcpClient tcpClient = new TcpClient())
+            {
+                tcpClient.SendTimeout = SendTimeout;
+                tcpClient.ReceiveTimeout = ReceiveTimeout;
+                tcpClient.Connect(Settings.Current.Host, Settings.Current.Port);
+                NetworkStream stream = tcpClient.GetStream();
+                BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
+                BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8);
+                // request
+                writer.Write((int)RequestType.Authorization);
+                writer.Write(request.ToString());
+                // response
+                response = JsonConvert.DeserializeObject<AuthorizationResponse>(reader.ReadString());
+
+                if (response.Error != null)
+                    throw new ClientCodeException(response.Error.Code);
+
+                if (response.TwoFactorAuthentication)
+                {
+                    tcpClient.ReceiveTimeout = 60000;
+                    tcpClient.SendTimeout = 60000;
+
+                    InputWindow inputWindow = new InputWindow();
+                    inputWindow.ShowDialog();
+
+                    writer.Write(Convert.ToInt32(inputWindow.GetInputValue()));
+
+                    response = JsonConvert.DeserializeObject<AuthorizationResponse>(reader.ReadString());
+
+                    if (response.Error != null)
+                        throw new ClientCodeException(response.Error.Code);
+                }
+            }
+
+            Token = response.Token;
+            RefreshToken = response.RefreshToken;
+
             return response;
         }
     }

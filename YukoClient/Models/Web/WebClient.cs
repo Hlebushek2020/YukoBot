@@ -24,7 +24,7 @@ namespace YukoClient.Models.Web
             int scriptCount,
             out Response<ExecuteScriptErrorJson> response)
         {
-            return new ExecuteScriptProvider(token.ToString(), serverId, scriptCount, out response);
+            return new ExecuteScriptProvider(Token.ToString(), serverId, scriptCount, out response);
         }
     }
 }

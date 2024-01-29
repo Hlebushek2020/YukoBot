@@ -17,6 +17,6 @@ namespace YukoCollectionsClient.Models.Web
             Request<MessageCollectionsResponse>(null, RequestType.GetMessageCollections);
 
         public UrlsProvider GetUrls(MessageCollection messageCollection, out Response<BaseErrorJson> response) =>
-            new UrlsProvider(token.ToString(), messageCollection, out response);
+            new UrlsProvider(Token.ToString(), messageCollection, out response);
     }
 }

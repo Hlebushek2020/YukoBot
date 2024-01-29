@@ -84,6 +84,9 @@
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Exceptions\ClientCodeException.cs" />
     <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
+    <Compile Include="InputWindow.xaml.cs">
+      <DependentUpon>InputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\ICloseableView.cs" />
     <Compile Include="Interfaces\IViewTitle.cs" />
@@ -131,6 +134,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="InputWindow.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
