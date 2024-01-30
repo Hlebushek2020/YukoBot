@@ -122,9 +122,6 @@
     <Compile Include="Views\ExecutionErrorsWindow.xaml.cs">
       <DependentUpon>ExecutionErrorsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\InputWindow.xaml.cs">
-      <DependentUpon>InputWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\RenameChannelWindow.xaml.cs">
       <DependentUpon>RenameChannelWindow.xaml</DependentUpon>
     </Compile>
@@ -134,7 +131,6 @@
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\ExecutionErrorsWindow.xaml" />
-    <Page Include="Views\InputWindow.xaml" />
     <Page Include="Views\RenameChannelWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

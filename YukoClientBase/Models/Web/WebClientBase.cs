@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -82,7 +81,7 @@ namespace YukoClientBase.Models.Web
                     InputWindow inputWindow = new InputWindow();
                     inputWindow.ShowDialog();
 
-                    writer.Write(Convert.ToInt32(inputWindow.GetInputValue()));
+                    writer.Write(inputWindow.GetInputValue());
 
                     response = JsonConvert.DeserializeObject<AuthorizationResponse>(reader.ReadString());
 
