@@ -58,7 +58,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\program-icon.ico</ApplicationIcon>
+    <ApplicationIcon>..\program-icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -220,7 +220,7 @@
     <Resource Include="Resources\menu-error-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\program-icon.ico" />
+    <Resource Include="..\program-icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

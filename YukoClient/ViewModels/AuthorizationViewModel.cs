@@ -44,7 +44,7 @@ namespace YukoClient.ViewModels
             get
             {
                 BitmapDecoder decoder = BitmapDecoder.Create(
-                    new Uri("pack://application:,,,/Resources/program-icon.ico"),
+                    new Uri("pack://application:,,,/../program-icon.ico"),
                     BitmapCreateOptions.DelayCreation,
                     BitmapCacheOption.OnDemand);
 
