@@ -1,25 +1,23 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
-using YukoClient.ViewModels;
 using YukoClientBase.Models;
+using YukoClientBase.ViewModels.Interfaces;
 
-namespace YukoClient
+namespace YukoClientBase.Views
 {
     /// <summary>
     /// Логика взаимодействия для AuthorizationWindow.xaml
     /// </summary>
     public partial class AuthorizationWindow : Window
     {
-        public AuthorizationWindow()
+        public AuthorizationWindow(IAuthorizationViewModel authorizationViewModel)
         {
             InitializeComponent();
-            DataContext = new AuthorizationViewModel
-            {
-                Close = new Action(Close),
-                Password = () => passwordBox_Password.Password
-            };
+            DataContext = authorizationViewModel;
+
+            authorizationViewModel.SetCloseAction(Close);
+            authorizationViewModel.SetGetPasswordFunc(() => passwordBox_Password.Password);
 
             Settings.LoadLoginData(out string login, out byte[] protectedData);
 
@@ -33,7 +31,8 @@ namespace YukoClient
                         null,
                         DataProtectionScope.CurrentUser));
 
-            ((AuthorizationViewModel)DataContext).Login = login;
+            authorizationViewModel.IsRemember = true;
+            authorizationViewModel.Login = login;
         }
     }
 }

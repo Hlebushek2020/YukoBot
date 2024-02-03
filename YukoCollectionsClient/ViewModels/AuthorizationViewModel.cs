@@ -1,28 +1,69 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Prism.Commands;
 using Prism.Mvvm;
-using YukoClientBase.Exceptions;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
+using YukoClientBase.ViewModels.Interfaces;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Web;
-using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.ViewModels
 {
-    public class AuthorizationViewModel : BindableBase, ICloseableView, IViewTitle
+    public class AuthorizationViewModel : BindableBase, IAuthorizationViewModel, ICloseableView, IViewTitle
     {
+        #region Fields
+        private Func<string> _passwordFunc;
+        private string _login;
+        private bool _isRemember;
+        #endregion
+
         #region Propirties
-        public string Title
+        public string Title => App.Name;
+        public Action Close { get; set; }
+
+        public string Login
         {
-            get => App.Name;
+            get => _login;
+            set
+            {
+                _login = value;
+                RaisePropertyChanged();
+            }
         }
 
-        public Action Close { get; set; }
-        public string Login { get; set; }
-        public Func<string> Password { get; set; }
+        public ImageBrush Logo
+        {
+            get
+            {
+                BitmapDecoder decoder = BitmapDecoder.Create(
+                    new Uri("pack://application:,,,/Resources/program-icon.ico"),
+                    BitmapCreateOptions.DelayCreation,
+                    BitmapCacheOption.OnDemand);
+
+                BitmapFrame bitmapFrame = decoder.Frames.Where(f => f.Width <= 256)
+                        .OrderByDescending(f => f.Width).FirstOrDefault() ??
+                    decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
+
+                return new ImageBrush { Stretch = Stretch.Uniform, ImageSource = bitmapFrame };
+            }
+        }
+
+        public bool IsRemember
+        {
+            get => _isRemember;
+            set
+            {
+                _isRemember = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Commands
@@ -36,30 +77,40 @@ namespace YukoCollectionsClient.ViewModels
             {
                 if (!Settings.Availability())
                 {
-                    SUI.Dialogs.MessageBox.Show("Сначала настройте программу! Значок в правом нижнем углу.", App.Name,
+                    MessageBox.Show("Сначала настройте программу! Значок в правом нижнем углу.", App.Name,
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password()))
+                if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(_passwordFunc?.Invoke()))
                 {
-                    SUI.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK,
+                    MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
                 }
 
                 try
                 {
-                    AuthorizationResponse response = WebClient.Current.Authorization(Login, Password());
+                    AuthorizationResponse response = WebClient.Current.Authorization(Login, _passwordFunc.Invoke());
 
-                    if (response.Error != null)
-                        throw new ClientCodeException(response.Error.Code);
+                    if (IsRemember)
+                    {
+                        Settings.SaveLoginData(Login,
+                            ProtectedData.Protect(
+                                Encoding.UTF8.GetBytes(_passwordFunc.Invoke()),
+                                null,
+                                DataProtectionScope.CurrentUser));
+                    }
+                    else
+                    {
+                        Settings.DeleteLoginData();
+                    }
 
                     Storage.Current.AvatarUri = response.AvatarUri;
                     Storage.Current.UserId = response.UserId;
                     Storage.Current.Username = response.Username;
 
-                    Close();
+                    Close?.Invoke();
                 }
                 catch (Exception ex)
                 {
@@ -72,5 +123,8 @@ namespace YukoCollectionsClient.ViewModels
                 settingsWindow.ShowDialog();
             });
         }
+
+        public void SetCloseAction(Action closeAction) => Close = closeAction;
+        public void SetGetPasswordFunc(Func<string> passwordFunc) => _passwordFunc = passwordFunc;
     }
 }

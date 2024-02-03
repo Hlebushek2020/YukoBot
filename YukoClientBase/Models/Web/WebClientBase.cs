@@ -18,8 +18,9 @@ namespace YukoClientBase.Models.Web
         public const int SendTimeout = 30000;
         public const int ReceiveTimeout = 30000;
 
+        private string _refreshToken;
+
         protected string Token;
-        protected string RefreshToken;
 
         public bool TokenAvailability => !string.IsNullOrWhiteSpace(Token);
 
@@ -32,15 +33,39 @@ namespace YukoClientBase.Models.Web
                 tcpClient.Connect(Settings.Current.Host, Settings.Current.Port);
                 NetworkStream stream = tcpClient.GetStream();
                 BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
-                BinaryWriter writter = new BinaryWriter(stream, Encoding.UTF8);
+                BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8);
                 // request
-                writter.Write((int)requestType);
-                if (requestType != RequestType.Authorization)
-                    writter.Write(Token);
+                writer.Write((int)requestType);
+                writer.Write(Token);
                 if (request != null)
-                    writter.Write(request.ToString());
+                    writer.Write(request.ToString());
                 // response
                 return JsonConvert.DeserializeObject<T>(reader.ReadString());
+            }
+        }
+
+        public void RefreshToken()
+        {
+            using (TcpClient tcpClient = new TcpClient())
+            {
+                tcpClient.SendTimeout = SendTimeout;
+                tcpClient.ReceiveTimeout = ReceiveTimeout;
+                tcpClient.Connect(Settings.Current.Host, Settings.Current.Port);
+                NetworkStream stream = tcpClient.GetStream();
+                BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
+                BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8);
+                // request
+                writer.Write((int)RequestType.RefreshToken);
+                writer.Write(_refreshToken);
+                // response
+                RefreshTokenResponse response =
+                    JsonConvert.DeserializeObject<RefreshTokenResponse>(reader.ReadString());
+
+                if (response.Error != null)
+                    throw new ClientCodeException(response.Error.Code);
+
+                Token = response.Token;
+                _refreshToken = response.RefreshToken;
             }
         }
 
@@ -101,7 +126,7 @@ namespace YukoClientBase.Models.Web
             }
 
             Token = response.Token;
-            RefreshToken = response.RefreshToken;
+            _refreshToken = response.RefreshToken;
 
             return response;
         }

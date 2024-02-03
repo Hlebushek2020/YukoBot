@@ -236,7 +236,7 @@ namespace YukoBot
                 {
                     _binaryWriter.Write(new RefreshTokenResponse
                     {
-                        Error = new BaseErrorJson { Code = ClientErrorCodes.InvalidCredentials }
+                        Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
                     }.ToString());
                 }
             }

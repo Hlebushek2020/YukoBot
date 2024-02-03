@@ -27,4 +27,7 @@
     <data name="Enum.ClientErrorCodes.InvalidCredentials" xml:space="preserve">
         <value>Неверный логин или пароль.</value>
     </data>
+    <data name="Enum.ClientErrorCodes.NotAuthorized" xml:space="preserve">
+        <value>Время сессии истекло, выполните вход заново.</value>
+    </data>
 </root>

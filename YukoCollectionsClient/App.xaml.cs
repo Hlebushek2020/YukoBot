@@ -1,10 +1,12 @@
-﻿using Sergey.UI.Extension.Themes;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using Sergey.UI.Extension.Themes;
 using YukoClientBase.Models;
+using YukoClientBase.Views;
 using YukoCollectionsClient.Models.Web;
+using YukoCollectionsClient.ViewModels;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient
@@ -14,7 +16,8 @@ namespace YukoCollectionsClient
     /// </summary>
     public partial class App : Application
     {
-        public static string Name { get; } = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
+        public static string Name { get; } =
+            Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
         private static Mutex yukoClientMutex;
 
@@ -24,20 +27,18 @@ namespace YukoCollectionsClient
             yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
             MainWindow = new MainWindow();
-            AuthorizationWindow authorization = new AuthorizationWindow();
+            AuthorizationWindow authorization = new AuthorizationWindow(new AuthorizationViewModel());
             authorization.ShowDialog();
+
             if (!WebClient.Current.TokenAvailability)
-            {
                 Shutdown();
-            }
             else
-            {
                 MainWindow.Show();
-            }
         }
 
         public static void SwitchTheme(Theme? theme)

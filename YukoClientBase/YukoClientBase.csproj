@@ -70,6 +70,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -95,6 +96,7 @@
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />
     <Compile Include="Models\Web\Responses\AuthorizationResponse.cs" />
+    <Compile Include="Models\Web\Responses\RefreshTokenResponse.cs" />
     <Compile Include="Models\Web\Responses\Response.cs" />
     <Compile Include="Models\Web\Responses\UrlsResponse.cs" />
     <Compile Include="Models\Web\WebClientBase.cs" />
@@ -103,6 +105,10 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Interfaces\IAuthorizationViewModel.cs" />
+    <Compile Include="Views\AuthorizationWindow.xaml.cs">
+      <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InputWindow.xaml.cs">
       <DependentUpon>InputWindow.xaml</DependentUpon>
@@ -136,6 +142,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\AuthorizationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\InputWindow.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

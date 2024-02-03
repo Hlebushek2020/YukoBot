@@ -1,10 +1,12 @@
-﻿using Sergey.UI.Extension.Themes;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using Sergey.UI.Extension.Themes;
 using YukoClient.Models.Web;
+using YukoClient.ViewModels;
 using YukoClientBase.Models;
+using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient
@@ -32,16 +34,13 @@ namespace YukoClient
                 Shutdown();
             }
             MainWindow = new MainWindow();
-            AuthorizationWindow authorization = new AuthorizationWindow();
+            AuthorizationWindow authorization = new AuthorizationWindow(new AuthorizationViewModel());
             authorization.ShowDialog();
+
             if (!WebClient.Current.TokenAvailability)
-            {
                 Shutdown();
-            }
             else
-            {
                 MainWindow.Show();
-            }
         }
 
         public static void SwitchTheme(Theme? theme)
@@ -55,7 +54,7 @@ namespace YukoClient
                     settings.Theme = theme.Value;
                     uri = ThemeUri.Get(theme.Value);
                 }
-                ResourceDictionary resource = (ResourceDictionary) LoadComponent(uri);
+                ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
                 Current.Resources.MergedDictionaries.Clear();
                 Current.Resources.MergedDictionaries.Add(resource);
             }

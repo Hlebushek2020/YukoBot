@@ -69,6 +69,15 @@ namespace YukoClientBase.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Время сессии истекло, выполните вход заново..
+        /// </summary>
+        internal static string Enum_ClientErrorCodes_NotAuthorized {
+            get {
+                return ResourceManager.GetString("Enum.ClientErrorCodes.NotAuthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Время действия кода истекло..
         /// </summary>
         internal static string TwoFactorAuthentication_CodeHasExpired {
