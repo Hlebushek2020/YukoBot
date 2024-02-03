@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +9,7 @@ using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Web.Requests;
 using YukoClientBase.Models.Web.Responses;
+using YukoClientBase.Properties;
 
 namespace YukoClientBase.Models.Web
 {
@@ -45,6 +47,7 @@ namespace YukoClientBase.Models.Web
         public AuthorizationResponse Authorization(string idOrUsername, string password)
         {
             AuthorizationRequest request = new AuthorizationRequest { Login = idOrUsername };
+
             // hash password
             using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
             {
@@ -81,12 +84,19 @@ namespace YukoClientBase.Models.Web
                     InputWindow inputWindow = new InputWindow();
                     inputWindow.ShowDialog();
 
-                    writer.Write(inputWindow.GetInputValue());
+                    try
+                    {
+                        writer.Write(inputWindow.GetInputValue());
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(Resources.TwoFactorAuthentication_CodeHasExpired);
+                    }
 
                     response = JsonConvert.DeserializeObject<AuthorizationResponse>(reader.ReadString());
 
                     if (response.Error != null)
-                        throw new ClientCodeException(response.Error.Code);
+                        throw new Exception(Resources.TwoFactorAuthentication_IncorrectCode);
                 }
             }
 

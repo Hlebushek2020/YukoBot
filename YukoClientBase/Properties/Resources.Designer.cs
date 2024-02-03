@@ -58,5 +58,32 @@ namespace YukoClientBase.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Неверный логин или пароль..
+        /// </summary>
+        internal static string Enum_ClientErrorCodes_InvalidCredentials {
+            get {
+                return ResourceManager.GetString("Enum.ClientErrorCodes.InvalidCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Время действия кода истекло..
+        /// </summary>
+        internal static string TwoFactorAuthentication_CodeHasExpired {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthentication.CodeHasExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введен неверный код..
+        /// </summary>
+        internal static string TwoFactorAuthentication_IncorrectCode {
+            get {
+                return ResourceManager.GetString("TwoFactorAuthentication.IncorrectCode", resourceCulture);
+            }
+        }
     }
 }

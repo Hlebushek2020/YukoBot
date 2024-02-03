@@ -18,4 +18,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="TwoFactorAuthentication.CodeHasExpired" xml:space="preserve">
+        <value>Время действия кода истекло.</value>
+    </data>
+    <data name="TwoFactorAuthentication.IncorrectCode" xml:space="preserve">
+        <value>Введен неверный код.</value>
+    </data>
+    <data name="Enum.ClientErrorCodes.InvalidCredentials" xml:space="preserve">
+        <value>Неверный логин или пароль.</value>
+    </data>
 </root>

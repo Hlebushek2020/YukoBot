@@ -166,8 +166,10 @@ namespace YukoBot
                     string code = random.Next(1000000).ToString("000000");
 
                     DiscordChannel dmChannel = await _discordClient.GetChannelAsync(dbUser.DmChannelId);
-                    await dmChannel.SendMessageAsync(new DiscordEmbedBuilder()
+                    DiscordMessage codeMessage = await dmChannel.SendMessageAsync(new DiscordEmbedBuilder()
                         .WithHappyMessage(discordUser.Username, string.Format(Resources.Client_2faCode, code)));
+                    await codeMessage.CreateReactionAsync(
+                        DiscordEmoji.FromName(_discordClient, Constants.DeleteMessageEmoji, false));
 
                     _tcpClient.ReceiveTimeout = 60000;
                     _tcpClient.SendTimeout = 60000;

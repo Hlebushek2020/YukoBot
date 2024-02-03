@@ -16,8 +16,9 @@
         <Button Style="{StaticResource ButtonStyle}"
                 Margin="0,10,0,0"
                 HorizontalAlignment="Right"
-                Width="100"
-                Content="Ввести"
+                Width="120"
+                Height="30"
+                Content="OK"
                 Click="ButtonBase_OnClick" />
     </StackPanel>
 </Window>
