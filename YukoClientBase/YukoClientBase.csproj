@@ -84,9 +84,6 @@
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Exceptions\ClientCodeException.cs" />
     <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
-    <Compile Include="InputWindow.xaml.cs">
-      <DependentUpon>InputWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\ICloseableView.cs" />
     <Compile Include="Interfaces\IViewTitle.cs" />
@@ -106,6 +103,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InputWindow.xaml.cs">
+      <DependentUpon>InputWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -136,7 +136,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="InputWindow.xaml" />
+    <Page Include="Views\InputWindow.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

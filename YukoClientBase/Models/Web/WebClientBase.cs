@@ -4,12 +4,12 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
-using YukoClient;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Web.Requests;
 using YukoClientBase.Models.Web.Responses;
 using YukoClientBase.Properties;
+using YukoClientBase.Views;
 
 namespace YukoClientBase.Models.Web
 {

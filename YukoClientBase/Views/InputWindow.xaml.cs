@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoClient
+namespace YukoClientBase.Views
 {
     public partial class InputWindow : Window
     {
