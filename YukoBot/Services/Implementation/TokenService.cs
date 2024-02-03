@@ -11,7 +11,7 @@ namespace YukoBot.Services.Implementation;
 
 public class TokenService : ITokenService
 {
-    private readonly ConcurrentDictionary<string, Metadata> _userTokens;
+    private readonly ConcurrentDictionary<string, DateTime> _userTokens;
     private readonly IYukoSettings _yukoSettings;
     private readonly ILogger<TokenService> _logger;
     private readonly Timer _timer;
@@ -24,76 +24,83 @@ public class TokenService : ITokenService
         _yukoSettings = yukoSettings;
         _logger = logger;
 
-        _userTokens = new ConcurrentDictionary<string, Metadata>();
+        _userTokens = new ConcurrentDictionary<string, DateTime>();
 
         long dueTime = yukoSettings.TokenLifeInMinutes * 60000;
-        _timer = new Timer(Action, null, dueTime, 120000);
+        _timer = new Timer(Action, null, dueTime, 60000);
 
-        _logger.LogInformation($"{nameof(BotPingService)} loaded.");
+        _logger.LogInformation($"{nameof(TokenService)} loaded.");
     }
 
     ~TokenService() => _timer.Dispose();
 
     private void Action(object data)
     {
+        _logger.LogInformation("Clearing expired authorization tokens");
         DateTime currentDateTime = DateTime.UtcNow;
-        foreach (KeyValuePair<string, Metadata> userToken in _userTokens)
+        foreach (KeyValuePair<string, DateTime> userToken in _userTokens)
         {
-            DateTime forCompare = userToken.Value.StartUse.AddMinutes(_yukoSettings.RefreshTokenLifeInHours);
-            if (forCompare >= currentDateTime)
-            {
-                _userTokens.TryRemove(userToken.Key, out _);
-                _logger.LogInformation($"User token {userToken.Key} removed");
-            }
+            if (userToken.Value < currentDateTime)
+                continue;
+
+            _userTokens.TryRemove(userToken.Key, out _);
         }
-    }
-
-    public bool GetUserId(string token, out ulong userId, out bool isExpired)
-    {
-        userId = ulong.MinValue;
-        isExpired = false;
-
-        if (!_userTokens.TryGetValue(token, out Metadata metadata))
-            return false;
-
-        userId = metadata.UserId;
-        isExpired = metadata.StartUse.AddMinutes(_yukoSettings.TokenLifeInMinutes) >= DateTime.UtcNow;
-
-        return true;
     }
 
     public string NewUserToken(ulong userId)
     {
-        string userToken = Guid.NewGuid().ToString();
-        Metadata metadata = new Metadata(userId);
-        _userTokens.AddOrUpdate(userToken, x => metadata, (x, y) => metadata);
-        return userToken;
+        DateTime expired = DateTime.UtcNow.AddMinutes(_yukoSettings.TokenLifeInMinutes);
+        string payload = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userId}|{expired.Ticks}"));
+        string token = GenerateRandom().Insert(0, $"{payload}.").ToString();
+        _userTokens.AddOrUpdate(CreateHash(token), x => expired, (x, y) => expired);
+        return token;
     }
 
-    public string RefreshUserToken(string userToken)
+    public string NewRefreshToken(ulong userId, out string refreshToken)
     {
-        if (!_userTokens.TryGetValue(userToken, out Metadata oldMetadata))
-            return userToken;
-
-        string newUserToken = Guid.NewGuid().ToString();
-        Metadata metadata = new Metadata(oldMetadata.UserId);
-        _userTokens.TryUpdate(newUserToken, metadata, metadata);
-        return newUserToken;
+        DateTime expired = DateTime.UtcNow.AddHours(_yukoSettings.RefreshTokenLifeInHours);
+        string payload = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userId}|{expired.Ticks}"));
+        refreshToken = GenerateRandom().Insert(0, $"{payload}.").ToString();
+        return CreateHash(refreshToken);
     }
 
-    public string NewRefreshToken(out string refreshToken)
+    public bool UserTokenCheck(string userToken, out ulong userId, out bool isExpired)
+    {
+        userId = default;
+        isExpired = default;
+
+        if (!_userTokens.ContainsKey(CreateHash(userToken)))
+            return false;
+
+        GetPayloadFromToken(userToken, out userId, out isExpired);
+
+        return true;
+    }
+
+    public bool RefreshTokenCheck(string rtRequest, string rtDb) => rtDb.Equals(CreateHash(rtRequest));
+
+    public void GetPayloadFromToken(string token, out ulong userId, out bool isExpired)
+    {
+        string payloadBase64 = token[..token.IndexOf('.')];
+        string payload = Encoding.UTF8.GetString(Convert.FromBase64String(payloadBase64));
+        string[] payloadParts = payload.Split('|');
+
+        userId = Convert.ToUInt64(payloadParts[0]);
+
+        DateTime expiredUtc = new DateTime(Convert.ToInt64(payloadParts[1]));
+        isExpired = DateTime.UtcNow > expiredUtc;
+    }
+
+    private static StringBuilder GenerateRandom()
     {
         Random random = new Random();
 
         StringBuilder refreshTokenSb = new StringBuilder();
         while (refreshTokenSb.Length != 32)
             refreshTokenSb.Append((char)random.Next(33, 127));
-        refreshToken = refreshTokenSb.ToString();
 
-        return CreateHash(refreshToken);
+        return refreshTokenSb;
     }
-
-    public bool RefreshTokenCheck(string rtRequest, string rtDb) => rtDb.Equals(CreateHash(rtRequest));
 
     private static string CreateHash(string source)
     {
@@ -102,17 +109,5 @@ public class TokenService : ITokenService
         foreach (byte code in hashBytes)
             hashBuilder.Append(code.ToString("X2"));
         return hashBuilder.ToString();
-    }
-
-    private struct Metadata
-    {
-        public ulong UserId { get; }
-        public DateTime StartUse { get; }
-
-        public Metadata(ulong userId)
-        {
-            UserId = userId;
-            StartUse = DateTime.UtcNow;
-        }
     }
 }

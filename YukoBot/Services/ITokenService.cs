@@ -2,9 +2,9 @@
 
 public interface ITokenService
 {
-    bool GetUserId(string token, out ulong userId, out bool isExpired);
     string NewUserToken(ulong userId);
-    string RefreshUserToken(string userToken);
-    string NewRefreshToken(out string refreshToken);
+    string NewRefreshToken(ulong userId, out string refreshToken);
+    bool UserTokenCheck(string userToken, out ulong userId, out bool isExpired);
     bool RefreshTokenCheck(string rtRequest, string rtDb);
+    void GetPayloadFromToken(string token, out ulong userId, out bool isExpired);
 }

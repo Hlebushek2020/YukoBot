@@ -70,9 +70,17 @@ namespace YukoBot
                 _binaryWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
                 RequestType requestType = (RequestType)_binaryReader.ReadInt32();
                 _logger.LogDebug($"[{_endPoint}] Request type: {requestType}");
-                if (requestType != RequestType.Authorization)
+                if (requestType == RequestType.Authorization)
                 {
-                    if (_tokenService.GetUserId(_binaryReader.ReadString(), out ulong userId, out bool isExpired))
+                    await ClientAuthorization();
+                }
+                else if (requestType == RequestType.RefreshToken)
+                {
+                    await ClientRefreshToken();
+                }
+                else
+                {
+                    if (_tokenService.UserTokenCheck(_binaryReader.ReadString(), out ulong userId, out bool isExpired))
                     {
                         if (isExpired)
                         {
@@ -97,9 +105,6 @@ namespace YukoBot
                     {
                         switch (requestType)
                         {
-                            case RequestType.RefreshToken:
-                                await ClientRefreshToken();
-                                break;
                             case RequestType.GetServer:
                                 await ClientGetServer();
                                 break;
@@ -117,10 +122,6 @@ namespace YukoBot
                                 break;
                         }
                     }
-                }
-                else
-                {
-                    await ClientAuthorization();
                 }
             }
             catch (Exception ex)
@@ -184,7 +185,7 @@ namespace YukoBot
                 if (isContinue)
                 {
                     // save db
-                    dbUser.RefreshToken = _tokenService.NewRefreshToken(out string refreshToken);
+                    dbUser.RefreshToken = _tokenService.NewRefreshToken(dbUser.Id, out string refreshToken);
                     dbUser.LastLogin = DateTime.Now;
                     await _dbContext.SaveChangesAsync();
                     // response build
@@ -202,33 +203,46 @@ namespace YukoBot
 
         private async Task ClientRefreshToken()
         {
-            RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.FromJson(_binaryReader.ReadString());
-            if (_currentDbUser.LastLogin.HasValue == false ||
-                _currentDbUser.LastLogin.Value.AddHours(_yukoSettings.RefreshTokenLifeInHours) <= DateTime.Now)
-            {
-                _binaryWriter.Write(new RefreshTokenResponse
-                {
-                    Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
-                }.ToString());
-            }
-            else if (_tokenService.RefreshTokenCheck(refreshTokenRequest.RefreshToken, _currentDbUser.RefreshToken))
-            {
-                // save db
-                _currentDbUser.RefreshToken = _tokenService.NewRefreshToken(out string refreshToken);
-                _currentDbUser.LastLogin = DateTime.Now;
-                await _dbContext.SaveChangesAsync();
+            string refreshToken = _binaryReader.ReadString();
 
-                _binaryWriter.Write(new RefreshTokenResponse
+            _tokenService.GetPayloadFromToken(refreshToken, out ulong userId, out bool isExpired);
+
+            _currentDbUser = await _dbContext.Users.FindAsync(userId);
+            if (_currentDbUser != null)
+            {
+                if (isExpired)
                 {
-                    Token = _tokenService.NewUserToken(_currentDbUser.Id),
-                    RefreshToken = refreshToken
-                }.ToString());
+                    _binaryWriter.Write(new RefreshTokenResponse
+                    {
+                        Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
+                    }.ToString());
+                }
+                else if (_tokenService.RefreshTokenCheck(refreshToken, _currentDbUser.RefreshToken))
+                {
+                    // save db
+                    _currentDbUser.RefreshToken =
+                        _tokenService.NewRefreshToken(_currentDbUser.Id, out string newRefreshToken);
+                    await _dbContext.SaveChangesAsync();
+
+                    _binaryWriter.Write(new RefreshTokenResponse
+                    {
+                        Token = _tokenService.NewUserToken(_currentDbUser.Id),
+                        RefreshToken = newRefreshToken
+                    }.ToString());
+                }
+                else
+                {
+                    _binaryWriter.Write(new RefreshTokenResponse
+                    {
+                        Error = new BaseErrorJson { Code = ClientErrorCodes.InvalidCredentials }
+                    }.ToString());
+                }
             }
             else
             {
                 _binaryWriter.Write(new RefreshTokenResponse
                 {
-                    Error = new BaseErrorJson { Code = ClientErrorCodes.InvalidCredentials }
+                    Error = new BaseErrorJson { Code = ClientErrorCodes.NotAuthorized }
                 }.ToString());
             }
         }
