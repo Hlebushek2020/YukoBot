@@ -14,7 +14,8 @@ namespace YukoBot.Commands.Attributes
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
             ulong userId = ctx.Member.Id;
-            YukoDbContext dbContext = ctx.Services.GetService<YukoDbContext>();
+            IYukoSettings settings = ctx.Services.GetService<IYukoSettings>();
+            await using YukoDbContext dbContext = new YukoDbContext(settings);
             DbUser dbUser = await dbContext.Users.FindAsync(userId);
             return dbUser != null;
         }

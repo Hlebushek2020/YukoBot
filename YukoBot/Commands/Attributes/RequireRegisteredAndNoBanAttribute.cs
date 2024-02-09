@@ -15,14 +15,15 @@ namespace YukoBot.Commands.Attributes
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
             ulong userId = ctx.Member.Id;
-            YukoDbContext dbContext = ctx.Services.GetService<YukoDbContext>();
+            IYukoSettings settings = ctx.Services.GetService<IYukoSettings>();
+            await using YukoDbContext dbContext = new YukoDbContext(settings);
             DbUser dbUser = await dbContext.Users.FindAsync(userId);
-            if (dbUser != null)
-            {
-                DbBan dbBan = dbContext.Bans.FirstOrDefault(x => x.UserId == userId && x.ServerId == ctx.Guild.Id);
-                return dbBan == null;
-            }
-            return false;
+
+            if (dbUser == null)
+                return false;
+
+            DbBan dbBan = dbContext.Bans.FirstOrDefault(x => x.UserId == userId && x.ServerId == ctx.Guild.Id);
+            return dbBan == null;
         }
     }
 }

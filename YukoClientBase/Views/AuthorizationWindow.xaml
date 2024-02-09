@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModelsI="clr-namespace:YukoClientBase.ViewModels.Interfaces"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type viewModelsI:IAuthorizationViewModel}}"
+        Title="{Binding Title, Mode=OneWay}"
+        Style="{StaticResource WindowStyle}"
         Height="490"
         MinHeight="500"
         Width="800"
         MinWidth="490"
         FontSize="14"
-        WindowStartupLocation="CenterScreen"
-        Style="{StaticResource WindowStyle}"
-        Title="{Binding Title, Mode=OneWay}"
-        d:DataContext="{d:DesignInstance {x:Type viewModelsI:IAuthorizationViewModel}}">
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel Width="300" VerticalAlignment="Center">
 
