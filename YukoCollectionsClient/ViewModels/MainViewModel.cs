@@ -6,6 +6,7 @@ using System.Windows.Media;
 using Prism.Commands;
 using Prism.Mvvm;
 using YukoClientBase.Interfaces;
+using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progress;
 using SUI = Sergey.UI.Extension;
@@ -95,7 +96,7 @@ namespace YukoCollectionsClient.ViewModels
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
-                SettingsWindow settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
             // Message Collections Commands

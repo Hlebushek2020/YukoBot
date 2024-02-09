@@ -11,6 +11,7 @@ using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
 using YukoClientBase.ViewModels.Interfaces;
+using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Web;
 
@@ -119,7 +120,7 @@ namespace YukoCollectionsClient.ViewModels
             });
             SettingsCommand = new DelegateCommand(() =>
             {
-                SettingsWindow settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
         }

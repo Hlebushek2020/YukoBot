@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using YukoClientBase.ViewModels;
 
 namespace YukoClientBase.Views
 {
@@ -7,13 +9,13 @@ namespace YukoClientBase.Views
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow()
+        public SettingsWindow(string title)
         {
             InitializeComponent();
-            /*DataContext = new SettingsViewModel
+            DataContext = new SettingsViewModel(title)
             {
                 Close = new Action(Close)
-            };*/
+            };
         }
     }
 }

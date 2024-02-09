@@ -13,6 +13,7 @@ using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web.Responses;
 using YukoClientBase.ViewModels.Interfaces;
+using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
@@ -120,7 +121,7 @@ namespace YukoClient.ViewModels
             });
             SettingsCommand = new DelegateCommand(() =>
             {
-                SettingsWindow settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
         }

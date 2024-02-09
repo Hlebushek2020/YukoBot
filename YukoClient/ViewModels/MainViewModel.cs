@@ -8,6 +8,7 @@ using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
 using YukoClientBase.Interfaces;
+using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 using WinForm = System.Windows.Forms;
 
@@ -85,7 +86,7 @@ namespace YukoClient.ViewModels
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
-                SettingsWindow settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
             // Server Commands
