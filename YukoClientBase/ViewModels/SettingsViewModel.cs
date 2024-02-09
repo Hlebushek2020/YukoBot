@@ -6,14 +6,14 @@ using Prism.Commands;
 using Sergey.UI.Extension.Themes;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {
     public class SettingsViewModel : ICloseableView, IViewTitle
     {
         #region Propirties
-        public string Title => App.Name;
+        public string Title { get; }
         public Action Close { get; set; }
         public List<DisplayTheme> Themes { get; }
         public DisplayTheme SelectTheme { get; set; }
@@ -28,8 +28,9 @@ namespace YukoClientBase.ViewModels
         public DelegateCommand SaveAndApplyCommand { get; }
         #endregion
 
-        public SettingsViewModel()
+        public SettingsViewModel(string title)
         {
+            Title = title;
             // fields
             Themes = DisplayTheme.GetList();
             SelectTheme = new DisplayTheme(Settings.Current.Theme);
@@ -43,39 +44,38 @@ namespace YukoClientBase.ViewModels
             {
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port))
                 {
-                    SUI.Dialogs.MessageBox.Show("Все поля должны быть заполнены!", App.Name, MessageBoxButton.OK,
+                    MessageBox.Show("Все поля должны быть заполнены!", Title, MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
                 }
 
                 if (!IPAddress.TryParse(Host, out _))
                 {
-                    SUI.Dialogs.MessageBox.Show("Некорректный адрес хоста!", App.Name, MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
+                    MessageBox.Show("Некорректный адрес хоста!", Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 if (!int.TryParse(Port, out int port))
                 {
-                    SUI.Dialogs.MessageBox.Show(
+                    MessageBox.Show(
                         "Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.",
-                        App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 else
                 {
                     if (port < 1024 || port > 65535)
                     {
-                        SUI.Dialogs.MessageBox.Show(
+                        MessageBox.Show(
                             "Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.",
-                            App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                            Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }
 
                 Settings.Current.Host = Host;
                 Settings.Current.Port = port;
-                App.SwitchTheme(SelectTheme.Value);
+                Settings.Current.Theme = SelectTheme.Value;
                 Settings.Current.MaxDownloadThreads = SelectMaxDownloadThreads;
                 Settings.Current.Save();
 
