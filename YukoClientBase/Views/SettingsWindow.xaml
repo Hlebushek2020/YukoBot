@@ -18,8 +18,8 @@
                   Background="Transparent">
             <Grid>
                 <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
-                           Margin="4,8,0,0" TextWrapping="NoWrap" Text="Тема:" VerticalAlignment="Top" />
-                <ComboBox FontWeight="Normal" Margin="44,4,4,0" VerticalAlignment="Top" ItemsSource="{Binding Themes}"
+                           Margin="4,8,0,0" TextWrapping="NoWrap" Text="Тема (применяется после перезапуска):" VerticalAlignment="Top" />
+                <ComboBox FontWeight="Normal" Margin="270,4,4,0" VerticalAlignment="Top" ItemsSource="{Binding Themes}"
                           SelectedItem="{Binding SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="Display" />
                 <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
