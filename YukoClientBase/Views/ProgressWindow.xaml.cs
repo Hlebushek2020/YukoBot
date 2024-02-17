@@ -1,18 +1,16 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using YukoClientBase.Models.Progresses;
-using YukoCollectionsClient.Models.Progress;
-using YukoCollectionsClient.ViewModels;
+using YukoClientBase.ViewModels;
 using SUI = Sergey.UI.Extension;
 
-namespace YukoCollectionsClient
+namespace YukoClientBase.Views
 {
     /// <summary>
-    /// Interaction logic for ProgressWindow.xaml
+    /// Логика взаимодействия для ProgressWindow.xaml
     /// </summary>
     public partial class ProgressWindow : Window
     {
@@ -22,7 +20,7 @@ namespace YukoCollectionsClient
 
         private bool _isCompleted = false;
 
-        public ProgressWindow(BaseProgressModel model, bool isCancelled = false)
+        public ProgressWindow(string title, BaseProgressModel model, bool isCancelled = false)
         {
             InitializeComponent();
             Loaded += Window_Loaded;
@@ -30,7 +28,7 @@ namespace YukoCollectionsClient
             Closed += Window_OnClosed;
             _model = model;
             _isCancelled = isCancelled;
-            DataContext = new ProgressViewModel(_model);
+            DataContext = new ProgressViewModel(title, _model);
             button_cancel.Visibility = isCancelled ? Visibility.Visible : Visibility.Collapsed;
             button_cancel.Click += (sender, args) => Close();
         }
@@ -47,7 +45,7 @@ namespace YukoCollectionsClient
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        SUI.Dialogs.MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK,
+                        SUI.Dialogs.MessageBox.Show(ex.Message, "", MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     });
                 }
@@ -70,7 +68,6 @@ namespace YukoCollectionsClient
             e.Cancel = !_isCompleted;
         }
 
-        private void Window_OnClosed(object sender, EventArgs e) =>
-            _cancellationTokenSource.Dispose();
+        private void Window_OnClosed(object sender, EventArgs e) => _cancellationTokenSource.Dispose();
     }
 }

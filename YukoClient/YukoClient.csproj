@@ -139,10 +139,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProgressWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -167,9 +163,6 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\AddScriptWindow.xaml.cs">
       <DependentUpon>AddScriptWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ProgressWindow.xaml.cs">
-      <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">

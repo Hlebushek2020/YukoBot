@@ -17,7 +17,6 @@ namespace YukoClientBase.ViewModels
         public Action Close { get; set; }
         public List<DisplayTheme> Themes { get; }
         public DisplayTheme SelectTheme { get; set; }
-        public List<int> MaxDownloadThreads { get; }
         public int SelectMaxDownloadThreads { get; set; }
         public string Host { get; set; }
         public string Port { get; set; }
@@ -34,7 +33,6 @@ namespace YukoClientBase.ViewModels
             // fields
             Themes = DisplayTheme.GetList();
             SelectTheme = new DisplayTheme(Settings.Current.Theme);
-            MaxDownloadThreads = Settings.GetListAllowedNumberDownloadThreads();
             SelectMaxDownloadThreads = Settings.Current.MaxDownloadThreads;
             Host = Settings.Current.Host;
             Port = Settings.Current.Port.ToString();
@@ -62,15 +60,13 @@ namespace YukoClientBase.ViewModels
                         Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                else
+
+                if (port < 1024 || port > 65535)
                 {
-                    if (port < 1024 || port > 65535)
-                    {
-                        MessageBox.Show(
-                            "Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.",
-                            Title, MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
+                    MessageBox.Show(
+                        "Недопустимое значение в поле \"Порт\". Значение должно быть больше чем 1023 и меньше чем 65536.",
+                        Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
 
                 Settings.Current.Host = Host;

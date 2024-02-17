@@ -1,10 +1,11 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
+using Prism.Commands;
+using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
 using YukoClientBase.Interfaces;
+using YukoClientBase.Views;
 using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
@@ -12,7 +13,11 @@ namespace YukoClient.ViewModels
     public class ServerSettingsViewModel : BindableBase, IViewTitle
     {
         #region Propirties
-        public string Title { get => App.Name; }
+        public string Title
+        {
+            get => App.Name;
+        }
+
         public Server Server { get; }
         public List<Channel> SelectedChannels { get; set; }
         public Channel SelectedChannel { get; set; }
@@ -42,7 +47,8 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedChannels.Count != 0)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         foreach (Channel channel in SelectedChannels)
                         {
@@ -55,7 +61,8 @@ namespace YukoClient.ViewModels
             {
                 if (Server.Channels.Count != 0)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (SUI.Dialogs.MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Server.Channels.Clear();
                     }
@@ -63,9 +70,11 @@ namespace YukoClient.ViewModels
             });
             UpdateChannelListCommand = new DelegateCommand(() =>
             {
-                if (SUI.Dialogs.MessageBox.Show("ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (SUI.Dialogs.MessageBox.Show(
+                        "ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name,
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateServer(server));
+                    ProgressWindow progress = new ProgressWindow(Title, new UpdateServer(server));
                     progress.ShowDialog();
                 }
             });

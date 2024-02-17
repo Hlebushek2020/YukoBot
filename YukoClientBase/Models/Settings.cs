@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -59,16 +58,7 @@ namespace YukoClientBase.Models
 
         public static bool Availability() { return File.Exists(Path.Combine(ProgramResourceFolder, "settings.json")); }
 
-        public static List<int> GetListAllowedNumberDownloadThreads()
-        {
-            List<int> result = new List<int>();
-            for (int number = 1; number <= 15; number++)
-            {
-                result.Add(number);
-            }
-            return result;
-        }
-
+       
         public static void LoadLoginData(out string login, out byte[] protectedData)
         {
             login = null;

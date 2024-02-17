@@ -89,7 +89,7 @@ namespace YukoCollectionsClient.ViewModels
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                ProgressWindow progress = new ProgressWindow(new UpdateMessageCollections(true));
+                ProgressWindow progress = new ProgressWindow(Title, new UpdateMessageCollections(true));
                 progress.ShowDialog();
                 CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
             });
@@ -109,7 +109,7 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
                     ProgressWindow progress =
-                        new ProgressWindow(new UpdateMessageCollections(overrideMessageCollections));
+                        new ProgressWindow(Title, new UpdateMessageCollections(overrideMessageCollections));
                     progress.ShowDialog();
                     if (overrideMessageCollections)
                     {
@@ -128,7 +128,7 @@ namespace YukoCollectionsClient.ViewModels
                         MessageBoxResult messageBoxResult = SUI.Dialogs.MessageBox.Show(
                             "Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question);
-                        ProgressWindow progressWindow = new ProgressWindow(
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
                             new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath,
                                 messageBoxResult == MessageBoxResult.Yes), true);
                         progressWindow.ShowDialog();
@@ -160,7 +160,7 @@ namespace YukoCollectionsClient.ViewModels
                     {
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            ProgressWindow progressWindow = new ProgressWindow(
+                            ProgressWindow progressWindow = new ProgressWindow(Title,
                                 new ExportMessageCollection(_selectedMessageCollection.Items, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
@@ -187,7 +187,7 @@ namespace YukoCollectionsClient.ViewModels
                                     _selectedMessageCollection.Items.Clear();
                                 }
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(
+                            ProgressWindow progressWindow = new ProgressWindow(Title,
                                 new ImportMessageCollection(_selectedMessageCollection.Items, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
@@ -205,7 +205,7 @@ namespace YukoCollectionsClient.ViewModels
                         _selectedMessageCollection.Urls.Clear();
                     }
                     ProgressWindow progress =
-                        new ProgressWindow(new GetUrlsFromMessageCollection(_selectedMessageCollection), true);
+                        new ProgressWindow(Title, new GetUrlsFromMessageCollection(_selectedMessageCollection), true);
                     progress.ShowDialog();
                 }
             });
@@ -245,7 +245,7 @@ namespace YukoCollectionsClient.ViewModels
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ExportUrls(_selectedMessageCollection.Urls,
+                                new ProgressWindow(Title, new ExportUrls(_selectedMessageCollection.Urls,
                                     saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
@@ -273,7 +273,7 @@ namespace YukoCollectionsClient.ViewModels
                                 }
                             }
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ImportUrls(_selectedMessageCollection.Urls,
+                                new ProgressWindow(Title, new ImportUrls(_selectedMessageCollection.Urls,
                                     openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
@@ -288,7 +288,7 @@ namespace YukoCollectionsClient.ViewModels
                         new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        ProgressWindow progressWindow = new ProgressWindow(
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
                             new Download(_selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath), true);
                         progressWindow.ShowDialog();
                     }

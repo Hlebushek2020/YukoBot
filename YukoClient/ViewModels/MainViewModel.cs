@@ -79,8 +79,8 @@ namespace YukoClient.ViewModels
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                // TODO: Update servers (oerride)
-                ProgressWindow progress = new ProgressWindow(new StorageInitialization());
+                // TODO: Update servers (override)
+                ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization());
                 progress.ShowDialog();
             });
             // User Commands
@@ -98,7 +98,7 @@ namespace YukoClient.ViewModels
                 if (messageResult != MessageBoxResult.Cancel)
                 {
                     ProgressWindow progress =
-                        new ProgressWindow(new UpdateServers(messageResult == MessageBoxResult.Yes));
+                        new ProgressWindow(Title, new UpdateServers(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
             });
@@ -174,7 +174,7 @@ namespace YukoClient.ViewModels
                         saveFileDialog.DefaultExt = "yukoscript";
                         if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
-                            ProgressWindow progressWindow = new ProgressWindow(new ExportScripts(
+                            ProgressWindow progressWindow = new ProgressWindow(Title, new ExportScripts(
                                 _selectedServer.Scripts,
                                 _selectedServer.Id, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
@@ -200,7 +200,7 @@ namespace YukoClient.ViewModels
                                     _selectedServer.Scripts.Clear();
                                 }
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(new ImportScripts(
+                            ProgressWindow progressWindow = new ProgressWindow(Title, new ImportScripts(
                                 _selectedServer.Scripts,
                                 _selectedServer.Id, openFileDialog.FileName));
                             progressWindow.ShowDialog();
@@ -212,7 +212,7 @@ namespace YukoClient.ViewModels
             {
                 if (_selectedServer != null && _selectedServer.Scripts.Count > 0)
                 {
-                    ProgressWindow progress = new ProgressWindow(new ExecuteScripts(_selectedServer));
+                    ProgressWindow progress = new ProgressWindow(Title, new ExecuteScripts(_selectedServer));
                     progress.ShowDialog();
                 }
             });
@@ -258,7 +258,8 @@ namespace YukoClient.ViewModels
                         if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
                         {
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
+                                new ProgressWindow(Title,
+                                    new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -283,7 +284,8 @@ namespace YukoClient.ViewModels
                                 }
                             }
                             ProgressWindow progressWindow =
-                                new ProgressWindow(new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
+                                new ProgressWindow(Title,
+                                    new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                         }
                     }
@@ -297,7 +299,7 @@ namespace YukoClient.ViewModels
                         new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        ProgressWindow progressWindow = new ProgressWindow(
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
                             new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
                         progressWindow.ShowDialog();
                     }
