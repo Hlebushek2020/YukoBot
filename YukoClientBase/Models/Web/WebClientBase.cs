@@ -69,7 +69,7 @@ namespace YukoClientBase.Models.Web
             }
         }
 
-        public AuthorizationResponse Authorization(string idOrUsername, string password)
+        public AuthorizationResponse Authorization(string appTitle, string idOrUsername, string password)
         {
             AuthorizationRequest request = new AuthorizationRequest { Login = idOrUsername };
 
@@ -106,7 +106,7 @@ namespace YukoClientBase.Models.Web
                     tcpClient.ReceiveTimeout = 60000;
                     tcpClient.SendTimeout = 60000;
 
-                    InputWindow inputWindow = new InputWindow();
+                    CodeInputWindow inputWindow = new CodeInputWindow(appTitle);
                     inputWindow.ShowDialog();
 
                     try

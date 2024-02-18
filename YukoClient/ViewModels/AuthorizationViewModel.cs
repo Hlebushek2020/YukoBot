@@ -93,7 +93,8 @@ namespace YukoClient.ViewModels
 
                 try
                 {
-                    AuthorizationResponse response = WebClient.Current.Authorization(Login, _passwordFunc.Invoke());
+                    AuthorizationResponse response =
+                        WebClient.Current.Authorization(Title, Login, _passwordFunc.Invoke());
 
                     if (IsRemember)
                     {

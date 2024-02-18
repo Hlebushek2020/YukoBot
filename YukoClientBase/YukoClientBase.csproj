@@ -113,8 +113,8 @@
     <Compile Include="Views\AuthorizationWindow.xaml.cs">
       <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\InputWindow.xaml.cs">
-      <DependentUpon>InputWindow.xaml</DependentUpon>
+    <Compile Include="Views\CodeInputWindow.xaml.cs">
+      <DependentUpon>CodeInputWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
@@ -155,7 +155,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InputWindow.xaml" />
+    <Page Include="Views\CodeInputWindow.xaml" />
     <Page Include="Views\ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
