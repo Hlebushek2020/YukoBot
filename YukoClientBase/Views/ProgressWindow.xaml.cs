@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using YukoClientBase.Models.Progresses;
 using YukoClientBase.ViewModels;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClientBase.Views
 {
@@ -14,23 +14,22 @@ namespace YukoClientBase.Views
     /// </summary>
     public partial class ProgressWindow : Window
     {
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private readonly bool _isCancelled;
-        private readonly BaseProgressModel _model;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly ProgressViewModel _viewModel;
 
-        private bool _isCompleted = false;
+        private volatile bool _isCompleted;
 
-        public ProgressWindow(string title, BaseProgressModel model, bool isCancelled = false)
+        public ProgressWindow(string title, BaseProgressModel model, bool isCancellable = false)
         {
             InitializeComponent();
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            _viewModel = new ProgressViewModel(title, model, isCancellable);
+            DataContext = _viewModel;
+
             Loaded += Window_Loaded;
             Closing += Window_Closing;
             Closed += Window_OnClosed;
-            _model = model;
-            _isCancelled = isCancelled;
-            DataContext = new ProgressViewModel(title, _model);
-            button_cancel.Visibility = isCancelled ? Visibility.Visible : Visibility.Collapsed;
-            button_cancel.Click += (sender, args) => Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -39,14 +38,13 @@ namespace YukoClientBase.Views
             {
                 try
                 {
-                    _model.Run(Dispatcher, _cancellationTokenSource.Token);
+                    _viewModel.Run(Dispatcher, _cancellationTokenSource.Token);
                 }
                 catch (Exception ex)
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        SUI.Dialogs.MessageBox.Show(ex.Message, "", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                        MessageBox.Show(ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
                     });
                 }
                 Dispatcher.Invoke(() =>
@@ -59,12 +57,12 @@ namespace YukoClientBase.Views
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (!_cancellationTokenSource.IsCancellationRequested && _isCancelled)
+            if (!_cancellationTokenSource.IsCancellationRequested)
             {
                 _cancellationTokenSource.Cancel();
-                _model.IsIndeterminate = true;
-                _model.State = "Отмена";
+                _viewModel.CancellationRequested();
             }
+
             e.Cancel = !_isCompleted;
         }
 
