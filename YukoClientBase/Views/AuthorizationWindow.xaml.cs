@@ -2,7 +2,7 @@
 using System.Text;
 using System.Windows;
 using YukoClientBase.Models;
-using YukoClientBase.ViewModels.Interfaces;
+using YukoClientBase.ViewModels;
 
 namespace YukoClientBase.Views
 {
@@ -11,7 +11,7 @@ namespace YukoClientBase.Views
     /// </summary>
     public partial class AuthorizationWindow : Window
     {
-        public AuthorizationWindow(IAuthorizationViewModel authorizationViewModel)
+        public AuthorizationWindow(BaseAuthorizationViewModel authorizationViewModel)
         {
             InitializeComponent();
             DataContext = authorizationViewModel;

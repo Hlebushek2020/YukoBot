@@ -107,7 +107,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ValueConverters\VisibilityValueConverter.cs" />
-    <Compile Include="ViewModels\Interfaces\IAuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\BaseAuthorizationViewModel.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\AuthorizationWindow.xaml.cs">

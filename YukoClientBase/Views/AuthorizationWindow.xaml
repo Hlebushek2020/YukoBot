@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModelsI="clr-namespace:YukoClientBase.ViewModels.Interfaces"
+        xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance {x:Type viewModelsI:IAuthorizationViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:BaseAuthorizationViewModel}}"
         Title="{Binding Title, Mode=OneWay}"
         Style="{StaticResource WindowStyle}"
         Height="490"
@@ -68,6 +68,7 @@
                     Margin="0,10,0,0"
                     VerticalAlignment="Top"
                     Width="120"
+                    IsDefault="True"
                     Command="{Binding LoginCommand}" />
         </StackPanel>
         <Button Style="{StaticResource IconButtonStyle}"

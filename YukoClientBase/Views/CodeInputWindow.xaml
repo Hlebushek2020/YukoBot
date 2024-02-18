@@ -6,13 +6,15 @@
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
         Width="300"
+        FontSize="14"
         SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
 
     <StackPanel Margin="10">
 
-        <TextBlock TextAlignment="Center"
+        <TextBlock Style="{StaticResource TextBlockStyle}"
+                   TextAlignment="Center"
                    Text="Введите проверочный код" />
 
         <TextBox x:Name="Input"
