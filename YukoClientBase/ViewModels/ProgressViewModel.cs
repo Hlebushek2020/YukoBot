@@ -10,18 +10,18 @@ namespace YukoClientBase.ViewModels
     {
         private readonly BaseProgressModel _model;
 
-        private bool _isCancellationRequested;
+        private bool _cancelButtonIsEnabled;
 
         #region Propirties
         public string Title { get; }
         public bool IsCancellable { get; }
 
-        public bool IsCancellationRequested
+        public bool CancelButtonIsEnabled
         {
-            get => _isCancellationRequested;
+            get => _cancelButtonIsEnabled;
             private set
             {
-                _isCancellationRequested = value;
+                _cancelButtonIsEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -44,6 +44,6 @@ namespace YukoClientBase.ViewModels
         public void Run(Dispatcher dispatcher, CancellationToken cancellationToken) =>
             _model.Run(dispatcher, cancellationToken);
 
-        public void CancellationRequested() => IsCancellationRequested = true;
+        public void CancellationRequested() => CancelButtonIsEnabled = true;
     }
 }

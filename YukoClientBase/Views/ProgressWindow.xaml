@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
+        xmlns:valueConverters="clr-namespace:YukoClientBase.ValueConverters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:ProgressViewModel}}"
         Title="{Binding Title, Mode=OneWay}"
@@ -13,15 +14,33 @@
         ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
-    <StackPanel Margin="10" Orientation="Vertical">
-        <ProgressBar Height="20" VerticalAlignment="Top"
+    <Window.Resources>
+        <valueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter" />
+    </Window.Resources>
+
+    <StackPanel Margin="10"
+                Orientation="Vertical">
+
+        <ProgressBar Height="20"
+                     VerticalAlignment="Top"
                      IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                      Maximum="{Binding MaxValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                      Value="{Binding Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBlock Margin="0,5,0,0" Height="56" TextWrapping="Wrap"
-                   Text="{Binding State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"
-                   Style="{StaticResource TextBlockStyle}" />
-        <Button x:Name="button_cancel" Content="Отмена" Height="30" Margin="0,5,0,0" Width="120"
-                HorizontalAlignment="Right" Style="{StaticResource ButtonStyle}" />
+        <TextBlock Style="{StaticResource TextBlockStyle}"
+                   Margin="0,5,0,0"
+                   Height="56"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Top"
+                   Text="{Binding State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Style="{StaticResource ButtonStyle}"
+                Content="Отмена"
+                Height="30"
+                Width="120"
+                Margin="0,5,0,0"
+                HorizontalAlignment="Right"
+                IsCancel="True"
+                IsEnabled="{Binding Path=CancelButtonIsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{Binding Path=IsCancellable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityValueConverter}}" />
     </StackPanel>
 </Window>
