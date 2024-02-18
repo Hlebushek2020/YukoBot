@@ -4,12 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="InputWindow"
+        Style="{StaticResource WindowStyle}"
         Width="300"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen"
-        Style="{StaticResource WindowStyle}">
+        WindowStartupLocation="CenterScreen">
 
     <StackPanel Margin="10">
 
