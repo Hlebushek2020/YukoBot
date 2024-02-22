@@ -1,10 +1,9 @@
-﻿using System;
-using YukoClientBase.Enums;
+﻿using YukoClientBase.Enums;
 using YukoClientBase.Extensions;
 
 namespace YukoClientBase.Exceptions
 {
-    public class ClientCodeException : Exception
+    public class ClientCodeException : YukoException
     {
         public ClientErrorCodes ClientErrorCode { get; }
 

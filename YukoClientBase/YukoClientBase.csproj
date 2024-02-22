@@ -84,6 +84,7 @@
     <Compile Include="Enums\ClientErrorCodes.cs" />
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Exceptions\ClientCodeException.cs" />
+    <Compile Include="Exceptions\YukoException.cs" />
     <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\ICloseableView.cs" />
