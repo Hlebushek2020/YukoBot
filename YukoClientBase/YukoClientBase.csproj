@@ -87,8 +87,6 @@
     <Compile Include="Exceptions\YukoException.cs" />
     <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
     <Compile Include="Interfaces\IUser.cs" />
-    <Compile Include="Interfaces\ICloseableView.cs" />
-    <Compile Include="Interfaces\IViewTitle.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\DownloaderLogger.cs" />
     <Compile Include="Models\Progresses\BaseProgressModel.cs" />

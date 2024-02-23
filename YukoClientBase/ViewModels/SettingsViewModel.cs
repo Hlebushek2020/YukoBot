@@ -10,11 +10,10 @@ using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {
-    public class SettingsViewModel : ICloseableView, IViewTitle
+    public class SettingsViewModel
     {
         #region Propirties
         public string Title { get; }
-        public Action Close { get; set; }
         public List<DisplayTheme> Themes { get; }
         public DisplayTheme SelectTheme { get; set; }
         public int SelectMaxDownloadThreads { get; set; }
@@ -27,7 +26,7 @@ namespace YukoClientBase.ViewModels
         public DelegateCommand SaveAndApplyCommand { get; }
         #endregion
 
-        public SettingsViewModel(string title)
+        public SettingsViewModel(Action closeAction, string title)
         {
             Title = title;
             // fields
@@ -37,7 +36,7 @@ namespace YukoClientBase.ViewModels
             Host = Settings.Current.Host;
             Port = Settings.Current.Port.ToString();
             // commands
-            CloseCommand = new DelegateCommand(() => Close());
+            CloseCommand = new DelegateCommand(closeAction.Invoke);
             SaveAndApplyCommand = new DelegateCommand(() =>
             {
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port))
@@ -47,11 +46,13 @@ namespace YukoClientBase.ViewModels
                     return;
                 }
 
+                /*
                 if (!IPAddress.TryParse(Host, out _))
                 {
                     MessageBox.Show("Некорректный адрес хоста!", Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                */
 
                 if (!int.TryParse(Port, out int port))
                 {
@@ -75,7 +76,7 @@ namespace YukoClientBase.ViewModels
                 Settings.Current.MaxDownloadThreads = SelectMaxDownloadThreads;
                 Settings.Current.Save();
 
-                Close();
+                closeAction.Invoke();
             });
         }
     }

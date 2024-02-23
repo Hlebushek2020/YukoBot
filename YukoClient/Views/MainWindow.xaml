@@ -6,12 +6,13 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:viewModels="clr-namespace:YukoClient.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
         Title="{Binding Title, Mode=OneWay}"
         Style="{StaticResource WindowStyle}"
         Height="450"
         Width="800"
         FontSize="14"
-        WindowStartupLocation="CenterScreen" d:DataContext="{d:DesignInstance viewModels:MainViewModel}">
+        WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
         <KeyBinding Key="F5" Command="{Binding UpdateServerCollectionCommand}" />
     </Window.InputBindings>

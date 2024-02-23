@@ -6,7 +6,7 @@ using YukoClientBase.Models.Progresses;
 
 namespace YukoClientBase.ViewModels
 {
-    public class ProgressViewModel : BindableBase, IViewTitle
+    public class ProgressViewModel : BindableBase
     {
         private readonly BaseProgressModel _model;
 

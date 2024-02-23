@@ -12,10 +12,7 @@ namespace YukoClientBase.Views
         public SettingsWindow(string title)
         {
             InitializeComponent();
-            DataContext = new SettingsViewModel(title)
-            {
-                Close = new Action(Close)
-            };
+            DataContext = new SettingsViewModel(Close, title);
         }
     }
 }

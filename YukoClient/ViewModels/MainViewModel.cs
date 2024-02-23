@@ -76,19 +76,21 @@ namespace YukoClient.ViewModels
 
         public MainViewModel()
         {
-            Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
+            Storage.Current.PropertyChanged += (s, e) => RaisePropertyChanged(e.PropertyName);
+
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                // TODO: Update servers (override)
                 ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization());
                 progress.ShowDialog();
             });
+
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
                 SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
+
             // Server Commands
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
@@ -200,6 +202,7 @@ namespace YukoClient.ViewModels
                                     _selectedServer.Scripts.Clear();
                                 }
                             }
+
                             ProgressWindow progressWindow = new ProgressWindow(Title, new ImportScripts(
                                 _selectedServer.Scripts,
                                 _selectedServer.Id, openFileDialog.FileName));
@@ -283,6 +286,7 @@ namespace YukoClient.ViewModels
                                     _selectedServer.Urls.Clear();
                                 }
                             }
+
                             ProgressWindow progressWindow =
                                 new ProgressWindow(Title,
                                     new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
