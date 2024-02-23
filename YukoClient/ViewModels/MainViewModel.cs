@@ -246,6 +246,11 @@ namespace YukoClient.ViewModels
                 {
                     ProgressWindow progress = new ProgressWindow(Title, new ExecuteScripts(_selectedServer));
                     progress.ShowDialog();
+                    
+                    ClearUrlsCommand.RaiseCanExecuteChanged();
+                    ExportUrlsCommand.RaiseCanExecuteChanged();
+                    ImportUrlsCommand.RaiseCanExecuteChanged();
+                    DownloadFilesCommand.RaiseCanExecuteChanged();
                 },
                 () => _selectedServer != null && _selectedServer.Scripts.Count > 0);
             ShowExecutionErrorsCommand = new DelegateCommand(
