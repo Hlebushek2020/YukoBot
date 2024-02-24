@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -7,7 +6,6 @@ using Prism.Commands;
 using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
-using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 using WinForm = System.Windows.Forms;
@@ -24,7 +22,6 @@ namespace YukoClient.ViewModels
 
         #region Propirties
         public string Title => App.Name;
-        public Action Close { get; set; }
         public ImageBrush Avatar => Storage.Current.Avatar;
         public string Username => Storage.Current.Username;
         public string UserId => Storage.Current.UserId.ToString();
@@ -246,7 +243,7 @@ namespace YukoClient.ViewModels
                 {
                     ProgressWindow progress = new ProgressWindow(Title, new ExecuteScripts(_selectedServer));
                     progress.ShowDialog();
-                    
+
                     ClearUrlsCommand.RaiseCanExecuteChanged();
                     ExportUrlsCommand.RaiseCanExecuteChanged();
                     ImportUrlsCommand.RaiseCanExecuteChanged();

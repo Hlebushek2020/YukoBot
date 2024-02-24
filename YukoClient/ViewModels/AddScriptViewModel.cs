@@ -1,78 +1,72 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Prism.Commands;
+using Prism.Mvvm;
 using YukoClient.Models;
-using YukoClientBase.Interfaces;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
-    public class AddScriptViewModel : BindableBase, ICloseableView, IViewTitle
+    public class AddScriptViewModel : BindableBase
     {
-        #region Fields
-        private Models.ScriptMode selectedMode;
-        #endregion
+        private ScriptMode _selectedMode;
 
         #region Propirties
-        public string Title { get => App.Name; }
-        public Action Close { get; set; }
+        public string Title => App.Name;
         public Server Server { get; set; }
         public Channel SelectedChannel { get; set; }
-        public ObservableCollection<Models.ScriptMode> Modes
-        {
-            get
+
+        public ObservableCollection<ScriptMode> Modes =>
+            new ObservableCollection<ScriptMode>
             {
-                return new ObservableCollection<Models.ScriptMode> {
-                    new Models.ScriptMode { Mode = Enums.ScriptMode.One },
-                    new Models.ScriptMode { Mode = Enums.ScriptMode.After },
-                    new Models.ScriptMode { Mode = Enums.ScriptMode.Before },
-                    new Models.ScriptMode { Mode = Enums.ScriptMode.End },
-                    new Models.ScriptMode { Mode = Enums.ScriptMode.All }
-                };
-            }
-        }
-        public Models.ScriptMode SelectedMode
+                new ScriptMode { Mode = Enums.ScriptMode.One },
+                new ScriptMode { Mode = Enums.ScriptMode.After },
+                new ScriptMode { Mode = Enums.ScriptMode.Before },
+                new ScriptMode { Mode = Enums.ScriptMode.End },
+                new ScriptMode { Mode = Enums.ScriptMode.All }
+            };
+
+        public ScriptMode SelectedMode
         {
+            get => _selectedMode;
             set
             {
-                selectedMode = value;
-                RaisePropertyChanged("ModeDescription");
-                RaisePropertyChanged("IsEnabledMessageId");
-                RaisePropertyChanged("IsEnabledMessageCount");
+                _selectedMode = value;
+
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ModeDescription));
+                RaisePropertyChanged(nameof(IsEnabledMessageId));
+                RaisePropertyChanged(nameof(IsEnabledMessageCount));
             }
         }
-        public string ModeDescription { get { return selectedMode == null ? string.Empty : selectedMode.Description; } }
+
+        public string ModeDescription => _selectedMode == null ? string.Empty : _selectedMode.Description;
+
         public bool IsEnabledMessageId
         {
             get
             {
-                if (selectedMode != null)
-                {
-                    if (selectedMode.Mode == Enums.ScriptMode.All || selectedMode.Mode == Enums.ScriptMode.End)
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                if (_selectedMode == null)
+                    return true;
+
+                return _selectedMode.Mode != Enums.ScriptMode.All && _selectedMode.Mode != Enums.ScriptMode.End;
             }
         }
+
         public string MessageId { get; set; }
+
         public bool IsEnabledMessageCount
         {
             get
             {
-                if (selectedMode != null)
-                {
-                    if (selectedMode.Mode == Enums.ScriptMode.All || selectedMode.Mode == Enums.ScriptMode.One)
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                if (_selectedMode == null)
+                    return true;
+
+                return _selectedMode.Mode != Enums.ScriptMode.All && _selectedMode.Mode != Enums.ScriptMode.One;
             }
         }
+
         public string MessageCount { get; set; }
         #endregion
 
@@ -81,9 +75,9 @@ namespace YukoClient.ViewModels
         public DelegateCommand ApplyCommand { get; }
         #endregion
 
-        public AddScriptViewModel()
+        public AddScriptViewModel(Action closeAction)
         {
-            CloseCommand = new DelegateCommand(() => Close());
+            CloseCommand = new DelegateCommand(closeAction.Invoke);
             ApplyCommand = new DelegateCommand(() =>
             {
                 ulong messageId = 0;
@@ -91,37 +85,48 @@ namespace YukoClient.ViewModels
                 {
                     if (string.IsNullOrEmpty(MessageId))
                     {
-                        SUI.Dialogs.MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Поле \"Cообщение\" не может быть пустым!", App.Name, MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
                         return;
                     }
+
                     if (!ulong.TryParse(MessageId, out messageId))
                     {
-                        SUI.Dialogs.MessageBox.Show("В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show(
+                            "В поле \"Сообщение\" введено некорректное значение! Поле должно содержать Id сообщения.",
+                            App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }
+
                 int messageCount = int.MaxValue;
                 if (IsEnabledMessageCount)
                 {
                     if (string.IsNullOrEmpty(MessageCount))
                     {
-                        SUI.Dialogs.MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Поле \"Количество\" не может быть пустым!", App.Name, MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
                         return;
                     }
+
                     if (!int.TryParse(MessageCount, out messageCount))
                     {
-                        SUI.Dialogs.MessageBox.Show("В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " + int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show(
+                            "В поле \"Количество\" введено некорректное значение! Поле должно содержать целое число от 0 до " +
+                            int.MaxValue + " включительно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                 }
+
                 Server.Scripts.Add(new Script
                 {
                     Channel = SelectedChannel,
-                    Mode = selectedMode,
+                    Mode = _selectedMode,
                     MessageId = messageId,
                     Count = messageCount
                 });
-                Close();
+
+                closeAction.Invoke();
             });
         }
     }
