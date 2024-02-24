@@ -31,10 +31,12 @@
         <Button Content="Закрыть"
                 Margin="0,36,0,0"
                 Width="80"
+                IsCancel="True"
                 Command="{Binding CloseCommand}" />
         <Button Content="Применить"
                 Margin="0,36,85,0"
                 Width="100"
+                IsDefault="True"
                 Command="{Binding ApplyCommand}" />
     </Grid>
 </Window>
