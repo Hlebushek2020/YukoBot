@@ -13,6 +13,7 @@
         ResizeMode="CanMinimize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
+
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}">
             <Setter Property="Height" Value="30" />
@@ -20,11 +21,20 @@
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
     </Window.Resources>
+
     <Grid Margin="10">
-        <TextBox Margin="0" TextWrapping="NoWrap"
-                 Text="{Binding NewChannelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Top" />
-        <Button Content="Закрыть" Margin="0,36,0,0" Width="80" Command="{Binding CloseCommand}" />
-        <Button Content="Применить" Margin="0,36,85,0" Width="100" Command="{Binding ApplyCommand}" />
+        <TextBox Margin="0"
+                 TextWrapping="NoWrap"
+                 VerticalAlignment="Top"
+                 Text="{Binding NewChannelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Content="Закрыть"
+                Margin="0,36,0,0"
+                Width="80"
+                Command="{Binding CloseCommand}" />
+        <Button Content="Применить"
+                Margin="0,36,85,0"
+                Width="100"
+                Command="{Binding ApplyCommand}" />
     </Grid>
 </Window>
