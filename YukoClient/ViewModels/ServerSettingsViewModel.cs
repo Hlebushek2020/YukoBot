@@ -4,9 +4,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
-using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
@@ -24,7 +23,7 @@ namespace YukoClient.ViewModels
         #endregion
 
         #region Commands
-        public DelegateCommand RenameСhannelCommand { get; }
+        public DelegateCommand RenameChannelCommand { get; }
         public DelegateCommand RemoveSelectedChannelsCommand { get; }
         public DelegateCommand ClearChannelListCommand { get; }
         public DelegateCommand UpdateChannelListCommand { get; }
@@ -35,7 +34,7 @@ namespace YukoClient.ViewModels
             Server = server;
             SelectedChannels = new List<Channel>();
             // commands
-            RenameСhannelCommand = new DelegateCommand(() =>
+            RenameChannelCommand = new DelegateCommand(() =>
             {
                 if (SelectedChannel != null)
                 {
@@ -47,7 +46,7 @@ namespace YukoClient.ViewModels
             {
                 if (SelectedChannels.Count != 0)
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         foreach (Channel channel in SelectedChannels)
