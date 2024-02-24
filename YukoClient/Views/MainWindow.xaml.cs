@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using YukoClient.ViewModels;
 
 namespace YukoClient
@@ -12,10 +11,7 @@ namespace YukoClient
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel
-            {
-                Close = new Action(Close)
-            };
+            DataContext = new MainViewModel();
         }
     }
 }
