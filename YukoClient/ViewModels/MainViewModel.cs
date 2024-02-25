@@ -171,6 +171,7 @@ namespace YukoClient.ViewModels
                     AddScriptWindow addScript = new AddScriptWindow(_selectedServer);
                     addScript.ShowDialog();
                     RunScriptsCommand.RaiseCanExecuteChanged();
+                    ClearScriptsCommand.RaiseCanExecuteChanged();
                 },
                 () => _selectedServer != null);
             RemoveScriptCommand = new DelegateCommand(
@@ -181,6 +182,7 @@ namespace YukoClient.ViewModels
                     {
                         _selectedServer.Scripts.Remove(SelectedScript);
                         RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
                     }
                 }, () => _selectedScript != null);
             ClearScriptsCommand = new DelegateCommand(
@@ -191,6 +193,7 @@ namespace YukoClient.ViewModels
                     {
                         _selectedServer.Scripts.Clear();
                         RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
                     }
                 },
                 () => _selectedServer != null);
@@ -234,6 +237,7 @@ namespace YukoClient.ViewModels
                                 _selectedServer.Id, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                             RunScriptsCommand.RaiseCanExecuteChanged();
+                            ClearScriptsCommand.RaiseCanExecuteChanged();
                         }
                     }
                 },
@@ -266,6 +270,7 @@ namespace YukoClient.ViewModels
                     {
                         _selectedServer?.Urls.Remove(SelectedUrl);
                         DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
                     }
                 }, () => _selectedUrl != null);
             ClearUrlsCommand = new DelegateCommand(
@@ -276,6 +281,7 @@ namespace YukoClient.ViewModels
                     {
                         _selectedServer.Urls.Clear();
                         DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
                     }
                 },
                 () => _selectedServer != null);
@@ -319,6 +325,7 @@ namespace YukoClient.ViewModels
                                     new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
                             progressWindow.ShowDialog();
                             DownloadFilesCommand.RaiseCanExecuteChanged();
+                            ClearUrlsCommand.RaiseCanExecuteChanged();
                         }
                     }
                 },
