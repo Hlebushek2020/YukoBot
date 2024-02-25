@@ -13,5 +13,6 @@
         WindowStartupLocation="CenterScreen" d:DataContext="{d:DesignInstance models:Script}">
     <Grid Margin="10">
         <ListBox ItemsSource="{Binding Path=Errors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <!-- https://asp-blogs.azurewebsites.net/thomaslebrun/wpf-how-to-gray-the-icon-of-a-menuitem -->
     </Grid>
 </Window>
