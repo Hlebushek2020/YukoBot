@@ -39,22 +39,23 @@ namespace YukoClient.Models.Progress
                     foreach (Script script in _server.Scripts)
                     {
                         dispatcher.Invoke(
-                            (Action<ulong, string>) ((ulong channelId, string mode) =>
+                            (Action<ulong, string>)((ulong channelId, string mode) =>
                             {
                                 State = $"Выполнение правила (Канал: {channelId}; тип запроса: {mode})";
                                 script.Errors.Clear();
+                                script.CompletedWithErrors = false;
                             }), script.Channel.Id, script.Mode.Title);
                         provider.ExecuteScript(script);
                         int blockCounter = 1;
                         UrlsResponse urlsResponse = null;
                         do
                         {
-                            dispatcher.Invoke((Action<int>) ((int block) =>
+                            dispatcher.Invoke((Action<int>)((int block) =>
                                 State = $"Получение данных (Блок: {block})"), blockCounter);
                             blockCounter++;
                             urlsResponse = provider.ReadBlock();
                             foreach (string url in urlsResponse.Urls)
-                                dispatcher.Invoke((Action<string>) ((string iUrl) =>
+                                dispatcher.Invoke((Action<string>)((string iUrl) =>
                                     _server.Urls.Add(iUrl)), url);
                             if (urlsResponse.Error != null)
                             {
@@ -62,7 +63,11 @@ namespace YukoClient.Models.Progress
                                     urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound
                                         ? urlsResponse.ChannelId
                                         : urlsResponse.MessageId);
-                                dispatcher.Invoke(() => script.Errors.Add(errorText));
+                                dispatcher.Invoke(() =>
+                                {
+                                    script.Errors.Add(errorText);
+                                    script.CompletedWithErrors = true;
+                                });
                             }
                         } while (urlsResponse.Next);
                     }
@@ -70,7 +75,7 @@ namespace YukoClient.Models.Progress
             }
             catch (Exception ex)
             {
-                dispatcher.Invoke((Action<string>) ((string errorMessage) =>
+                dispatcher.Invoke((Action<string>)((string errorMessage) =>
                     MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), ex.Message);
             }
         }
