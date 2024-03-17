@@ -20,11 +20,11 @@ namespace YukoClient.ViewModels
         public ObservableCollection<ScriptMode> Modes =>
             new ObservableCollection<ScriptMode>
             {
-                new ScriptMode { Mode = Enums.ScriptMode.One },
-                new ScriptMode { Mode = Enums.ScriptMode.After },
-                new ScriptMode { Mode = Enums.ScriptMode.Before },
-                new ScriptMode { Mode = Enums.ScriptMode.End },
-                new ScriptMode { Mode = Enums.ScriptMode.All }
+                new ScriptMode(Enums.ScriptMode.One),
+                new ScriptMode(Enums.ScriptMode.After),
+                new ScriptMode(Enums.ScriptMode.Before),
+                new ScriptMode(Enums.ScriptMode.End),
+                new ScriptMode(Enums.ScriptMode.All)
             };
 
         public ScriptMode SelectedMode

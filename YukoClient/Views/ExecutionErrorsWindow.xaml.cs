@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using YukoClient.Models;
+using YukoClient.ViewModels;
 
 namespace YukoClient
 {
@@ -8,7 +9,7 @@ namespace YukoClient
         public ExecutionErrorsWindow(Script script)
         {
             InitializeComponent();
-            DataContext = script;
+            DataContext = new ExecutionErrorsViewModel(Close, script);
         }
     }
 }

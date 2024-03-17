@@ -120,7 +120,7 @@ namespace YukoClient.ViewModels
 
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization());
+                ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization(), false);
                 progress.ShowDialog();
             });
 

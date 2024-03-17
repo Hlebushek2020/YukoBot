@@ -118,6 +118,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ExecutionErrorsViewModel.cs" />
     <Compile Include="Views\ExecutionErrorsWindow.xaml.cs">
       <DependentUpon>ExecutionErrorsWindow.xaml</DependentUpon>
     </Compile>

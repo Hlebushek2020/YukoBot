@@ -1,25 +1,15 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Prism.Mvvm;
 
 namespace YukoClient.Models
 {
     public class Channel : BindableBase, IEquatable<Channel>
     {
-        #region Fields
-        private ulong _id;
         private string _name;
-        #endregion
 
         #region Propirties
-        public ulong Id
-        {
-            get => _id;
-            set
-            {
-                _id = value;
-                RaisePropertyChanged();
-            }
-        }
+        public ulong Id { get; }
 
         public string Name
         {
@@ -32,8 +22,15 @@ namespace YukoClient.Models
         }
         #endregion
 
-        public bool Equals(Channel other) => other != null && _id.Equals(other._id);
+        [JsonConstructor]
+        public Channel(ulong id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public bool Equals(Channel other) => other != null && Id.Equals(other.Id);
         public override bool Equals(object obj) => Equals(obj as Channel);
-        public override int GetHashCode() => _id.GetHashCode();
+        public override int GetHashCode() => Id.GetHashCode();
     }
 }

@@ -19,7 +19,7 @@ namespace YukoClientBase.Views
 
         private volatile bool _isCompleted;
 
-        public ProgressWindow(string title, BaseProgressModel model, bool isCancellable = false)
+        public ProgressWindow(string title, BaseProgressModel model, bool isCancellable = true)
         {
             InitializeComponent();
 

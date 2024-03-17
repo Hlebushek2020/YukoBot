@@ -6,7 +6,7 @@ namespace YukoClient.Models
 {
     public class ScriptMode
     {
-        public Enums.ScriptMode Mode { get; set; }
+        public Enums.ScriptMode Mode { get; }
 
         public string Title
         {
@@ -43,5 +43,7 @@ namespace YukoClient.Models
                 return Mode.ToString();
             }
         }
+
+        public ScriptMode(Enums.ScriptMode mode) { Mode = mode; }
     }
 }
