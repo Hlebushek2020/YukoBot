@@ -13,7 +13,7 @@
         FontSize="14"
         WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
-        <KeyBinding Key="Escape" Modifiers="None" Command="{Binding Path=CloseWindowCommand}" />
+        <KeyBinding Key="Escape" Command="{Binding Path=CloseWindowCommand}" />
     </Window.InputBindings>
     <Grid Margin="10">
         <ListBox ItemsSource="{Binding Path=Errors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />

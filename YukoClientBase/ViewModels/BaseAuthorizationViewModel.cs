@@ -14,7 +14,7 @@ using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {
-    public abstract class BaseAuthorizationViewModel : BindableBase
+    public abstract class BaseAuthorizationViewModel : BindableBase, IFullscreenEvent
     {
         #region Fields
         private Action _closeAction;
@@ -50,12 +50,16 @@ namespace YukoClientBase.ViewModels
         #endregion
 
         #region Commands
+        public DelegateCommand FullscreenCommand { get; }
         public DelegateCommand LoginCommand { get; }
         public DelegateCommand SettingsCommand { get; }
         #endregion
 
+        public event FullscreenEventHandler FullscreenEvent;
+
         protected BaseAuthorizationViewModel(IUser store, WebClientBase webClient)
         {
+            FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             LoginCommand = new DelegateCommand(() =>
             {
                 if (!Settings.Availability())

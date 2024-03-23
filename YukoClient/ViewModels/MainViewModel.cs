@@ -6,13 +6,14 @@ using Prism.Commands;
 using Prism.Mvvm;
 using YukoClient.Models;
 using YukoClient.Models.Progress;
+using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 using WinForm = System.Windows.Forms;
 
 namespace YukoClient.ViewModels
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel : BindableBase, IFullscreenEvent
     {
         #region Fields
         private Server _selectedServer;
@@ -87,6 +88,7 @@ namespace YukoClient.ViewModels
         #endregion
 
         #region Commands
+        public DelegateCommand FullscreenCommand { get; }
         public DelegateCommand WindowLoadedCommand { get; }
 
         // User Commands
@@ -114,10 +116,13 @@ namespace YukoClient.ViewModels
         public DelegateCommand DownloadFilesCommand { get; }
         #endregion
 
+        public event FullscreenEventHandler FullscreenEvent;
+
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => RaisePropertyChanged(e.PropertyName);
 
+            FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             WindowLoadedCommand = new DelegateCommand(() =>
             {
                 ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization(), false);
@@ -252,6 +257,8 @@ namespace YukoClient.ViewModels
                     ExportUrlsCommand.RaiseCanExecuteChanged();
                     ImportUrlsCommand.RaiseCanExecuteChanged();
                     DownloadFilesCommand.RaiseCanExecuteChanged();
+
+                    ShowExecutionErrorsCommand.RaiseCanExecuteChanged();
                 },
                 () => _selectedServer != null && _selectedServer.Scripts.Count > 0);
             ShowExecutionErrorsCommand = new DelegateCommand(
@@ -259,7 +266,7 @@ namespace YukoClient.ViewModels
                 {
                     ExecutionErrorsWindow executionErrorsWindow = new ExecutionErrorsWindow(SelectedScript);
                     executionErrorsWindow.ShowDialog();
-                }, () => _selectedScript != null);
+                }, () => _selectedScript != null && _selectedScript.CompletedWithErrors == true);
 
             // Url Command
             RemoveUrlCommand = new DelegateCommand(

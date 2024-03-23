@@ -11,7 +11,23 @@ namespace YukoClient
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            MainViewModel viewModel = new MainViewModel();
+            viewModel.FullscreenEvent += ViewModelOnFullscreenEvent;
+            DataContext = viewModel;
+        }
+
+        private void ViewModelOnFullscreenEvent()
+        {
+            if (WindowStyle == WindowStyle.None)
+            {
+                WindowState = WindowState.Normal;
+                WindowStyle = WindowStyle.SingleBorderWindow;
+            }
+            else
+            {
+                WindowStyle = WindowStyle.None;
+                WindowState = WindowState.Maximized;
+            }
         }
     }
 }

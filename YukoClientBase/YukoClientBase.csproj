@@ -86,6 +86,7 @@
     <Compile Include="Exceptions\ClientCodeException.cs" />
     <Compile Include="Exceptions\YukoException.cs" />
     <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
+    <Compile Include="Interfaces\IFullscreenEvent.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\DownloaderLogger.cs" />

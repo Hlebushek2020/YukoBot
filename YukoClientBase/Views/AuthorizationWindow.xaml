@@ -14,6 +14,11 @@
         MinWidth="490"
         FontSize="14"
         WindowStartupLocation="CenterScreen">
+
+    <Window.InputBindings>
+        <KeyBinding Key="F11" Command="{Binding Path=FullscreenCommand}" />
+    </Window.InputBindings>
+
     <Grid>
         <StackPanel Width="300" VerticalAlignment="Center">
 

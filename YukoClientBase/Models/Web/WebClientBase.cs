@@ -44,7 +44,7 @@ namespace YukoClientBase.Models.Web
             }
         }
 
-        public void RefreshToken()
+        protected void RefreshToken()
         {
             using (TcpClient tcpClient = new TcpClient())
             {

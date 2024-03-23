@@ -13,14 +13,18 @@
         Width="800"
         FontSize="14"
         WindowStartupLocation="CenterScreen">
+
     <Window.InputBindings>
-        <KeyBinding Key="F5" Command="{Binding UpdateServerCollectionCommand}" />
+        <KeyBinding Key="F5" Command="{Binding  Path=UpdateServerCollectionCommand}" />
+        <KeyBinding Key="F11" Command="{Binding Path=FullscreenCommand }" />
     </Window.InputBindings>
+
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded">
             <behaviors:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
+
     <Window.Resources>
         <Style x:Key="HeadGridStyle" TargetType="Grid">
             <Setter Property="Background" Value="{DynamicResource MainWindow.Head.Background}" />
@@ -30,6 +34,7 @@
             <Setter Property="FontSize" Value="18" />
         </Style>
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

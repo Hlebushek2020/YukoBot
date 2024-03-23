@@ -33,6 +33,22 @@ namespace YukoClientBase.Views
 
             authorizationViewModel.IsRemember = true;
             authorizationViewModel.Login = login;
+
+            authorizationViewModel.FullscreenEvent += AuthorizationViewModelOnFullscreenEvent;
+        }
+
+        private void AuthorizationViewModelOnFullscreenEvent()
+        {
+            if (WindowStyle == WindowStyle.None)
+            {
+                WindowState = WindowState.Normal;
+                WindowStyle = WindowStyle.SingleBorderWindow;
+            }
+            else
+            {
+                WindowStyle = WindowStyle.None;
+                WindowState = WindowState.Maximized;
+            }
         }
     }
 }

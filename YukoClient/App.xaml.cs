@@ -40,7 +40,11 @@ namespace YukoClient
             if (!WebClient.Current.TokenAvailability)
                 Shutdown();
             else
+            {
+                MainWindow.WindowStyle = authorization.WindowStyle;
+                MainWindow.WindowState = authorization.WindowState;
                 MainWindow.Show();
+            }
         }
 
         public static void SwitchTheme(Theme? theme)
