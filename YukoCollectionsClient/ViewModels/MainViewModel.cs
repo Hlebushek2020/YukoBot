@@ -13,7 +13,7 @@ using SUI = Sergey.UI.Extension;
 
 namespace YukoCollectionsClient.ViewModels
 {
-    public class MainViewModel : BindableBase, ICloseableView, IViewTitle
+    public class MainViewModel : BindableBase, IFullscreenEvent
     {
         #region Fields
         private MessageCollection _selectedMessageCollection;
@@ -59,6 +59,7 @@ namespace YukoCollectionsClient.ViewModels
         #endregion
 
         #region Commands
+        public DelegateCommand FullscreenCommand { get; }
         public DelegateCommand WindowLoadedCommand { get; }
 
         // User Commands
@@ -84,21 +85,27 @@ namespace YukoCollectionsClient.ViewModels
         public DelegateCommand DownloadFilesCommand { get; }
         #endregion
 
+        public event FullscreenEventHandler FullscreenEvent;
+
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
+
+            FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             WindowLoadedCommand = new DelegateCommand(() =>
             {
                 ProgressWindow progress = new ProgressWindow(Title, new UpdateMessageCollections(true));
                 progress.ShowDialog();
                 CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
             });
+
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
                 SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
+
             // Message Collections Commands
             UpdateMessageCollectionsCommand = new DelegateCommand(() =>
             {
@@ -135,6 +142,7 @@ namespace YukoCollectionsClient.ViewModels
                     }
                 }
             });
+
             // Message Collection Commands
             RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
             {

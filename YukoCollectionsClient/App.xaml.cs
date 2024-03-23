@@ -19,12 +19,12 @@ namespace YukoCollectionsClient
         public static string Name { get; } =
             Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
-        private static Mutex yukoClientMutex;
+        private static Mutex _yukoClientMutex;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             SwitchTheme(null);
-            yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
+            _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
                 SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
@@ -38,7 +38,11 @@ namespace YukoCollectionsClient
             if (!WebClient.Current.TokenAvailability)
                 Shutdown();
             else
+            {
+                MainWindow.WindowStyle = authorization.WindowStyle;
+                MainWindow.WindowState = authorization.WindowState;
                 MainWindow.Show();
+            }
         }
 
         public static void SwitchTheme(Theme? theme)
