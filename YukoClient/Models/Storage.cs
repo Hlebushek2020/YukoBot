@@ -14,32 +14,32 @@ namespace YukoClient.Models
     public class Storage : BindableBase, IUser
     {
         #region Fields
-        private ulong id;
-        private string avatarUri;
-        private string nikname;
-        private ObservableCollection<Server> servers;
+        private ulong _userId;
+        private string _avatarUri;
+        private string _username;
+        private ObservableCollection<Server> _servers;
         #endregion
 
         #region Propirties
         public static Storage Current { get; } = new Storage();
 
-        public ulong Id
+        public ulong UserId
         {
-            get { return id; }
+            get => _userId;
             set
             {
-                id = value;
+                _userId = value;
                 RaisePropertyChanged();
             }
         }
 
         public string AvatarUri
         {
-            get { return avatarUri; }
+            get { return _avatarUri; }
             set
             {
-                avatarUri = value;
-                RaisePropertyChanged("Avatar");
+                _avatarUri = value;
+                RaisePropertyChanged(nameof(Avatar));
             }
         }
 
@@ -47,34 +47,33 @@ namespace YukoClient.Models
         {
             get
             {
-                if (string.IsNullOrEmpty(avatarUri))
-                {
+                if (string.IsNullOrEmpty(_avatarUri))
                     return null;
-                }
+
                 return new ImageBrush
                 {
-                    ImageSource = new BitmapImage(new Uri(avatarUri, UriKind.Absolute)),
+                    ImageSource = new BitmapImage(new Uri(_avatarUri, UriKind.Absolute)),
                     Stretch = Stretch.UniformToFill
                 };
             }
         }
 
-        public string Nikname
+        public string Username
         {
-            get { return nikname; }
+            get => _username;
             set
             {
-                nikname = value;
+                _username = value;
                 RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<Server> Servers
         {
-            get { return servers; }
+            get { return _servers; }
             set
             {
-                servers = value;
+                _servers = value;
                 RaisePropertyChanged();
             }
         }

@@ -3,52 +3,67 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:YukoClient"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:viewModels="clr-namespace:YukoClient.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModels:ServerSettingsViewModel}"
         Title="{Binding Title, Mode=OneWay}"
         Style="{StaticResource WindowStyle}"
-        Height="450" 
+        Height="450"
         Width="800"
         WindowStartupLocation="CenterScreen"
         FontSize="14">
+
     <Window.InputBindings>
-        <KeyBinding Key="F2" Command="{Binding RenameСhannelCommand}"/>
-        <KeyBinding Key="Delete" Command="{Binding RemoveSelectedChannelsCommand}"/>
-        <KeyBinding Key="Delete" Modifiers="Ctrl" Command="{Binding ClearChannelListCommand}"/>
-        <KeyBinding Key="F5" Command="{Binding UpdateChannelListCommand}"/>
+        <KeyBinding Key="F2" Command="{Binding RenameChannelCommand}" />
+        <KeyBinding Key="Delete" Command="{Binding RemoveSelectedChannelsCommand}" />
+        <KeyBinding Key="Delete" Modifiers="Ctrl" Command="{Binding ClearChannelListCommand}" />
+        <KeyBinding Key="F5" Command="{Binding UpdateChannelListCommand}" />
     </Window.InputBindings>
+
     <Grid Margin="10">
+
         <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Переименовать" Command="{Binding RenameСhannelCommand}">
-                <Image Source="/Resources/menu-edit-32.png"/>
+            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Переименовать"
+                    Command="{Binding RenameChannelCommand}">
+                <Image Source="/Resources/menu-edit-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить" Command="{Binding RemoveSelectedChannelsCommand}">
-                <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
+            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить"
+                    Command="{Binding RemoveSelectedChannelsCommand}">
+                <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearChannelListCommand}">
-                <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
+            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить"
+                    Command="{Binding ClearChannelListCommand}">
+                <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить" Command="{Binding UpdateChannelListCommand}">
-                <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png"/>
+            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить"
+                    Command="{Binding UpdateChannelListCommand}">
+                <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png" />
             </Button>
         </StackPanel>
-        <ListView Margin="0,26,0,0" SelectionMode="Extended" ItemsSource="{Binding Server.Channels, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedChannel, Mode=OneWayToSource}" SelectionChanged="ListView_SelectionChanged">
+
+        <ListView Margin="0,26,0,0" SelectionMode="Extended"
+                  ItemsSource="{Binding Server.Channels, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedChannel, Mode=OneWayToSource}"
+                  SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Канал" DisplayMemberBinding="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <GridViewColumn Header="Канал"
+                                    DisplayMemberBinding="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <GridViewColumn Header="Id"
+                                    DisplayMemberBinding="{Binding Id, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Переименовать" InputGestureText="F2" Command="{Binding RenameСhannelCommand}"/>
-                    <MenuItem Header="Удалить" InputGestureText="Delete" Command="{Binding RemoveSelectedChannelsCommand}"/>
+                    <MenuItem Header="Переименовать" InputGestureText="F2" Command="{Binding RenameChannelCommand}" />
+                    <MenuItem Header="Удалить" InputGestureText="Delete"
+                              Command="{Binding RemoveSelectedChannelsCommand}" />
                 </ContextMenu>
             </ListView.ContextMenu>
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDoubleClick">
-                    <behaviors:InvokeCommandAction Command="{Binding RenameСhannelCommand}"/>
+                    <behaviors:InvokeCommandAction Command="{Binding RenameChannelCommand}" />
                 </behaviors:EventTrigger>
             </behaviors:Interaction.Triggers>
         </ListView>

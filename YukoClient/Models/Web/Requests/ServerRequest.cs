@@ -2,7 +2,7 @@
 
 namespace YukoClient.Models.Web.Requests
 {
-    public class ServerRequest : BaseRequest
+    public class ServerRequest : Request
     {
         public ulong Id { get; set; }
     }

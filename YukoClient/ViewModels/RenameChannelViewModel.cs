@@ -1,40 +1,25 @@
-﻿using Prism.Commands;
+﻿using System;
+using Prism.Commands;
 using Prism.Mvvm;
-using System;
-using System.Windows;
 using YukoClient.Models;
-using YukoClientBase.Interfaces;
-using SUI = Sergey.UI.Extension;
 
 namespace YukoClient.ViewModels
 {
-    public class RenameChannelViewModel : BindableBase, ICloseableView, IViewTitle
+    public class RenameChannelViewModel : BindableBase
     {
-        #region Fields
-        private string newChannelName;
-        private Channel channel;
-        #endregion
+        private string _newChannelName;
 
         #region Propirties
-        public string Title { get => App.Name; }
-        public Action Close { get; set; }
-        public Channel Channel
-        {
-            get => channel;
-            set
-            {
-                channel = value;
-                RaisePropertyChanged();
-                NewChannelName = channel.Name;
-            }
-        }
+        public string Title => App.Name;
+
         public string NewChannelName
         {
-            get => newChannelName;
+            get => _newChannelName;
             set
             {
-                newChannelName = value;
+                _newChannelName = value;
                 RaisePropertyChanged();
+                ApplyCommand.RaiseCanExecuteChanged();
             }
         }
         #endregion
@@ -44,26 +29,17 @@ namespace YukoClient.ViewModels
         public DelegateCommand CloseCommand { get; }
         #endregion
 
-        public RenameChannelViewModel(Channel channel)
+        public RenameChannelViewModel(Action closeAction, Channel channel)
         {
-            Channel = channel;
-            // Commands
             ApplyCommand = new DelegateCommand(() =>
-            {
-                if (string.IsNullOrEmpty(newChannelName))
                 {
-                    SUI.Dialogs.MessageBox.Show("Название канала не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else
-                {
-                    if (!channel.Name.Equals(newChannelName))
-                    {
-                        channel.Name = newChannelName;
-                    }
-                    Close();
-                }
-            });
-            CloseCommand = new DelegateCommand(() => Close());
+                    if (!channel.Name.Equals(_newChannelName))
+                        channel.Name = _newChannelName;
+
+                    closeAction.Invoke();
+                },
+                () => !string.IsNullOrEmpty(_newChannelName));
+            CloseCommand = new DelegateCommand(closeAction.Invoke);
         }
     }
 }

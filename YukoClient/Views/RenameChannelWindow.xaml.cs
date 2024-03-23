@@ -12,10 +12,7 @@ namespace YukoClient
         public RenameChannelWindow(Channel channel)
         {
             InitializeComponent();
-            DataContext = new RenameChannelViewModel(channel)
-            {
-                Close = Close
-            };
+            DataContext = new RenameChannelViewModel(Close, channel);
         }
     }
 }

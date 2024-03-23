@@ -13,5 +13,7 @@ namespace YukoBot
         public const string SadSmile = "(⋟﹏⋞)";
 
         public const string DeleteMessageEmoji = ":negative_squared_cross_mark:";
+
+        public const char LinkSeparator = ';';
     }
 }
