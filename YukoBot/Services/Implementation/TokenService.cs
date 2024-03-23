@@ -40,7 +40,10 @@ public class TokenService : ITokenService
         DateTime currentDateTime = DateTime.UtcNow;
         foreach (KeyValuePair<string, DateTime> userToken in _userTokens)
         {
-            if (userToken.Value < currentDateTime)
+            DateTime expiredDatetime = userToken.Value
+                .AddMinutes(_yukoSettings.TokenLifeInMinutes);
+
+            if (expiredDatetime > currentDateTime)
                 continue;
 
             _userTokens.TryRemove(userToken.Key, out _);
