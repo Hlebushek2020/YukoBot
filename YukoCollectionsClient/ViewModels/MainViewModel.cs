@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -9,7 +10,11 @@ using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progress;
-using SUI = Sergey.UI.Extension;
+using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
+using DialogResult = System.Windows.Forms.DialogResult;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace YukoCollectionsClient.ViewModels
 {
@@ -17,6 +22,7 @@ namespace YukoCollectionsClient.ViewModels
     {
         #region Fields
         private MessageCollection _selectedMessageCollection;
+        private MessageCollectionItem _selectedMessageCollectionItem;
         private string _searchCollections;
         #endregion
 
@@ -33,12 +39,14 @@ namespace YukoCollectionsClient.ViewModels
             get => _selectedMessageCollection;
             set
             {
-                if (value != null)
-                {
-                    _selectedMessageCollection = value;
-                    RaisePropertyChanged(nameof(MessageCollectionItems));
-                    RaisePropertyChanged(nameof(Urls));
-                }
+                _selectedMessageCollection = value;
+
+                RaisePropertyChanged(nameof(MessageCollectionItems));
+                RaisePropertyChanged(nameof(Urls));
+
+                RemoveMessageCollectionItemCommand.RaiseCanExecuteChanged();
+                ExportMessageCollectionCommand.RaiseCanExecuteChanged();
+                ImportMessageCollectionCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -53,7 +61,18 @@ namespace YukoCollectionsClient.ViewModels
         }
 
         public ObservableCollection<MessageCollectionItem> MessageCollectionItems => _selectedMessageCollection?.Items;
-        public MessageCollectionItem SelectedMessageCollectionItem { get; set; }
+
+        public MessageCollectionItem SelectedMessageCollectionItem
+        {
+            get => _selectedMessageCollectionItem;
+            set
+            {
+                _selectedMessageCollectionItem = value;
+                RaisePropertyChanged();
+                RemoveMessageCollectionItemCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public ObservableCollection<string> Urls => _selectedMessageCollection?.Urls;
         public string SelectedUrl { get; set; }
         #endregion
@@ -87,52 +106,60 @@ namespace YukoCollectionsClient.ViewModels
 
         public event FullscreenEventHandler FullscreenEvent;
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
 
             FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
-            WindowLoadedCommand = new DelegateCommand(() =>
-            {
-                ProgressWindow progress = new ProgressWindow(Title, new UpdateMessageCollections(true));
-                progress.ShowDialog();
-                CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
-            });
+            WindowLoadedCommand = new DelegateCommand(
+                () =>
+                {
+                    ProgressWindow progress = new ProgressWindow(Title, new UpdateMessageCollections(true));
+                    progress.ShowDialog();
+                    CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
+                });
 
             // User Commands
-            AppSettingsCommand = new DelegateCommand(() =>
-            {
-                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
-                settingsWindow.ShowDialog();
-            });
+            AppSettingsCommand = new DelegateCommand(
+                () =>
+                {
+                    SettingsWindow settingsWindow = new SettingsWindow(App.Name);
+                    settingsWindow.ShowDialog();
+                });
 
             // Message Collections Commands
-            UpdateMessageCollectionsCommand = new DelegateCommand(() =>
-            {
-                MessageBoxResult messageResult = SUI.Dialogs.MessageBox.Show(
-                    "Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.",
-                    App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                if (messageResult != MessageBoxResult.Cancel)
+            UpdateMessageCollectionsCommand = new DelegateCommand(
+                () =>
                 {
+                    MessageBoxResult messageResult = MessageBox.Show(
+                        "Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.",
+                        App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+
+                    if (messageResult == MessageBoxResult.Cancel)
+                        return;
+
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
                     ProgressWindow progress =
                         new ProgressWindow(Title, new UpdateMessageCollections(overrideMessageCollections));
                     progress.ShowDialog();
+
                     if (overrideMessageCollections)
-                    {
                         CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
-                    }
-                }
-            });
-            DownloadAllCollectionsCommand = new DelegateCommand(() =>
-            {
-                if (MessageCollections != null && MessageCollections.Count != 0)
+
+                    DownloadAllCollectionsCommand.RaiseCanExecuteChanged();
+                });
+            DownloadAllCollectionsCommand = new DelegateCommand(
+                () =>
                 {
-                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog =
-                        new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
-                    if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
                     {
-                        MessageBoxResult messageBoxResult = SUI.Dialogs.MessageBox.Show(
+                        folderBrowserDialog.ShowNewFolderButton = true;
+
+                        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        MessageBoxResult messageBoxResult = MessageBox.Show(
                             "Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question);
                         ProgressWindow progressWindow = new ProgressWindow(Title,
@@ -140,68 +167,64 @@ namespace YukoCollectionsClient.ViewModels
                                 messageBoxResult == MessageBoxResult.Yes), true);
                         progressWindow.ShowDialog();
                     }
-                }
-            });
+                },
+                () => MessageCollections != null && MessageCollections.Count != 0);
 
             // Message Collection Commands
-            RemoveMessageCollectionItemCommand = new DelegateCommand(() =>
-            {
-                if (SelectedMessageCollectionItem != null)
+            RemoveMessageCollectionItemCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show(
+                    if (MessageBox.Show(
                             $"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }
-                }
-            });
-            ExportMessageCollectionCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0)
+                },
+                () => _selectedMessageCollection != null && SelectedMessageCollectionItem != null);
+            ExportMessageCollectionCommand = new DelegateCommand(
+                () =>
                 {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "JavaScript Object Notation|*.json",
-                               DefaultExt = "json"
-                           })
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow = new ProgressWindow(Title,
-                                new ExportMessageCollection(_selectedMessageCollection.Items, saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
+                        saveFileDialog.DefaultExt = "json";
+                        saveFileDialog.Filter = "JavaScript Object Notation|*.json";
+
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ExportMessageCollection(_selectedMessageCollection.Items,
+                                saveFileDialog.FileName));
+                        progressWindow.ShowDialog();
                     }
-                }
-            });
-            ImportMessageCollectionCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null)
+                }, () => _selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0);
+            ImportMessageCollectionCommand = new DelegateCommand(
+                () =>
                 {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "JavaScript Object Notation|*.json",
-                               DefaultExt = "json"
-                           })
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        openFileDialog.DefaultExt = "json";
+                        openFileDialog.Filter = "JavaScript Object Notation|*.json";
+
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedMessageCollection.Items.Count > 0)
                         {
-                            if (_selectedMessageCollection.Items.Count > 0)
+                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    _selectedMessageCollection.Items.Clear();
-                                }
+                                _selectedMessageCollection.Items.Clear();
                             }
-                            ProgressWindow progressWindow = new ProgressWindow(Title,
-                                new ImportMessageCollection(_selectedMessageCollection.Items, openFileDialog.FileName));
-                            progressWindow.ShowDialog();
                         }
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ImportMessageCollection(_selectedMessageCollection.Items, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
                     }
-                }
-            });
+                },
+                () => _selectedMessageCollection != null);
             GetUrlsFromMessageCollectionCommand = new DelegateCommand(() =>
             {
                 if (_selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0)
