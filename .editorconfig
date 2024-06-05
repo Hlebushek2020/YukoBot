@@ -20,8 +20,8 @@ insert_final_newline = false
 # Упорядочение Using
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = false
-file_header_template = # Предпочтения для this. и Me.
 
+# Предпочтения для this. и Me.
 dotnet_style_qualification_for_event = false
 dotnet_style_qualification_for_field = false
 dotnet_style_qualification_for_method = false
