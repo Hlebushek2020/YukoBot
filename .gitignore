@@ -1,11 +1,10 @@
 /.idea
 /.vs
+/**/.vs
 /.vscode
 /packages
-/YukoBot/bin
-/YukoBot/obj
-/YukoClient/VS_Output
-/YukoClientBase/VS_Output
-/YukoCollectionsClient/VS_Output
+/**/bin
+/**/obj
+/**/VS_Output
 *Thumbs.db
 *.user
