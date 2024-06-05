@@ -12,7 +12,7 @@ using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progresses
 {
     public class GetUrlsFromMessageCollection : BaseProgressModel
     {
@@ -46,9 +46,9 @@ namespace YukoCollectionsClient.Models.Progress
                         MessageCollectionItem mcItem = _messageCollection.Items
                             .First(item => item.MessageId == urlsResponse.MessageId);
                         mcItem.IsChannelNotFound = urlsResponse.Error != null &&
-                            urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
+                                                   urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
                         mcItem.IsMessageNotFound = urlsResponse.Error != null &&
-                            urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
+                                                   urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
                     } while (urlsResponse.Next && !cancellationToken.IsCancellationRequested);
                 }
             }

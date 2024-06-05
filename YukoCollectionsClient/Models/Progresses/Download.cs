@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Progresses;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progresses
 {
     public class Download : BaseProgressModel
     {
@@ -27,7 +27,7 @@ namespace YukoCollectionsClient.Models.Progress
 
             const string baseState = "Загрузка";
 
-            dispatcher.Invoke((Action<string, int>) ((string state, int count) =>
+            dispatcher.Invoke((Action<string, int>)((string state, int count) =>
             {
                 MaxValue = count;
                 State = state;
@@ -75,6 +75,7 @@ namespace YukoCollectionsClient.Models.Progress
                             {
                                 downloaderLogger.Log(url, ex);
                             }
+
                             dispatcher.Invoke(() => Value++);
                         }
                     });
@@ -94,12 +95,13 @@ namespace YukoCollectionsClient.Models.Progress
                         if (addPointTimer >= 9)
                         {
                             addPointTimer = 0;
-                            dispatcher.Invoke((Action<string>) ((string state) => State = state),
+                            dispatcher.Invoke((Action<string>)((string state) => State = state),
                                 $"{baseState} {new string('.', pointCount)}");
                             if (pointCount >= 3)
                             {
                                 pointCount = -1;
                             }
+
                             pointCount++;
                         }
                     }

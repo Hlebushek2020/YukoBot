@@ -1,4 +1,10 @@
-﻿using System;
+﻿using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.CommandsNext.Entities;
+using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Entities;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,12 +12,6 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.CommandsNext.Entities;
-using DSharpPlus.CommandsNext.Exceptions;
-using DSharpPlus.Entities;
-using Microsoft.Extensions.Logging;
 using YukoBot.Commands.Models;
 using YukoBot.Extensions;
 using YukoBot.Models.Database;
@@ -51,12 +51,7 @@ namespace YukoBot.Commands
             if (dbUser == null)
             {
                 isRegister = true;
-                dbUser = new DbUser
-                {
-                    Id = ctx.User.Id,
-                    Username = ctx.User.Username,
-                    Registered = DateTime.Now
-                };
+                dbUser = new DbUser { Id = ctx.User.Id, Username = ctx.User.Username, Registered = DateTime.Now };
                 _yukoDbContext.Users.Add(dbUser);
             }
 
@@ -113,7 +108,7 @@ namespace YukoBot.Commands
         {
             if (!string.IsNullOrWhiteSpace(categoryOrCommand))
             {
-                if (TryGetRegisteredСategory(categoryOrCommand, out Category category))
+                if (TryGetRegisteredCategory(categoryOrCommand, out Category category))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                         .Where(
@@ -123,7 +118,7 @@ namespace YukoBot.Commands
                                 Category commandCategory = (baseCommandModule as CommandModule)?.Category;
 
                                 return category.Equals(commandCategory) && !x.IsHidden &&
-                                    !x.RunChecksAsync(ctx, true).Result.Any();
+                                       !x.RunChecksAsync(ctx, true).Result.Any();
                             });
 
                     SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();

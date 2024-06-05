@@ -13,7 +13,7 @@ using YukoClientBase.Models;
 using YukoClientBase.Models.Progresses;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class StorageInitialization : BaseProgressModel
     {
@@ -41,7 +41,7 @@ namespace YukoClient.Models.Progress
                 }
                 catch (Exception ex)
                 {
-                    dispatcher.Invoke((Action<string>) ((string errorMessage) =>
+                    dispatcher.Invoke((Action<string>)((string errorMessage) =>
                             MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)),
                         ex.Message);
                 }

@@ -12,7 +12,7 @@ using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Responses;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class ExecuteScripts : BaseProgressModel
     {

@@ -8,7 +8,7 @@ using System.Windows.Threading;
 using YukoClientBase.Models.Progresses;
 using SUI = Sergey.UI.Extension;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class ImportScripts : BaseProgressModel
     {

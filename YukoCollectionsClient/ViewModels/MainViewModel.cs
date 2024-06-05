@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using Prism.Commands;
-using Prism.Mvvm;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
-using YukoCollectionsClient.Models.Progress;
+using YukoCollectionsClient.Models.Progresses;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
@@ -235,6 +235,7 @@ namespace YukoCollectionsClient.ViewModels
                     {
                         _selectedMessageCollection.Urls.Clear();
                     }
+
                     ProgressWindow progress =
                         new ProgressWindow(Title, new GetUrlsFromMessageCollection(_selectedMessageCollection), true);
                     progress.ShowDialog();
@@ -269,8 +270,7 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
                            {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
+                               Filter = "Текстовый докуент|*.txt", DefaultExt = "txt"
                            })
                     {
                         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -289,8 +289,7 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
                            {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
+                               Filter = "Текстовый докуент|*.txt", DefaultExt = "txt"
                            })
                     {
                         if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -303,6 +302,7 @@ namespace YukoCollectionsClient.ViewModels
                                     _selectedMessageCollection.Urls.Clear();
                                 }
                             }
+
                             ProgressWindow progressWindow =
                                 new ProgressWindow(Title, new ImportUrls(_selectedMessageCollection.Urls,
                                     openFileDialog.FileName));
@@ -330,7 +330,7 @@ namespace YukoCollectionsClient.ViewModels
         private bool MessageCollectionsFilter(object item)
         {
             return string.IsNullOrEmpty(_searchCollections) ||
-                ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
+                   ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
         }
     }
 }

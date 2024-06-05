@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using Prism.Commands;
-using Prism.Mvvm;
 using YukoClient.Models;
-using YukoClient.Models.Progress;
+using YukoClient.Models.Progresses;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;

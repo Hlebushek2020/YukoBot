@@ -8,9 +8,8 @@ using YukoClient.Models.Web.Responses;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
-using SUI = Sergey.UI.Extension;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class UpdateServer : BaseProgressModel
     {
@@ -53,7 +52,7 @@ namespace YukoClient.Models.Progress
                 }
                 else
                 {
-                    dispatcher.Invoke((Action<string>) ((string errorMessage) =>
+                    dispatcher.Invoke((Action<string>)((string errorMessage) =>
                             MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)),
                         ex.Message);
                 }

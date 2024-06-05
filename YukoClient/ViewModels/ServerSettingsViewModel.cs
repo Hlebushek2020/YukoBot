@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
+using System.Collections.Generic;
+using System.Windows;
 using YukoClient.Models;
-using YukoClient.Models.Progress;
+using YukoClient.Models.Progresses;
 using YukoClientBase.Views;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 

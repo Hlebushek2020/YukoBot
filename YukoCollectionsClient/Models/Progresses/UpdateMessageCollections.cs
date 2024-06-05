@@ -9,7 +9,7 @@ using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Responses;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progresses
 {
     public class UpdateMessageCollections : BaseProgressModel
     {
@@ -59,7 +59,7 @@ namespace YukoCollectionsClient.Models.Progress
             }
             catch (Exception ex)
             {
-                dispatcher.Invoke((Action<string>) ((string errorMessage) =>
+                dispatcher.Invoke((Action<string>)((string errorMessage) =>
                     MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), ex.Message);
             }
         }

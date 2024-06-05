@@ -16,7 +16,7 @@ using YukoCollectionsClient.Models.Web.Providers;
 using YWeb = YukoCollectionsClient.Models.Web;
 using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progresses
 {
     public class DownloadAll : BaseProgressModel
     {
@@ -67,9 +67,9 @@ namespace YukoCollectionsClient.Models.Progress
                             MessageCollectionItem mcItem = collection.Items
                                 .First(item => item.MessageId == urlsResponse.MessageId);
                             mcItem.IsChannelNotFound = urlsResponse.Error != null &&
-                                urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
+                                                       urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
                             mcItem.IsMessageNotFound = urlsResponse.Error != null &&
-                                urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
+                                                       urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
                         } while (urlsResponse.Next && !cancellationToken.IsCancellationRequested);
                     }
                 }
@@ -153,6 +153,7 @@ namespace YukoCollectionsClient.Models.Progress
                 {
                     folderName = folderName.Replace(replaceChar.ToString(), "");
                 }
+
                 string collectionFolder = Path.Combine(_folder, folderName);
                 Directory.CreateDirectory(collectionFolder);
 
@@ -198,6 +199,7 @@ namespace YukoCollectionsClient.Models.Progress
                                 {
                                     downloaderLogger.Log(url, ex);
                                 }
+
                                 dispatcher.Invoke(() => Value++);
                             }
                         });
@@ -223,6 +225,7 @@ namespace YukoCollectionsClient.Models.Progress
                                 {
                                     pointCount = -1;
                                 }
+
                                 pointCount++;
                             }
                         }
