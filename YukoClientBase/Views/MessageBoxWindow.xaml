@@ -12,9 +12,11 @@
         Background="{DynamicResource Base.Grid.Background}"
         SnapsToDevicePixels="True"
         Topmost="True">
+
     <Window.Resources>
-        <ResourceDictionary Source="/Sergey.UI.Extension;component/Resources/UIStyle.xaml" />
+        <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/UIStyle.xaml" />
     </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

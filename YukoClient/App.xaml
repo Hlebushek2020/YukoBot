@@ -1,9 +1,8 @@
 ﻿<Application x:Class="YukoClient.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:YukoClient"
              Startup="Application_Startup">
     <Application.Resources>
-        <ResourceDictionary Source="/Sergey.UI.Extension;component/Resources/UIStyle.xaml"/>
+        <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/UIStyle.xaml" />
     </Application.Resources>
 </Application>
