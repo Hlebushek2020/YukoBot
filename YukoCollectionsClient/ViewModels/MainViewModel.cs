@@ -24,6 +24,7 @@ namespace YukoCollectionsClient.ViewModels
         private MessageCollection _selectedMessageCollection;
         private MessageCollectionItem _selectedMessageCollectionItem;
         private string _searchCollections;
+        private string _selectedUrl;
         #endregion
 
         #region Propirties
@@ -47,6 +48,12 @@ namespace YukoCollectionsClient.ViewModels
                 RemoveMessageCollectionItemCommand.RaiseCanExecuteChanged();
                 ExportMessageCollectionCommand.RaiseCanExecuteChanged();
                 ImportMessageCollectionCommand.RaiseCanExecuteChanged();
+
+                GetUrlsFromMessageCollectionCommand.RaiseCanExecuteChanged();
+                ClearUrlsCommand.RaiseCanExecuteChanged();
+                ExportUrlsCommand.RaiseCanExecuteChanged();
+                ImportUrlsCommand.RaiseCanExecuteChanged();
+                DownloadFilesCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -74,7 +81,17 @@ namespace YukoCollectionsClient.ViewModels
         }
 
         public ObservableCollection<string> Urls => _selectedMessageCollection?.Urls;
-        public string SelectedUrl { get; set; }
+
+        public string SelectedUrl
+        {
+            get => _selectedUrl;
+            set
+            {
+                _selectedUrl = value;
+                RaisePropertyChanged();
+                RemoveUrlCommand.RaiseCanExecuteChanged();
+            }
+        }
         #endregion
 
         #region Commands
@@ -164,7 +181,7 @@ namespace YukoCollectionsClient.ViewModels
                             MessageBoxImage.Question);
                         ProgressWindow progressWindow = new ProgressWindow(Title,
                             new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath,
-                                messageBoxResult == MessageBoxResult.Yes), true);
+                                messageBoxResult == MessageBoxResult.Yes));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -206,7 +223,6 @@ namespace YukoCollectionsClient.ViewModels
                     {
                         openFileDialog.DefaultExt = "json";
                         openFileDialog.Filter = "JavaScript Object Notation|*.json";
-
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
@@ -225,112 +241,108 @@ namespace YukoCollectionsClient.ViewModels
                     }
                 },
                 () => _selectedMessageCollection != null);
-            GetUrlsFromMessageCollectionCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0)
+            GetUrlsFromMessageCollectionCommand = new DelegateCommand(
+                () =>
                 {
                     if (_selectedMessageCollection.Urls.Count != 0 &&
-                        SUI.Dialogs.MessageBox.Show("Очистить список ссылок перед добавлением?", App.Name,
+                        MessageBox.Show("Очистить список ссылок перед добавлением?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Clear();
                     }
 
-                    ProgressWindow progress =
-                        new ProgressWindow(Title, new GetUrlsFromMessageCollection(_selectedMessageCollection), true);
+                    ProgressWindow progress = new ProgressWindow(Title,
+                        new GetUrlsFromMessageCollection(_selectedMessageCollection));
                     progress.ShowDialog();
-                }
-            });
+                },
+                () => _selectedMessageCollection != null);
+
             // Url Command
-            RemoveUrlCommand = new DelegateCommand(() =>
-            {
-                if (SelectedUrl != null)
+            RemoveUrlCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
+                    if (MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Remove(SelectedUrl);
                     }
-                }
-            });
-            ClearUrlsCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null && _selectedMessageCollection.Urls.Count > 0)
+                },
+                () => _selectedUrl != null);
+            ClearUrlsCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Clear();
                     }
-                }
-            });
-            ExportUrlsCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null && _selectedMessageCollection.Urls.Count > 0)
+                },
+                () => _selectedMessageCollection != null && _selectedMessageCollection.Urls.Count > 0);
+            ExportUrlsCommand = new DelegateCommand(
+                () =>
                 {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt", DefaultExt = "txt"
-                           })
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(Title, new ExportUrls(_selectedMessageCollection.Urls,
-                                    saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            ImportUrlsCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null)
-                {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt", DefaultExt = "txt"
-                           })
-                    {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            if (_selectedMessageCollection.Urls.Count > 0)
-                            {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    _selectedMessageCollection.Urls.Clear();
-                                }
-                            }
+                        saveFileDialog.Filter = "Текстовый докуент|*.txt";
+                        saveFileDialog.DefaultExt = "txt";
 
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(Title, new ImportUrls(_selectedMessageCollection.Urls,
-                                    openFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            DownloadFilesCommand = new DelegateCommand(() =>
-            {
-                if (_selectedMessageCollection != null && _selectedMessageCollection.Urls.Count > 0)
-                {
-                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog =
-                        new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
-                    if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
                         ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new Download(_selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath), true);
+                            new ExportUrls(_selectedMessageCollection.Urls, saveFileDialog.FileName));
                         progressWindow.ShowDialog();
                     }
-                }
-            });
+                },
+                () => _selectedMessageCollection != null);
+            ImportUrlsCommand = new DelegateCommand(
+                () =>
+                {
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                    {
+                        openFileDialog.Filter = "Текстовый докуент|*.txt";
+                        openFileDialog.DefaultExt = "txt";
+
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedMessageCollection.Urls.Count > 0)
+                        {
+                            if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                _selectedMessageCollection.Urls.Clear();
+                            }
+                        }
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ImportUrls(_selectedMessageCollection.Urls, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                    }
+                },
+                () => _selectedMessageCollection != null);
+            DownloadFilesCommand = new DelegateCommand(
+                () =>
+                {
+                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+                    {
+                        folderBrowserDialog.ShowNewFolderButton = true;
+
+                        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new Download(_selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath));
+                        progressWindow.ShowDialog();
+                    }
+                },
+                () => _selectedMessageCollection != null);
         }
 
         private bool MessageCollectionsFilter(object item)
         {
             return string.IsNullOrEmpty(_searchCollections) ||
-                   ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
+                ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
         }
     }
 }
