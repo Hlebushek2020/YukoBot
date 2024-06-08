@@ -103,14 +103,12 @@ namespace YukoCollectionsClient.ViewModels
 
         // Message Collections Commands
         public DelegateCommand UpdateMessageCollectionsCommand { get; }
-
         public DelegateCommand DownloadAllCollectionsCommand { get; }
 
         // Message Collection Commands
         public DelegateCommand RemoveMessageCollectionItemCommand { get; }
         public DelegateCommand ExportMessageCollectionCommand { get; }
         public DelegateCommand ImportMessageCollectionCommand { get; }
-
         public DelegateCommand GetUrlsFromMessageCollectionCommand { get; }
 
         // Url Command
