@@ -66,10 +66,9 @@ namespace YukoClient.Models.Progresses
                     }
                     else
                     {
-                        dispatcher.Invoke(() =>
-                            MessageBox.Show(
-                                "Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.",
-                                App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
+                        dispatcher.Invoke(() => MessageBox.Show(
+                            "Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.",
+                            App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                     }
                 }
             }
