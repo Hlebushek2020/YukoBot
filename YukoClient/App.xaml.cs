@@ -2,12 +2,12 @@
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using Sergey.UI.Extension.Themes;
 using YukoClient.Models.Web;
 using YukoClient.ViewModels;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Themes;
 using YukoClientBase.Views;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient
 {

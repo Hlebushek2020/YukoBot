@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
-using Prism.Commands;
-using Prism.Mvvm;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Responses;
 using YukoClientBase.Views;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {

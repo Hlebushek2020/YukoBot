@@ -2,12 +2,12 @@
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using Sergey.UI.Extension.Themes;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Themes;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.ViewModels;
-using SUI = Sergey.UI.Extension;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoCollectionsClient
 {
@@ -27,7 +27,7 @@ namespace YukoCollectionsClient
             _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
+                MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Prism.Commands;
-using Prism.Mvvm;
 using YukoClient.Models;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
@@ -120,10 +120,7 @@ namespace YukoClient.ViewModels
 
                 Server.Scripts.Add(new Script
                 {
-                    Channel = SelectedChannel,
-                    Mode = _selectedMode,
-                    MessageId = messageId,
-                    Count = messageCount
+                    Channel = SelectedChannel, Mode = _selectedMode, MessageId = messageId, Count = messageCount
                 });
 
                 closeAction.Invoke();

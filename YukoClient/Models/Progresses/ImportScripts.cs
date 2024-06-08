@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClientBase.Models.Progresses;
-using SUI = Sergey.UI.Extension;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.Models.Progresses
 {
@@ -60,14 +60,14 @@ namespace YukoClient.Models.Progresses
                         }
                         else
                         {
-                            dispatcher.Invoke(() => SUI.Dialogs.MessageBox.Show("Выбран некорректный сервер!", App.Name,
+                            dispatcher.Invoke(() => MessageBox.Show("Выбран некорректный сервер!", App.Name,
                                 MessageBoxButton.OK, MessageBoxImage.Warning));
                         }
                     }
                     else
                     {
                         dispatcher.Invoke(() =>
-                            SUI.Dialogs.MessageBox.Show(
+                            MessageBox.Show(
                                 "Невозможно открыть файл т.к. его версия не поддерживается текущей версией программы.",
                                 App.Name, MessageBoxButton.OK, MessageBoxImage.Warning));
                     }

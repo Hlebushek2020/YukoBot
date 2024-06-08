@@ -14,7 +14,7 @@ using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Providers;
 using YWeb = YukoCollectionsClient.Models.Web;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoCollectionsClient.Models.Progresses
 {
@@ -67,9 +67,9 @@ namespace YukoCollectionsClient.Models.Progresses
                             MessageCollectionItem mcItem = collection.Items
                                 .First(item => item.MessageId == urlsResponse.MessageId);
                             mcItem.IsChannelNotFound = urlsResponse.Error != null &&
-                                                       urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
+                                urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
                             mcItem.IsMessageNotFound = urlsResponse.Error != null &&
-                                                       urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
+                                urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
                         } while (urlsResponse.Next && !cancellationToken.IsCancellationRequested);
                     }
                 }

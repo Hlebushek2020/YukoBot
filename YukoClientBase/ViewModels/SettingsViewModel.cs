@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Prism.Commands;
+using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Windows;
-using Prism.Commands;
-using Sergey.UI.Extension.Themes;
-using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {

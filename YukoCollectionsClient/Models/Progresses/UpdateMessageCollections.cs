@@ -7,7 +7,7 @@ using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Responses;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoCollectionsClient.Models.Progresses
 {

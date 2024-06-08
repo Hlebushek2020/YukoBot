@@ -1,6 +1,7 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -8,8 +9,11 @@ using YukoClient.Models;
 using YukoClient.Models.Progresses;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
-using WinForm = System.Windows.Forms;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
+using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
+using DialogResult = System.Windows.Forms.DialogResult;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace YukoClient.ViewModels
 {
@@ -118,6 +122,7 @@ namespace YukoClient.ViewModels
 
         public event FullscreenEventHandler FullscreenEvent;
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public MainViewModel()
         {
             Storage.Current.PropertyChanged += (s, e) => RaisePropertyChanged(e.PropertyName);
@@ -205,45 +210,45 @@ namespace YukoClient.ViewModels
             ExportScriptsCommand = new DelegateCommand(
                 () =>
                 {
-                    using (WinForm.SaveFileDialog saveFileDialog = new WinForm.SaveFileDialog())
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
                         saveFileDialog.Filter = "Yuko Script|*.yukoscript";
                         saveFileDialog.DefaultExt = "yukoscript";
-                        if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow = new ProgressWindow(Title, new ExportScripts(
-                                _selectedServer.Scripts,
-                                _selectedServer.Id, saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
+
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ExportScripts(_selectedServer.Scripts, _selectedServer.Id, saveFileDialog.FileName));
+                        progressWindow.ShowDialog();
                     }
                 },
                 () => _selectedServer != null);
             ImportScriptsCommand = new DelegateCommand(
                 () =>
                 {
-                    using (WinForm.OpenFileDialog openFileDialog = new WinForm.OpenFileDialog())
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
                         openFileDialog.Filter = "Yuko Script|*.yukoscript";
                         openFileDialog.DefaultExt = "yukoscript";
-                        if (openFileDialog.ShowDialog() == WinForm.DialogResult.OK)
-                        {
-                            if (_selectedServer.Scripts.Count > 0)
-                            {
-                                if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    _selectedServer.Scripts.Clear();
-                                }
-                            }
 
-                            ProgressWindow progressWindow = new ProgressWindow(Title, new ImportScripts(
-                                _selectedServer.Scripts,
-                                _selectedServer.Id, openFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                            RunScriptsCommand.RaiseCanExecuteChanged();
-                            ClearScriptsCommand.RaiseCanExecuteChanged();
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedServer.Scripts.Count > 0)
+                        {
+                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                _selectedServer.Scripts.Clear();
+                            }
                         }
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ImportScripts(_selectedServer.Scripts, _selectedServer.Id, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                        RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
                     }
                 },
                 () => _selectedServer != null);
@@ -295,55 +300,59 @@ namespace YukoClient.ViewModels
             ExportUrlsCommand = new DelegateCommand(
                 () =>
                 {
-                    using (WinForm.SaveFileDialog saveFileDialog = new WinForm.SaveFileDialog())
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
                         saveFileDialog.Filter = "Текстовый докуент|*.txt";
                         saveFileDialog.DefaultExt = "txt";
-                        if (saveFileDialog.ShowDialog() == WinForm.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(Title,
-                                    new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
+
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
+                        progressWindow.ShowDialog();
                     }
                 },
                 () => _selectedServer != null);
             ImportUrlsCommand = new DelegateCommand(
                 () =>
                 {
-                    using (WinForm.OpenFileDialog openFileDialog = new WinForm.OpenFileDialog())
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
                         openFileDialog.Filter = "Текстовый докуент|*.txt";
                         openFileDialog.DefaultExt = "txt";
-                        if (openFileDialog.ShowDialog() == WinForm.DialogResult.OK)
-                        {
-                            if (_selectedServer.Urls.Count > 0)
-                            {
-                                if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    _selectedServer.Urls.Clear();
-                                }
-                            }
 
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(Title,
-                                    new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                            DownloadFilesCommand.RaiseCanExecuteChanged();
-                            ClearUrlsCommand.RaiseCanExecuteChanged();
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedServer.Urls.Count > 0)
+                        {
+                            if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                _selectedServer.Urls.Clear();
+                            }
                         }
+
+                        ProgressWindow progressWindow =
+                            new ProgressWindow(Title,
+                                new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                        DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
                     }
                 },
                 () => _selectedServer != null);
             DownloadFilesCommand = new DelegateCommand(
                 () =>
                 {
-                    WinForm.FolderBrowserDialog folderBrowserDialog =
-                        new WinForm.FolderBrowserDialog { ShowNewFolderButton = true };
-                    if (folderBrowserDialog.ShowDialog() == WinForm.DialogResult.OK)
+                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
                     {
+                        folderBrowserDialog.ShowNewFolderButton = true;
+
+                        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
                         ProgressWindow progressWindow = new ProgressWindow(Title,
                             new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
                         progressWindow.ShowDialog();

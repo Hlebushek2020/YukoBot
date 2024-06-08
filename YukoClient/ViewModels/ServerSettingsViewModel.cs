@@ -5,7 +5,7 @@ using System.Windows;
 using YukoClient.Models;
 using YukoClient.Models.Progresses;
 using YukoClientBase.Views;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {

@@ -10,7 +10,7 @@ using YukoClientBase.Interfaces;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progresses;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;

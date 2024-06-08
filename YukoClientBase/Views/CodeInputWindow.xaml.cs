@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using MessageBox = Sergey.UI.Extension.Dialogs.MessageBox;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClientBase.Views
 {
