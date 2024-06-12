@@ -47,6 +47,7 @@
         <TextBlock Grid.Column="1" Grid.Row="0"
                    Style="{StaticResource TextBlockStyle}"
                    Margin="10,10,10,10"
+                   MaxWidth="550"
                    TextWrapping="Wrap"
                    VerticalAlignment="Center"
                    Text="{Binding Path=Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
