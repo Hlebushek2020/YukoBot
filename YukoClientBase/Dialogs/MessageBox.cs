@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using YukoClientBase.ViewModels;
 using YukoClientBase.Views;
 
 namespace YukoClientBase.Dialogs
@@ -18,9 +19,10 @@ namespace YukoClientBase.Dialogs
         /// <returns>One of the <see cref="T:System.Windows.DialogResult"/> values</returns>
         public static MessageBoxResult Show(string text, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            MessageBoxWindow messageBox = new MessageBoxWindow(text, caption, button, icon);
+            MessageBoxViewModel viewModel = new MessageBoxViewModel(text, caption, button, icon);
+            MessageBoxWindow messageBox = new MessageBoxWindow(viewModel);
             messageBox.ShowDialog();
-            return messageBox.Result;
+            return viewModel.Result;
         }
     }
 }

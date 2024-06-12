@@ -110,6 +110,7 @@
     <Compile Include="ValueConverters\VisibilityValueConverter.cs" />
     <Compile Include="ViewModels\BaseAuthorizationViewModel.cs" />
       <Compile Include="ViewModels\DisplayTheme.cs"/>
+      <Compile Include="ViewModels\MessageBoxViewModel.cs"/>
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\AuthorizationWindow.xaml.cs">
@@ -171,6 +172,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Resources\dialog-error-64.png"/>
+        <Resource Include="Resources\dialog-information-64.png"/>
+        <Resource Include="Resources\dialog-question-64.png"/>
+        <Resource Include="Resources\dialog-warning-64.png"/>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
