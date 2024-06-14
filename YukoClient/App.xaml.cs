@@ -8,7 +8,7 @@ using YukoClientBase.Models;
 using YukoClientBase.Models.Themes;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
-using PResources = YukoClient.Properties.Resources;
+using BaseResources = YukoClientBase.Properties.Resources;
 
 namespace YukoClient
 {
@@ -35,7 +35,7 @@ namespace YukoClient
             _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                MessageBox.Show(PResources.App_AlreadyLaunched, Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(BaseResources.App_AlreadyLaunched, Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
 

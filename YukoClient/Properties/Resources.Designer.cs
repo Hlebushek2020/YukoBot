@@ -60,15 +60,6 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Клиент уже открыт! Запрещено открывать несколько клиентов..
-        /// </summary>
-        internal static string App_AlreadyLaunched {
-            get {
-                return ResourceManager.GetString("App.AlreadyLaunched", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap menu_add_32 {
