@@ -9,7 +9,7 @@ namespace YukoClientBase.ViewModels
 {
     internal class MessageBoxViewModel : BindableBase
     {
-        #region Fields
+        #region Fields (Static Readonly)
         private static readonly Uri _errorIcon = new Uri(
             "/YukoClientBase;component/Resources/dialog-error-64.png",
             UriKind.Relative);
@@ -29,7 +29,6 @@ namespace YukoClientBase.ViewModels
 
         #region Properties
         public double MaxHeight { get; }
-        public double MaxWidth { get; }
         public string Caption { get; }
         public ImageSource Image { get; }
         public bool ShowImage { get; }
@@ -41,7 +40,13 @@ namespace YukoClientBase.ViewModels
         public MessageBoxResult Result { get; private set; }
         #endregion
 
-        public DelegateCommand<MessageBoxResult> ButtonCommand { get; }
+        public DelegateCommand<object> ButtonCommand { get; }
+
+        #region CloseCallbackEvent
+        public delegate void CloseCallbackEventHandler();
+        public event CloseCallbackEventHandler CloseCallback;
+        protected virtual void OnCloseCallback() => CloseCallback?.Invoke();
+        #endregion
 
         public MessageBoxViewModel(
             string messageBoxText,
@@ -50,7 +55,6 @@ namespace YukoClientBase.ViewModels
             MessageBoxImage icon)
         {
             MaxHeight = (int)(SystemParameters.PrimaryScreenHeight / 2);
-            MaxWidth = (int)(SystemParameters.PrimaryScreenWidth / 2);
 
             Caption = caption;
             Text = messageBoxText;
@@ -107,6 +111,13 @@ namespace YukoClientBase.ViewModels
                     ShowImage = false;
                     break;
             }
+
+            ButtonCommand = new DelegateCommand<object>(
+                result =>
+                {
+                    Result = (MessageBoxResult)result;
+                    OnCloseCallback();
+                });
         }
     }
 }

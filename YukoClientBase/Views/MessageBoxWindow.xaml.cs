@@ -12,6 +12,7 @@ namespace YukoClientBase.Views
         {
             InitializeComponent();
             DataContext = viewModel;
+            viewModel.CloseCallback += Close;
         }
     }
 }

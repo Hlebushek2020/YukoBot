@@ -10,7 +10,6 @@
         d:DataContext="{d:DesignInstance {x:Type viewModels:MessageBoxViewModel}}"
         Title="{Binding Path=Caption, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         MaxHeight="{Binding Path=MaxHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        MaxWidth="{Binding Path=MaxWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         Style="{StaticResource WindowStyle}"
         FontSize="14"
         ResizeMode="NoResize"
