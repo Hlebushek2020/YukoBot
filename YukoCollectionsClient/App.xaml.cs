@@ -8,6 +8,7 @@ using YukoClientBase.Views;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.ViewModels;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
+using PResources = YukoCollectionsClient.Properties.Resources;
 
 namespace YukoCollectionsClient
 {
@@ -23,15 +24,21 @@ namespace YukoCollectionsClient
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SwitchTheme(null);
+            // set the theme
+            Uri themeUri = ThemeUri.Get(Settings.Current.Theme);
+            ResourceDictionary resource = (ResourceDictionary)LoadComponent(themeUri);
+            Resources.MergedDictionaries.Add(resource);
+
+            // check whether one of the clients is running or not
             _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name,
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(PResources.App_AlreadyLaunched, Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
+
             MainWindow = new MainWindow();
+
             AuthorizationWindow authorization = new AuthorizationWindow(new AuthorizationViewModel());
             authorization.ShowDialog();
 
@@ -42,23 +49,6 @@ namespace YukoCollectionsClient
                 MainWindow.WindowStyle = authorization.WindowStyle;
                 MainWindow.WindowState = authorization.WindowState;
                 MainWindow.Show();
-            }
-        }
-
-        public static void SwitchTheme(Theme? theme)
-        {
-            Settings settings = Settings.Current;
-            if (!theme.HasValue || settings.Theme != theme.Value)
-            {
-                Uri uri = ThemeUri.Get(settings.Theme);
-                if (theme.HasValue)
-                {
-                    settings.Theme = theme.Value;
-                    uri = ThemeUri.Get(theme.Value);
-                }
-                ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
-                Current.Resources.MergedDictionaries.Clear();
-                Current.Resources.MergedDictionaries.Add(resource);
             }
         }
     }
