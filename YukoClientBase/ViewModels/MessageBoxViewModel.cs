@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 
 namespace YukoClientBase.ViewModels
 {
-    internal class MessageBoxViewModel : BindableBase
+    internal sealed class MessageBoxViewModel : BindableBase
     {
         #region Fields (Static Readonly)
         private static readonly Uri _errorIcon = new Uri(
@@ -45,7 +45,7 @@ namespace YukoClientBase.ViewModels
         #region CloseCallbackEvent
         public delegate void CloseCallbackEventHandler();
         public event CloseCallbackEventHandler CloseCallback;
-        protected virtual void OnCloseCallback() => CloseCallback?.Invoke();
+        private void OnCloseCallback() => CloseCallback?.Invoke();
         #endregion
 
         public MessageBoxViewModel(
