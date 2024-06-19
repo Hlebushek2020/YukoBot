@@ -8,6 +8,7 @@ namespace YukoClientBase.Models
     public class Settings
     {
         public const string YukoClientMutexName = "YukoClientMutex";
+        public const string FakePassword = "FakePassword";
         public const string ServersCacheFile = "servers.json";
 
         #region Static members

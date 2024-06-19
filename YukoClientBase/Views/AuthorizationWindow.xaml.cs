@@ -17,22 +17,27 @@ namespace YukoClientBase.Views
             DataContext = authorizationViewModel;
 
             authorizationViewModel.SetCloseAction(Close);
-            authorizationViewModel.SetGetPasswordFunc(() => passwordBox_Password.Password);
+            authorizationViewModel.SetGetPasswordFunc(() =>
+            {
+                if (!Settings.FakePassword.Equals(passwordBox_Password.Password))
+                    return passwordBox_Password.Password;
 
-            Settings.LoadLoginData(out string login, out byte[] protectedData);
-
-            if (login == null)
-                return;
-
-            passwordBox_Password.Password =
-                Encoding.UTF8.GetString(
+                Settings.LoadLoginData(out _, out byte[] protectedData);
+                return Encoding.UTF8.GetString(
                     ProtectedData.Unprotect(
                         protectedData,
                         null,
                         DataProtectionScope.CurrentUser));
+            });
 
-            authorizationViewModel.IsRemember = true;
+            Settings.LoadLoginData(out string login, out _);
+
+            if (string.IsNullOrWhiteSpace(login))
+                return;
+
             authorizationViewModel.Login = login;
+            passwordBox_Password.Password = Settings.FakePassword;
+            authorizationViewModel.IsRemember = true;
 
             authorizationViewModel.FullscreenEvent += AuthorizationViewModelOnFullscreenEvent;
         }

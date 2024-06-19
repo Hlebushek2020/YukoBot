@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Web.Requests;
@@ -77,6 +77,7 @@ namespace YukoClientBase.Models.Web
             using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                password = null;
                 StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
                 foreach (byte code in hashBytes)
                     hashBuilder.Append(code.ToString("X2"));
