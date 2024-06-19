@@ -90,9 +90,8 @@
     <Compile Include="Models\DownloaderLogger.cs" />
     <Compile Include="Models\Progresses\BaseProgressModel.cs" />
     <Compile Include="Models\Settings.cs" />
-      <Compile Include="Models\Themes\Attributes\DisplayAttribute.cs"/>
-      <Compile Include="Models\Themes\Theme.cs"/>
-      <Compile Include="Models\Themes\ThemeUri.cs"/>
+      <Compile Include="Models\Themes.cs"/>
+      <Compile Include="Models\ThemesUri.cs"/>
     <Compile Include="Models\Web\Errors\BaseErrorJson.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />

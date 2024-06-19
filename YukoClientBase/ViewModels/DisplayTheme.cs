@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using YukoClientBase.Models.Themes;
-using YukoClientBase.Models.Themes.Attributes;
+using YukoClientBase.Models;
+using YukoClientBase.Properties;
 
 namespace YukoClientBase.ViewModels
 {
@@ -14,36 +13,23 @@ namespace YukoClientBase.ViewModels
         /// <summary>
         /// Returns the theme
         /// </summary>
-        public Theme Value { get; }
+        public Themes Value { get; }
 
         /// <summary>
         /// Returns the title of the theme to display
         /// </summary>
-        public string Display
-        {
-            get
-            {
-                Type type = Value.GetType();
-                MemberInfo[] memInfo = type.GetMember(Value.ToString());
-                if (memInfo.Length > 0)
-                {
-                    object[] attrs = memInfo[0].GetCustomAttributes(typeof(DisplayAttribute), false);
-                    if (attrs.Length > 0)
-                    {
-                        return ((DisplayAttribute)attrs[0]).Value;
-                    }
-                }
-                return Value.ToString();
-            }
-        }
+        public string Title { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DisplayTheme"/> structure for the specified theme
         /// </summary>
         /// <param name="value">Theme</param>
-        public DisplayTheme(Theme value)
+        public DisplayTheme(Themes value)
         {
             Value = value;
+
+            string resourceKey = $"Enum.{nameof(Themes)}.{value.ToString()}";
+            Title = Resources.ResourceManager.GetString(resourceKey) ?? value.ToString();
         }
 
         /// <summary>
@@ -53,10 +39,8 @@ namespace YukoClientBase.ViewModels
         public static List<DisplayTheme> GetList()
         {
             List<DisplayTheme> displayThemes = new List<DisplayTheme>();
-            foreach (Theme theme in Enum.GetValues(typeof(Theme)))
-            {
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
                 displayThemes.Add(new DisplayTheme(theme));
-            }
             return displayThemes;
         }
     }

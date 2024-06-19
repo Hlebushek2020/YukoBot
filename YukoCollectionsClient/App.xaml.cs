@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using YukoClientBase.Models;
-using YukoClientBase.Models.Themes;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.ViewModels;
@@ -25,7 +24,7 @@ namespace YukoCollectionsClient
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // set the theme
-            Uri themeUri = ThemeUri.Get(Settings.Current.Theme);
+            Uri themeUri = ThemesUri.Get(Settings.Current.Theme);
             ResourceDictionary resource = (ResourceDictionary)LoadComponent(themeUri);
             Resources.MergedDictionaries.Add(resource);
 

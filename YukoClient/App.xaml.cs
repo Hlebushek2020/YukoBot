@@ -5,7 +5,6 @@ using System.Windows;
 using YukoClient.Models.Web;
 using YukoClient.ViewModels;
 using YukoClientBase.Models;
-using YukoClientBase.Models.Themes;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 using BaseResources = YukoClientBase.Properties.Resources;
@@ -27,7 +26,7 @@ namespace YukoClient
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // set the theme
-            Uri themeUri = ThemeUri.Get(Settings.Current.Theme);
+            Uri themeUri = ThemesUri.Get(Settings.Current.Theme);
             ResourceDictionary resource = (ResourceDictionary)LoadComponent(themeUri);
             Resources.MergedDictionaries.Add(resource);
 

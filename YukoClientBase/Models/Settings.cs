@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Text;
-using YukoClientBase.Models.Themes;
 
 namespace YukoClientBase.Models
 {
@@ -50,14 +49,14 @@ namespace YukoClientBase.Models
         }
         #endregion
 
-        public Theme Theme { get; set; }
+        public Themes Theme { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public int MaxDownloadThreads { get; set; }
 
         private Settings()
         {
-            Theme = Theme.Light;
+            Theme = Themes.Light;
             Host = "127.0.0.1";
             Port = 10000;
             MaxDownloadThreads = 4;
