@@ -6,8 +6,9 @@
         xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:BaseAuthorizationViewModel}}"
-        Title="{Binding Title, Mode=OneWay}"
-        Style="{StaticResource WindowStyle}"
+        Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Background="{DynamicResource NormalBackground}"
+        Foreground="{DynamicResource NormalForeground}"
         Height="490"
         MinHeight="500"
         Width="800"
@@ -75,7 +76,9 @@
                     Width="120"
                     IsDefault="True"
                     Command="{Binding LoginCommand}" />
+
         </StackPanel>
+
         <Button Style="{StaticResource IconButtonStyle}"
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
@@ -86,5 +89,6 @@
                 Command="{Binding SettingsCommand}" VerticalAlignment="Bottom">
             <Image Source="pack://application:,,,/YukoClientBase;component/Resources/settings-48.png" />
         </Button>
+
     </Grid>
 </Window>

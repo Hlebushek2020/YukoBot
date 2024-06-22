@@ -7,13 +7,15 @@
         xmlns:valueConverters="clr-namespace:YukoClientBase.ValueConverters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:ProgressViewModel}}"
-        Title="{Binding Title, Mode=OneWay}"
-        Style="{StaticResource WindowStyle}"
+        Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Background="{DynamicResource NormalBackground}"
+        Foreground="{DynamicResource NormalForeground}"
         Width="620"
         FontSize="14"
         ResizeMode="NoResize"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
+
     <Window.Resources>
         <valueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter" />
     </Window.Resources>
@@ -42,5 +44,7 @@
                 IsCancel="True"
                 IsEnabled="{Binding Path=CancelButtonIsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 Visibility="{Binding Path=IsCancellable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityValueConverter}}" />
+
     </StackPanel>
+
 </Window>

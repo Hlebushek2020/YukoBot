@@ -1,6 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!--Base-->
+    <!-- General -->
+    <SolidColorBrush x:Key="NormalBackground" Color="#fff0f0f0" />
+    <SolidColorBrush x:Key="NormalForeground" Color="#ff000000" />
+
+
+    <!-- OLD OLD OLD OLD OLD OLD -->
     <SolidColorBrush x:Key="Base.Foreground" Color="Black" />
     <SolidColorBrush x:Key="Base.NotEnabled.Foreground" Color="Gray" />
     <SolidColorBrush x:Key="Base.Grid.Background" Color="White" />

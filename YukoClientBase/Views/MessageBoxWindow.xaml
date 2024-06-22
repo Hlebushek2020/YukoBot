@@ -10,12 +10,12 @@
         d:DataContext="{d:DesignInstance {x:Type viewModels:MessageBoxViewModel}}"
         Title="{Binding Path=Caption, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         MaxHeight="{Binding Path=MaxHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Style="{StaticResource WindowStyle}"
+        Background="{DynamicResource NormalBackground}"
+        Foreground="{DynamicResource NormalForeground}"
         FontSize="14"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
-        Background="{DynamicResource Base.Grid.Background}"
         SnapsToDevicePixels="True"
         Topmost="True">
 

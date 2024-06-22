@@ -6,17 +6,21 @@
         xmlns:viewModels="clr-namespace:YukoClient.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:ExecutionErrorsViewModel}"
-        Title="{Binding Path=Title, Mode=OneWay}"
-        Style="{StaticResource WindowStyle}"
+        Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Background="{DynamicResource NormalBackground}"
+        Foreground="{DynamicResource NormalForeground}"
         Height="450"
         Width="800"
         FontSize="14"
         WindowStartupLocation="CenterScreen">
+
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding Path=CloseWindowCommand}" />
     </Window.InputBindings>
+
     <Grid Margin="10">
         <ListBox ItemsSource="{Binding Path=Errors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         <!-- https://asp-blogs.azurewebsites.net/thomaslebrun/wpf-how-to-gray-the-icon-of-a-menuitem -->
     </Grid>
+
 </Window>
