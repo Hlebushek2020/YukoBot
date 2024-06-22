@@ -3,6 +3,7 @@
     <!-- General -->
     <SolidColorBrush x:Key="NormalBackground" Color="#fff0f0f0" />
     <SolidColorBrush x:Key="NormalForeground" Color="#ff000000" />
+    <SolidColorBrush x:Key="LogoBorder" Color="#ffea7e80" />
 
 
     <!--Base-->

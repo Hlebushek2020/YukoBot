@@ -31,7 +31,7 @@
                         CornerRadius="20"
                         Background="{Binding Path=Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Border BorderThickness="4"
-                        BorderBrush="Orange"
+                        BorderBrush="{DynamicResource LogoBorder}"
                         Height="132"
                         Width="132"
                         CornerRadius="20" />
