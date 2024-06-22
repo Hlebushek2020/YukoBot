@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:AddScriptViewModel}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Background="{DynamicResource NormalBackground}"
-        Foreground="{DynamicResource NormalForeground}"
+        Style="{DynamicResource WindowStyle}"
         Width="600"
         FontSize="14"
         WindowStartupLocation="CenterScreen"
@@ -22,13 +21,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource TextBlockStyle}"
-                   Grid.Row="0"
-                   HorizontalAlignment="Left"
-                   Margin="0,4,0,0"
-                   TextWrapping="NoWrap"
-                   Text="Канал"
-                   VerticalAlignment="Top" />
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Left"
+            Margin="0,4,0,0"
+            TextWrapping="NoWrap"
+            Text="Канал"
+            VerticalAlignment="Top" />
         <ComboBox Grid.Row="0"
                   VerticalAlignment="Top"
                   Margin="43,0,0,0"
@@ -36,35 +35,35 @@
                   ItemsSource="{Binding Server.Channels, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding SelectedChannel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Style="{StaticResource TextBlockStyle}"
-                   Grid.Row="0"
-                   HorizontalAlignment="Left"
-                   Margin="0,36,0,0"
-                   TextWrapping="NoWrap"
-                   Text="Получить"
-                   VerticalAlignment="Top" />
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Left"
+            Margin="0,36,0,0"
+            TextWrapping="NoWrap"
+            Text="Получить"
+            VerticalAlignment="Top" />
         <ComboBox Grid.Row="0"
                   VerticalAlignment="Top"
                   Margin="66,32,0,0"
                   DisplayMemberPath="Title"
                   ItemsSource="{Binding Modes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBlock Style="{StaticResource TextBlockStyle}"
-                   Grid.Row="1"
-                   HorizontalAlignment="Left"
-                   Margin="0,5"
-                   TextWrapping="Wrap"
-                   VerticalAlignment="Top"
-                   Text="{Binding ModeDescription, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock
+            Grid.Row="1"
+            HorizontalAlignment="Left"
+            Margin="0,5"
+            TextWrapping="Wrap"
+            VerticalAlignment="Top"
+            Text="{Binding ModeDescription, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Style="{StaticResource TextBlockStyle}"
-                   Grid.Row="2"
-                   HorizontalAlignment="Left"
-                   Margin="0,5,0,0"
-                   TextWrapping="NoWrap"
-                   Text="Сообщение (Id)"
-                   VerticalAlignment="Top"
-                   IsEnabled="{Binding IsEnabledMessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock
+            Grid.Row="2"
+            HorizontalAlignment="Left"
+            Margin="0,5,0,0"
+            TextWrapping="NoWrap"
+            Text="Сообщение (Id)"
+            VerticalAlignment="Top"
+            IsEnabled="{Binding IsEnabledMessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox Grid.Row="2"
                  Margin="105,0,0,0"
                  TextWrapping="NoWrap"
@@ -72,14 +71,14 @@
                  IsEnabled="{Binding IsEnabledMessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                  Text="{Binding MessageId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Style="{StaticResource TextBlockStyle}"
-                   Grid.Row="2"
-                   HorizontalAlignment="Left"
-                   Margin="0,39,0,0"
-                   TextWrapping="NoWrap"
-                   Text="Количество"
-                   VerticalAlignment="Top"
-                   IsEnabled="{Binding IsEnabledMessageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock
+            Grid.Row="2"
+            HorizontalAlignment="Left"
+            Margin="0,39,0,0"
+            TextWrapping="NoWrap"
+            Text="Количество"
+            VerticalAlignment="Top"
+            IsEnabled="{Binding IsEnabledMessageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox Grid.Row="2"
                  Margin="80,34,0,0"
                  TextWrapping="NoWrap"
@@ -87,25 +86,25 @@
                  IsEnabled="{Binding IsEnabledMessageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                  Text="{Binding MessageCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Button Style="{StaticResource ButtonStyle}"
-                Grid.Row="2"
-                Content="Применить"
-                Height="30"
-                HorizontalAlignment="Right"
-                Margin="0,73,105,0"
-                VerticalAlignment="Top"
-                Width="120"
-                IsDefault="True"
-                Command="{Binding ApplyCommand}" />
-        <Button Style="{StaticResource ButtonStyle}"
-                Grid.Row="2"
-                Content="Закрыть"
-                Height="30"
-                HorizontalAlignment="Right"
-                Margin="0,73,0,0"
-                VerticalAlignment="Top"
-                Width="100"
-                IsCancel="True"
-                Command="{Binding CloseCommand}" />
+        <Button
+            Grid.Row="2"
+            Content="Применить"
+            Height="30"
+            HorizontalAlignment="Right"
+            Margin="0,73,105,0"
+            VerticalAlignment="Top"
+            Width="120"
+            IsDefault="True"
+            Command="{Binding ApplyCommand}" />
+        <Button
+            Grid.Row="2"
+            Content="Закрыть"
+            Height="30"
+            HorizontalAlignment="Right"
+            Margin="0,73,0,0"
+            VerticalAlignment="Top"
+            Width="100"
+            IsCancel="True"
+            Command="{Binding CloseCommand}" />
     </Grid>
 </Window>

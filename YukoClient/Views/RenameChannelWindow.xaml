@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:RenameChannelViewModel}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Background="{DynamicResource NormalBackground}"
-        Foreground="{DynamicResource NormalForeground}"
+        Style="{DynamicResource WindowStyle}"
         Width="600"
         FontSize="14"
         ResizeMode="CanMinimize"
@@ -16,7 +15,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}">
+        <Style TargetType="{x:Type Button}">
             <Setter Property="Height" Value="30" />
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />

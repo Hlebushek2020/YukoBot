@@ -154,6 +154,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Styles\Controls\Window.xaml"/>
       <Resource Include="Resources\Styles\Themes\Dark.xaml"/>
       <Resource Include="Resources\Styles\Themes\Light.xaml"/>
       <Resource Include="Resources\Styles\UIStyle.xaml"/>

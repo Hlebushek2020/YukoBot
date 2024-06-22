@@ -8,8 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Background="{DynamicResource NormalBackground}"
-        Foreground="{DynamicResource NormalForeground}"
+        Style="{DynamicResource WindowStyle}"
         Height="450"
         Width="800"
         FontSize="14"
@@ -30,7 +29,7 @@
         <Style x:Key="HeadGridStyle" TargetType="Grid">
             <Setter Property="Background" Value="{DynamicResource MainWindow.Head.Background}" />
         </Style>
-        <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
+        <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Medium" />
             <Setter Property="FontSize" Value="18" />
         </Style>
@@ -41,7 +40,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Style="{StaticResource HeadGridStyle}">
+        <Grid Grid.Row="0" Style="{DynamicResource HeadGridStyle}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -56,11 +55,11 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource TitleTextBlockStyle}"
+                <TextBlock Grid.Row="0" HorizontalAlignment="Left" Style="{DynamicResource TitleTextBlockStyle}"
                            Margin="0" TextWrapping="Wrap"
                            Text="{Binding Username, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                            VerticalAlignment="Bottom" />
-                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource TextBlockStyle}"
+                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Style="{DynamicResource TextBlockStyle}"
                            Margin="0,5,0,0" TextWrapping="Wrap"
                            Text="{Binding UserId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                            VerticalAlignment="Top" />
@@ -69,7 +68,7 @@
                 <!-- PROGRESS ITEMS -->
             </Grid>
             <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5,0,10,0" BorderThickness="0" Padding="2"
-                    Style="{StaticResource IconButtonStyle}" Command="{Binding AppSettingsCommand}"
+                    Style="{DynamicResource IconButtonStyle}" Command="{Binding AppSettingsCommand}"
                     VerticalAlignment="Center" Height="34" Width="34">
                 <Image Source="/YukoClientBase;component/Resources/settings-48.png" />
             </Button>
@@ -109,11 +108,12 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" HorizontalAlignment="Left"
-                                           Style="{StaticResource TitleTextBlockStyle}" Margin="0" TextWrapping="Wrap"
+                                           Style="{DynamicResource TitleTextBlockStyle}" Margin="0" TextWrapping="Wrap"
                                            Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                            VerticalAlignment="Bottom" />
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Left"
-                                           Style="{StaticResource TextBlockStyle}" Margin="0,5,0,0" TextWrapping="Wrap"
+                                           Style="{DynamicResource TextBlockStyle}" Margin="0,5,0,0"
+                                           TextWrapping="Wrap"
                                            Text="{Binding Channels.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat='Доступно {0} каналов'}"
                                            VerticalAlignment="Top" />
                             </Grid>
@@ -131,31 +131,31 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Добавить правило"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Добавить правило"
                                 Command="{Binding AddScriptCommand}">
                             <Image Source="/Resources/menu-add-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить правило"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Удалить правило"
                                 Command="{Binding RemoveScriptCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Очистить"
                                 Command="{Binding ClearScriptsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать правила"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Экспортировать правила"
                                 Command="{Binding ExportScriptsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать правилa"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Импортировать правилa"
                                 Command="{Binding ImportScriptsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Выполнить правила"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Выполнить правила"
                                 Command="{Binding RunScriptsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-start-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Просмотреть ошибки"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Просмотреть ошибки"
                                 Command="{Binding ShowExecutionErrorsCommand}">
                             <Image Source="/Resources/menu-error-32.png" />
                         </Button>
@@ -176,8 +176,7 @@
                             </GridView>
                         </ListView.View>
                         <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem"
-                                   BasedOn="{StaticResource  {x:Type ListViewItem}}">
+                            <Style TargetType="ListViewItem">
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
@@ -222,23 +221,23 @@
                               VerticalAlignment="Center" />
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Удалить"
                                 Command="{Binding RemoveUrlCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Очистить"
                                 Command="{Binding ClearUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Экспортировать список"
                                 Command="{Binding ExportUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Импортировать список"
                                 Command="{Binding ImportUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать"
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Скачать"
                                 Command="{Binding DownloadFilesCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-download-32.png" />
                         </Button>

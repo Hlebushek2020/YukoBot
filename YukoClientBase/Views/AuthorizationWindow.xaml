@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:BaseAuthorizationViewModel}}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Background="{DynamicResource NormalBackground}"
-        Foreground="{DynamicResource NormalForeground}"
+        Style="{DynamicResource WindowStyle}"
         Height="490"
         MinHeight="500"
         Width="800"
@@ -37,8 +36,7 @@
                         CornerRadius="20" />
             </Grid>
 
-            <TextBlock Style="{StaticResource TextBlockStyle}"
-                       HorizontalAlignment="Center"
+            <TextBlock HorizontalAlignment="Center"
                        Margin="0,10,0,0"
                        TextWrapping="Wrap"
                        Text="Логин"
@@ -50,8 +48,7 @@
                      Margin="0,5,0,0"
                      Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock Style="{StaticResource TextBlockStyle}"
-                       HorizontalAlignment="Center"
+            <TextBlock HorizontalAlignment="Center"
                        Margin="0,5,0,0"
                        TextWrapping="Wrap"
                        Text="Пароль"
@@ -67,8 +64,7 @@
                       Content="Запомнить (Нерекомендуется)"
                       IsChecked="{Binding Path=IsRemember, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Button Style="{StaticResource ButtonStyle}"
-                    Content="Войти"
+            <Button Content="Войти"
                     Height="30"
                     HorizontalAlignment="Center"
                     Margin="0,10,0,0"
@@ -79,8 +75,7 @@
 
         </StackPanel>
 
-        <Button Style="{StaticResource IconButtonStyle}"
-                HorizontalAlignment="Right"
+        <Button HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 BorderThickness="0"
                 Padding="2"

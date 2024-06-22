@@ -8,8 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:ServerSettingsViewModel}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-        Background="{DynamicResource NormalBackground}"
-        Foreground="{DynamicResource NormalForeground}"
+        Style="{DynamicResource WindowStyle}"
         Height="450"
         Width="800"
         WindowStartupLocation="CenterScreen"
@@ -25,19 +24,19 @@
     <Grid Margin="10">
 
         <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Переименовать"
+            <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Переименовать"
                     Command="{Binding RenameChannelCommand}">
                 <Image Source="/Resources/menu-edit-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить"
+            <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Удалить"
                     Command="{Binding RemoveSelectedChannelsCommand}">
                 <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить"
+            <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Очистить"
                     Command="{Binding ClearChannelListCommand}">
                 <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
             </Button>
-            <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить"
+            <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Обновить"
                     Command="{Binding UpdateChannelListCommand}">
                 <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png" />
             </Button>
