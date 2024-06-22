@@ -118,7 +118,9 @@
     <Compile Include="Views\CodeInputWindow.xaml.cs">
       <DependentUpon>CodeInputWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MessageBoxWindow.xaml.cs"/>
+    <Compile Include="Views\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
@@ -127,47 +129,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <Resource Include="Resources\Styles\Controls\TextBlock.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\settings-48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-download-32.png" />
-    <Resource Include="Resources\menu-export-32.png" />
-    <Resource Include="Resources\menu-import-32.png" />
-    <Resource Include="Resources\menu-start-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-delete-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-clear-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\menu-refresh-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Styles\Controls\Window.xaml"/>
-    <Resource Include="Resources\Styles\Themes\Dark.xaml"/>
-    <Resource Include="Resources\Styles\Themes\Light.xaml"/>
-    <Resource Include="Resources\Styles\UIStyle.xaml"/>
-    <Resource Include="Resources\Styles\Controls\TextBox.xaml"/>
     <Page Include="Views\AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CodeInputWindow.xaml" />
-    <Page Include="Views\MessageBoxWindow.xaml"/>
+    <Page Include="Views\CodeInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -178,10 +151,47 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\dialog-error-64.png"/>
     <Resource Include="Resources\dialog-information-64.png"/>
     <Resource Include="Resources\dialog-question-64.png"/>
     <Resource Include="Resources\dialog-warning-64.png"/>
+    <Resource Include="Resources\settings-48.png" />
+    <Resource Include="Resources\menu-download-32.png" />
+    <Resource Include="Resources\menu-export-32.png" />
+    <Resource Include="Resources\menu-import-32.png" />
+    <Resource Include="Resources\menu-start-32.png" />
+    <Resource Include="Resources\menu-delete-32.png" />
+    <Resource Include="Resources\menu-clear-32.png" />
+    <Resource Include="Resources\menu-refresh-32.png"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Styles\Controls\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Controls\TextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Controls\TextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\UIStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Themes\Dark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Themes\Light.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
