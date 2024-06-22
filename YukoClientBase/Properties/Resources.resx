@@ -33,4 +33,10 @@
     <data name="App.AlreadyLaunched" xml:space="preserve">
         <value>Клиент уже открыт! Запрещено открывать несколько клиентов.</value>
     </data>
+    <data name="AuthorizationWindow.TextBlock.Login" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="AuthorizationWindow.TextBlock.Password" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
 </root>
