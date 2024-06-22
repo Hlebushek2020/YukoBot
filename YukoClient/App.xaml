@@ -3,6 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Startup="Application_Startup">
     <Application.Resources>
-        <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/Window.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/Window.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

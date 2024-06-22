@@ -42,7 +42,8 @@
                        Text="Логин"
                        FontWeight="Medium"
                        VerticalAlignment="Top" />
-            <TextBox TextAlignment="Center"
+            <TextBox Style="{DynamicResource TextBoxStyle}"
+                     TextAlignment="Center"
                      TextWrapping="NoWrap"
                      VerticalAlignment="Top"
                      Margin="0,5,0,0"

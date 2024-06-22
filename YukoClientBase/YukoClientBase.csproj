@@ -158,6 +158,7 @@
       <Resource Include="Resources\Styles\Themes\Dark.xaml"/>
       <Resource Include="Resources\Styles\Themes\Light.xaml"/>
       <Resource Include="Resources\Styles\UIStyle.xaml"/>
+    <Resource Include="Resources\Styles\Controls\TextBox.xaml"/>
     <Page Include="Views\AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
