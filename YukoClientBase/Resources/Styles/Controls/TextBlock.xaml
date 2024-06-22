@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="#00FFFFFF" />
         <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />

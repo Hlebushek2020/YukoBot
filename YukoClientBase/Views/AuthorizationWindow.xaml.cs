@@ -19,8 +19,8 @@ namespace YukoClientBase.Views
             authorizationViewModel.SetCloseAction(Close);
             authorizationViewModel.SetGetPasswordFunc(() =>
             {
-                if (!Settings.FakePassword.Equals(passwordBox_Password.Password))
-                    return passwordBox_Password.Password;
+                if (!Settings.FakePassword.Equals(PasswordBoxPassword.Password))
+                    return PasswordBoxPassword.Password;
 
                 Settings.LoadLoginData(out _, out byte[] protectedData);
                 return Encoding.UTF8.GetString(
@@ -36,7 +36,7 @@ namespace YukoClientBase.Views
                 return;
 
             authorizationViewModel.Login = login;
-            passwordBox_Password.Password = Settings.FakePassword;
+            PasswordBoxPassword.Password = Settings.FakePassword;
             authorizationViewModel.IsRemember = true;
 
             authorizationViewModel.FullscreenEvent += AuthorizationViewModelOnFullscreenEvent;
