@@ -69,6 +69,24 @@ namespace YukoClientBase.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Войти.
+        /// </summary>
+        public static string AuthorizationWindow_Button_Login {
+            get {
+                return ResourceManager.GetString("AuthorizationWindow.Button.Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запомнить (Нерекомендуется).
+        /// </summary>
+        public static string AuthorizationWindow_CheckBox_RememberMe {
+            get {
+                return ResourceManager.GetString("AuthorizationWindow.CheckBox.RememberMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Логин.
         /// </summary>
         public static string AuthorizationWindow_TextBlock_Login {

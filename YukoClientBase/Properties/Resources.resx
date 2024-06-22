@@ -39,4 +39,10 @@
     <data name="AuthorizationWindow.TextBlock.Password" xml:space="preserve">
         <value>Пароль</value>
     </data>
+    <data name="AuthorizationWindow.CheckBox.RememberMe" xml:space="preserve">
+        <value>Запомнить (Нерекомендуется)</value>
+    </data>
+    <data name="AuthorizationWindow.Button.Login" xml:space="preserve">
+        <value>Войти</value>
+    </data>
 </root>

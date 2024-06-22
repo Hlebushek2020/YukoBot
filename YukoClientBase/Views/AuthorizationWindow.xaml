@@ -67,10 +67,10 @@
 
             <CheckBox Margin="0,10,0,0"
                       HorizontalAlignment="Center"
-                      Content="Запомнить (Нерекомендуется)"
+                      Content="{x:Static props:Resources.AuthorizationWindow_CheckBox_RememberMe}"
                       IsChecked="{Binding Path=IsRemember, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Button Content="Войти"
+            <Button Content="{x:Static props:Resources.AuthorizationWindow_Button_Login}"
                     Height="30"
                     HorizontalAlignment="Center"
                     Margin="0,10,0,0"
