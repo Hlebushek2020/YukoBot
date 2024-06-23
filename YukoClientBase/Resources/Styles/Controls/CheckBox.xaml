@@ -5,34 +5,36 @@
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Margin="17,0,0,0" SnapsToDevicePixels="True" Stroke="{StaticResource BorderAlt3}"
-                               StrokeThickness="{StaticResource Windows11Light.StrokeThickness1}"
-                               StrokeDashArray="{StaticResource Windows11Light.StrokeDashArray}" />
+                    <Rectangle Margin="17,0,0,0"
+                               SnapsToDevicePixels="True"
+                               Stroke="{DynamicResource BorderAlt3}"
+                               StrokeThickness="1,1,1,1"
+                               StrokeDashArray="1,2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style x:Key="CheckBoxFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle SnapsToDevicePixels="True" Margin="{StaticResource Windows11Light.FocusMargin}"
-                               Stroke="{StaticResource BorderAlt3}"
-                               StrokeThickness="{StaticResource Windows11Light.StrokeThickness1}"
-                               StrokeDashArray="{StaticResource Windows11Light.StrokeDashArray}" />
+                    <Rectangle SnapsToDevicePixels="True"
+                               Margin="2,2,2,2"
+                               Stroke="{DynamicResource BorderAlt3}"
+                               StrokeThickness="1,1,1,1"
+                               StrokeDashArray="1,2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="WPFCheckBoxStyle" TargetType="{x:Type CheckBox}">
+
+    <Style x:Key="CheckBoxStyle" TargetType="{x:Type CheckBox}">
         <Setter Property="FrameworkElement.FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}" />
         <Setter Property="Background" Value="#00FFFFFF" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderAlt1}" />
-        <Setter Property="BorderThickness" Value="{StaticResource Windows11Light.BorderThickness1}" />
-        <Setter Property="Foreground" Value="{StaticResource ContentForeground}" />
-        <Setter Property="FontFamily" Value="{StaticResource Windows11Light.ThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{StaticResource Windows11Light.BodyTextStyle}" />
-        <Setter Property="FontWeight" Value="{StaticResource Windows11Light.FontWeightNormal}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt1}" />
+        <Setter Property="BorderThickness" Value="1,1,1,1" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
@@ -42,47 +44,69 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Ellipse Name="OverlayCircle" Height="24" Width="24" Visibility="Collapsed"
-                                 Fill="{StaticResource PrimaryBackgroundOpacity2}" />
-                        <Border Name="checkBoxBorder"
+                        <Ellipse Grid.Column="0"
+                                 Name="OverlayCircle"
+                                 Height="24"
+                                 Width="24"
+                                 Visibility="Collapsed"
+                                 Fill="{DynamicResource PrimaryBackgroundOpacity2}" />
+                        <Border Grid.Column="0"
+                                Name="checkBoxBorder"
+                                Margin="1"
+                                Width="14"
+                                Height="14"
+                                CornerRadius="2,2,2,2"
                                 HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" Margin="1"
-                                Width="14" Height="14" BorderBrush="{TemplateBinding Control.BorderBrush}"
+                                VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+                                BorderBrush="{TemplateBinding Control.BorderBrush}"
                                 BorderThickness="{TemplateBinding Control.BorderThickness}"
-                                Background="{TemplateBinding Control.Background}"
-                                CornerRadius="{StaticResource Windows11Light.CornerRadius2}">
+                                Background="{TemplateBinding Control.Background}">
                             <Grid Name="markGrid">
-                                <Path Name="optionMark" StrokeThickness="1.5" Width="10" Margin="1" Opacity="0"
-                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                                      HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"
-                                      StrokeDashOffset="0" StrokeDashArray="100" Stroke="{StaticResource IconColor}">
+                                <Path Name="optionMark"
+                                      StrokeThickness="1.5"
+                                      Width="10"
+                                      Margin="1"
+                                      Opacity="0"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Stretch="Uniform"
+                                      StrokeDashOffset="0"
+                                      StrokeDashArray="100"
+                                      Stroke="{DynamicResource IconColor}">
                                     <Path.Data>
                                         <PathGeometry>M1 3L3 5L7 1</PathGeometry>
                                     </Path.Data>
                                 </Path>
-                                <TextBlock Name="indeterminateMark" Text=""
-                                           FontFamily="pack://application:,,,/Syncfusion.Themes.Windows11Light.WPF;component/Common/FontFamily/#Windows11ThemeControlIcons"
-                                           FontSize="14" Opacity="0" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" Foreground="{StaticResource IconColor}" />
+                                <TextBlock Name="indeterminateMark"
+                                           Text=""
+                                           FontSize="14"
+                                           Opacity="0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource IconColor}" />
                             </Grid>
                         </Border>
-                        <ContentPresenter Name="contentPresenter" Grid.Column="1" Focusable="False"
-                                          Margin="{TemplateBinding Control.Padding}" RecognizesAccessKey="True"
+                        <ContentPresenter Grid.Column="1"
+                                          Name="contentPresenter"
+                                          Focusable="False"
+                                          RecognizesAccessKey="True"
+                                          Margin="{TemplateBinding Control.Padding}"
                                           HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
                                           SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}">
                             <FrameworkElement.Resources>
                                 <ResourceDictionary>
-                                    <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}"
+                                    <Style x:Key="{x:Type TextBlock}"
+                                           TargetType="{x:Type TextBlock}"
                                            BasedOn="{x:Null}" />
                                 </ResourceDictionary>
                             </FrameworkElement.Resources>
                         </ContentPresenter>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="sfskin:SfSkinManager.SizeMode" Value="Touch">
-                            <Setter Property="MinHeight" Value="{StaticResource TouchMode.MinHeight}" />
-                        </Trigger>
                         <Trigger Property="FlowDirection" Value="RightToLeft">
                             <Setter TargetName="optionMark" Property="FlowDirection" Value="LeftToRight" />
                         </Trigger>
@@ -95,9 +119,12 @@
                             <TriggerBase.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetName="optionMark"
-                                                         Storyboard.TargetProperty="StrokeDashOffset" Duration="0:0:2"
-                                                         From="100" To="0" />
+                                        <DoubleAnimation Storyboard.TargetName="optionMark"
+                                                         Storyboard.TargetProperty="StrokeDashOffset"
+                                                         BeginTime="00:00:00"
+                                                         Duration="0:0:2"
+                                                         From="100"
+                                                         To="0" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </TriggerBase.EnterActions>
@@ -108,15 +135,15 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackgroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity1}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackgroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity1}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -124,12 +151,12 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="false" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource BorderAlt}" />
+                                    Value="{DynamicResource BorderAlt}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource BorderAlt1}" />
+                                    Value="{DynamicResource BorderAlt1}" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke" Value="#00FFFFFF" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -137,15 +164,15 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackgroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity1}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackgroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity1}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="indeterminateMark" Property="TextBlock.Foreground"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -153,17 +180,17 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackgroundOpacity2}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity2}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackgroundOpacity2}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity2}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke"
-                                    Value="{StaticResource PrimaryForegroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryForegroundOpacity1}" />
                             <Setter TargetName="indeterminateMark" Property="TextBlock.Foreground"
-                                    Value="{StaticResource PrimaryForegroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryForegroundOpacity1}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -171,12 +198,12 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="false" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PopupBorder}" />
+                                    Value="{DynamicResource PopupBorder}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke" Value="#00FFFFFF" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -184,43 +211,43 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackgroundOpacity2}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity2}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackgroundOpacity2}" />
+                                    Value="{DynamicResource PrimaryBackgroundOpacity2}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="indeterminateMark" Property="TextBlock.Foreground"
-                                    Value="{StaticResource PrimaryForegroundOpacity1}" />
+                                    Value="{DynamicResource PrimaryForegroundOpacity1}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
                         <Trigger Property="ToggleButton.IsChecked" Value="{x:Null}">
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackground}" />
+                                    Value="{DynamicResource PrimaryBackground}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackground}" />
+                                    Value="{DynamicResource PrimaryBackground}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="indeterminateMark" Property="TextBlock.Foreground"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                             <Setter TargetName="optionMark" Property="UIElement.Opacity" Value="0" />
                             <Setter TargetName="indeterminateMark" Property="UIElement.Opacity" Value="1" />
                         </Trigger>
                         <Trigger Property="ToggleButton.IsChecked" Value="true">
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource PrimaryBackground}" />
+                                    Value="{DynamicResource PrimaryBackground}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource PrimaryBackground}" />
+                                    Value="{DynamicResource PrimaryBackground}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderThickness"
-                                    Value="{StaticResource Windows11Light.BorderThickness}" />
+                                    Value="0,0,0,0" />
                             <Setter TargetName="optionMark" Property="UIElement.Opacity" Value="1" />
                             <Setter TargetName="indeterminateMark" Property="UIElement.Opacity" Value="0" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource ContentForeground}" />
+                                    Value="{DynamicResource ContentForeground}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -228,13 +255,13 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="indeterminateMark" Property="TextBlock.Foreground"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource DisabledForeground}" />
+                                    Value="{DynamicResource DisabledForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -242,13 +269,13 @@
                                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke"
-                                    Value="{StaticResource PrimaryForeground}" />
+                                    Value="{DynamicResource PrimaryForeground}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource DisabledForeground}" />
+                                    Value="{DynamicResource DisabledForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -257,21 +284,15 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="checkBoxBorder" Property="Border.Background" Value="#00FFFFFF" />
                             <Setter TargetName="checkBoxBorder" Property="Border.BorderBrush"
-                                    Value="{StaticResource BorderAlt4}" />
+                                    Value="{DynamicResource BorderAlt4}" />
                             <Setter TargetName="optionMark" Property="Shape.Stroke" Value="#00FFFFFF" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                                    Value="{StaticResource DisabledForeground}" />
+                                    Value="{DynamicResource DisabledForeground}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="sfskin:SkinManagerHelper.FocusVisualKind" Value="HighVisibility">
-                <Setter Property="FrameworkElement.FocusVisualStyle" Value="{StaticResource KeyboardFocusVisualStyle}" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
-    <Style x:Key="{x:Type CheckBox}" BasedOn="{StaticResource WPFCheckBoxStyle}" TargetType="{x:Type CheckBox}" />
 
 </ResourceDictionary>
