@@ -6,29 +6,35 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5" />
         </Brush.RelativeTransform>
         <GradientBrush.GradientStops>
-            <GradientStop Offset="0.5" Color="{StaticResource SecondaryBorderGradient.Color}" />
-            <GradientStop Offset="1.0" Color="{StaticResource SecondaryBorder.Color}" />
+            <GradientStop Offset="0.5" Color="{DynamicResource SecondaryBorderGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource SecondaryBorder.Color}" />
         </GradientBrush.GradientStops>
     </LinearGradientBrush>
+
     <LinearGradientBrush x:Key="ButtonBorderBrushHovered" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
         <Brush.RelativeTransform>
             <ScaleTransform ScaleY="-1" CenterY="0.5" />
         </Brush.RelativeTransform>
         <GradientBrush.GradientStops>
-            <GradientStop Offset="0.5" Color="{StaticResource SecondaryBorderHoveredGradient.Color}" />
-            <GradientStop Offset="1.0" Color="{StaticResource SecondaryBorderHovered.Color}" />
+            <GradientStop Offset="0.5" Color="{DynamicResource SecondaryBorderHoveredGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource SecondaryBorderHovered.Color}" />
         </GradientBrush.GradientStops>
     </LinearGradientBrush>
-    <ControlTemplate x:Key="WPFButtonTemplate" TargetType="{x:Type Button}">
-        <Border Name="border" Background="{TemplateBinding Control.Background}"
+
+    <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
+        <Border Name="border"
+                SnapsToDevicePixels="True"
+                CornerRadius="4,4,4,4"
+                Background="{TemplateBinding Control.Background}"
                 BorderBrush="{TemplateBinding Control.BorderBrush}"
-                BorderThickness="{TemplateBinding Control.BorderThickness}" SnapsToDevicePixels="True"
-                CornerRadius="{StaticResource Windows11Light.CornerRadius4}">
-            <ContentPresenter Name="contentPresenter" Focusable="False" Margin="{TemplateBinding Control.Padding}"
+                BorderThickness="{TemplateBinding Control.BorderThickness}">
+            <ContentPresenter Name="contentPresenter"
+                              Focusable="False"
+                              RecognizesAccessKey="True"
+                              Margin="{TemplateBinding Control.Padding}"
                               VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
                               HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                              RecognizesAccessKey="True">
+                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}" BasedOn="{x:Null}" />
@@ -37,148 +43,45 @@
             </ContentPresenter>
         </Border>
         <ControlTemplate.Triggers>
-            <Trigger Property="sfskin:SfSkinManager.SizeMode" Value="Touch">
-                <Setter Property="FrameworkElement.MinHeight" Value="{StaticResource TouchMode.MinHeight}" />
-            </Trigger>
             <Trigger Property="Button.IsDefaulted" Value="True">
-                <Setter TargetName="border" Property="Border.BorderBrush" Value="{StaticResource BorderAlt3}" />
+                <Setter TargetName="border" Property="Border.BorderBrush" Value="{DynamicResource BorderAlt3}" />
             </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="sfskin:SkinManagerHelper.FocusVisualKind" Value="Default" />
-                    <Condition Property="UIElement.IsFocused" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter TargetName="border" Property="Border.Background"
-                        Value="{StaticResource SecondaryBackgroundHovered}" />
-                <Setter TargetName="border" Property="Border.BorderBrush" Value="{StaticResource BorderAlt3}" />
-                <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                        Value="{StaticResource SecondaryForegroundHovered}" />
-            </MultiTrigger>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
                 <Setter TargetName="border" Property="Border.Background"
-                        Value="{StaticResource SecondaryBackgroundHovered}" />
+                        Value="{DynamicResource SecondaryBackgroundHovered}" />
                 <Setter TargetName="border" Property="Border.BorderBrush"
                         Value="{StaticResource ButtonBorderBrushHovered}" />
                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                        Value="{StaticResource SecondaryForegroundHovered}" />
+                        Value="{DynamicResource SecondaryForegroundHovered}" />
             </Trigger>
             <Trigger Property="ButtonBase.IsPressed" Value="True">
                 <Setter TargetName="border" Property="Border.Background"
-                        Value="{StaticResource SecondaryBackgroundSelected}" />
+                        Value="{DynamicResource SecondaryBackgroundSelected}" />
                 <Setter TargetName="border" Property="Border.BorderBrush"
-                        Value="{StaticResource SecondaryBorderSelected}" />
+                        Value="{DynamicResource SecondaryBorderSelected}" />
                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                        Value="{StaticResource SecondaryForegroundSelected}" />
+                        Value="{DynamicResource SecondaryForegroundSelected}" />
             </Trigger>
             <Trigger Property="UIElement.IsEnabled" Value="False">
                 <Setter TargetName="border" Property="Border.Background"
-                        Value="{StaticResource SecondaryBackgroundDisabled}" />
+                        Value="{DynamicResource SecondaryBackgroundDisabled}" />
                 <Setter TargetName="border" Property="Border.BorderBrush"
-                        Value="{StaticResource SecondaryBorderDisabled}" />
+                        Value="{DynamicResource SecondaryBorderDisabled}" />
                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
-                        Value="{StaticResource SecondaryForegroundDisabled}" />
+                        Value="{DynamicResource SecondaryForegroundDisabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <Style x:Key="WPFButtonStyle" TargetType="{x:Type Button}">
+
+    <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Background" Value="{StaticResource SecondaryBackground}" />
-        <Setter Property="BorderThickness" Value="{StaticResource Windows11Light.BorderThickness2}" />
+        <Setter Property="Background" Value="{DynamicResource SecondaryBackground}" />
+        <Setter Property="BorderThickness" Value="2,2,2,2" />
         <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
-        <Setter Property="FontFamily" Value="{StaticResource Windows11Light.ThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{StaticResource Windows11Light.BodyTextStyle}" />
-        <Setter Property="FontWeight" Value="{StaticResource Windows11Light.FontWeightNormal}" />
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template" Value="{StaticResource WPFButtonTemplate}" />
-        <Style.Triggers>
-            <Trigger Property="sfskin:SkinManagerHelper.FocusVisualKind" Value="HighVisibility">
-                <Setter Property="FrameworkElement.FocusVisualStyle" Value="{StaticResource KeyboardFocusVisualStyle}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    <Style x:Key="{x:Type Button}" BasedOn="{StaticResource WPFButtonStyle}" TargetType="{x:Type Button}" />
-    <Style x:Key="WPFRoundedButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Background" Value="{StaticResource SecondaryBackground}" />
-        <Setter Property="BorderThickness" Value="{StaticResource Windows11Light.BorderThickness1}" />
-        <Setter Property="BorderBrush" Value="{StaticResource SecondaryBorder}" />
-        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
-        <Setter Property="FontFamily" Value="{StaticResource Windows11Light.ThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{StaticResource Windows11Light.BodyTextStyle}" />
-        <Setter Property="FontWeight" Value="{StaticResource Windows11Light.FontWeightNormal}" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <Ellipse Name="ellipse" Fill="{TemplateBinding Control.Background}"
-                                 Stroke="{TemplateBinding Control.BorderBrush}"
-                                 StrokeThickness="{TemplateBinding Control.BorderThickness}" />
-                        <ContentPresenter Name="contentPresenter" Focusable="False"
-                                          Margin="{TemplateBinding Control.Padding}"
-                                          VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
-                                          HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                                          SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                          RecognizesAccessKey="True">
-                            <FrameworkElement.Resources>
-                                <ResourceDictionary>
-                                    <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}"
-                                           BasedOn="{x:Null}" />
-                                </ResourceDictionary>
-                            </FrameworkElement.Resources>
-                        </ContentPresenter>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="sfskin:SfSkinManager.SizeMode" Value="Touch">
-                            <Setter Property="MinHeight" Value="{StaticResource TouchMode.MinHeight}" />
-                        </Trigger>
-                        <Trigger Property="Button.IsDefaulted" Value="True">
-                            <Setter TargetName="ellipse" Property="Shape.Stroke" Value="{StaticResource BorderAlt3}" />
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="sfskin:SkinManagerHelper.FocusVisualKind" Value="Default" />
-                                <Condition Property="UIElement.IsFocused" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ellipse" Property="Shape.Fill"
-                                    Value="{StaticResource SecondaryBackgroundHovered}" />
-                            <Setter TargetName="ellipse" Property="Shape.Stroke" Value="{StaticResource BorderAlt3}" />
-                            <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundHovered}" />
-                        </MultiTrigger>
-                        <Trigger Property="UIElement.IsMouseOver" Value="True">
-                            <Setter TargetName="ellipse" Property="Shape.Fill"
-                                    Value="{StaticResource SecondaryBackgroundHovered}" />
-                            <Setter TargetName="ellipse" Property="Shape.Stroke"
-                                    Value="{StaticResource SecondaryBorderHovered}" />
-                            <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundHovered}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ellipse" Property="Shape.Fill"
-                                    Value="{StaticResource SecondaryBackgroundSelected}" />
-                            <Setter TargetName="ellipse" Property="Shape.Stroke"
-                                    Value="{StaticResource SecondaryBorderSelected}" />
-                            <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundSelected}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ellipse" Property="Shape.Fill"
-                                    Value="{StaticResource SecondaryBackgroundDisabled}" />
-                            <Setter TargetName="ellipse" Property="Shape.Stroke"
-                                    Value="{StaticResource SecondaryBorderDisabled}" />
-                            <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="sfskin:SkinManagerHelper.FocusVisualKind" Value="HighVisibility">
-                <Setter Property="FrameworkElement.FocusVisualStyle"
-                        Value="{StaticResource CircleKeyboardFocusVisualStyle}" />
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="Template" Value="{StaticResource ButtonTemplate}" />
     </Style>
 
 </ResourceDictionary>

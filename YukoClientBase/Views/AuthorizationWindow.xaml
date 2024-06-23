@@ -72,7 +72,8 @@
                       Content="{x:Static props:Resources.AuthorizationWindow_CheckBox_RememberMe}"
                       IsChecked="{Binding Path=IsRemember, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Button Content="{x:Static props:Resources.AuthorizationWindow_Button_Login}"
+            <Button Style="{DynamicResource ButtonStyle}"
+                    Content="{x:Static props:Resources.AuthorizationWindow_Button_Login}"
                     Height="30"
                     HorizontalAlignment="Center"
                     Margin="0,10,0,0"
@@ -83,7 +84,8 @@
 
         </StackPanel>
 
-        <Button HorizontalAlignment="Right"
+        <Button Style="{DynamicResource ButtonStyle}"
+                HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 BorderThickness="0"
                 Padding="2"

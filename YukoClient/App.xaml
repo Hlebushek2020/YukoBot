@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/TextBox.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/PasswordBox.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/CheckBox.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
