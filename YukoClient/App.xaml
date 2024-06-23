@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/Window.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/TextBlock.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/TextBox.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/PasswordBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

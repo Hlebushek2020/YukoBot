@@ -78,7 +78,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dialogs\MessageBox.cs"/>
+      <Compile Include="Dialogs\MessageBox.cs"/>
     <Compile Include="Enums\ClientErrorCodes.cs" />
     <Compile Include="Enums\RequestType.cs" />
     <Compile Include="Exceptions\ClientCodeException.cs" />
@@ -90,8 +90,8 @@
     <Compile Include="Models\DownloaderLogger.cs" />
     <Compile Include="Models\Progresses\BaseProgressModel.cs" />
     <Compile Include="Models\Settings.cs" />
-    <Compile Include="Models\Themes.cs"/>
-    <Compile Include="Models\ThemesUri.cs"/>
+      <Compile Include="Models\Themes.cs"/>
+      <Compile Include="Models\ThemesUri.cs"/>
     <Compile Include="Models\Web\Errors\BaseErrorJson.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />
@@ -108,8 +108,8 @@
     </Compile>
     <Compile Include="ValueConverters\VisibilityValueConverter.cs" />
     <Compile Include="ViewModels\BaseAuthorizationViewModel.cs" />
-    <Compile Include="ViewModels\DisplayTheme.cs"/>
-    <Compile Include="ViewModels\MessageBoxViewModel.cs"/>
+      <Compile Include="ViewModels\DisplayTheme.cs"/>
+      <Compile Include="ViewModels\MessageBoxViewModel.cs"/>
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\AuthorizationWindow.xaml.cs">
@@ -129,6 +129,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+      <Resource Include="Resources\Styles\Controls\PasswordBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\CheckBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\Button.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
     <Page Include="Views\AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,10 +163,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dialog-error-64.png"/>
-    <Resource Include="Resources\dialog-information-64.png"/>
-    <Resource Include="Resources\dialog-question-64.png"/>
-    <Resource Include="Resources\dialog-warning-64.png"/>
+      <Resource Include="Resources\dialog-error-64.png"/>
+      <Resource Include="Resources\dialog-information-64.png"/>
+      <Resource Include="Resources\dialog-question-64.png"/>
+      <Resource Include="Resources\dialog-warning-64.png"/>
     <Resource Include="Resources\settings-48.png" />
     <Resource Include="Resources\menu-download-32.png" />
     <Resource Include="Resources\menu-export-32.png" />
@@ -165,7 +174,7 @@
     <Resource Include="Resources\menu-start-32.png" />
     <Resource Include="Resources\menu-delete-32.png" />
     <Resource Include="Resources\menu-clear-32.png" />
-    <Resource Include="Resources\menu-refresh-32.png"/>
+      <Resource Include="Resources\menu-refresh-32.png"/>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Styles\Controls\Window.xaml">
