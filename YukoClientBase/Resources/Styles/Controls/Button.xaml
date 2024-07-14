@@ -63,20 +63,17 @@
             </ContentPresenter>
         </Border>
         <ControlTemplate.Triggers>
-            <Trigger Property="Button.IsDefaulted" Value="True">
-                <Setter TargetName="border" Property="Border.BorderBrush" Value="{DynamicResource BorderAlt3}" />
-            </Trigger>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="Background" TargetName="border"
-                        Value="{DynamicResource SecondaryBackgroundHovered}" />
-                <Setter Property="BorderBrush" TargetName="border"
-                        Value="{DynamicResource BorderAlt3}" />
-                <Setter Property="TextElement.Foreground" TargetName="contentPresenter"
+                <Setter TargetName="border" Property="Border.Background"
+                        Value="{DynamicResource ContentBackgroundAlt5}" />
+                <Setter TargetName="border" Property="Border.BorderBrush"
+                        Value="{StaticResource ButtonBorderBrushHovered}" />
+                <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
                         Value="{DynamicResource SecondaryForegroundHovered}" />
             </Trigger>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
                 <Setter TargetName="border" Property="Border.Background"
-                        Value="{DynamicResource SecondaryBackgroundHovered}" />
+                        Value="{DynamicResource ContentBackgroundAlt5}" />
                 <Setter TargetName="border" Property="Border.BorderBrush"
                         Value="{StaticResource ButtonBorderBrushHovered}" />
                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
@@ -124,10 +121,10 @@
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="Background" TargetName="border"
-                        Value="{DynamicResource PrimaryBackground}" />
                 <Setter Property="BorderBrush" TargetName="border"
-                        Value="{DynamicResource BorderAlt3}" />
+                        Value="{StaticResource PrimaryButtonBorderBrushHovered}" />
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource PrimaryBackgroundOpacity1}" />
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
