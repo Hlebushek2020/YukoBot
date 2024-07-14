@@ -11,6 +11,16 @@
         </GradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="PrimaryButtonBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <LinearGradientBrush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+        </LinearGradientBrush.RelativeTransform>
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0.5" Color="{DynamicResource PrimaryButtonBorderGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource PrimaryButtonBorder.Color}" />
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
     <LinearGradientBrush x:Key="ButtonBorderBrushHovered" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
         <Brush.RelativeTransform>
             <ScaleTransform ScaleY="-1" CenterY="0.5" />
@@ -21,20 +31,30 @@
         </GradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="PrimaryButtonBorderBrushHovered" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <LinearGradientBrush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+        </LinearGradientBrush.RelativeTransform>
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0.5" Color="{DynamicResource PrimaryButtonBorderHoveredGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource PrimaryButtonBorderHovered.Color}" />
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
     <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
         <Border Name="border"
                 SnapsToDevicePixels="True"
                 CornerRadius="4,4,4,4"
-                Background="{TemplateBinding Control.Background}"
-                BorderBrush="{TemplateBinding Control.BorderBrush}"
-                BorderThickness="{TemplateBinding Control.BorderThickness}">
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
             <ContentPresenter Name="contentPresenter"
                               Focusable="False"
                               RecognizesAccessKey="True"
-                              Margin="{TemplateBinding Control.Padding}"
-                              VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
-                              HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}">
+                              Margin="{TemplateBinding Padding}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}" BasedOn="{x:Null}" />
@@ -45,6 +65,14 @@
         <ControlTemplate.Triggers>
             <Trigger Property="Button.IsDefaulted" Value="True">
                 <Setter TargetName="border" Property="Border.BorderBrush" Value="{DynamicResource BorderAlt3}" />
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource SecondaryBackgroundHovered}" />
+                <Setter Property="BorderBrush" TargetName="border"
+                        Value="{DynamicResource BorderAlt3}" />
+                <Setter Property="TextElement.Foreground" TargetName="contentPresenter"
+                        Value="{DynamicResource SecondaryForegroundHovered}" />
             </Trigger>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
                 <Setter TargetName="border" Property="Border.Background"
@@ -73,15 +101,82 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="PrimaryButtonTemplate" TargetType="{x:Type Button}">
+        <Border Name="border"
+                SnapsToDevicePixels="True"
+                CornerRadius="4,4,4,4"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+            <ContentPresenter Name="contentPresenter"
+                              Focusable="False"
+                              RecognizesAccessKey="True"
+                              Margin="{TemplateBinding Padding}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                <FrameworkElement.Resources>
+                    <ResourceDictionary>
+                        <Style x:Key="{x:Type TextBlock}" TargetType="{x:Type TextBlock}" BasedOn="{x:Null}" />
+                    </ResourceDictionary>
+                </FrameworkElement.Resources>
+            </ContentPresenter>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource PrimaryBackground}" />
+                <Setter Property="BorderBrush" TargetName="border"
+                        Value="{DynamicResource BorderAlt3}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" TargetName="border"
+                        Value="{StaticResource PrimaryButtonBorderBrushHovered}" />
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource PrimaryBackgroundOpacity1}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource PrimaryBackgroundOpacity2}" />
+                <Setter Property="BorderBrush" TargetName="border"
+                        Value="{DynamicResource PrimaryBorderSelected}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundOpacity1}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" TargetName="border"
+                        Value="{DynamicResource BorderAlt4}" />
+                <Setter Property="BorderBrush" TargetName="border"
+                        Value="{DynamicResource BorderAlt4}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
+                <Setter Property="Opacity" Value="1" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="{DynamicResource SecondaryBackground}" />
         <Setter Property="BorderThickness" Value="2,2,2,2" />
         <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource SecondaryForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template" Value="{StaticResource ButtonTemplate}" />
+    </Style>
+
+    <Style x:Key="PrimaryButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template" Value="{StaticResource PrimaryButtonTemplate}" />
     </Style>
 
 </ResourceDictionary>
