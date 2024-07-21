@@ -155,7 +155,7 @@
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="{DynamicResource SecondaryBackground}" />
-        <Setter Property="BorderThickness" Value="2,2,2,2" />
+        <Setter Property="BorderThickness" Value="1,1,1,1" />
         <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource SecondaryForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />

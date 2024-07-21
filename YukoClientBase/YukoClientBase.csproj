@@ -129,6 +129,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+      <Resource Include="Resources\Styles\Controls\Menu.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
       <Resource Include="Resources\Styles\Controls\PasswordBox.xaml">
           <Generator>MSBuild:Compile</Generator>
       </Resource>
