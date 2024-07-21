@@ -53,8 +53,7 @@
                        TextWrapping="Wrap"
                        FontWeight="Medium"
                        VerticalAlignment="Top" />
-            <TextBox Style="{DynamicResource TextBoxStyle}"
-                     TextAlignment="Center"
+            <TextBox TextAlignment="Center"
                      TextWrapping="NoWrap"
                      VerticalAlignment="Top"
                      Margin="0,5,0,0"
