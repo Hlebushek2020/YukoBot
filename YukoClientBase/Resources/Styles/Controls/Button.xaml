@@ -176,4 +176,8 @@
         <Setter Property="Template" Value="{StaticResource PrimaryButtonTemplate}" />
     </Style>
 
+    <Style x:Key="{x:Type Button}"
+           TargetType="{x:Type Button}"
+           BasedOn="{StaticResource ButtonStyle}" />
+
 </ResourceDictionary>

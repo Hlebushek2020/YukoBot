@@ -42,9 +42,11 @@
                          Text="{Binding Port}" />
             </Grid>
         </GroupBox>
-        <Button Content="Применить" Style="{StaticResource ButtonStyle}" Command="{Binding SaveAndApplyCommand}"
+        <Button Content="Применить"
+                Command="{Binding SaveAndApplyCommand}"
                 Height="30" HorizontalAlignment="Right" Margin="0,0,105,10" VerticalAlignment="Bottom" Width="120" />
-        <Button Content="Закрыть" Style="{StaticResource ButtonStyle}" Command="{Binding CloseCommand}" Height="30"
+        <Button Content="Закрыть"
+                Command="{Binding CloseCommand}" Height="30"
                 HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="90" />
     </Grid>
 </Window>

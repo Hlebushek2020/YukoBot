@@ -59,28 +59,24 @@
                         VerticalAlignment="Bottom"
                         Orientation="Horizontal">
 
-                <Button Style="{StaticResource ButtonStyle}"
-                        Margin="4,0,0,0"
+                <Button Margin="4,0,0,0"
                         Width="80" Content="OK"
                         IsDefault="True"
                         Visibility="{Binding Path=OkButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
                         Command="{Binding Path=ButtonCommand}"
                         CommandParameter="{x:Static MessageBoxResult.OK}" />
-                <Button Style="{StaticResource ButtonStyle}"
-                        Margin="4,0,0,0"
+                <Button Margin="4,0,0,0"
                         Width="80" Content="Да"
                         IsDefault="True"
                         Visibility="{Binding Path=YesButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
                         Command="{Binding Path=ButtonCommand}"
                         CommandParameter="{x:Static MessageBoxResult.Yes}" />
-                <Button Style="{StaticResource ButtonStyle}"
-                        Margin="4,0,0,0"
+                <Button Margin="4,0,0,0"
                         Width="80" Content="Нет"
                         Visibility="{Binding Path=NoButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
                         Command="{Binding Path=ButtonCommand}"
                         CommandParameter="{x:Static MessageBoxResult.No}" />
-                <Button Style="{StaticResource ButtonStyle}"
-                        Margin="4,0,0,0"
+                <Button Margin="4,0,0,0"
                         Width="80" Content="Отмена"
                         IsCancel="True"
                         Visibility="{Binding Path=CancelButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
