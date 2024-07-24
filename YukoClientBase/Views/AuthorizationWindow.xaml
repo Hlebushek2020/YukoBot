@@ -69,7 +69,6 @@
                        FontWeight="Medium"
                        VerticalAlignment="Top" />
             <PasswordBox x:Name="PasswordBoxPassword"
-                         Style="{DynamicResource PasswordBoxStyle}"
                          Margin="0,5,0,0"
                          HorizontalContentAlignment="Center"
                          VerticalAlignment="Top"
