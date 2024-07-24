@@ -21,10 +21,10 @@
     </Window.InputBindings>
 
     <Window.Resources>
-        <ContextMenu x:Key="TextBoxContextMenu" Style="{DynamicResource ContextMenuStyle}">
-            <MenuItem Command="ApplicationCommands.Copy" Style="{DynamicResource MenuItemStyle}" />
-            <MenuItem Command="ApplicationCommands.Cut" Style="{DynamicResource MenuItemStyle}" />
-            <MenuItem Command="ApplicationCommands.Paste" Style="{DynamicResource MenuItemStyle}" />
+        <ContextMenu x:Key="TextBoxContextMenu">
+            <MenuItem Command="ApplicationCommands.Copy" />
+            <MenuItem Command="ApplicationCommands.Cut" />
+            <MenuItem Command="ApplicationCommands.Paste" />
         </ContextMenu>
     </Window.Resources>
 

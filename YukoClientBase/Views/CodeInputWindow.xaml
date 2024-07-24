@@ -22,10 +22,10 @@
                  TextAlignment="Center"
                  PreviewTextInput="Input_OnPreviewTextInput">
             <TextBox.ContextMenu>
-                <ContextMenu Style="{DynamicResource ContextMenuStyle}">
-                    <MenuItem Command="ApplicationCommands.Copy" Style="{DynamicResource MenuItemStyle}" />
-                    <MenuItem Command="ApplicationCommands.Cut" Style="{DynamicResource MenuItemStyle}" />
-                    <MenuItem Command="ApplicationCommands.Paste" Style="{DynamicResource MenuItemStyle}" />
+                <ContextMenu>
+                    <MenuItem Command="ApplicationCommands.Copy" />
+                    <MenuItem Command="ApplicationCommands.Cut" />
+                    <MenuItem Command="ApplicationCommands.Paste" />
                 </ContextMenu>
             </TextBox.ContextMenu>
         </TextBox>
