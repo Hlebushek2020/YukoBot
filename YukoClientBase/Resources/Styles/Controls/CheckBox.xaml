@@ -30,7 +30,7 @@
     </Style>
 
     <Style x:Key="CheckBoxStyle" TargetType="{x:Type CheckBox}">
-        <Setter Property="FrameworkElement.FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisual}" />
         <Setter Property="Background" Value="#00FFFFFF" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt1}" />
         <Setter Property="BorderThickness" Value="1,1,1,1" />
@@ -294,5 +294,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="{x:Type CheckBox}"
+           TargetType="{x:Type CheckBox}"
+           BasedOn="{StaticResource CheckBoxStyle}" />
 
 </ResourceDictionary>

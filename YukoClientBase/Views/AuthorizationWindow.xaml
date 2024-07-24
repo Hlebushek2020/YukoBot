@@ -75,8 +75,7 @@
                          VerticalAlignment="Top"
                          ContextMenu="{StaticResource TextBoxContextMenu}" />
 
-            <CheckBox Style="{DynamicResource CheckBoxStyle}"
-                      Margin="0,10,0,0"
+            <CheckBox Margin="0,10,0,0"
                       HorizontalAlignment="Center"
                       Content="{x:Static props:Resources.AuthorizationWindow_CheckBox_RememberMe}"
                       IsChecked="{Binding Path=IsRemember, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
