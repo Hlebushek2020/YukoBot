@@ -9,7 +9,7 @@
                                Stroke="{DynamicResource BorderAlt}"
                                StrokeThickness="1,1,1,1"
                                StrokeDashArray="1,2"
-                               SnapsToDevicePixels="true" />
+                               SnapsToDevicePixels="True" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

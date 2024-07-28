@@ -35,7 +35,7 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
-    <Style x:Key="ComboBoxItemFocusVisual" TargetType="{x:Type ComboBoxItem}">
+    <Style x:Key="ComboBoxItemFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
