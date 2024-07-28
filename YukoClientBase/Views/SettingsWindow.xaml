@@ -13,40 +13,94 @@
         FontSize="14"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
+
     <Grid>
-        <GroupBox Header="Основное" FontWeight="Medium" Height="95" Margin="10,10,10,0" VerticalAlignment="Top"
+
+        <GroupBox Header="Основное"
+                  FontWeight="Medium"
+                  Height="95"
+                  Margin="10,10,10,0"
+                  VerticalAlignment="Top"
                   Background="Transparent">
             <Grid>
-                <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
-                           Margin="4,8,0,0" TextWrapping="NoWrap" Text="Тема (применяется после перезапуска):"
-                           VerticalAlignment="Top" />
-                <ComboBox FontWeight="Normal" Margin="270,4,4,0" VerticalAlignment="Top" ItemsSource="{Binding Themes}"
-                          SelectedItem="{Binding SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          DisplayMemberPath="Title" />
-                <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
-                           Margin="4,40,0,0" TextWrapping="NoWrap" Text="Количество одновременных скачиваний:"
-                           VerticalAlignment="Top" />
-                <TextBox FontWeight="Normal" Margin="275,36,4,0" VerticalAlignment="Top"
-                         Text="{Binding SelectMaxDownloadThreads, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Тема (применяется после перезапуска):"
+                           Margin="4,8,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontWeight="Normal"
+                           TextWrapping="NoWrap" />
+                <ComboBox Margin="270,4,4,0"
+                          VerticalAlignment="Top"
+                          FontWeight="Normal"
+                          DisplayMemberPath="Title"
+                          ItemsSource="{Binding Path=Themes}"
+                          SelectedItem="{Binding Path=SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Количество одновременных скачиваний:"
+                           Margin="4,40,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontWeight="Normal"
+                           TextWrapping="NoWrap" />
+                <TextBox Margin="275,36,4,0"
+                         VerticalAlignment="Top"
+                         FontWeight="Normal"
+                         TextWrapping="NoWrap"
+                         Text="{Binding  Path=SelectMaxDownloadThreads, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
             </Grid>
         </GroupBox>
-        <GroupBox Header="Подключение" FontWeight="Medium" Height="100" Margin="10,110,10,0" VerticalAlignment="Top">
+
+        <GroupBox Header="Подключение"
+                  FontWeight="Medium"
+                  Height="100"
+                  Margin="10,110,10,0"
+                  VerticalAlignment="Top">
             <Grid>
-                <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
-                           Margin="4,9,0,0" TextWrapping="NoWrap" Text="Хост:" VerticalAlignment="Top" />
-                <TextBox FontWeight="Normal" Margin="41,4,4,0" TextWrapping="NoWrap" VerticalAlignment="Top"
-                         Text="{Binding Host}" />
-                <TextBlock FontWeight="Normal" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Left"
-                           Margin="4,43,0,0" TextWrapping="NoWrap" Text="Порт:" VerticalAlignment="Top" />
-                <TextBox FontWeight="Normal" Margin="44,38,4,0" TextWrapping="NoWrap" VerticalAlignment="Top"
-                         Text="{Binding Port}" />
+
+                <TextBlock Text="Хост:"
+                           Margin="4,9,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontWeight="Normal"
+                           TextWrapping="NoWrap" />
+                <TextBox Margin="41,4,4,0"
+                         VerticalAlignment="Top"
+                         FontWeight="Normal"
+                         TextWrapping="NoWrap"
+                         Text="{Binding Path=Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Порт:"
+                           Margin="4,43,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontWeight="Normal"
+                           TextWrapping="NoWrap" />
+                <TextBox Margin="44,38,4,0"
+                         VerticalAlignment="Top"
+                         FontWeight="Normal"
+                         TextWrapping="NoWrap"
+                         Text="{Binding Path=Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
             </Grid>
         </GroupBox>
+
         <Button Content="Применить"
                 Command="{Binding SaveAndApplyCommand}"
-                Height="30" HorizontalAlignment="Right" Margin="0,0,105,10" VerticalAlignment="Bottom" Width="120" />
+                Margin="0,0,105,10"
+                Height="30"
+                Width="120"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom" />
         <Button Content="Закрыть"
-                Command="{Binding CloseCommand}" Height="30"
-                HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="90" />
+                Command="{Binding CloseCommand}"
+                Margin="0,0,10,10"
+                Height="30"
+                Width="90"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom" />
+
     </Grid>
+
 </Window>

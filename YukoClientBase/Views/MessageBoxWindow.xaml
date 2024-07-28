@@ -43,7 +43,6 @@
                Visibility="{Binding Path=ShowImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
                Source="{Binding Path=Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock Grid.Column="1" Grid.Row="0"
-                   Style="{StaticResource TextBlockStyle}"
                    Margin="10,10,10,10"
                    MaxWidth="550"
                    TextWrapping="Wrap"
