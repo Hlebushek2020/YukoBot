@@ -86,6 +86,7 @@
                     VerticalAlignment="Top"
                     Width="120"
                     IsDefault="True"
+                    Style="{DynamicResource PrimaryButtonStyle}"
                     Command="{Binding LoginCommand}" />
 
         </StackPanel>

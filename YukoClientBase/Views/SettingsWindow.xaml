@@ -8,99 +8,132 @@
         d:DataContext="{d:DesignInstance {x:Type viewModels:SettingsViewModel}}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         Style="{DynamicResource WindowStyle}"
-        Height="300"
         Width="600"
         FontSize="14"
+        SizeToContent="Height"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
 
-    <Grid>
+    <StackPanel Margin="10,10,10,10">
 
         <GroupBox Header="Основное"
                   FontWeight="Medium"
-                  Height="95"
-                  Margin="10,10,10,0"
                   VerticalAlignment="Top"
                   Background="Transparent">
-            <Grid>
+            <StackPanel Margin="3,3,3,3">
 
-                <TextBlock Text="Тема (применяется после перезапуска):"
-                           Margin="4,8,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           FontWeight="Normal"
-                           TextWrapping="NoWrap" />
-                <ComboBox Margin="270,4,4,0"
-                          VerticalAlignment="Top"
-                          FontWeight="Normal"
-                          DisplayMemberPath="Title"
-                          ItemsSource="{Binding Path=Themes}"
-                          SelectedItem="{Binding Path=SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Тема (применяется после перезапуска):"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontWeight="Normal"
+                               TextWrapping="NoWrap" />
+                    <ComboBox Grid.Column="1"
+                              Margin="4,0,0,0"
+                              VerticalAlignment="Top"
+                              FontWeight="Normal"
+                              DisplayMemberPath="Title"
+                              ItemsSource="{Binding Path=Themes}"
+                              SelectedItem="{Binding Path=SelectTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
 
-                <TextBlock Text="Количество одновременных скачиваний:"
-                           Margin="4,40,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           FontWeight="Normal"
-                           TextWrapping="NoWrap" />
-                <TextBox Margin="275,36,4,0"
-                         VerticalAlignment="Top"
-                         FontWeight="Normal"
-                         TextWrapping="NoWrap"
-                         Text="{Binding  Path=SelectMaxDownloadThreads, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Количество одновременных скачиваний:"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontWeight="Normal"
+                               TextWrapping="NoWrap" />
+                    <TextBox Grid.Column="1"
+                             Margin="4,0,0,0"
+                             VerticalAlignment="Top"
+                             FontWeight="Normal"
+                             TextWrapping="NoWrap"
+                             Text="{Binding Path=SelectMaxDownloadThreads, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
 
-            </Grid>
+            </StackPanel>
         </GroupBox>
 
         <GroupBox Header="Подключение"
                   FontWeight="Medium"
-                  Height="100"
-                  Margin="10,110,10,0"
+                  Margin="0,4,0,0"
                   VerticalAlignment="Top">
-            <Grid>
+            <StackPanel Margin="3,3,3,3">
 
-                <TextBlock Text="Хост:"
-                           Margin="4,9,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           FontWeight="Normal"
-                           TextWrapping="NoWrap" />
-                <TextBox Margin="41,4,4,0"
-                         VerticalAlignment="Top"
-                         FontWeight="Normal"
-                         TextWrapping="NoWrap"
-                         Text="{Binding Path=Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Хост:"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontWeight="Normal"
+                               TextWrapping="NoWrap" />
+                    <TextBox Grid.Column="1"
+                             Margin="4,0,0,0"
+                             VerticalAlignment="Top"
+                             FontWeight="Normal"
+                             TextWrapping="NoWrap"
+                             Text="{Binding Path=Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
 
-                <TextBlock Text="Порт:"
-                           Margin="4,43,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           FontWeight="Normal"
-                           TextWrapping="NoWrap" />
-                <TextBox Margin="44,38,4,0"
-                         VerticalAlignment="Top"
-                         FontWeight="Normal"
-                         TextWrapping="NoWrap"
-                         Text="{Binding Path=Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Порт:"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               FontWeight="Normal"
+                               TextWrapping="NoWrap" />
+                    <TextBox Grid.Column="1"
+                             Margin="4,0,0,0"
+                             VerticalAlignment="Top"
+                             FontWeight="Normal"
+                             TextWrapping="NoWrap"
+                             Text="{Binding Path=Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
 
-            </Grid>
+            </StackPanel>
         </GroupBox>
 
-        <Button Content="Применить"
-                Command="{Binding SaveAndApplyCommand}"
-                Margin="0,0,105,10"
-                Height="30"
-                Width="120"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom" />
-        <Button Content="Закрыть"
-                Command="{Binding CloseCommand}"
-                Margin="0,0,10,10"
-                Height="30"
-                Width="90"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="8,8,0,0">
 
-    </Grid>
+            <Button Content="Применить"
+                    Command="{Binding SaveAndApplyCommand}"
+                    Margin="0,0,4,0"
+                    Height="30"
+                    Width="120"
+                    IsDefault="True"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Style="{DynamicResource PrimaryButtonStyle}" />
+            <Button Content="Закрыть"
+                    Command="{Binding CloseCommand}"
+                    Margin="0,0,0,0"
+                    Height="30"
+                    Width="90"
+                    IsCancel="True"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" />
+        </StackPanel>
+
+    </StackPanel>
 
 </Window>

@@ -43,7 +43,7 @@
 
     <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
         <Border Name="border"
-                SnapsToDevicePixels="True"
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                 CornerRadius="4,4,4,4"
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -100,7 +100,7 @@
 
     <ControlTemplate x:Key="PrimaryButtonTemplate" TargetType="{x:Type Button}">
         <Border Name="border"
-                SnapsToDevicePixels="True"
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                 CornerRadius="4,4,4,4"
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -141,13 +141,13 @@
                         Value="{DynamicResource PrimaryBorderSelected}" />
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundOpacity1}" />
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" TargetName="border"
-                        Value="{DynamicResource BorderAlt4}" />
-                <Setter Property="BorderBrush" TargetName="border"
-                        Value="{DynamicResource BorderAlt4}" />
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}" />
-                <Setter Property="Opacity" Value="1" />
+            <Trigger Property="UIElement.IsEnabled" Value="False">
+                <Setter TargetName="border" Property="Border.Background"
+                        Value="{DynamicResource SecondaryBackgroundDisabled}" />
+                <Setter TargetName="border" Property="Border.BorderBrush"
+                        Value="{DynamicResource SecondaryBorderDisabled}" />
+                <Setter TargetName="contentPresenter" Property="TextElement.Foreground"
+                        Value="{DynamicResource SecondaryForegroundDisabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
