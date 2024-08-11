@@ -933,71 +933,53 @@
     </Style>
 
     <Style x:Key="ContextMenuStyle" TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{DynamicResource PopupBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
-        <Setter Property="BorderThickness" Value="0,0,0,0" />
-        <Setter Property="ContextMenu.Foreground" Value="{DynamicResource Menu.Static.Foreground}" />
-        <Setter Property="MenuItem.Foreground" Value="{DynamicResource PopupForeground}" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="2" />
-        <Setter Property="Grid.IsSharedSizeScope" Value="true" />
-        <Setter Property="HasDropShadow"
-                Value="{StaticResource {x:Static SystemParameters.DropShadowKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource PopupForeground}" />
+        <Setter Property="BorderThickness" Value="1,1,1,1" />
+        <Setter Property="Padding" Value="2,2,2,2" />
+        <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+        <Setter Property="HasDropShadow" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Border Name="Shdw"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="Transparent"
-                            CornerRadius="0,0,0,0"
-                            SnapsToDevicePixels="true">
-                        <Border.Effect>
-                            <DropShadowEffect x:Key="Default.ShadowDepth4"
-                                              BlurRadius="16"
-                                              ShadowDepth="7"
-                                              Direction="270"
-                                              Color="#CC000000"
-                                              Opacity="0.17"
-                                              RenderingBias="Performance" />
-                        </Border.Effect>
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                CornerRadius="8,8,8,8"
-                                BorderThickness="1,1,1,1">
-                            <Grid>
-                                <Rectangle Fill="{TemplateBinding Background}"
-                                           HorizontalAlignment="Left"
-                                           Width="28"
-                                           Margin="2"
-                                           RadiusX="2"
-                                           RadiusY="2" />
-                                <Rectangle HorizontalAlignment="Left"
-                                           Width="1"
-                                           Margin="30,2,0,2"
-                                           Fill="{TemplateBinding BorderBrush}" />
-                                <Rectangle HorizontalAlignment="Left"
-                                           Width="1"
-                                           Margin="31,2,0,2"
-                                           Fill="{TemplateBinding BorderBrush}" />
-                                <ScrollViewer CanContentScroll="true"
-                                              Grid.ColumnSpan="2" Margin="1,0"
-                                              Style="{StaticResource MenuScrollViewer}">
-                                    <ItemsPresenter Margin="{TemplateBinding Padding}"
-                                                    KeyboardNavigation.DirectionalNavigation="Cycle"
-                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ScrollViewer>
-                            </Grid>
+                    <Grid Margin="{TemplateBinding Margin}">
+                        <Border Name="EffectBorder"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderThickness="1,1,1,1"
+                                Background="Transparent"
+                                BorderBrush="White"
+                                Margin="14,2,14,14"
+                                CornerRadius="4,4,4,4"
+                                SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16"
+                                                  ShadowDepth="7"
+                                                  Direction="270"
+                                                  Color="#CC000000"
+                                                  Opacity="1"
+                                                  RenderingBias="Performance" />
+                            </Border.Effect>
                         </Border>
-                    </Border>
+                        <Border Name="ContentBorder"
+                                Margin="12,0,12,12"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                CornerRadius="4,4,4,4">
+                            <ScrollViewer CanContentScroll="True"
+                                          Style="{StaticResource MenuScrollViewer}">
+                                <ItemsPresenter Margin="{TemplateBinding Padding}"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="HasDropShadow"
-                                 Value="true">
-                            <Setter TargetName="Shdw"
-                                    Property="Margin"
-                                    Value="14,0,14,14" />
-                            <Setter TargetName="Shdw"
-                                    Property="Background"
-                                    Value="Transparent" />
+                        <Trigger Property="HasDropShadow" Value="False">
+                            <Setter TargetName="EffectBorder" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentBorder" Property="Margin" Value="0,0,0,0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
