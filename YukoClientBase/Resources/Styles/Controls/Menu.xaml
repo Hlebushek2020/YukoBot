@@ -31,139 +31,32 @@
 
     <Style x:Key="MenuScrollButton" TargetType="{x:Type RepeatButton}" BasedOn="{x:Null}">
         <Setter Property="ClickMode" Value="Hover" />
-        <Setter Property="MinWidth" Value="0" />
-        <Setter Property="MinHeight" Value="0" />
-        <Setter Property="Height" Value="16" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource MenuScrollButtonFocusVisual}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <DockPanel x:Name="bg"
-                               Background="Transparent"
-                               SnapsToDevicePixels="true">
-                        <Rectangle DockPanel.Dock="Right"
-                                   x:Name="R1"
-                                   Width="0"
-                                   Stroke="Transparent"
-                                   Fill="Transparent" />
-                        <Rectangle DockPanel.Dock="Bottom"
-                                   x:Name="B1"
-                                   Height="0"
-                                   Stroke="Transparent"
-                                   Fill="Transparent" />
-                        <Rectangle DockPanel.Dock="Left"
-                                   x:Name="L1"
-                                   Width="0"
-                                   Stroke="Transparent"
-                                   Fill="Transparent" />
-                        <Rectangle DockPanel.Dock="Top"
-                                   x:Name="T1"
-                                   Height="0"
-                                   Stroke="Transparent"
-                                   Fill="Transparent" />
+                    <Border x:Name="Border"
+                            Margin="{TemplateBinding Margin}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <ContentPresenter x:Name="ContentContainer"
-                                          Margin="2,2,2,2"
+                                          Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="Center"
                                           HorizontalAlignment="Center" />
-                    </DockPanel>
+                    </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed"
-                                 Value="true">
-                            <Setter TargetName="R1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="R1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupPressedBackground}" />
-                            <Setter TargetName="ContentContainer"
-                                    Property="Margin"
-                                    Value="3,3,1,1" />
-                            <Setter TargetName="bg" Property="Background"
-                                    Value="{DynamicResource PopupPressedBackground}" />
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource PopupPressedBackground}" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver"
-                                 Value="true">
-                            <Setter TargetName="R1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="R1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
-                            <Setter TargetName="ContentContainer"
-                                    Property="Margin"
-                                    Value="3,3,1,1" />
-                            <Setter TargetName="bg"
-                                    Property="Background"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource PopupHoveredBackground}" />
                         </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="False">
-                            <Setter TargetName="R1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="R1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="B1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="L1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Fill"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="T1"
-                                    Property="Stroke"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
-                            <Setter TargetName="ContentContainer"
-                                    Property="Margin"
-                                    Value="3,3,1,1" />
-                            <Setter TargetName="bg"
-                                    Property="Background"
-                                    Value="{DynamicResource PopupDisabledBackground}" />
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{DynamicResource PopupDisabledBackground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -187,23 +80,35 @@
                         <RepeatButton x:Name="upButton"
                                       Grid.Row="0"
                                       Focusable="False"
-                                      Style="{StaticResource MenuScrollButton}"
+                                      Padding="6,6,6,6"
+                                      BorderThickness="0,0,0,1"
+                                      BorderBrush="{DynamicResource BorderAlt}"
+                                      Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                                       Command="{x:Static ScrollBar.LineUpCommand}"
-                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                      Style="{StaticResource MenuScrollButton}">
                             <Path x:Name="upPath"
+                                  Height="7"
                                   Data="M 0,4 L 3.5,0 L 7,4 Z"
+                                  Stretch="UniformToFill"
                                   Fill="{DynamicResource IconColor}" />
                         </RepeatButton>
                         <ScrollContentPresenter Grid.Row="1" Margin="{TemplateBinding Padding}" />
                         <RepeatButton x:Name="downButton"
                                       Grid.Row="2"
                                       Focusable="False"
-                                      Style="{StaticResource MenuScrollButton}"
+                                      Padding="6,6,6,6"
+                                      BorderThickness="0,1,0,0"
+                                      BorderBrush="{DynamicResource BorderAlt}"
+                                      Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                                       Command="{x:Static ScrollBar.LineDownCommand}"
-                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                      Style="{StaticResource MenuScrollButton}">
                             <Path x:Name="downPath"
-                                  Fill="{DynamicResource IconColor}"
-                                  Data="M 0,0 L 3.5,4 L 7,0 Z" />
+                                  MaxHeight="7"
+                                  Data="M 0,0 L 3.5,4 L 7,0 Z"
+                                  Stretch="UniformToFill"
+                                  Fill="{DynamicResource IconColor}" />
                         </RepeatButton>
                     </Grid>
                     <ControlTemplate.Triggers>
