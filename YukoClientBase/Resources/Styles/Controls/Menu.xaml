@@ -174,91 +174,62 @@
     <Style x:Key="MenuScrollViewer" TargetType="{x:Type ScrollViewer}" BasedOn="{x:Null}">
         <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="border" Grid.Row="1"
-                                Grid.Column="0"
-                                CornerRadius="8"
-                                BorderThickness="0,0,0,0"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                Background="{DynamicResource PopupBackground}">
-                            <ScrollContentPresenter Margin="{TemplateBinding Padding}" />
-                        </Border>
                         <RepeatButton x:Name="upButton"
-                                      Style="{StaticResource MenuScrollButton}"
                                       Grid.Row="0"
-                                      Grid.Column="0"
+                                      Focusable="False"
+                                      Style="{StaticResource MenuScrollButton}"
                                       Command="{x:Static ScrollBar.LineUpCommand}"
-                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                      Focusable="false">
+                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                             <Path x:Name="upPath"
                                   Data="M 0,4 L 3.5,0 L 7,4 Z"
                                   Fill="{DynamicResource IconColor}" />
                         </RepeatButton>
+                        <ScrollContentPresenter Grid.Row="1" Margin="{TemplateBinding Padding}" />
                         <RepeatButton x:Name="downButton"
-                                      Style="{StaticResource MenuScrollButton}"
                                       Grid.Row="2"
-                                      Grid.Column="0"
+                                      Focusable="False"
+                                      Style="{StaticResource MenuScrollButton}"
                                       Command="{x:Static ScrollBar.LineDownCommand}"
-                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                      Focusable="false">
+                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                             <Path x:Name="downPath"
                                   Fill="{DynamicResource IconColor}"
                                   Data="M 0,0 L 3.5,4 L 7,0 Z" />
                         </RepeatButton>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed" SourceName="upButton"
-                                 Value="true">
-                            <Setter TargetName="upPath"
-                                    Property="Fill"
+                        <Trigger Property="IsPressed" SourceName="upButton" Value="True">
+                            <Setter TargetName="upPath" Property="Fill"
                                     Value="{DynamicResource IconColorSelected}" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver" SourceName="upButton"
-                                 Value="true">
-                            <Setter TargetName="upPath"
-                                    Property="Fill"
+                        <Trigger Property="IsMouseOver" SourceName="upButton" Value="True">
+                            <Setter TargetName="upPath" Property="Fill"
                                     Value="{DynamicResource IconColorHovered}" />
                         </Trigger>
-                        <Trigger Property="IsPressed" SourceName="downButton"
-                                 Value="true">
-                            <Setter TargetName="downPath"
-                                    Property="Fill"
+                        <Trigger Property="IsEnabled" SourceName="upButton" Value="False">
+                            <Setter TargetName="downPath" Property="Fill"
+                                    Value="{DynamicResource IconColorDisabled}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" SourceName="downButton" Value="True">
+                            <Setter TargetName="downPath" Property="Fill"
                                     Value="{DynamicResource IconColorSelected}" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver" SourceName="downButton"
-                                 Value="true">
-                            <Setter TargetName="downPath"
-                                    Property="Fill"
+                        <Trigger Property="IsMouseOver" SourceName="downButton" Value="True">
+                            <Setter TargetName="downPath" Property="Fill"
                                     Value="{DynamicResource IconColorHovered}" />
                         </Trigger>
-                        <Trigger Property="IsPressed" SourceName="upButton"
-                                 Value="true">
-                            <Setter TargetName="downPath"
-                                    Property="Fill"
+                        <Trigger Property="IsEnabled" SourceName="downButton" Value="False">
+                            <Setter TargetName="downPath" Property="Fill"
                                     Value="{DynamicResource IconColorDisabled}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" SourceName="downButton"
-                                 Value="false">
-                            <Setter TargetName="downPath"
-                                    Property="Fill"
-                                    Value="{DynamicResource IconColorDisabled}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter TargetName="border"
-                                    Property="Background"
-                                    Value="{DynamicResource PopupBackground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
