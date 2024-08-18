@@ -36,6 +36,7 @@
                 Height="30"
                 Content="OK"
                 IsDefault="True"
+                Style="{DynamicResource PrimaryButtonStyle}"
                 Click="OkButton_OnClick" />
 
     </StackPanel>

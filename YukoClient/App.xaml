@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/Button.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/GroupBox.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ComboBox.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ListBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

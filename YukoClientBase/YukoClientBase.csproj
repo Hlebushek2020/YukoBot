@@ -135,6 +135,9 @@
       <Resource Include="Resources\Styles\Controls\GroupBox.xaml">
           <Generator>MSBuild:Compile</Generator>
       </Resource>
+      <Resource Include="Resources\Styles\Controls\ListBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
       <Resource Include="Resources\Styles\Controls\Menu.xaml">
           <Generator>MSBuild:Compile</Generator>
       </Resource>
