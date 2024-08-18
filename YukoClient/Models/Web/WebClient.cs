@@ -30,7 +30,7 @@ namespace YukoClient.Models.Web
         {
             ServersResponse sr = Request<ServersResponse>(null, RequestType.GetServers);
 
-            if (sr.Error.Code != ClientErrorCodes.TokenHasExpired)
+            if (sr.Error?.Code != ClientErrorCodes.TokenHasExpired)
                 return sr;
 
             RefreshToken();

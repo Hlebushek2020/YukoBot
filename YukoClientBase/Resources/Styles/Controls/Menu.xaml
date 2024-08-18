@@ -168,48 +168,57 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource MenuItemFocusVisual}" />
         <Setter Property="Background" Value="{DynamicResource PopupBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
-        <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="Foreground" Value="{DynamicResource PopupForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="4,4,4,4" />
+        <Setter Property="Margin" Value="2,2,2,2" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Border Name="Bg"
-                            Background="{TemplateBinding Background}"
                             BorderBrush="Transparent"
                             BorderThickness="0,0,0,0"
-                            Margin="5,2,8,2">
+                            CornerRadius="4,4,4,4"
+                            Padding="4,0,4,0"
+                            Background="{TemplateBinding Background}"
+                            Margin="{TemplateBinding Margin}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="24"
-                                                  Width="Auto"
+                                <ColumnDefinition Width="Auto"
                                                   SharedSizeGroup="MenuItemIconColumnGroup" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*"
+                                                  SharedSizeGroup="MenuItemContentColumnGroup" />
                                 <ColumnDefinition Width="Auto"
                                                   SharedSizeGroup="MenuItemIGTColumnGroup" />
-                                <ColumnDefinition Width="17" />
                             </Grid.ColumnDefinitions>
-                            <ContentPresenter Grid.Column="0" x:Name="Icon"
-                                              VerticalAlignment="Center"
+                            <ContentPresenter Grid.Column="0"
+                                              x:Name="Icon"
+                                              MinHeight="16"
+                                              MinWidth="16"
                                               ContentSource="Icon"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            <Border Grid.Column="0" x:Name="GlyphPanel"
+                            <Border Grid.Column="0"
+                                    x:Name="GlyphPanel"
                                     Background="{DynamicResource PopupBackground}"
                                     BorderBrush="{DynamicResource BorderAlt}"
+                                    Margin="{TemplateBinding Padding}"
+                                    VerticalAlignment="Center"
                                     BorderThickness="0,0,0,0"
-                                    CornerRadius="3"
-                                    Visibility="Hidden"
-                                    Width="22"
-                                    Height="22">
-                                <Path x:Name="Glyph"
-                                      Width="12"
-                                      Height="12"
+                                    MinHeight="16"
+                                    Visibility="Collapsed">
+                                <Path Name="Glyph"
+                                      Margin="0,2,0,2"
+                                      Stretch="Uniform"
                                       Fill="{DynamicResource IconColor}"
-                                      FlowDirection="LeftToRight"
-                                      Margin="0,5,0,0">
+                                      FlowDirection="LeftToRight">
                                     <Path.Data>
                                         <PathGeometry>M10.3536 0.646447C10.5488 0.841709 10.5488 1.15829 10.3536 1.35355L4.35355 7.35355C4.15829 7.54882 3.84171 7.54882 3.64645 7.35355L0.646447 4.35355C0.451184 4.15829 0.451184 3.84171 0.646447 3.64645C0.841709 3.45118 1.15829 3.45118 1.35355 3.64645L4 6.29289L9.64645 0.646447C9.84171 0.451184 10.1583 0.451184 10.3536 0.646447Z</PathGeometry>
                                     </Path.Data>
@@ -217,31 +226,33 @@
                             </Border>
                             <ContentPresenter Grid.Column="1"
                                               ContentSource="Header"
-                                              Margin="{TemplateBinding MenuItem.Padding}"
+                                              Margin="{TemplateBinding Padding}"
                                               RecognizesAccessKey="True"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <TextBlock Grid.Column="2"
-                                       VerticalAlignment="Center"
-                                       Text="{TemplateBinding MenuItem.InputGestureText}"
-                                       Margin="{TemplateBinding MenuItem.Padding}" />
+                                       Text="{TemplateBinding InputGestureText}"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="Center" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Icon" Value="{x:Null}">
                             <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="IsChecked" Value="true">
+                        <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="IsHighlighted" Value="true">
+                        <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Bg" Property="Background"
                                     Value="{DynamicResource PopupHoveredBackground}" />
                             <Setter TargetName="Bg" Property="BorderBrush"
                                     Value="{DynamicResource PopupHoveredBackground}" />
                             <Setter TargetName="GlyphPanel" Property="Background"
-                                    Value="{DynamicResource PopupHoveredBackground}" />
+                                    Value="Transparent" />
                             <Setter TargetName="GlyphPanel" Property="BorderBrush"
                                     Value="{DynamicResource PopupHoveredBackground}" />
                             <Setter TargetName="Glyph" Property="Fill"
@@ -249,7 +260,7 @@
                             <Setter Property="Foreground"
                                     Value="{DynamicResource PopupHoveredForeground}" />
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
+                        <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="GlyphPanel" Property="Opacity" Value="0.5" />
                             <Setter TargetName="Bg" Property="Background"
                                     Value="{DynamicResource PopupDisabledBackground}" />
@@ -260,7 +271,7 @@
                             <Setter Property="Foreground"
                                     Value="{DynamicResource PopupDisabledForeground}" />
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="true">
+                        <Trigger Property="IsEnabled" Value="True">
                             <Setter TargetName="GlyphPanel" Property="Opacity" Value="1" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -503,7 +514,9 @@
                 </Setter>
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
-                <Setter Property="Padding" Value="8,3,8,3" />
+                <Setter Property="Padding" Value="4,4,4,4" />
+                <Setter Property="Margin" Value="2,2,2,2" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type MenuItem}">
@@ -672,7 +685,6 @@
                 <Setter Property="Padding" Value="4,4,4,4" />
                 <Setter Property="Margin" Value="2,2,2,2" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type MenuItem}">
