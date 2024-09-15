@@ -189,6 +189,9 @@
       <Resource Include="Resources\menu-refresh-32.png"/>
   </ItemGroup>
   <ItemGroup>
+      <Resource Include="Resources\Styles\Controls\ScrollViewer.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
     <Resource Include="Resources\Styles\Controls\Window.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Resource>

@@ -250,8 +250,6 @@
                         <ToggleButton x:Name="PART_ToggleButton"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="2"
-                                      Background="Transparent"
-                                      BorderBrush="Transparent"
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                       Style="{StaticResource GlyphEditableDropdownExpanderStyle}"
                                       HorizontalContentAlignment="Right"

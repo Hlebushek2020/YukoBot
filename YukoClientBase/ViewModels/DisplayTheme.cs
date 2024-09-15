@@ -41,6 +41,18 @@ namespace YukoClientBase.ViewModels
             List<DisplayTheme> displayThemes = new List<DisplayTheme>();
             foreach (Themes theme in Enum.GetValues(typeof(Themes)))
                 displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
+            foreach (Themes theme in Enum.GetValues(typeof(Themes)))
+                displayThemes.Add(new DisplayTheme(theme));
             return displayThemes;
         }
     }
