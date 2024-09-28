@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ComboBox.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ListBox.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ListView.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/GridSplitter.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
