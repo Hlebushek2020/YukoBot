@@ -3,23 +3,46 @@ using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Windows;
 using YukoClient.Models;
-using YukoClient.Models.Progress;
-using YukoClientBase.Interfaces;
-using SUI = Sergey.UI.Extension;
+using YukoClient.Models.Progresses;
+using YukoClientBase.Views;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
-    public class ServerSettingsViewModel : BindableBase, IViewTitle
+    public class ServerSettingsViewModel : BindableBase
     {
+        private List<Channel> _selectedChannels;
+        private Channel _selectedChannel;
+
         #region Propirties
-        public string Title { get => App.Name; }
+        public string Title => App.Name;
         public Server Server { get; }
-        public List<Channel> SelectedChannels { get; set; }
-        public Channel SelectedChannel { get; set; }
+
+        public List<Channel> SelectedChannels
+        {
+            get => _selectedChannels;
+            set
+            {
+                _selectedChannels = value;
+                RaisePropertyChanged();
+                RemoveSelectedChannelsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public Channel SelectedChannel
+        {
+            get => _selectedChannel;
+            set
+            {
+                _selectedChannel = value;
+                RaisePropertyChanged();
+                RenameChannelCommand.RaiseCanExecuteChanged();
+            }
+        }
         #endregion
 
         #region Commands
-        public DelegateCommand RenameСhannelCommand { get; }
+        public DelegateCommand RenameChannelCommand { get; }
         public DelegateCommand RemoveSelectedChannelsCommand { get; }
         public DelegateCommand ClearChannelListCommand { get; }
         public DelegateCommand UpdateChannelListCommand { get; }
@@ -29,46 +52,52 @@ namespace YukoClient.ViewModels
         {
             Server = server;
             SelectedChannels = new List<Channel>();
-            // commands
-            RenameСhannelCommand = new DelegateCommand(() =>
-            {
-                if (SelectedChannel != null)
+
+            // Commands
+            RenameChannelCommand = new DelegateCommand(
+                () =>
                 {
                     RenameChannelWindow renameChannel = new RenameChannelWindow(SelectedChannel);
                     renameChannel.ShowDialog();
-                }
-            });
-            RemoveSelectedChannelsCommand = new DelegateCommand(() =>
-            {
-                if (SelectedChannels.Count != 0)
+                },
+                () => _selectedChannel != null);
+            RemoveSelectedChannelsCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         foreach (Channel channel in SelectedChannels)
-                        {
                             Server.Channels.Remove(channel);
-                        }
+
+                        ClearChannelListCommand.RaiseCanExecuteChanged();
                     }
-                }
-            });
-            ClearChannelListCommand = new DelegateCommand(() =>
-            {
-                if (Server.Channels.Count != 0)
+                },
+                () => _selectedChannels.Count != 0);
+            ClearChannelListCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Server.Channels.Clear();
+                        ClearChannelListCommand.RaiseCanExecuteChanged();
                     }
-                }
-            });
+                },
+                () => Server.Channels.Count != 0);
             UpdateChannelListCommand = new DelegateCommand(() =>
             {
-                if (SUI.Dialogs.MessageBox.Show("ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show(
+                        "ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name,
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    ProgressWindow progress = new ProgressWindow(new UpdateServer(server));
+                    ProgressWindow progress = new ProgressWindow(Title, new UpdateServer(server));
                     progress.ShowDialog();
+                    ClearChannelListCommand.RaiseCanExecuteChanged();
                 }
             });
+
+            ClearChannelListCommand.RaiseCanExecuteChanged();
         }
     }
 }

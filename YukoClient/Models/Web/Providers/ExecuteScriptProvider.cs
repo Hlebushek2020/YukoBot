@@ -4,68 +4,68 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using YukoClient.Exceptions;
+using YukoClient.Models.Web.Errors;
 using YukoClient.Models.Web.Requests;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web.Providers
 {
     public class ExecuteScriptProvider : IDisposable
     {
-        private bool disposed = false;
+        private bool _disposed = false;
 
-        private int countScripts;
-        private int countSendScripts = 0;
+        private readonly int _countScripts;
+        private int _countSendScripts = 0;
 
-        private readonly TcpClient client;
-        private readonly BinaryReader clientReader;
-        private readonly BinaryWriter clientWriter;
+        private readonly TcpClient _client;
+        private readonly BinaryReader _clientReader;
+        private readonly BinaryWriter _clientWriter;
 
-        public ExecuteScriptProvider(string token, ulong serverId, int scriptsCount)
+        public ExecuteScriptProvider(
+            string token,
+            ulong serverId,
+            int scriptsCount,
+            out Response<ExecuteScriptErrorJson> response)
         {
-            countScripts = scriptsCount;
-            client = new TcpClient
+            _countScripts = scriptsCount;
+            _client = new TcpClient
             {
-                SendTimeout = WebClient.SendTimeout,
-                ReceiveTimeout = WebClient.ReceiveTimeout
+                SendTimeout = WebClientBase.SendTimeout,
+                ReceiveTimeout = WebClientBase.ReceiveTimeout
             };
-            client.Connect(Settings.Current.Host, Settings.Current.Port);
-            NetworkStream networkStream = client.GetStream();
-            clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
-            clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
+            _client.Connect(Settings.Current.Host, Settings.Current.Port);
+            NetworkStream networkStream = _client.GetStream();
+            _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
+            _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
-            ServerRequest request = new ServerRequest
-            {
-                Type = RequestType.ExecuteScripts,
-                Token = token,
-                Id = serverId
-            };
-            clientWriter.Write(request.ToString());
+            _clientWriter.Write((int) RequestType.ExecuteScripts);
+            _clientWriter.Write(token);
+            _clientWriter.Write(new ServerRequest { Id = serverId }.ToString());
+            // response
+            response = JsonConvert.DeserializeObject<Response<ExecuteScriptErrorJson>>(_clientReader.ReadString());
         }
 
         public void ExecuteScript(Script script)
         {
-            if (countSendScripts >= countScripts)
-            {
+            if (_countSendScripts >= _countScripts)
                 throw new ScriptExecutionUnavailableException();
-            }
-            countSendScripts++;
-            ExecuteScriptRequest request = new ExecuteScriptRequest()
-            {
-                ChannelId = script.Channel.Id,
-                Mode = script.Mode.Mode,
-                MessageId = script.MessageId,
-                Count = script.Count,
-                HasNext = countSendScripts < countScripts
-            };
-            clientWriter.Write(request.ToString());
+
+            _countSendScripts++;
+            _clientWriter.Write(
+                new ExecuteScriptRequest()
+                {
+                    ChannelId = script.Channel.Id,
+                    Mode = script.Mode.Mode,
+                    MessageId = script.MessageId,
+                    Count = script.Count,
+                    HasNext = _countSendScripts < _countScripts
+                }.ToString());
         }
 
-        public UrlsResponse ReadBlock()
-        {
-            return JsonConvert.DeserializeObject<UrlsResponse>(clientReader.ReadString());
-        }
+        public UrlsResponse ReadBlock() => JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());
 
         public void Dispose()
         {
@@ -75,15 +75,15 @@ namespace YukoClient.Models.Web.Providers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
-                    clientReader.Dispose();
-                    clientWriter.Dispose();
-                    client.Dispose();
+                    _clientReader.Dispose();
+                    _clientWriter.Dispose();
+                    _client.Dispose();
                 }
-                disposed = true;
+                _disposed = true;
             }
         }
     }

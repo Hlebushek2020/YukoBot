@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using YukoClient.ViewModels;
 
 namespace YukoClient
@@ -12,10 +11,23 @@ namespace YukoClient
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel
+            MainViewModel viewModel = new MainViewModel();
+            viewModel.FullscreenEvent += ViewModelOnFullscreenEvent;
+            DataContext = viewModel;
+        }
+
+        private void ViewModelOnFullscreenEvent()
+        {
+            if (WindowStyle == WindowStyle.None)
             {
-                Close = new Action(Close)
-            };
+                WindowState = WindowState.Normal;
+                WindowStyle = WindowStyle.SingleBorderWindow;
+            }
+            else
+            {
+                WindowStyle = WindowStyle.None;
+                WindowState = WindowState.Maximized;
+            }
         }
     }
 }

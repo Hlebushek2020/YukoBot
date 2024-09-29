@@ -1,11 +1,13 @@
-﻿using Sergey.UI.Extension.Themes;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using YukoClient.Models.Web;
+using YukoClient.ViewModels;
 using YukoClientBase.Models;
-using SUI = Sergey.UI.Extension;
+using YukoClientBase.Views;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
+using BaseResources = YukoClientBase.Properties.Resources;
 
 namespace YukoClient
 {
@@ -16,46 +18,38 @@ namespace YukoClient
     {
         public const int BinaryFileVersion = 20211009;
 
-        public static string Name { get; } = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
+        public static string Name { get; } =
+            Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
-        private static Mutex yukoClientMutex;
+        private static Mutex _yukoClientMutex;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SwitchTheme(null);
-            yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
+            // set the theme
+            Uri themeUri = ThemesUri.Get(Settings.Current.Theme);
+            ResourceDictionary resource = (ResourceDictionary)LoadComponent(themeUri);
+            Resources.MergedDictionaries.Add(resource);
+
+            // check whether one of the clients is running or not
+            _yukoClientMutex = new Mutex(true, Settings.YukoClientMutexName, out bool createdNew);
             if (!createdNew)
             {
-                SUI.Dialogs.MessageBox.Show("Клиент уже открыт! Запрещено открывать несколько клиентов.", Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(BaseResources.App_AlreadyLaunched, Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 Shutdown();
             }
+
             MainWindow = new MainWindow();
-            AuthorizationWindow authorization = new AuthorizationWindow();
+
+            AuthorizationWindow authorization = new AuthorizationWindow(new AuthorizationViewModel());
             authorization.ShowDialog();
+
             if (!WebClient.Current.TokenAvailability)
-            {
                 Shutdown();
-            }
             else
             {
+                MainWindow.WindowStyle = authorization.WindowStyle;
+                MainWindow.WindowState = authorization.WindowState;
                 MainWindow.Show();
-            }
-        }
-
-        public static void SwitchTheme(Theme? theme)
-        {
-            Settings settings = Settings.Current;
-            if (!theme.HasValue || settings.Theme != theme.Value)
-            {
-                Uri uri = ThemeUri.Get(settings.Theme);
-                if (theme.HasValue)
-                {
-                    settings.Theme = theme.Value;
-                    uri = ThemeUri.Get(theme.Value);
-                }
-                ResourceDictionary resource = (ResourceDictionary)LoadComponent(uri);
-                Current.Resources.MergedDictionaries.Clear();
-                Current.Resources.MergedDictionaries.Add(resource);
             }
         }
     }

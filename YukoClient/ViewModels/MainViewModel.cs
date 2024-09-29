@@ -1,78 +1,108 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
-using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using YukoClient.Models;
-using YukoClient.Models.Progress;
+using YukoClient.Models.Progresses;
 using YukoClientBase.Interfaces;
-using SUI = Sergey.UI.Extension;
+using YukoClientBase.Views;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
+using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
+using DialogResult = System.Windows.Forms.DialogResult;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace YukoClient.ViewModels
 {
-    public class MainViewModel : BindableBase, ICloseableView, IViewTitle
+    public class MainViewModel : BindableBase, IFullscreenEvent
     {
         #region Fields
-        private Server selectedServer;
+        private Server _selectedServer;
+        private Script _selectedScript;
+        private string _selectedUrl;
         #endregion
 
         #region Propirties
-        public string Title
-        {
-            get => App.Name;
-        }
-        public Action Close { get; set; }
-        public ImageBrush Avatar
-        {
-            get { return Storage.Current.Avatar; }
-        }
-        public string Nikname
-        {
-            get { return Storage.Current.Nikname; }
-        }
-        public string Id
-        {
-            get { return Storage.Current.Id.ToString(); }
-        }
-        public ObservableCollection<Server> Servers
-        {
-            get { return Storage.Current.Servers; }
-        }
+        public string Title => App.Name;
+        public ImageBrush Avatar => Storage.Current.Avatar;
+        public string Username => Storage.Current.Username;
+        public string UserId => Storage.Current.UserId.ToString();
+        public ObservableCollection<Server> Servers => Storage.Current.Servers;
+
         public Server SelectedServer
         {
-            get { return selectedServer; }
+            get => _selectedServer;
             set
             {
-                selectedServer = value;
-                if (selectedServer != null)
-                {
-                    RaisePropertyChanged("Scripts");
-                    RaisePropertyChanged("Urls");
-                }
+                _selectedServer = value;
+
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(Scripts));
+                RaisePropertyChanged(nameof(Urls));
+
+                RemoveServerCommand.RaiseCanExecuteChanged();
+                ServerSettingsCommand.RaiseCanExecuteChanged();
+
+                AddScriptCommand.RaiseCanExecuteChanged();
+                ClearScriptsCommand.RaiseCanExecuteChanged();
+                ExportScriptsCommand.RaiseCanExecuteChanged();
+                ImportScriptsCommand.RaiseCanExecuteChanged();
+                RunScriptsCommand.RaiseCanExecuteChanged();
+
+                ClearUrlsCommand.RaiseCanExecuteChanged();
+                ExportUrlsCommand.RaiseCanExecuteChanged();
+                ImportUrlsCommand.RaiseCanExecuteChanged();
+                DownloadFilesCommand.RaiseCanExecuteChanged();
             }
         }
-        public ObservableCollection<Script> Scripts
+
+        public ObservableCollection<Script> Scripts => _selectedServer?.Scripts;
+
+        public Script SelectedScript
         {
-            get { return selectedServer?.Scripts; }
+            get => _selectedScript;
+            set
+            {
+                _selectedScript = value;
+
+                RaisePropertyChanged();
+
+                RemoveScriptCommand.RaiseCanExecuteChanged();
+                ShowExecutionErrorsCommand.RaiseCanExecuteChanged();
+            }
         }
-        public Script SelectedScript { get; set; }
-        public ObservableCollection<string> Urls
+
+        public ObservableCollection<string> Urls => _selectedServer?.Urls;
+
+        public string SelectedUrl
         {
-            get { return selectedServer?.Urls; }
+            get => _selectedUrl;
+            set
+            {
+                _selectedUrl = value;
+
+                RaisePropertyChanged();
+
+                RemoveUrlCommand.RaiseCanExecuteChanged();
+            }
         }
-        public string SelectedUrl { get; set; }
         #endregion
 
         #region Commands
+        public DelegateCommand FullscreenCommand { get; }
         public DelegateCommand WindowLoadedCommand { get; }
+
         // User Commands
         public DelegateCommand AppSettingsCommand { get; }
+
         // Server Commands
         public DelegateCommand ServerSettingsCommand { get; }
         public DelegateCommand RemoveServerCommand { get; }
         public DelegateCommand UpdateServerCollectionCommand { get; }
+
         // Script Commands
         public DelegateCommand AddScriptCommand { get; }
         public DelegateCommand RemoveScriptCommand { get; }
@@ -80,6 +110,8 @@ namespace YukoClient.ViewModels
         public DelegateCommand ExportScriptsCommand { get; }
         public DelegateCommand ImportScriptsCommand { get; }
         public DelegateCommand RunScriptsCommand { get; }
+        public DelegateCommand ShowExecutionErrorsCommand { get; }
+
         // Url Command
         public DelegateCommand RemoveUrlCommand { get; }
         public DelegateCommand ClearUrlsCommand { get; }
@@ -88,233 +120,245 @@ namespace YukoClient.ViewModels
         public DelegateCommand DownloadFilesCommand { get; }
         #endregion
 
+        public event FullscreenEventHandler FullscreenEvent;
+
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public MainViewModel()
         {
-            Storage.Current.PropertyChanged += (s, e) => { RaisePropertyChanged(e.PropertyName); };
+            Storage.Current.PropertyChanged += (s, e) => RaisePropertyChanged(e.PropertyName);
+
+            FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                // TODO: Update servers (oerride)
-                ProgressWindow progress = new ProgressWindow(new StorageInitialization());
+                ProgressWindow progress = new ProgressWindow(Title, new StorageInitialization(), false);
                 progress.ShowDialog();
             });
+
             // User Commands
             AppSettingsCommand = new DelegateCommand(() =>
             {
-                SettingsWindow settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow(App.Name);
                 settingsWindow.ShowDialog();
             });
+
             // Server Commands
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
-                MessageBoxResult messageResult = SUI.Dialogs.MessageBox.Show(
+                MessageBoxResult messageResult = MessageBox.Show(
                     "Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.",
                     App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (messageResult != MessageBoxResult.Cancel)
                 {
                     ProgressWindow progress =
-                        new ProgressWindow(new UpdateServers(messageResult == MessageBoxResult.Yes));
+                        new ProgressWindow(Title, new UpdateServers(messageResult == MessageBoxResult.Yes));
                     progress.ShowDialog();
                 }
             });
-            RemoveServerCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
+            RemoveServerCommand = new DelegateCommand(
+                () =>
                 {
-                    if (SUI.Dialogs.MessageBox.Show($"Удалить сервер {selectedServer.Name} из списка?", App.Name,
+                    if (MessageBox.Show($"Удалить сервер {_selectedServer.Name} из списка?", App.Name,
                             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        Storage.Current.Servers.Remove(selectedServer);
+                        Storage.Current.Servers.Remove(_selectedServer);
                     }
-                }
-            });
-            ServerSettingsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
+                },
+                () => _selectedServer != null);
+            ServerSettingsCommand = new DelegateCommand(
+                () =>
                 {
-                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(selectedServer);
+                    ServerSettingsWindow serverSettings = new ServerSettingsWindow(_selectedServer);
                     serverSettings.ShowDialog();
                     // save data
                     Task.Run(() => Storage.Current.Save());
-                }
-            });
+                },
+                () => _selectedServer != null);
+
             // Script Commands
-            AddScriptCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
+            AddScriptCommand = new DelegateCommand(
+                () =>
                 {
-                    AddScriptWindow addScript = new AddScriptWindow(selectedServer);
+                    AddScriptWindow addScript = new AddScriptWindow(_selectedServer);
                     addScript.ShowDialog();
-                }
-                else
+                    RunScriptsCommand.RaiseCanExecuteChanged();
+                    ClearScriptsCommand.RaiseCanExecuteChanged();
+                },
+                () => _selectedServer != null);
+            RemoveScriptCommand = new DelegateCommand(
+                () =>
                 {
-                    SUI.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-            });
-            RemoveScriptCommand = new DelegateCommand(() =>
-            {
-                if (SelectedScript != null)
-                {
-                    if (SUI.Dialogs.MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Удалить выбранное правило?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Scripts.Remove(SelectedScript);
+                        _selectedServer.Scripts.Remove(SelectedScript);
+                        RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
                     }
-                }
-                else
+                }, () => _selectedScript != null);
+            ClearScriptsCommand = new DelegateCommand(
+                () =>
                 {
-                    SUI.Dialogs.MessageBox.Show("Выберите сервер!", App.Name, MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-            });
-            ClearScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
-                {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show("Очистить список правил?", App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        selectedServer.Scripts.Clear();
+                        _selectedServer.Scripts.Clear();
+                        RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
                     }
-                }
-            });
-            ExportScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
+                },
+                () => _selectedServer != null);
+            ExportScriptsCommand = new DelegateCommand(
+                () =>
                 {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "Yuko Script|*.yukoscript",
-                               DefaultExt = "yukoscript"
-                           })
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow = new ProgressWindow(new ExportScripts(selectedServer.Scripts,
-                                selectedServer.Id, saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            ImportScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
-                {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "Yuko Script|*.yukoscript",
-                               DefaultExt = "yukoscript"
-                           })
-                    {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            if (selectedServer.Scripts.Count > 0)
-                            {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    selectedServer.Scripts.Clear();
-                                }
-                            }
-                            ProgressWindow progressWindow = new ProgressWindow(new ImportScripts(selectedServer.Scripts,
-                                selectedServer.Id, openFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            RunScriptsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Scripts.Count > 0)
-                {
-                    ProgressWindow progress = new ProgressWindow(new ExecuteScripts(selectedServer));
-                    progress.ShowDialog();
-                }
-            });
-            // Url Command
-            RemoveUrlCommand = new DelegateCommand(() =>
-            {
-                if (SelectedUrl != null)
-                {
-                    if (SUI.Dialogs.MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        selectedServer.Urls.Remove(SelectedUrl);
-                    }
-                }
-            });
-            ClearUrlsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
-                {
-                    if (SUI.Dialogs.MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
-                            MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        selectedServer.Urls.Clear();
-                    }
-                }
-            });
-            ExportUrlsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
-                {
-                    using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
-                           })
-                    {
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(new ExportUrls(selectedServer.Urls, saveFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            ImportUrlsCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null)
-                {
-                    using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
-                           {
-                               Filter = "Текстовый докуент|*.txt",
-                               DefaultExt = "txt"
-                           })
-                    {
-                        if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            if (selectedServer.Urls.Count > 0)
-                            {
-                                if (SUI.Dialogs.MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                                {
-                                    selectedServer.Urls.Clear();
-                                }
-                            }
-                            ProgressWindow progressWindow =
-                                new ProgressWindow(new ImportUrls(selectedServer.Urls, openFileDialog.FileName));
-                            progressWindow.ShowDialog();
-                        }
-                    }
-                }
-            });
-            DownloadFilesCommand = new DelegateCommand(() =>
-            {
-                if (selectedServer != null && selectedServer.Urls.Count > 0)
-                {
-                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog =
-                        new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
-                    if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        ProgressWindow progressWindow = new ProgressWindow(
-                            new Download(selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
+                        saveFileDialog.Filter = "Yuko Script|*.yukoscript";
+                        saveFileDialog.DefaultExt = "yukoscript";
+
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ExportScripts(_selectedServer.Scripts, _selectedServer.Id, saveFileDialog.FileName));
                         progressWindow.ShowDialog();
                     }
-                }
-            });
+                },
+                () => _selectedServer != null);
+            ImportScriptsCommand = new DelegateCommand(
+                () =>
+                {
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                    {
+                        openFileDialog.Filter = "Yuko Script|*.yukoscript";
+                        openFileDialog.DefaultExt = "yukoscript";
+
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedServer.Scripts.Count > 0)
+                        {
+                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                _selectedServer.Scripts.Clear();
+                            }
+                        }
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ImportScripts(_selectedServer.Scripts, _selectedServer.Id, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                        RunScriptsCommand.RaiseCanExecuteChanged();
+                        ClearScriptsCommand.RaiseCanExecuteChanged();
+                    }
+                },
+                () => _selectedServer != null);
+            RunScriptsCommand = new DelegateCommand(
+                () =>
+                {
+                    ProgressWindow progress = new ProgressWindow(Title, new ExecuteScripts(_selectedServer));
+                    progress.ShowDialog();
+
+                    ClearUrlsCommand.RaiseCanExecuteChanged();
+                    ExportUrlsCommand.RaiseCanExecuteChanged();
+                    ImportUrlsCommand.RaiseCanExecuteChanged();
+                    DownloadFilesCommand.RaiseCanExecuteChanged();
+
+                    ShowExecutionErrorsCommand.RaiseCanExecuteChanged();
+                },
+                () => _selectedServer != null && _selectedServer.Scripts.Count > 0);
+            ShowExecutionErrorsCommand = new DelegateCommand(
+                () =>
+                {
+                    ExecutionErrorsWindow executionErrorsWindow = new ExecutionErrorsWindow(SelectedScript);
+                    executionErrorsWindow.ShowDialog();
+                }, () => _selectedScript != null && _selectedScript.CompletedWithErrors == true);
+
+            // Url Command
+            RemoveUrlCommand = new DelegateCommand(
+                () =>
+                {
+                    if (MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
+                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        _selectedServer?.Urls.Remove(SelectedUrl);
+                        DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
+                    }
+                }, () => _selectedUrl != null);
+            ClearUrlsCommand = new DelegateCommand(
+                () =>
+                {
+                    if (MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        _selectedServer.Urls.Clear();
+                        DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
+                    }
+                },
+                () => _selectedServer != null);
+            ExportUrlsCommand = new DelegateCommand(
+                () =>
+                {
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                    {
+                        saveFileDialog.Filter = "Текстовый докуент|*.txt";
+                        saveFileDialog.DefaultExt = "txt";
+
+                        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                    }
+                },
+                () => _selectedServer != null);
+            ImportUrlsCommand = new DelegateCommand(
+                () =>
+                {
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                    {
+                        openFileDialog.Filter = "Текстовый докуент|*.txt";
+                        openFileDialog.DefaultExt = "txt";
+
+                        if (openFileDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        if (_selectedServer.Urls.Count > 0)
+                        {
+                            if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                _selectedServer.Urls.Clear();
+                            }
+                        }
+
+                        ProgressWindow progressWindow =
+                            new ProgressWindow(Title,
+                                new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
+                        progressWindow.ShowDialog();
+                        DownloadFilesCommand.RaiseCanExecuteChanged();
+                        ClearUrlsCommand.RaiseCanExecuteChanged();
+                    }
+                },
+                () => _selectedServer != null);
+            DownloadFilesCommand = new DelegateCommand(
+                () =>
+                {
+                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+                    {
+                        folderBrowserDialog.ShowNewFolderButton = true;
+
+                        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        ProgressWindow progressWindow = new ProgressWindow(Title,
+                            new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
+                        progressWindow.ShowDialog();
+                    }
+                },
+                () => _selectedServer != null && _selectedServer.Urls.Count > 0);
         }
     }
 }

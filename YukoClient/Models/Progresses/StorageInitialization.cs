@@ -8,11 +8,12 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Progresses;
-using SUI = Sergey.UI.Extension;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class StorageInitialization : BaseProgressModel
     {
@@ -28,15 +29,21 @@ namespace YukoClient.Models.Progress
             }
             else
             {
-                dispatcher.Invoke(() => State = "Получение данных");
-                ServersResponse response = WebClient.Current.GetServers();
-                if (string.IsNullOrEmpty(response.ErrorMessage))
+                try
                 {
+                    dispatcher.Invoke(() => State = "Получение данных");
+                    ServersResponse response = WebClient.Current.GetServers();
+
+                    if (response.Error != null)
+                        throw new ClientCodeException(response.Error.Code);
+
                     Storage.Current.Servers = new ObservableCollection<Server>(response.Servers);
                 }
-                else
+                catch (Exception ex)
                 {
-                    dispatcher.Invoke((Action<string>)((string errorMessage) => SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), response.ErrorMessage);
+                    dispatcher.Invoke((Action<string>)((string errorMessage) =>
+                            MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)),
+                        ex.Message);
                 }
             }
         }

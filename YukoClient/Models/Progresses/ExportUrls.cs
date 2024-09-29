@@ -5,26 +5,26 @@ using System.Threading;
 using System.Windows.Threading;
 using YukoClientBase.Models.Progresses;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class ExportUrls : BaseProgressModel
     {
-        private readonly ICollection<string> urls;
-        private readonly string fileName;
+        private readonly ICollection<string> _urls;
+        private readonly string _fileName;
 
         public ExportUrls(ICollection<string> urls, string fileName)
         {
-            this.urls = urls;
-            this.fileName = fileName;
+            _urls = urls;
+            _fileName = fileName;
         }
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка к экспорту сылок");
-            using (StreamWriter streamWriter = new StreamWriter(fileName, false, Encoding.UTF8))
+            using (StreamWriter streamWriter = new StreamWriter(_fileName, false, Encoding.UTF8))
             {
-                dispatcher.Invoke(() => MaxValue = urls.Count);
-                foreach (string url in urls)
+                dispatcher.Invoke(() => MaxValue = _urls.Count);
+                foreach (string url in _urls)
                 {
                     dispatcher.Invoke(() => State = $"Запись {Value + 1}/{MaxValue}");
                     streamWriter.WriteLine(url);

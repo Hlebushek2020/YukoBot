@@ -3,154 +3,248 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:YukoClient"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:viewModels="clr-namespace:YukoClient.ViewModels"
         mc:Ignorable="d"
-        Title="{Binding Title, Mode=OneWay}" 
-        Style="{StaticResource WindowStyle}"
-        Height="450" 
+        d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
+        Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Style="{DynamicResource WindowStyle}"
+        Height="450"
         Width="800"
         FontSize="14"
         WindowStartupLocation="CenterScreen">
+
     <Window.InputBindings>
-        <KeyBinding Key="F5" Command="{Binding UpdateServerCollectionCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding  Path=UpdateServerCollectionCommand}" />
+        <KeyBinding Key="F11" Command="{Binding Path=FullscreenCommand }" />
     </Window.InputBindings>
+
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded">
-            <behaviors:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
+            <behaviors:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
+
     <Window.Resources>
         <Style x:Key="HeadGridStyle" TargetType="Grid">
-            <Setter Property="Background" Value="{DynamicResource MainWindow.Head.Background}"/>
+            <Setter Property="Background" Value="{DynamicResource MainWindow.Head.Background}" />
         </Style>
-        <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
-            <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="FontSize" Value="18"/>
+        <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="18" />
         </Style>
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Style="{StaticResource HeadGridStyle}">
+        <Grid Grid.Row="0" Style="{DynamicResource HeadGridStyle}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Ellipse Grid.Column="0" Margin="10,5,0,5" Width="60" Height="60" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" Fill="{Binding Avatar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Ellipse Grid.Column="0" Margin="10,5,0,5" Width="60" Height="60" HorizontalAlignment="Left"
+                     RenderOptions.BitmapScalingMode="HighQuality"
+                     Fill="{Binding Avatar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource TitleTextBlockStyle}" Margin="0" TextWrapping="Wrap" Text="{Binding Nikname, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom"/>
-                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource TextBlockStyle}" Margin="0,5,0,0" TextWrapping="Wrap" Text="{Binding Id, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Left" Style="{DynamicResource TitleTextBlockStyle}"
+                           Margin="0" TextWrapping="Wrap"
+                           Text="{Binding Username, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                           VerticalAlignment="Bottom" />
+                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Style="{DynamicResource TextBlockStyle}"
+                           Margin="0,5,0,0" TextWrapping="Wrap"
+                           Text="{Binding UserId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                           VerticalAlignment="Top" />
             </Grid>
             <Grid Grid.Column="2" Margin="5,0,0,0">
                 <!-- PROGRESS ITEMS -->
             </Grid>
-            <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5,0,10,0" BorderThickness="0" Padding="2" Style="{StaticResource IconButtonStyle}" Command="{Binding AppSettingsCommand}" VerticalAlignment="Center" Height="34" Width="34" >
-                <Image Source="/YukoClientBase;component/Resources/settings-48.png"/>
+            <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5,0,10,0" BorderThickness="0" Padding="2"
+                    Style="{DynamicResource IconButtonStyle}" Command="{Binding AppSettingsCommand}"
+                    VerticalAlignment="Center" Height="34" Width="34">
+                <Image Source="/YukoClientBase;component/Resources/settings-48.png" />
             </Button>
         </Grid>
         <Grid Grid.Row="1" Margin="10,5,10,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ListBox Grid.Column="0" SelectionMode="Single" ItemsSource="{Binding Servers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedServer, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+            <ListBox Grid.Column="0" SelectionMode="Single"
+                     ItemsSource="{Binding Servers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                     SelectedItem="{Binding SelectedServer, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Настроить" Command="{Binding ServerSettingsCommand}"/>
-                        <MenuItem Header="Удалить" Command="{Binding RemoveServerCommand}"/>
-                        <Separator/>
-                        <MenuItem Header="Обновить список" InputGestureText="F5" Command="{Binding UpdateServerCollectionCommand}"/>
+                        <MenuItem Header="Настроить" Command="{Binding ServerSettingsCommand}" />
+                        <MenuItem Header="Удалить" Command="{Binding RemoveServerCommand}" />
+                        <Separator />
+                        <MenuItem Header="Обновить список" InputGestureText="F5"
+                                  Command="{Binding UpdateServerCollectionCommand}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Height="70">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Ellipse Grid.Column="0" Margin="5,5,0,5" Width="60" Height="60" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" Fill="{Binding Icon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0">
+                            <Ellipse Grid.Column="0" Margin="5,5,0,5" Width="60" Height="60" HorizontalAlignment="Left"
+                                     RenderOptions.BitmapScalingMode="HighQuality"
+                                     Fill="{Binding Icon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                  Margin="5,0,0,0">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
+                                    <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource TitleTextBlockStyle}" Margin="0" TextWrapping="Wrap" Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom"/>
-                                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource TextBlockStyle}" Margin="0,5,0,0" TextWrapping="Wrap" Text="{Binding Channels.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat='Доступно {0} каналов'}" VerticalAlignment="Top"/>
+                                <TextBlock Grid.Row="0" HorizontalAlignment="Left"
+                                           Style="{DynamicResource TitleTextBlockStyle}" Margin="0" TextWrapping="Wrap"
+                                           Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                           VerticalAlignment="Bottom" />
+                                <TextBlock Grid.Row="1" HorizontalAlignment="Left"
+                                           Style="{DynamicResource TextBlockStyle}" Margin="0,5,0,0"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding Channels.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat='Доступно {0} каналов'}"
+                                           VerticalAlignment="Top" />
                             </Grid>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <GridSplitter Grid.Column="1" Width="3" Margin="5,0" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Width="3" Margin="5,0" HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch" />
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Добавить правило" Command="{Binding AddScriptCommand}">
-                            <Image Source="/Resources/menu-add-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Добавить правило"
+                                Command="{Binding AddScriptCommand}">
+                            <Image Source="/Resources/menu-add-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить правило" Command="{Binding RemoveScriptCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Удалить правило"
+                                Command="{Binding RemoveScriptCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearScriptsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Очистить"
+                                Command="{Binding ClearScriptsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать правила" Command="{Binding ExportScriptsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Экспортировать правила"
+                                Command="{Binding ExportScriptsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать правилa" Command="{Binding ImportScriptsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Импортировать правилa"
+                                Command="{Binding ImportScriptsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Выполнить правила" Command="{Binding RunScriptsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-start-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Выполнить правила"
+                                Command="{Binding RunScriptsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-start-32.png" />
+                        </Button>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Просмотреть ошибки"
+                                Command="{Binding ShowExecutionErrorsCommand}">
+                            <Image Source="/Resources/menu-error-32.png" />
                         </Button>
                     </StackPanel>
-                    <ListView Margin="0,26,0,0" SelectionMode="Single" ItemsSource="{Binding Scripts, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedScript, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView Margin="0,26,0,0" SelectionMode="Single"
+                              ItemsSource="{Binding Scripts, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedScript, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Канал" DisplayMemberBinding="{Binding Channel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <GridViewColumn Header="Получение" DisplayMemberBinding="{Binding Mode.Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <GridViewColumn Header="Сообщение" DisplayMemberBinding="{Binding MessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <GridViewColumn Header="Канал"
+                                                DisplayMemberBinding="{Binding Channel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <GridViewColumn Header="Получение"
+                                                DisplayMemberBinding="{Binding Mode.Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <GridViewColumn Header="Сообщение"
+                                                DisplayMemberBinding="{Binding MessageId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <GridViewColumn Header="Количество"
+                                                DisplayMemberBinding="{Binding Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             </GridView>
                         </ListView.View>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition
+                                                Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Self}}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding Path=CompletedWithErrors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Background" Value="#3fff0000" />
+                                            <Setter Property="BorderBrush" Value="#3fff0000" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition
+                                                Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Self}}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding Path=CompletedWithErrors, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Background" Value="#3f00ff00" />
+                                            <Setter Property="BorderBrush" Value="#3f00ff00" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </Grid>
-                <GridSplitter Grid.Row="1" Height="3" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <GridSplitter Grid.Row="1" Height="3" Margin="0,5" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center" />
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить" Command="{Binding RemoveUrlCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Удалить"
+                                Command="{Binding RemoveUrlCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить" Command="{Binding ClearUrlsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Очистить"
+                                Command="{Binding ClearUrlsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список" Command="{Binding ExportUrlsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Экспортировать список"
+                                Command="{Binding ExportUrlsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список" Command="{Binding ImportUrlsCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Импортировать список"
+                                Command="{Binding ImportUrlsCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать" Command="{Binding DownloadFilesCommand}">
-                            <Image Source="/YukoClientBase;component/Resources/menu-download-32.png"/>
+                        <Button Style="{DynamicResource MenuIconButtonStyle}" ToolTip="Скачать"
+                                Command="{Binding DownloadFilesCommand}">
+                            <Image Source="/YukoClientBase;component/Resources/menu-download-32.png" />
                         </Button>
                     </StackPanel>
-                    <ListBox SelectionMode="Single" Margin="0,26,0,0" ItemsSource="{Binding Urls, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedUrl, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ListBox SelectionMode="Single" Margin="0,26,0,0"
+                             ItemsSource="{Binding Urls, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                             SelectedItem="{Binding SelectedUrl, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </Grid>
         </Grid>

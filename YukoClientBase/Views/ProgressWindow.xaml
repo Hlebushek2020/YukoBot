@@ -1,0 +1,48 @@
+﻿<Window x:Class="YukoClientBase.Views.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
+        xmlns:valueConverters="clr-namespace:YukoClientBase.ValueConverters"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:ProgressViewModel}}"
+        Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Style="{DynamicResource WindowStyle}"
+        Width="620"
+        FontSize="14"
+        ResizeMode="NoResize"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <valueConverters:VisibilityValueConverter x:Key="VisibilityValueConverter" />
+    </Window.Resources>
+
+    <StackPanel Margin="10"
+                Orientation="Vertical">
+
+        <ProgressBar Height="20"
+                     VerticalAlignment="Top"
+                     IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                     Maximum="{Binding MaxValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                     Value="{Binding Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Style="{StaticResource TextBlockStyle}"
+                   Margin="0,5,0,0"
+                   Height="56"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Top"
+                   Text="{Binding State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Content="Отмена"
+                Height="30"
+                Width="120"
+                Margin="0,5,0,0"
+                HorizontalAlignment="Right"
+                IsCancel="True"
+                IsEnabled="{Binding Path=CancelButtonIsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{Binding Path=IsCancellable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityValueConverter}}" />
+
+    </StackPanel>
+
+</Window>

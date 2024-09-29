@@ -64,12 +64,10 @@
     <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Sergey.UI.Extension">
-      <HintPath>..\..\Sergey.UI.Extension\Sergey.UI.Extension\VS_Output\bin\Debug\Sergey.UI.Extension.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -80,46 +78,150 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+      <Compile Include="Dialogs\MessageBox.cs"/>
+    <Compile Include="Enums\ClientErrorCodes.cs" />
     <Compile Include="Enums\RequestType.cs" />
+    <Compile Include="Exceptions\ClientCodeException.cs" />
+    <Compile Include="Exceptions\YukoException.cs" />
+    <Compile Include="Extensions\ClientErrorCodesExtension.cs" />
+    <Compile Include="Interfaces\IFullscreenEvent.cs" />
     <Compile Include="Interfaces\IUser.cs" />
-    <Compile Include="Interfaces\ICloseableView.cs" />
-    <Compile Include="Interfaces\IViewTitle.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\DownloaderLogger.cs" />
     <Compile Include="Models\Progresses\BaseProgressModel.cs" />
     <Compile Include="Models\Settings.cs" />
+      <Compile Include="Models\Themes.cs"/>
+      <Compile Include="Models\ThemesUri.cs"/>
+    <Compile Include="Models\Web\Errors\BaseErrorJson.cs" />
     <Compile Include="Models\Web\Requests\AuthorizationRequest.cs" />
-    <Compile Include="Models\Web\Requests\BaseRequest.cs" />
     <Compile Include="Models\Web\Requests\Request.cs" />
-    <Compile Include="Models\Web\Responces\AuthorizationResponse.cs" />
-    <Compile Include="Models\Web\Responces\Response.cs" />
-    <Compile Include="Models\Web\Responces\UrlsResponse.cs" />
+    <Compile Include="Models\Web\Responses\AuthorizationResponse.cs" />
+    <Compile Include="Models\Web\Responses\RefreshTokenResponse.cs" />
+    <Compile Include="Models\Web\Responses\Response.cs" />
+    <Compile Include="Models\Web\Responses\UrlsResponse.cs" />
     <Compile Include="Models\Web\WebClientBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ValueConverters\VisibilityValueConverter.cs" />
+    <Compile Include="ViewModels\BaseAuthorizationViewModel.cs" />
+      <Compile Include="ViewModels\DisplayTheme.cs"/>
+      <Compile Include="ViewModels\MessageBoxViewModel.cs"/>
+    <Compile Include="ViewModels\ProgressViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\AuthorizationWindow.xaml.cs">
+      <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CodeInputWindow.xaml.cs">
+      <DependentUpon>CodeInputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+      <Resource Include="Resources\Styles\Controls\ComboBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\GridSplitter.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\GroupBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\ListBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\ListView.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\Menu.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\PasswordBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\CheckBox.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+      <Resource Include="Resources\Styles\Controls\Button.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+    <Page Include="Views\AuthorizationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CodeInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+      <Resource Include="Resources\dialog-error-64.png"/>
+      <Resource Include="Resources\dialog-information-64.png"/>
+      <Resource Include="Resources\dialog-question-64.png"/>
+      <Resource Include="Resources\dialog-warning-64.png"/>
     <Resource Include="Resources\settings-48.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-download-32.png" />
     <Resource Include="Resources\menu-export-32.png" />
     <Resource Include="Resources\menu-import-32.png" />
     <Resource Include="Resources\menu-start-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-delete-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\menu-clear-32.png" />
+      <Resource Include="Resources\menu-refresh-32.png"/>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\menu-refresh-32.png" />
+      <Resource Include="Resources\Styles\Controls\ScrollViewer.xaml">
+          <Generator>MSBuild:Compile</Generator>
+      </Resource>
+    <Resource Include="Resources\Styles\Controls\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Controls\TextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Controls\TextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\UIStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Themes\Dark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Styles\Themes\Light.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModels" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

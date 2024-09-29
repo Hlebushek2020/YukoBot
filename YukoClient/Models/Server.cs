@@ -10,32 +10,32 @@ namespace YukoClient.Models
     public class Server : BindableBase, IEquatable<Server>
     {
         #region Fields
-        private ulong id = 0;
-        private string iconUri;
-        private string name;
-        private ObservableCollection<Channel> channels;
-        private ObservableCollection<Script> scripts = new ObservableCollection<Script>();
-        private ObservableCollection<string> urls = new ObservableCollection<string>();
+        private ulong _id;
+        private string _iconUri;
+        private string _name;
+        private ObservableCollection<Channel> _channels;
+        private ObservableCollection<Script> _scripts = new ObservableCollection<Script>();
+        private ObservableCollection<string> _urls = new ObservableCollection<string>();
         #endregion
 
         #region Propirties
         public ulong Id
         {
-            get { return id; }
+            get => _id;
             set
             {
-                id = value;
+                _id = value;
                 RaisePropertyChanged();
             }
         }
 
         public string IconUri
         {
-            get { return iconUri; }
+            get => _iconUri;
             set
             {
-                iconUri = value;
-                RaisePropertyChanged("Icon");
+                _iconUri = value;
+                RaisePropertyChanged(nameof(Icon));
             }
         }
 
@@ -44,13 +44,12 @@ namespace YukoClient.Models
         {
             get
             {
-                if (string.IsNullOrEmpty(iconUri))
-                {
+                if (string.IsNullOrEmpty(_iconUri))
                     return null;
-                }
+
                 return new ImageBrush
                 {
-                    ImageSource = new BitmapImage(new Uri(iconUri, UriKind.Absolute)),
+                    ImageSource = new BitmapImage(new Uri(_iconUri, UriKind.Absolute)),
                     Stretch = Stretch.UniformToFill
                 };
             }
@@ -58,20 +57,20 @@ namespace YukoClient.Models
 
         public string Name
         {
-            get { return name; }
+            get => _name;
             set
             {
-                name = value;
+                _name = value;
                 RaisePropertyChanged();
             }
         }
 
         public ObservableCollection<Channel> Channels
         {
-            get { return channels; }
+            get => _channels;
             set
             {
-                channels = value;
+                _channels = value;
                 RaisePropertyChanged();
             }
         }
@@ -79,10 +78,10 @@ namespace YukoClient.Models
         [JsonIgnore]
         public ObservableCollection<Script> Scripts
         {
-            get { return scripts; }
+            get => _scripts;
             set
             {
-                scripts = value;
+                _scripts = value;
                 RaisePropertyChanged();
             }
         }
@@ -90,28 +89,17 @@ namespace YukoClient.Models
         [JsonIgnore]
         public ObservableCollection<string> Urls
         {
-            get { return urls; }
+            get => _urls;
             set
             {
-                urls = value;
+                _urls = value;
                 RaisePropertyChanged();
             }
         }
         #endregion
 
-        public bool Equals(Server other)
-        {
-            return other == null ? false : id.Equals(other.id);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Server);
-        }
-
-        public override int GetHashCode()
-        {
-            return id.GetHashCode();
-        }
+        public bool Equals(Server other) => other != null && _id.Equals(other._id);
+        public override bool Equals(object obj) => Equals(obj as Server);
+        public override int GetHashCode() => _id.GetHashCode();
     }
 }

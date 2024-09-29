@@ -1,0 +1,111 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FF707070" />
+    <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#179bd7" />
+    <SolidColorBrush x:Key="TextBox.Focused.Border" Color="#686969" />
+
+    <LinearGradientBrush x:Key="TextBoxBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <Brush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+        </Brush.RelativeTransform>
+        <GradientBrush.GradientStops>
+            <GradientStop Offset="0.5" Color="{DynamicResource BorderGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource Border.Color}" />
+        </GradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TextBoxBorderBrushHovered" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <Brush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+        </Brush.RelativeTransform>
+        <GradientBrush.GradientStops>
+            <GradientStop Offset="0.5" Color="{DynamicResource BorderGradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource Border.Color}" />
+        </GradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TextBoxBorderBrushFocused" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <Brush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+        </Brush.RelativeTransform>
+        <GradientBrush.GradientStops>
+            <GradientStop Offset="1.0" Color="{DynamicResource BorderAlt2Gradient.Color}" />
+            <GradientStop Offset="1.0" Color="{DynamicResource BorderAlt2.Color}" />
+        </GradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ContentBackgroundAlt4}" />
+        <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1,1,1,1" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryBackground}" />
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="AllowDrop" Value="True" />
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+        <Setter Property="CaretBrush" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid>
+                        <Border Name="border"
+                                Padding="0 0 0 0"
+                                BorderBrush="{TemplateBinding Control.BorderBrush}"
+                                BorderThickness="{TemplateBinding Control.BorderThickness}"
+                                Background="{TemplateBinding Control.Background}"
+                                SnapsToDevicePixels="True"
+                                CornerRadius="4,4,4,4">
+                            <ScrollViewer Name="PART_ContentHost"
+                                          Margin="4,4,4,4"
+                                          Focusable="False"
+                                          Background="#00FFFFFF"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="border"
+                                    Property="Border.BorderBrush"
+                                    Value="{StaticResource TextBoxBorderBrushHovered}" />
+                            <Setter TargetName="border"
+                                    Property="Border.Background"
+                                    Value="{DynamicResource ContentBackgroundAlt5}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+                            <Setter Property="TextBoxBase.CaretBrush" Value="{DynamicResource ContentForeground}" />
+                        </Trigger>
+                        <Trigger Property="UIElement.IsKeyboardFocused" Value="True">
+                            <Setter TargetName="border"
+                                    Property="Border.BorderBrush"
+                                    Value="{StaticResource TextBoxBorderBrushFocused}" />
+                            <Setter TargetName="border"
+                                    Property="Border.Background"
+                                    Value="{DynamicResource ContentBackground}" />
+                            <Setter Property="BorderThickness" Value="1,1,1,2" />
+                            <Setter Property="Padding" Value="0,0,0,-1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border"
+                                    Property="Border.Background"
+                                    Value="{DynamicResource ContentBackgroundAlt6}" />
+                            <Setter TargetName="border"
+                                    Property="Border.BorderBrush"
+                                    Value="{DynamicResource BorderAlt}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{x:Type TextBox}"
+           TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource TextBoxStyle}" />
+
+</ResourceDictionary>

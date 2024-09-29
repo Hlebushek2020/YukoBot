@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using YukoClient.Models;
 using YukoClient.ViewModels;
 
@@ -13,11 +12,7 @@ namespace YukoClient
         public AddScriptWindow(Server server)
         {
             InitializeComponent();
-            DataContext = new AddScriptViewModel
-            {
-                Close = new Action(Close),
-                Server = server
-            };
+            DataContext = new AddScriptViewModel(Close) { Server = server };
         }
     }
 }

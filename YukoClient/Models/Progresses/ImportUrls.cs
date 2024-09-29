@@ -6,23 +6,23 @@ using System.Threading;
 using System.Windows.Threading;
 using YukoClientBase.Models.Progresses;
 
-namespace YukoClient.Models.Progress
+namespace YukoClient.Models.Progresses
 {
     public class ImportUrls : BaseProgressModel
     {
-        private readonly ICollection<string> urls;
-        private readonly string fileName;
+        private readonly ICollection<string> _urls;
+        private readonly string _fileName;
 
         public ImportUrls(ICollection<string> urls, string fileName)
         {
-            this.urls = urls;
-            this.fileName = fileName;
+            _urls = urls;
+            _fileName = fileName;
         }
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
             dispatcher.Invoke(() => State = "Подготовка к импорту сылок");
-            using (StreamReader streamReader = new StreamReader(fileName, Encoding.UTF8))
+            using (StreamReader streamReader = new StreamReader(_fileName, Encoding.UTF8))
             {
                 while (!streamReader.EndOfStream)
                 {
@@ -30,7 +30,7 @@ namespace YukoClient.Models.Progress
                     dispatcher.Invoke((Action<string>)((string invokeUrl) =>
                     {
                         State = $"Добавление {invokeUrl}";
-                        urls.Add(invokeUrl);
+                        _urls.Add(invokeUrl);
                     }), url);
                 }
             }

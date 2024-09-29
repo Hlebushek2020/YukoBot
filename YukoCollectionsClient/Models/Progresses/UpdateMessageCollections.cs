@@ -3,30 +3,35 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Responses;
-using SUI = Sergey.UI.Extension;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progress
+namespace YukoCollectionsClient.Models.Progresses
 {
     public class UpdateMessageCollections : BaseProgressModel
     {
-        private readonly bool overrideMessageCollections;
+        private readonly bool _overrideMessageCollections;
 
         public UpdateMessageCollections(bool overrideMessageCollections)
         {
-            this.overrideMessageCollections = overrideMessageCollections;
+            _overrideMessageCollections = overrideMessageCollections;
         }
 
         public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
         {
-            dispatcher.Invoke(() => State = "Получение данных");
-            MessageCollectionsResponse response = WebClient.Current.GetMessageCollections();
-            dispatcher.Invoke(() => State = "Обработка");
-            if (string.IsNullOrEmpty(response.ErrorMessage))
+            try
             {
-                if (overrideMessageCollections)
+                dispatcher.Invoke(() => State = "Получение данных");
+                MessageCollectionsResponse response = WebClient.Current.GetMessageCollections();
+
+                if (response.Error != null)
+                    throw new ClientCodeException(response.Error.Code);
+
+                dispatcher.Invoke(() => State = "Обработка");
+                if (_overrideMessageCollections)
                 {
                     Storage.Current.MessageCollections =
                         new ObservableCollection<MessageCollection>(response.MessageCollections);
@@ -42,9 +47,7 @@ namespace YukoCollectionsClient.Models.Progress
                             foreach (MessageCollectionItem itemResp in collectionResp.Items)
                             {
                                 if (!messageCollection.Items.Contains(itemResp))
-                                {
                                     messageCollection.Items.Add(itemResp);
-                                }
                             }
                         }
                         else
@@ -54,12 +57,10 @@ namespace YukoCollectionsClient.Models.Progress
                     }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                dispatcher.Invoke(
-                    (Action<string>)((string errorMessage) =>
-                        SUI.Dialogs.MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK,
-                            MessageBoxImage.Error)), response.ErrorMessage);
+                dispatcher.Invoke((Action<string>)((string errorMessage) =>
+                    MessageBox.Show(errorMessage, App.Name, MessageBoxButton.OK, MessageBoxImage.Error)), ex.Message);
             }
         }
     }

@@ -4,7 +4,7 @@ using Prism.Mvvm;
 
 namespace YukoClientBase.Models.Progresses
 {
-    public class BaseProgressModel : BindableBase
+    public abstract class BaseProgressModel : BindableBase
     {
         #region Field
         private string _state = string.Empty;
@@ -23,6 +23,7 @@ namespace YukoClientBase.Models.Progresses
                 RaisePropertyChanged();
             }
         }
+
         public int Value
         {
             get { return _value; }
@@ -32,6 +33,7 @@ namespace YukoClientBase.Models.Progresses
                 RaisePropertyChanged();
             }
         }
+
         public int MaxValue
         {
             get { return _maxValue; }
@@ -45,6 +47,7 @@ namespace YukoClientBase.Models.Progresses
                 }
             }
         }
+
         public bool IsIndeterminate
         {
             get { return _isIndeterminate; }
@@ -56,8 +59,6 @@ namespace YukoClientBase.Models.Progresses
         }
         #endregion
 
-        public virtual void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
-        {
-        }
+        public abstract void Run(Dispatcher dispatcher, CancellationToken cancellationToken);
     }
 }
