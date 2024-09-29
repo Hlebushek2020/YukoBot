@@ -5,7 +5,7 @@
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Fill="{DynamicResource PrimaryBackground}" />
+                    <Rectangle Fill="{DynamicResource PrimaryBackground}" RadiusX="1" RadiusY="1" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -38,7 +38,8 @@
                     <Border x:Name="border"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}" />
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="1,1,1,1" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="BorderBrush" TargetName="border"
