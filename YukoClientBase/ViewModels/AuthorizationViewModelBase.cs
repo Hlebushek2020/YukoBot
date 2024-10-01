@@ -14,7 +14,7 @@ using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {
-    public abstract class BaseAuthorizationViewModel : BindableBase, IFullscreenEvent
+    public abstract class AuthorizationViewModelBase : BindableBase, IFullscreenEvent
     {
         #region Fields
         private Action _closeAction;
@@ -57,7 +57,7 @@ namespace YukoClientBase.ViewModels
 
         public event FullscreenEventHandler FullscreenEvent;
 
-        protected BaseAuthorizationViewModel(IUser store, WebClientBase webClient)
+        protected AuthorizationViewModelBase(IUser store, WebClientBase webClient)
         {
             FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             LoginCommand = new DelegateCommand(() =>

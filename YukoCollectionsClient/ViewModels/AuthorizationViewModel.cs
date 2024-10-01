@@ -8,7 +8,7 @@ using YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient.ViewModels
 {
-    public class AuthorizationViewModel : BaseAuthorizationViewModel
+    public class AuthorizationViewModel : AuthorizationViewModelBase
     {
         #region Propirties
         public override string Title => App.Name;
@@ -23,8 +23,8 @@ namespace YukoCollectionsClient.ViewModels
                     BitmapCacheOption.OnDemand);
 
                 BitmapFrame bitmapFrame = decoder.Frames.Where(f => f.Width <= 256)
-                        .OrderByDescending(f => f.Width).FirstOrDefault() ??
-                    decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
+                                              .OrderByDescending(f => f.Width).FirstOrDefault() ??
+                                          decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
 
                 return new ImageBrush { Stretch = Stretch.Uniform, ImageSource = bitmapFrame };
             }

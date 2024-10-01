@@ -91,7 +91,7 @@ namespace YukoClient.ViewModels
                         "ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name,
                         MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    ProgressWindow progress = new ProgressWindow(Title, new UpdateServer(server));
+                    OperationProgressWindow progress = new OperationProgressWindow(Title, new UpdateServer(server));
                     progress.ShowDialog();
                     ClearChannelListCommand.RaiseCanExecuteChanged();
                 }

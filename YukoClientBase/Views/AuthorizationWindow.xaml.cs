@@ -11,7 +11,7 @@ namespace YukoClientBase.Views
     /// </summary>
     public partial class AuthorizationWindow : Window
     {
-        public AuthorizationWindow(BaseAuthorizationViewModel authorizationViewModel)
+        public AuthorizationWindow(AuthorizationViewModelBase authorizationViewModel)
         {
             InitializeComponent();
             DataContext = authorizationViewModel;
