@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Windows.Threading;
+using System.Threading.Tasks;
+using YukoClientBase.Args;
 using YukoClientBase.Models;
-using YukoClientBase.Models.Progresses;
 
 namespace YukoClient.Models.Progresses
 {
@@ -20,18 +20,21 @@ namespace YukoClient.Models.Progresses
             _folder = folder;
         }
 
-        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
+        public async Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             HashSet<string> filesTemp = new HashSet<string>();
             Downloader downloader = new Downloader();
 
             const string baseState = "Загрузка";
 
-            dispatcher.Invoke((Action<string, int>)((string state, int count) =>
+            progress.Report(new ProgressReportArgs
             {
-                MaxValue = count;
-                State = state;
-            }), baseState, _urls.Count);
+                Maximum = _urls.Count,
+                Minimum = 0,
+                Value = 0,
+                Text = baseState,
+                IsIndeterminate = false
+            });
 
             using (DownloaderLogger downloaderLogger = new DownloaderLogger(_folder))
             {
@@ -39,9 +42,7 @@ namespace YukoClient.Models.Progresses
                 {
                     string baseFileName = Path.GetFileName(url);
                     if (baseFileName.Contains("?"))
-                    {
-                        baseFileName = baseFileName.Remove(baseFileName.IndexOf("?"));
-                    }
+                        baseFileName = baseFileName.Remove(baseFileName.IndexOf("?", StringComparison.Ordinal));
 
                     string fileNameFull = Path.Combine(_folder, baseFileName);
                     string fileName = baseFileName;
@@ -62,48 +63,41 @@ namespace YukoClient.Models.Progresses
 
                     downloader.StartNew(() =>
                     {
-                        if (!cancellationToken.IsCancellationRequested)
+                        try
                         {
-                            try
-                            {
-                                using (WebClient webClient = new WebClient())
-                                {
-                                    webClient.DownloadFile(new Uri(url), fileNameFull);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                downloaderLogger.Log(url, ex);
-                            }
+                            cancellationToken.ThrowIfCancellationRequested();
 
-                            dispatcher.Invoke(() => Value++);
+                            using (WebClient webClient = new WebClient())
+                                webClient.DownloadFile(new Uri(url), fileNameFull);
                         }
+                        catch (OperationCanceledException) { }
+                        catch (Exception ex)
+                        {
+                            // ReSharper disable once AccessToDisposedClosure
+                            downloaderLogger.Log(url, ex);
+                        }
+
+                        dispatcher.Invoke(() => Value++);
                     });
-                }
 
-                filesTemp.Clear();
+                    filesTemp.Clear();
 
-                int addPointTimer = 0;
-                int pointCount = 0;
+                    int pointCount = 0;
 
-                while (downloader.IsActive)
-                {
-                    Thread.Sleep(100);
-                    if (!cancellationToken.IsCancellationRequested)
+                    while (downloader.IsActive)
                     {
-                        addPointTimer++;
-                        if (addPointTimer >= 9)
-                        {
-                            addPointTimer = 0;
-                            dispatcher.Invoke((Action<string>)((string state) => State = state),
-                                $"{baseState} {new string('.', pointCount)}");
-                            if (pointCount >= 3)
-                            {
-                                pointCount = -1;
-                            }
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                            pointCount++;
+                        await Task.Delay(100, cancellationToken);
+
+                        dispatcher.Invoke((Action<string>)((string state) => State = state),
+                            $"{baseState} {new string('.', pointCount)}");
+                        if (pointCount >= 3)
+                        {
+                            pointCount = -1;
                         }
+
+                        pointCount++;
                     }
                 }
             }

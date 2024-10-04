@@ -89,7 +89,6 @@
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Models\Downloader.cs" />
     <Compile Include="Models\DownloaderLogger.cs" />
-    <Compile Include="Models\Progresses\BaseProgressModel.cs" />
     <Compile Include="Models\Settings.cs" />
       <Compile Include="Models\Themes.cs"/>
       <Compile Include="Models\ThemesUri.cs"/>

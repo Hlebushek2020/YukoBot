@@ -203,5 +203,8 @@
   <ItemGroup>
     <Resource Include="..\program-icon.ico" />
   </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Models\Operations\"/>
+    </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
