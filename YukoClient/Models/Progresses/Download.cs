@@ -83,6 +83,7 @@ namespace YukoClient.Models.Progresses
                     filesTemp.Clear();
 
                     int pointCount = 0;
+                    int addPointTimer = 0;
 
                     while (downloader.IsActive)
                     {
@@ -90,12 +91,17 @@ namespace YukoClient.Models.Progresses
 
                         await Task.Delay(100, cancellationToken);
 
-                        dispatcher.Invoke((Action<string>)((string state) => State = state),
-                            $"{baseState} {new string('.', pointCount)}");
+                        //progress.Report(new ProgressReportArgs { });
+
+                        addPointTimer++;
+                        if (addPointTimer < 10) continue;
+
+                        addPointTimer = 0;
+
+                        progress.Report(new ProgressReportArgs { Text = $"{baseState}{new string('.', pointCount)}" });
+
                         if (pointCount >= 3)
-                        {
                             pointCount = -1;
-                        }
 
                         pointCount++;
                     }
