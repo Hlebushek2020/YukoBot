@@ -11,6 +11,8 @@ namespace YukoClientBase.Models
 
         private readonly StreamWriter _streamWriter;
 
+        public bool IsDisposed { get; private set; }
+
         public DownloaderLogger(string folder)
         {
             _streamWriter = new StreamWriter(Path.Combine(folder, FileName), false, Encoding.UTF8);
@@ -27,7 +29,11 @@ namespace YukoClientBase.Models
 
         public void Dispose()
         {
-            _streamWriter?.Dispose();
+            lock (this)
+            {
+                _streamWriter?.Dispose();
+                IsDisposed = true;
+            }
         }
     }
 }

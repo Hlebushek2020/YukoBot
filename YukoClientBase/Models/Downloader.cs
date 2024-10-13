@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace YukoClientBase.Models
 {
-    public class Downloader
+    public class Downloader : IDisposable
     {
         #region Limited Concurrency Level Task Scheduler
         private class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
         {
-            public bool IsActive
-            {
-                get => _currentThreadIsProcessingItems || _delegatesQueuedOrRunning > 0;
-            }
+            public bool IsActive => _currentThreadIsProcessingItems || _delegatesQueuedOrRunning > 0;
 
             /// <summary>Whether the current thread is processing work items.</summary>
             [ThreadStatic]
             private static bool _currentThreadIsProcessingItems;
+
             /// <summary>The list of tasks to be executed.</summary>
             private readonly LinkedList<Task> _tasks = new LinkedList<Task>(); // protected by lock(_tasks)
+
             /// <summary>The maximum concurrency level allowed by this scheduler.</summary>
             private readonly int _maxDegreeOfParallelism;
+
             /// <summary>Whether the scheduler is currently processing work items.</summary>
             private int _delegatesQueuedOrRunning = 0; // protected by lock(_tasks)
 
@@ -170,22 +171,45 @@ namespace YukoClientBase.Models
         #region Fields
         private readonly TaskFactory _taskFactory;
         private readonly LimitedConcurrencyLevelTaskScheduler _taskScheduler;
+        private readonly DownloaderLogger _logger;
+
+        private volatile int _completed = 0;
         #endregion
 
         #region Propirties
-        public bool IsActive
-        {
-            get => _taskScheduler.IsActive;
-        }
+        public bool IsActive => _taskScheduler.IsActive;
+        public int Completed => _completed;
         #endregion
 
-        public Downloader()
+        public Downloader(DownloaderLogger downloaderLogger = null)
         {
             _taskScheduler = new LimitedConcurrencyLevelTaskScheduler(Settings.Current.MaxDownloadThreads);
             _taskFactory = new TaskFactory(_taskScheduler);
+            _logger = downloaderLogger;
         }
 
-        public void StartNew(Action action) =>
-            _taskFactory.StartNew(action);
+        public void StartNew(string url, string fullFileName, CancellationToken token = default)
+        {
+            _taskFactory.StartNew(() =>
+            {
+                try
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    using (WebClient webClient = new WebClient())
+                        webClient.DownloadFile(new Uri(url), fullFileName);
+                }
+                catch (OperationCanceledException) { }
+                catch (Exception ex)
+                {
+                    if (_logger != null && !_logger.IsDisposed)
+                        _logger.Log(url, ex);
+                }
+
+                Interlocked.Increment(ref _completed);
+            }, token);
+        }
+
+        public void Dispose() => _logger.Dispose();
     }
 }

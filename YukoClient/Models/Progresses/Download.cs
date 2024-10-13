@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
@@ -9,7 +8,7 @@ using YukoClientBase.Models;
 
 namespace YukoClient.Models.Progresses
 {
-    public class Download : BaseProgressModel
+    public class Download
     {
         private readonly ICollection<string> _urls;
         private readonly string _folder;
@@ -23,7 +22,6 @@ namespace YukoClient.Models.Progresses
         public async Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             HashSet<string> filesTemp = new HashSet<string>();
-            Downloader downloader = new Downloader();
 
             const string baseState = "Загрузка";
 
@@ -36,7 +34,7 @@ namespace YukoClient.Models.Progresses
                 IsIndeterminate = false
             });
 
-            using (DownloaderLogger downloaderLogger = new DownloaderLogger(_folder))
+            using (Downloader downloader = new Downloader(new DownloaderLogger(_folder)))
             {
                 foreach (string url in _urls)
                 {
@@ -58,27 +56,9 @@ namespace YukoClient.Models.Progresses
 
                     filesTemp.Add(fileName);
 
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    downloader.StartNew(() =>
-                    {
-                        try
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            using (WebClient webClient = new WebClient())
-                                webClient.DownloadFile(new Uri(url), fileNameFull);
-                        }
-                        catch (OperationCanceledException) { }
-                        catch (Exception ex)
-                        {
-                            // ReSharper disable once AccessToDisposedClosure
-                            downloaderLogger.Log(url, ex);
-                        }
-
-                        dispatcher.Invoke(() => Value++);
-                    });
+                    downloader.StartNew(url, fileNameFull, cancellationToken);
 
                     filesTemp.Clear();
 
@@ -91,7 +71,7 @@ namespace YukoClient.Models.Progresses
 
                         await Task.Delay(100, cancellationToken);
 
-                        //progress.Report(new ProgressReportArgs { });
+                        progress.Report(new ProgressReportArgs { Value = downloader.Completed });
 
                         addPointTimer++;
                         if (addPointTimer < 10) continue;
