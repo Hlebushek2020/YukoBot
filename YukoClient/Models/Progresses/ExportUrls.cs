@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Windows.Threading;
-using YukoClientBase.Models.Progresses;
+using System.Threading.Tasks;
+using YukoClientBase.Args;
 
 namespace YukoClient.Models.Progresses
 {
-    public class ExportUrls : BaseProgressModel
+    public class ExportUrls
     {
         private readonly ICollection<string> _urls;
         private readonly string _fileName;
@@ -18,19 +19,28 @@ namespace YukoClient.Models.Progresses
             _fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
-            dispatcher.Invoke(() => State = "Подготовка к экспорту сылок");
+            progress.Report(new ProgressReportArgs { Text = "Подготовка к экспорту ссылок" });
             using (StreamWriter streamWriter = new StreamWriter(_fileName, false, Encoding.UTF8))
             {
-                dispatcher.Invoke(() => MaxValue = _urls.Count);
+                progress.Report(new ProgressReportArgs { Maximum = _urls.Count, Minimum = 0, Value = 0 });
+
+                int counter = 0;
+
                 foreach (string url in _urls)
                 {
-                    dispatcher.Invoke(() => State = $"Запись {Value + 1}/{MaxValue}");
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    counter++;
+
+                    progress.Report(new ProgressReportArgs { Text = $"Запись {counter}/{_urls.Count}" });
                     streamWriter.WriteLine(url);
-                    dispatcher.Invoke(() => Value++);
+                    progress.Report(new ProgressReportArgs { Value = counter });
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }
