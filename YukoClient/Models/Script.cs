@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
+using System.Collections.Generic;
 
 namespace YukoClient.Models
 {
@@ -9,7 +9,7 @@ namespace YukoClient.Models
 
         #region Propirties
         public Channel Channel { get; set; }
-        public ScriptMode Mode { get; set; }
+        public DisplayScriptMode Mode { get; set; }
         public ulong MessageId { get; set; }
         public int Count { get; set; }
         public IList<string> Errors { get; set; } = new List<string>();
