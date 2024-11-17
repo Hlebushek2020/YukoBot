@@ -272,8 +272,8 @@ namespace YukoClient.ViewModels
             RunScriptsCommand = new DelegateCommand(
                 () =>
                 {
-                    OperationProgressWindow progress =
-                        new OperationProgressWindow(Title, new ExecuteScripts(_selectedServer));
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title, new ExecuteScripts(_selectedServer)));
                     progress.ShowDialog();
 
                     ClearUrlsCommand.RaiseCanExecuteChanged();
@@ -295,10 +295,15 @@ namespace YukoClient.ViewModels
             RemoveUrlCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    // ReSharper disable once InvertIf
+                    if (MessageBox.Show(
+                            string.Format(Resources.RemoveUrlCommand_Confirmation, SelectedUrl),
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedServer?.Urls.Remove(SelectedUrl);
+
                         DownloadFilesCommand.RaiseCanExecuteChanged();
                         ClearUrlsCommand.RaiseCanExecuteChanged();
                     }

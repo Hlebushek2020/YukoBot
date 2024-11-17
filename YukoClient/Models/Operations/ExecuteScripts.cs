@@ -8,11 +8,12 @@ using YukoClientBase.Args;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Extensions;
+using YukoClientBase.Models.Operations;
 using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Operations
 {
-    public class ExecuteScripts
+    public class ExecuteScripts : IOperation
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly Server _server;

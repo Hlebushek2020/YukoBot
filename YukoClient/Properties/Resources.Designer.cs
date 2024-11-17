@@ -118,6 +118,15 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить &quot;{0}&quot; из списка?.
+        /// </summary>
+        internal static string RemoveUrlCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveUrlCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок..
         /// </summary>
         internal static string UpdateServerCollectionCommand_OverwriteServers {
