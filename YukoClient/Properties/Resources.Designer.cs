@@ -116,5 +116,23 @@ namespace YukoClient.Properties {
                 return ResourceManager.GetString("UpdateServerCollectionCommand.OverwriteServers", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to yukoscript.
+        /// </summary>
+        internal static string YukoScriptFile_Ext {
+            get {
+                return ResourceManager.GetString("YukoScriptFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yuko Script|*.yukoscript.
+        /// </summary>
+        internal static string YukoScriptFile_Filter {
+            get {
+                return ResourceManager.GetString("YukoScriptFile.Filter", resourceCulture);
+            }
+        }
     }
 }

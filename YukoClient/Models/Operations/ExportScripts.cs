@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class ExportScripts
+    public class ExportScripts : IOperation
     {
         private readonly ICollection<Script> _scripts;
         private readonly string _fileName;

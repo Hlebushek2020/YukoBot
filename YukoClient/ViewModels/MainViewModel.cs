@@ -220,14 +220,18 @@ namespace YukoClient.ViewModels
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.Filter = "Yuko Script|*.yukoscript";
-                        saveFileDialog.DefaultExt = "yukoscript";
+                        saveFileDialog.Filter = Resources.YukoScriptFile_Filter;
+                        saveFileDialog.DefaultExt = Resources.YukoScriptFile_Ext;
 
                         if (saveFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new ExportScripts(_selectedServer.Scripts, _selectedServer.Id, saveFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ExportScripts(
+                                    _selectedServer.Scripts,
+                                    _selectedServer.Id,
+                                    saveFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -237,8 +241,8 @@ namespace YukoClient.ViewModels
                 {
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        openFileDialog.Filter = "Yuko Script|*.yukoscript";
-                        openFileDialog.DefaultExt = "yukoscript";
+                        openFileDialog.Filter = Resources.YukoScriptFile_Filter;
+                        openFileDialog.DefaultExt = Resources.YukoScriptFile_Ext;
 
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;

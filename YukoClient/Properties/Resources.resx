@@ -137,4 +137,10 @@
   <data name="RemoveServerCommand.Confirmation" xml:space="preserve">
     <value>Remove server {0} from the list?</value>
   </data>
+  <data name="YukoScriptFile.Filter" xml:space="preserve">
+    <value>Yuko Script|*.yukoscript</value>
+  </data>
+  <data name="YukoScriptFile.Ext" xml:space="preserve">
+    <value>yukoscript</value>
+  </data>
 </root>
