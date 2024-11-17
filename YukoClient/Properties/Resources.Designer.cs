@@ -60,11 +60,29 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок?.
+        /// </summary>
+        internal static string ClearUrlsCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("ClearUrlsCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Очистить список правил перед добавлением?.
         /// </summary>
         internal static string ImportScriptsCommand_ClearList {
             get {
                 return ResourceManager.GetString("ImportScriptsCommand.ClearList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок перед добавлением?.
+        /// </summary>
+        internal static string ImportUrlsCommand_ClearList {
+            get {
+                return ResourceManager.GetString("ImportUrlsCommand.ClearList", resourceCulture);
             }
         }
         
@@ -123,6 +141,24 @@ namespace YukoClient.Properties {
         internal static string RemoveUrlCommand_Confirmation {
             get {
                 return ResourceManager.GetString("RemoveUrlCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to txt.
+        /// </summary>
+        internal static string TextFile_Ext {
+            get {
+                return ResourceManager.GetString("TextFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текстовый докуент|*.txt.
+        /// </summary>
+        internal static string TextFile_Filter {
+            get {
+                return ResourceManager.GetString("TextFile.Filter", resourceCulture);
             }
         }
         

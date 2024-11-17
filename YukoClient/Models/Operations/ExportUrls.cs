@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class ExportUrls
+    public class ExportUrls : IOperation
     {
         private readonly ICollection<string> _urls;
         private readonly string _fileName;

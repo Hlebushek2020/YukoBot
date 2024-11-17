@@ -5,10 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class Download
+    public class Download : IOperation
     {
         private readonly ICollection<string> _urls;
         private readonly string _folder;

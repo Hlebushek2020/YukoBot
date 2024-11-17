@@ -311,10 +311,12 @@ namespace YukoClient.ViewModels
             ClearUrlsCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
+                    // ReSharper disable once InvertIf
+                    if (MessageBox.Show(Resources.ClearUrlsCommand_Confirmation, App.Name, MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedServer.Urls.Clear();
+
                         DownloadFilesCommand.RaiseCanExecuteChanged();
                         ClearUrlsCommand.RaiseCanExecuteChanged();
                     }
@@ -325,14 +327,15 @@ namespace YukoClient.ViewModels
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.Filter = "Текстовый докуент|*.txt";
-                        saveFileDialog.DefaultExt = "txt";
+                        saveFileDialog.Filter = Resources.TextFile_Filter;
+                        saveFileDialog.DefaultExt = Resources.TextFile_Ext;
 
                         if (saveFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ExportUrls(_selectedServer.Urls, saveFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -342,25 +345,26 @@ namespace YukoClient.ViewModels
                 {
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        openFileDialog.Filter = "Текстовый докуент|*.txt";
-                        openFileDialog.DefaultExt = "txt";
+                        openFileDialog.Filter = Resources.TextFile_Filter;
+                        openFileDialog.DefaultExt = Resources.TextFile_Ext;
 
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
                         if (_selectedServer.Urls.Count > 0)
                         {
-                            if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
+                            if (MessageBox.Show(Resources.ImportUrlsCommand_ClearList, App.Name,
                                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 _selectedServer.Urls.Clear();
                             }
                         }
 
-                        OperationProgressWindow progressWindow =
-                            new OperationProgressWindow(Title,
-                                new ImportUrls(_selectedServer.Urls, openFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ImportUrls(_selectedServer.Urls, openFileDialog.FileName)));
                         progressWindow.ShowDialog();
+
                         DownloadFilesCommand.RaiseCanExecuteChanged();
                         ClearUrlsCommand.RaiseCanExecuteChanged();
                     }
@@ -376,8 +380,9 @@ namespace YukoClient.ViewModels
                         if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath), true);
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new Download(_selectedServer.Urls, folderBrowserDialog.SelectedPath)));
                         progressWindow.ShowDialog();
                     }
                 },

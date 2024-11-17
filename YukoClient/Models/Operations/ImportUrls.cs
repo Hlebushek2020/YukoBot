@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class ImportUrls
+    public class ImportUrls : IOperation
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly ICollection<string> _urls;
