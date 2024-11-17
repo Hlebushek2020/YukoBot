@@ -180,7 +180,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ru.resx"/>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

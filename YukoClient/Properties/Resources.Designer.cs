@@ -60,6 +60,15 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список правил перед добавлением?.
+        /// </summary>
+        internal static string ImportScriptsCommand_ClearList {
+            get {
+                return ResourceManager.GetString("ImportScriptsCommand.ClearList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap menu_add_32 {
@@ -100,7 +109,7 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove server {0} from the list?.
+        ///   Looks up a localized string similar to Удалить сервер {0} из списка?.
         /// </summary>
         internal static string RemoveServerCommand_Confirmation {
             get {
@@ -109,7 +118,7 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Overwrite the data of the current servers? Attention! This will result in the loss of the list of rules and links..
+        ///   Looks up a localized string similar to Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок..
         /// </summary>
         internal static string UpdateServerCollectionCommand_OverwriteServers {
             get {

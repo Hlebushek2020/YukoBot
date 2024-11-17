@@ -249,16 +249,21 @@ namespace YukoClient.ViewModels
 
                         if (_selectedServer.Scripts.Count > 0)
                         {
-                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
+                            if (MessageBox.Show(Resources.ImportScriptsCommand_ClearList, App.Name,
                                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 _selectedServer.Scripts.Clear();
                             }
                         }
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new ImportScripts(_selectedServer.Scripts, _selectedServer.Id, openFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ImportScripts(
+                                    _selectedServer.Scripts,
+                                    _selectedServer.Id,
+                                    openFileDialog.FileName)));
                         progressWindow.ShowDialog();
+
                         RunScriptsCommand.RaiseCanExecuteChanged();
                         ClearScriptsCommand.RaiseCanExecuteChanged();
                     }

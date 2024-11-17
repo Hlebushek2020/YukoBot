@@ -132,15 +132,18 @@
     <value>..\..\program-icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UpdateServerCollectionCommand.OverwriteServers" xml:space="preserve">
-    <value>Overwrite the data of the current servers? Attention! This will result in the loss of the list of rules and links.</value>
+    <value>Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.</value>
   </data>
   <data name="RemoveServerCommand.Confirmation" xml:space="preserve">
-    <value>Remove server {0} from the list?</value>
+    <value>Удалить сервер {0} из списка?</value>
   </data>
   <data name="YukoScriptFile.Filter" xml:space="preserve">
     <value>Yuko Script|*.yukoscript</value>
   </data>
   <data name="YukoScriptFile.Ext" xml:space="preserve">
     <value>yukoscript</value>
+  </data>
+    <data name="ImportScriptsCommand.ClearList" xml:space="preserve">
+    <value>Очистить список правил перед добавлением?</value>
   </data>
 </root>

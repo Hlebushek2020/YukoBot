@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukoClient.Enums;
 using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class ImportScripts
+    public class ImportScripts : IOperation
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly ICollection<Script> _scripts;
