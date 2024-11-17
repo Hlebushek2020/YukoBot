@@ -60,6 +60,15 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список каналов?.
+        /// </summary>
+        internal static string ClearChannelListCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("ClearChannelListCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Очистить список ссылок?.
         /// </summary>
         internal static string ClearUrlsCommand_Confirmation {
@@ -127,6 +136,15 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить выбранные каналы?.
+        /// </summary>
+        internal static string RemoveSelectedChannelsCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveSelectedChannelsCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить сервер {0} из списка?.
         /// </summary>
         internal static string RemoveServerCommand_Confirmation {
@@ -159,6 +177,15 @@ namespace YukoClient.Properties {
         internal static string TextFile_Filter {
             get {
                 return ResourceManager.GetString("TextFile.Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Все каналы будут удалены, вы действительно хотите продолжить?.
+        /// </summary>
+        internal static string UpdateChannelListCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("UpdateChannelListCommand.Confirmation", resourceCulture);
             }
         }
         

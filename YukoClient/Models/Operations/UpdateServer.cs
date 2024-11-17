@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using YukoClient.Models.Web;
 using YukoClient.Models.Web.Responses;
 using YukoClientBase.Args;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
+using YukoClientBase.Models.Operations;
 
 namespace YukoClient.Models.Operations
 {
-    public class UpdateServer
+    public class UpdateServer : IOperation
     {
         private readonly Server _server;
 
         public UpdateServer(Server server) { _server = server; }
 
-        public Task Run(IProgress<ProgressReportArgs> progress)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Получение данных о сервере" });
 
