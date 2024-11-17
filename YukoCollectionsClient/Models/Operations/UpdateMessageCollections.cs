@@ -4,14 +4,13 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using YukoClientBase.Exceptions;
-using YukoClientBase.Models.Progresses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Responses;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progresses
+namespace YukoCollectionsClient.Models.Operations
 {
-    public class UpdateMessageCollections : BaseProgressModel
+    public class UpdateMessageCollections
     {
         private readonly bool _overrideMessageCollections;
 

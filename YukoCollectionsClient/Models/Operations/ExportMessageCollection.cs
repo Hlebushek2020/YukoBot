@@ -4,11 +4,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
-using YukoClientBase.Models.Progresses;
 
-namespace YukoCollectionsClient.Models.Progresses
+namespace YukoCollectionsClient.Models.Operations
 {
-    public class ExportMessageCollection : BaseProgressModel
+    public class ExportMessageCollection
     {
         private readonly ICollection<MessageCollectionItem> _messageCollectionItems;
         private readonly string _fileName;

@@ -5,16 +5,15 @@ using System.Windows;
 using System.Windows.Threading;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
-using YukoClientBase.Models.Progresses;
 using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
-namespace YukoCollectionsClient.Models.Progresses
+namespace YukoCollectionsClient.Models.Operations
 {
-    public class GetUrlsFromMessageCollection : BaseProgressModel
+    public class GetUrlsFromMessageCollection
     {
         private readonly MessageCollection _messageCollection;
 

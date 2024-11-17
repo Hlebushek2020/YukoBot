@@ -105,14 +105,14 @@
     </Compile>
     <Compile Include="Models\MessageCollection.cs" />
     <Compile Include="Models\MessageCollectionItem.cs" />
-    <Compile Include="Models\Progresses\Download.cs" />
-    <Compile Include="Models\Progresses\DownloadAll.cs" />
-    <Compile Include="Models\Progresses\ExportMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ExportUrls.cs" />
-    <Compile Include="Models\Progresses\GetUrlsFromMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ImportMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ImportUrls.cs" />
-    <Compile Include="Models\Progresses\UpdateMessageCollections.cs" />
+      <Compile Include="Models\Operations\Download.cs"/>
+      <Compile Include="Models\Operations\DownloadAll.cs"/>
+      <Compile Include="Models\Operations\ExportMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ExportUrls.cs"/>
+      <Compile Include="Models\Operations\GetUrlsFromMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ImportMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ImportUrls.cs"/>
+      <Compile Include="Models\Operations\UpdateMessageCollections.cs"/>
     <Compile Include="Models\Storage.cs" />
     <Compile Include="Models\Web\Providers\UrlsProvider.cs" />
     <Compile Include="Models\Web\Requests\UrlsRequest.cs" />
