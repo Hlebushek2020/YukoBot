@@ -1,12 +1,11 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using YukoClientBase.Interfaces;
+using YukoClientBase.MVVM;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
 using YukoCollectionsClient.Models.Progresses;
@@ -341,7 +340,7 @@ namespace YukoCollectionsClient.ViewModels
         private bool MessageCollectionsFilter(object item)
         {
             return string.IsNullOrEmpty(_searchCollections) ||
-                   ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
+                ((MessageCollection)item).Name.ToLower().Contains(_searchCollections);
         }
     }
 }

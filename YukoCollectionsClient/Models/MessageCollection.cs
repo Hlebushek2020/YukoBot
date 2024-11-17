@@ -1,6 +1,6 @@
-﻿using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
+using YukoClientBase.MVVM;
 
 namespace YukoCollectionsClient.Models
 {
@@ -46,13 +46,10 @@ namespace YukoCollectionsClient.Models
         }
         #endregion
 
-        public bool Equals(MessageCollection other) =>
-            other != null && Id.Equals(other.Id);
+        public bool Equals(MessageCollection other) => other != null && Id.Equals(other.Id);
 
-        public override bool Equals(object obj) =>
-            Equals(obj as MessageCollection);
+        public override bool Equals(object obj) => Equals(obj as MessageCollection);
 
-        public override int GetHashCode() =>
-            Id.GetHashCode();
+        public override int GetHashCode() => Id.GetHashCode();
     }
 }
