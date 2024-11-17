@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using YukoClientBase.Args;
 using YukoClientBase.Models;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
     public class Download
     {

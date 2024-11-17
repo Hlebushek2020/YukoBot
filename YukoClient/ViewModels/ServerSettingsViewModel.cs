@@ -1,9 +1,7 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using YukoClient.Models;
-using YukoClient.Models.Progresses;
+using YukoClientBase.MVVM;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 

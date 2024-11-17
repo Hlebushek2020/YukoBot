@@ -7,7 +7,7 @@ using YukoClientBase.Args;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
     public class UpdateServer
     {

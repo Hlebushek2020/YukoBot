@@ -1,6 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -9,6 +7,7 @@ using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Responses;
+using YukoClientBase.MVVM;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 

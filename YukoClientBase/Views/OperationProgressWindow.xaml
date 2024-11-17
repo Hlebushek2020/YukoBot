@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
         xmlns:valueConverters="clr-namespace:YukoClientBase.ValueConverters"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:OperationProgressViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:OperationProgressViewModelBase}}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         Style="{DynamicResource WindowStyle}"
         Width="620"

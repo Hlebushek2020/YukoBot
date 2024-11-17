@@ -1,124 +1,27 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
-using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
+using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClientBase.ViewModels
 {
-    public abstract class OperationProgressViewModel : BindableBase, IProgress<ProgressReportArgs>
+    public class OperationProgressViewModel : OperationProgressViewModelBase
     {
-        #region Fields
-        protected readonly CancellationTokenSource CancellationTokenSource;
-        protected SynchronizationContext SynchronizationContext;
+        private readonly IOperation _operation;
 
-        private bool _isIndeterminate;
-        private double _minimum;
-        private double _maximum;
-        private double _value;
-        private string _text;
-        #endregion
-
-        #region Properties
-        public string Title { get; protected set; }
-
-        public bool IsCancellable { get; }
-
-        public bool IsIndeterminate
+        public OperationProgressViewModel(string title, IOperation operation, bool isCancellable = true)
+            : base(isCancellable)
         {
-            get => _isIndeterminate;
-            private set
-            {
-                _isIndeterminate = value;
-                RaisePropertyChanged();
-            }
+            Title = title;
+            _operation = operation;
         }
 
-        public double Minimum
-        {
-            get => _minimum;
-            private set
-            {
-                _minimum = value;
-                RaisePropertyChanged();
-            }
-        }
+        public override Task Operation() => _operation.Run(this, CancellationTokenSource.Token);
 
-        public double Maximum
-        {
-            get => _maximum;
-            private set
-            {
-                _maximum = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public double Value
-        {
-            get => _value;
-            private set
-            {
-                _value = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string Text
-        {
-            get => _text;
-            private set
-            {
-                _text = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-        public DelegateCommand CancelCommand { get; }
-
-        protected OperationProgressViewModel(bool isCancellable = true)
-        {
-            IsCancellable = isCancellable;
-
-            CancellationTokenSource = new CancellationTokenSource();
-            SynchronizationContext = SynchronizationContext.Current;
-
-            CancelCommand = new DelegateCommand(() =>
-            {
-                if (!CancellationTokenSource.IsCancellationRequested)
-                    CancellationTokenSource.Cancel();
-            });
-        }
-
-        public virtual void Report(ProgressReportArgs value)
-        {
-            SynchronizationContext.Send(
-                state =>
-                {
-                    ProgressReportArgs args = (ProgressReportArgs)state;
-
-                    if (args.IsIndeterminate != null)
-                        IsIndeterminate = args.IsIndeterminate.Value;
-
-                    if (args.Text != null)
-                        Text = args.Text;
-
-                    if (args.Maximum != null)
-                        Maximum = args.Maximum.Value;
-
-                    if (args.Minimum != null)
-                        Minimum = args.Minimum.Value;
-
-                    if (args.Value != null)
-                        Value = args.Value.Value;
-                },
-                value);
-        }
-
-        public abstract Task Operation();
-        public abstract MessageBoxResult WindowClosingConfirmation();
+        public override MessageBoxResult WindowClosingConfirmation() =>
+            IsCancellable
+                ? MessageBox.Show(Title, "Вы действительно хотите отменить операцию?", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question)
+                : MessageBoxResult.No;
     }
 }

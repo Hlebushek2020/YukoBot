@@ -98,5 +98,23 @@ namespace YukoClient.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove server {0} from the list?.
+        /// </summary>
+        internal static string RemoveServerCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveServerCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite the data of the current servers? Attention! This will result in the loss of the list of rules and links..
+        /// </summary>
+        internal static string UpdateServerCollectionCommand_OverwriteServers {
+            get {
+                return ResourceManager.GetString("UpdateServerCollectionCommand.OverwriteServers", resourceCulture);
+            }
+        }
     }
 }

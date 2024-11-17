@@ -11,11 +11,11 @@ namespace YukoClientBase.Views
     /// </summary>
     public partial class OperationProgressWindow : Window
     {
-        private readonly OperationProgressViewModel _viewModel;
+        private readonly OperationProgressViewModelBase _viewModel;
 
         private bool _isCompleted = false;
 
-        public OperationProgressWindow(OperationProgressViewModel viewModel)
+        public OperationProgressWindow(OperationProgressViewModelBase viewModel)
         {
             InitializeComponent();
 

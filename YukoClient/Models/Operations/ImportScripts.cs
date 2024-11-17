@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using YukoClient.Enums;
 using YukoClientBase.Args;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
     public class ImportScripts
     {

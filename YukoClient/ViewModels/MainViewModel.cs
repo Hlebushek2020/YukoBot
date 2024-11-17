@@ -1,13 +1,14 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using YukoClient.Models;
-using YukoClient.Models.Progresses;
+using YukoClient.Models.Operations;
+using YukoClient.Properties;
 using YukoClientBase.Interfaces;
+using YukoClientBase.MVVM;
+using YukoClientBase.ViewModels;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
@@ -130,8 +131,8 @@ namespace YukoClient.ViewModels
             FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             WindowLoadedCommand = new DelegateCommand(() =>
             {
-                OperationProgressWindow progress =
-                    new OperationProgressWindow(Title, new StorageInitialization(), false);
+                OperationProgressWindow progress = new OperationProgressWindow(
+                    new OperationProgressViewModel(Title, new StorageInitialization(), false));
                 progress.ShowDialog();
             });
 
@@ -146,20 +147,26 @@ namespace YukoClient.ViewModels
             UpdateServerCollectionCommand = new DelegateCommand(() =>
             {
                 MessageBoxResult messageResult = MessageBox.Show(
-                    "Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.",
-                    App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-                if (messageResult != MessageBoxResult.Cancel)
-                {
-                    OperationProgressWindow progress =
-                        new OperationProgressWindow(Title, new UpdateServers(messageResult == MessageBoxResult.Yes));
-                    progress.ShowDialog();
-                }
+                    Resources.UpdateServerCollectionCommand_OverwriteServers,
+                    App.Name,
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Warning);
+
+                if (messageResult == MessageBoxResult.Cancel)
+                    return;
+
+                OperationProgressWindow progress = new OperationProgressWindow(
+                    new OperationProgressViewModel(Title, new UpdateServers(messageResult == MessageBoxResult.Yes)));
+                progress.ShowDialog();
             });
             RemoveServerCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show($"Удалить сервер {_selectedServer.Name} из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(
+                            string.Format(Resources.RemoveServerCommand_Confirmation, _selectedServer.Name),
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Storage.Current.Servers.Remove(_selectedServer);
                     }

@@ -10,7 +10,7 @@ using YukoClientBase.Exceptions;
 using YukoClientBase.Extensions;
 using YukoClientBase.Models.Web.Responses;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
     public class ExecuteScripts
     {

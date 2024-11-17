@@ -10,10 +10,11 @@ using YukoClient.Models.Web.Responses;
 using YukoClientBase.Args;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Operations;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
-    public class StorageInitialization
+    public class StorageInitialization : IOperation
     {
         public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {

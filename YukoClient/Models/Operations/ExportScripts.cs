@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
 
-namespace YukoClient.Models.Progresses
+namespace YukoClient.Models.Operations
 {
     public class ExportScripts
     {

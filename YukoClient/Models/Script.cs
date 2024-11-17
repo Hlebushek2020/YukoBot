@@ -1,5 +1,5 @@
-﻿using Prism.Mvvm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using YukoClientBase.MVVM;
 
 namespace YukoClient.Models
 {

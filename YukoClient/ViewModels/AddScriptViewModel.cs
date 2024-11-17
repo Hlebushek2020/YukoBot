@@ -1,10 +1,9 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using YukoClient.Enums;
 using YukoClient.Models;
+using YukoClientBase.MVVM;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
