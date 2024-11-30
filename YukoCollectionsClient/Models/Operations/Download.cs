@@ -62,30 +62,30 @@ namespace YukoCollectionsClient.Models.Operations
                     downloader.StartNew(url, fileNameFull, cancellationToken);
 
                     filesTemp.Clear();
+                }
 
-                    int pointCount = 0;
-                    int addPointTimer = 0;
+                int pointCount = 0;
+                int addPointTimer = 0;
 
-                    while (downloader.IsActive)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
+                while (downloader.IsActive)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                        await Task.Delay(100, cancellationToken);
+                    await Task.Delay(100, cancellationToken);
 
-                        progress.Report(new ProgressReportArgs { Value = downloader.Completed });
+                    progress.Report(new ProgressReportArgs { Value = downloader.Completed });
 
-                        addPointTimer++;
-                        if (addPointTimer < 10) continue;
+                    addPointTimer++;
+                    if (addPointTimer < 10) continue;
 
-                        addPointTimer = 0;
+                    addPointTimer = 0;
 
-                        progress.Report(new ProgressReportArgs { Text = $"{baseState}{new string('.', pointCount)}" });
+                    progress.Report(new ProgressReportArgs { Text = $"{baseState}{new string('.', pointCount)}" });
 
-                        if (pointCount >= 3)
-                            pointCount = -1;
+                    if (pointCount >= 3)
+                        pointCount = -1;
 
-                        pointCount++;
-                    }
+                    pointCount++;
                 }
             }
         }
