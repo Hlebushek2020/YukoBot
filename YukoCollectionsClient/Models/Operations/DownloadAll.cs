@@ -6,13 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
 using YukoClientBase.Enums;
-using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Operations;
-using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
+using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
-using YWeb = YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient.Models.Operations
 {
@@ -44,12 +42,8 @@ namespace YukoCollectionsClient.Models.Operations
 
                 progress.Report(new ProgressReportArgs { Text = "Подключение" });
 
-                using (UrlsProvider provider = YWeb.YukoWebClient.Current.GetUrls(
-                           collection, out Response<BaseErrorJson> response))
+                using (UrlsProvider provider = YukoWebClient.Current.GetUrls(collection))
                 {
-                    if (response.Error != null)
-                        throw new ClientCodeException(response.Error.Code);
-
                     progress.Report(new ProgressReportArgs { Text = "Обработка" });
 
                     UrlsResponse urlsResponse;

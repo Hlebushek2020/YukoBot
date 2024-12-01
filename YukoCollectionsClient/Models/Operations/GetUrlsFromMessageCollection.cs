@@ -4,9 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
 using YukoClientBase.Enums;
-using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Operations;
-using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
 using YukoCollectionsClient.Models.Web.Providers;
@@ -27,12 +25,8 @@ namespace YukoCollectionsClient.Models.Operations
         public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { IsIndeterminate = true, Text = "Подключение" });
-            using (UrlsProvider provider = YukoWebClient.Current.GetUrls(
-                       _messageCollection, out Response<BaseErrorJson> response))
+            using (UrlsProvider provider = YukoWebClient.Current.GetUrls(_messageCollection))
             {
-                if (response.Error != null)
-                    throw new ClientCodeException(response.Error.Code);
-
                 progress.Report(new ProgressReportArgs { Text = "Обработка" });
                 UrlsResponse urlsResponse;
                 do
