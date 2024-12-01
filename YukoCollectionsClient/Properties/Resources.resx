@@ -121,4 +121,40 @@
   <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\program-icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+    <data name="UpdateMessageCollectionsCommand.Overwrite" xml:space="preserve">
+    <value>Перезаписать данные текущих коллекций? Это приведет к потере списка ссылок.</value>
+  </data>
+    <data name="DownloadAllCollectionsCommand.ClearUrls" xml:space="preserve">
+    <value>Очищать список ссылок коллекции перед добавлением?</value>
+  </data>
+    <data name="RemoveMessageCollectionItemCommand.Confirmation" xml:space="preserve">
+    <value>Удалить сообщение {0} из списка?</value>
+  </data>
+    <data name="JsonFile.Ext" xml:space="preserve">
+    <value>json</value>
+  </data>
+    <data name="JsonFile.Filter" xml:space="preserve">
+    <value>JavaScript Object Notation|*.json</value>
+  </data>
+    <data name="ImportMessageCollectionCommand.ClearItems" xml:space="preserve">
+    <value>Очистить список элементов коллекции перед добавлением?</value>
+  </data>
+    <data name="GetUrlsFromMessageCollectionCommand.ClearUrls" xml:space="preserve">
+    <value>Очистить список ссылок перед добавлением?</value>
+  </data>
+    <data name="RemoveUrlCommand.Confirmation" xml:space="preserve">
+    <value>Удалить "{0}" из списка?</value>
+  </data>
+    <data name="ClearUrlsCommand.Confirmation" xml:space="preserve">
+    <value>Очистить список ссылок?</value>
+  </data>
+    <data name="TextFile.Ext" xml:space="preserve">
+    <value>txt</value>
+  </data>
+    <data name="TextFile.Filter" xml:space="preserve">
+    <value>Текстовый докуент|*.txt</value>
+  </data>
+    <data name="ImportUrlsCommand.ClearUrls" xml:space="preserve">
+    <value>Очистить список ссылок перед добавлением?</value>
+  </data>
 </root>

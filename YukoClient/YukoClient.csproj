@@ -62,16 +62,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -99,16 +93,16 @@
     </ApplicationDefinition>
     <Compile Include="Enums\ScriptMode.cs" />
     <Compile Include="Exceptions\ScriptExecutionUnavailableException.cs" />
-    <Compile Include="Models\Progresses\StorageInitialization.cs" />
+    <Compile Include="Models\Operations\StorageInitialization.cs"/>
     <Compile Include="Models\Web\Errors\ExecuteScriptErrorJson.cs" />
     <Compile Include="Models\Web\Providers\ExecuteScriptProvider.cs" />
     <Compile Include="Models\Web\Requests\ExecuteScriptRequest.cs" />
     <Compile Include="Models\Web\Requests\ServerRequest.cs" />
     <Compile Include="Models\Web\Responses\ServerResponse.cs" />
     <Compile Include="Models\Web\Responses\ServersResponse.cs" />
-    <Compile Include="Models\Progresses\ExecuteScripts.cs" />
-    <Compile Include="Models\Progresses\UpdateServers.cs" />
-    <Compile Include="Models\Progresses\UpdateServer.cs" />
+    <Compile Include="Models\Operations\ExecuteScripts.cs"/>
+    <Compile Include="Models\Operations\UpdateServers.cs"/>
+    <Compile Include="Models\Operations\UpdateServer.cs"/>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -146,12 +140,12 @@
     <Compile Include="Attributes\Enum\DescriptionAttribute.cs" />
     <Compile Include="Attributes\Enum\TitleAttribute.cs" />
     <Compile Include="Models\Channel.cs" />
-    <Compile Include="Models\ScriptMode.cs" />
-    <Compile Include="Models\Progresses\Download.cs" />
-    <Compile Include="Models\Progresses\ExportUrls.cs" />
-    <Compile Include="Models\Progresses\ImportUrls.cs" />
-    <Compile Include="Models\Progresses\ImportScripts.cs" />
-    <Compile Include="Models\Progresses\ExportScripts.cs" />
+    <Compile Include="Models\DisplayScriptMode.cs"/>
+    <Compile Include="Models\Operations\Download.cs"/>
+    <Compile Include="Models\Operations\ExportUrls.cs"/>
+    <Compile Include="Models\Operations\ImportUrls.cs"/>
+    <Compile Include="Models\Operations\ImportScripts.cs"/>
+    <Compile Include="Models\Operations\ExportScripts.cs"/>
     <Compile Include="Models\Script.cs" />
     <Compile Include="Models\Server.cs" />
     <Compile Include="Models\Storage.cs" />
@@ -171,7 +165,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Web\WebClient.cs" />
+      <Compile Include="Models\Web\YukoWebClient.cs"/>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

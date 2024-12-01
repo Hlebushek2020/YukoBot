@@ -1,6 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
-using Prism.Mvvm;
+﻿using Newtonsoft.Json;
+using System;
+using YukoClientBase.MVVM;
 
 namespace YukoClient.Models
 {

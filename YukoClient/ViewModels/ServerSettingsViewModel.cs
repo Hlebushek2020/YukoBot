@@ -1,9 +1,11 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using YukoClient.Models;
-using YukoClient.Models.Progresses;
+using YukoClient.Models.Operations;
+using YukoClient.Properties;
+using YukoClientBase.MVVM;
+using YukoClientBase.ViewModels;
 using YukoClientBase.Views;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
@@ -48,6 +50,8 @@ namespace YukoClient.ViewModels
         public DelegateCommand UpdateChannelListCommand { get; }
         #endregion
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        [SuppressMessage("ReSharper", "InvertIf")]
         public ServerSettingsViewModel(Server server)
         {
             Server = server;
@@ -64,8 +68,8 @@ namespace YukoClient.ViewModels
             RemoveSelectedChannelsCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show("Удалить выбранные каналы?", App.Name, MessageBoxButton.YesNo,
-                            MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(Resources.RemoveSelectedChannelsCommand_Confirmation, App.Name,
+                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         foreach (Channel channel in SelectedChannels)
                             Server.Channels.Remove(channel);
@@ -77,22 +81,24 @@ namespace YukoClient.ViewModels
             ClearChannelListCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show("Очистить список каналов?", App.Name, MessageBoxButton.YesNo,
-                            MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(Resources.ClearChannelListCommand_Confirmation, App.Name,
+                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Server.Channels.Clear();
+
                         ClearChannelListCommand.RaiseCanExecuteChanged();
                     }
                 },
                 () => Server.Channels.Count != 0);
             UpdateChannelListCommand = new DelegateCommand(() =>
             {
-                if (MessageBox.Show(
-                        "ВНИМАНИЕ! Все каналы будут удалены, вы действительно хотите продолжить?", App.Name,
+                if (MessageBox.Show(Resources.UpdateChannelListCommand_Confirmation, App.Name,
                         MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    ProgressWindow progress = new ProgressWindow(Title, new UpdateServer(server));
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title, new UpdateServer(server)));
                     progress.ShowDialog();
+
                     ClearChannelListCommand.RaiseCanExecuteChanged();
                 }
             });

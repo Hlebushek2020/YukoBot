@@ -1,15 +1,16 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using YukoClientBase.Interfaces;
+using YukoClientBase.MVVM;
+using YukoClientBase.ViewModels;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
-using YukoCollectionsClient.Models.Progresses;
+using YukoCollectionsClient.Models.Operations;
+using YukoCollectionsClient.Properties;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
@@ -130,8 +131,10 @@ namespace YukoCollectionsClient.ViewModels
             WindowLoadedCommand = new DelegateCommand(
                 () =>
                 {
-                    ProgressWindow progress = new ProgressWindow(Title, new UpdateMessageCollections(true));
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title, new UpdateMessageCollections(true), false));
                     progress.ShowDialog();
+
                     CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
                 });
 
@@ -148,15 +151,19 @@ namespace YukoCollectionsClient.ViewModels
                 () =>
                 {
                     MessageBoxResult messageResult = MessageBox.Show(
-                        "Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.",
-                        App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                        Resources.UpdateMessageCollectionsCommand_Overwrite,
+                        App.Name,
+                        MessageBoxButton.YesNoCancel,
+                        MessageBoxImage.Warning);
 
                     if (messageResult == MessageBoxResult.Cancel)
                         return;
 
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
-                    ProgressWindow progress =
-                        new ProgressWindow(Title, new UpdateMessageCollections(overrideMessageCollections));
+
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title,
+                            new UpdateMessageCollections(overrideMessageCollections)));
                     progress.ShowDialog();
 
                     if (overrideMessageCollections)
@@ -175,11 +182,17 @@ namespace YukoCollectionsClient.ViewModels
                             return;
 
                         MessageBoxResult messageBoxResult = MessageBox.Show(
-                            "Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo,
+                            Resources.DownloadAllCollectionsCommand_ClearUrls,
+                            App.Name,
+                            MessageBoxButton.YesNo,
                             MessageBoxImage.Question);
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath,
-                                messageBoxResult == MessageBoxResult.Yes));
+
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new DownloadAll(
+                                    MessageCollections,
+                                    folderBrowserDialog.SelectedPath,
+                                    messageBoxResult == MessageBoxResult.Yes)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -190,8 +203,12 @@ namespace YukoCollectionsClient.ViewModels
                 () =>
                 {
                     if (MessageBox.Show(
-                            $"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            string.Format(
+                                Resources.RemoveMessageCollectionItemCommand_Confirmation,
+                                SelectedMessageCollectionItem.MessageId),
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }
@@ -202,15 +219,17 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.DefaultExt = "json";
-                        saveFileDialog.Filter = "JavaScript Object Notation|*.json";
+                        saveFileDialog.DefaultExt = Resources.JsonFile_Ext;
+                        saveFileDialog.Filter = Resources.JsonFile_Filter;
 
                         if (saveFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new ExportMessageCollection(_selectedMessageCollection.Items,
-                                saveFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ExportMessageCollection(
+                                    _selectedMessageCollection.Items,
+                                    saveFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 }, () => _selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0);
@@ -219,22 +238,29 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        openFileDialog.DefaultExt = "json";
-                        openFileDialog.Filter = "JavaScript Object Notation|*.json";
+                        openFileDialog.DefaultExt = Resources.JsonFile_Ext;
+                        openFileDialog.Filter = Resources.JsonFile_Filter;
+
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
                         if (_selectedMessageCollection.Items.Count > 0)
                         {
-                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
-                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            if (MessageBox.Show(
+                                    Resources.ImportMessageCollectionCommand_ClearItems,
+                                    App.Name,
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 _selectedMessageCollection.Items.Clear();
                             }
                         }
 
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new ImportMessageCollection(_selectedMessageCollection.Items, openFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ImportMessageCollection(
+                                    _selectedMessageCollection.Items,
+                                    openFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -243,14 +269,18 @@ namespace YukoCollectionsClient.ViewModels
                 () =>
                 {
                     if (_selectedMessageCollection.Urls.Count != 0 &&
-                        MessageBox.Show("Очистить список ссылок перед добавлением?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        MessageBox.Show(
+                            Resources.GetUrlsFromMessageCollectionCommand_ClearUrls,
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Clear();
                     }
 
-                    ProgressWindow progress = new ProgressWindow(Title,
-                        new GetUrlsFromMessageCollection(_selectedMessageCollection));
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title,
+                            new GetUrlsFromMessageCollection(_selectedMessageCollection)));
                     progress.ShowDialog();
                 },
                 () => _selectedMessageCollection != null);
@@ -259,8 +289,11 @@ namespace YukoCollectionsClient.ViewModels
             RemoveUrlCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show($"Удалить \"{SelectedUrl}\" из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(
+                            string.Format(Resources.RemoveUrlCommand_Confirmation, SelectedUrl),
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Remove(SelectedUrl);
                     }
@@ -269,7 +302,10 @@ namespace YukoCollectionsClient.ViewModels
             ClearUrlsCommand = new DelegateCommand(
                 () =>
                 {
-                    if (MessageBox.Show("Очистить список сылок?", App.Name, MessageBoxButton.YesNo,
+                    if (MessageBox.Show(
+                            Resources.ClearUrlsCommand_Confirmation,
+                            App.Name,
+                            MessageBoxButton.YesNo,
                             MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Urls.Clear();
@@ -281,14 +317,15 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.Filter = "Текстовый докуент|*.txt";
-                        saveFileDialog.DefaultExt = "txt";
+                        saveFileDialog.DefaultExt = Resources.TextFile_Ext;
+                        saveFileDialog.Filter = Resources.TextFile_Filter;
 
                         if (saveFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new ExportUrls(_selectedMessageCollection.Urls, saveFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ExportUrls(_selectedMessageCollection.Urls, saveFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -298,23 +335,27 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        openFileDialog.Filter = "Текстовый докуент|*.txt";
-                        openFileDialog.DefaultExt = "txt";
+                        openFileDialog.DefaultExt = Resources.TextFile_Ext;
+                        openFileDialog.Filter = Resources.TextFile_Filter;
 
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
                         if (_selectedMessageCollection.Urls.Count > 0)
                         {
-                            if (MessageBox.Show("Очистить список сылок перед добавлением?", App.Name,
-                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            if (MessageBox.Show(
+                                    Resources.ImportUrlsCommand_ClearUrls,
+                                    App.Name,
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 _selectedMessageCollection.Urls.Clear();
                             }
                         }
 
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new ImportUrls(_selectedMessageCollection.Urls, openFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ImportUrls(_selectedMessageCollection.Urls, openFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -329,8 +370,9 @@ namespace YukoCollectionsClient.ViewModels
                         if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        ProgressWindow progressWindow = new ProgressWindow(Title,
-                            new Download(_selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new Download(_selectedMessageCollection.Urls, folderBrowserDialog.SelectedPath)));
                         progressWindow.ShowDialog();
                     }
                 },

@@ -131,4 +131,43 @@
   <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\program-icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="UpdateServerCollectionCommand.OverwriteServers" xml:space="preserve">
+    <value>Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок.</value>
+  </data>
+  <data name="RemoveServerCommand.Confirmation" xml:space="preserve">
+    <value>Удалить сервер {0} из списка?</value>
+  </data>
+  <data name="YukoScriptFile.Filter" xml:space="preserve">
+    <value>Yuko Script|*.yukoscript</value>
+  </data>
+  <data name="YukoScriptFile.Ext" xml:space="preserve">
+    <value>yukoscript</value>
+  </data>
+    <data name="ImportScriptsCommand.ClearList" xml:space="preserve">
+    <value>Очистить список правил перед добавлением?</value>
+  </data>
+    <data name="RemoveUrlCommand.Confirmation" xml:space="preserve">
+    <value>Удалить "{0}" из списка?</value>
+  </data>
+    <data name="ClearUrlsCommand.Confirmation" xml:space="preserve">
+    <value>Очистить список ссылок?</value>
+  </data>
+    <data name="TextFile.Filter" xml:space="preserve">
+    <value>Текстовый докуент|*.txt</value>
+  </data>
+    <data name="TextFile.Ext" xml:space="preserve">
+    <value>txt</value>
+  </data>
+    <data name="ImportUrlsCommand.ClearList" xml:space="preserve">
+    <value>Очистить список ссылок перед добавлением?</value>
+  </data>
+  <data name="RemoveSelectedChannelsCommand.Confirmation" xml:space="preserve">
+    <value>Удалить выбранные каналы?</value>
+  </data>
+  <data name="ClearChannelListCommand.Confirmation" xml:space="preserve">
+    <value>Очистить список каналов?</value>
+  </data>
+  <data name="UpdateChannelListCommand.Confirmation" xml:space="preserve">
+    <value>Все каналы будут удалены, вы действительно хотите продолжить?</value>
+  </data>
 </root>

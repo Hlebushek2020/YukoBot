@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using YukoClientBase.MVVM;
 
 namespace YukoClient.Models
 {

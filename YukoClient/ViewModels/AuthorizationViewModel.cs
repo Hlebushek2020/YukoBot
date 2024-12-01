@@ -8,7 +8,7 @@ using YukoClientBase.ViewModels;
 
 namespace YukoClient.ViewModels
 {
-    public class AuthorizationViewModel : BaseAuthorizationViewModel
+    public class AuthorizationViewModel : AuthorizationViewModelBase
     {
         #region Propirties
         public override string Title => App.Name;
@@ -31,6 +31,6 @@ namespace YukoClient.ViewModels
         }
         #endregion
 
-        public AuthorizationViewModel() : base(Storage.Current, WebClient.Current) { }
+        public AuthorizationViewModel() : base(Storage.Current, YukoWebClient.Current) { }
     }
 }

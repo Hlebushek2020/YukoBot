@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
         xmlns:props="clr-namespace:YukoClientBase.Properties"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:BaseAuthorizationViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:AuthorizationViewModelBase}}"
         Title="{Binding Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         Style="{DynamicResource WindowStyle}"
         Height="490"

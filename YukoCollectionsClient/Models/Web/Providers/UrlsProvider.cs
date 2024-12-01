@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Newtonsoft.Json;
 using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Errors;
@@ -20,28 +21,29 @@ namespace YukoCollectionsClient.Models.Web.Providers
         private readonly BinaryReader _clientReader;
         private readonly BinaryWriter _clientWriter;
 
-        public UrlsProvider(string token, MessageCollection messageCollection, out Response<BaseErrorJson> response)
+        public UrlsProvider(string token, MessageCollection messageCollection)
         {
             _client = new TcpClient
             {
-                SendTimeout = WebClientBase.SendTimeout,
-                ReceiveTimeout = WebClientBase.ReceiveTimeout
+                SendTimeout = YukoWebClientBase.SendTimeout, ReceiveTimeout = YukoWebClientBase.ReceiveTimeout
             };
             _client.Connect(Settings.Current.Host, Settings.Current.Port);
             NetworkStream networkStream = _client.GetStream();
             _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
+
             // request
             _clientWriter.Write((int)RequestType.GetUrls);
             _clientWriter.Write(token);
             _clientWriter.Write(
-                new UrlsRequest
-                {
-                    Items = messageCollection.Items,
-                    Id = messageCollection.Id
-                }.ToString());
+                new UrlsRequest { Items = messageCollection.Items, Id = messageCollection.Id }.ToString());
+
             // response
-            response = JsonConvert.DeserializeObject<Response<BaseErrorJson>>(_clientReader.ReadString());
+            Response<BaseErrorJson> response =
+                JsonConvert.DeserializeObject<Response<BaseErrorJson>>(_clientReader.ReadString());
+
+            if (response.Error != null)
+                throw new ClientCodeException(response.Error.Code);
         }
 
         public UrlsResponse ReadBlock() => JsonConvert.DeserializeObject<UrlsResponse>(_clientReader.ReadString());

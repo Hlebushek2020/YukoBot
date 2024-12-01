@@ -60,6 +60,42 @@ namespace YukoClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список каналов?.
+        /// </summary>
+        internal static string ClearChannelListCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("ClearChannelListCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок?.
+        /// </summary>
+        internal static string ClearUrlsCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("ClearUrlsCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Очистить список правил перед добавлением?.
+        /// </summary>
+        internal static string ImportScriptsCommand_ClearList {
+            get {
+                return ResourceManager.GetString("ImportScriptsCommand.ClearList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок перед добавлением?.
+        /// </summary>
+        internal static string ImportUrlsCommand_ClearList {
+            get {
+                return ResourceManager.GetString("ImportUrlsCommand.ClearList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap menu_add_32 {
@@ -96,6 +132,87 @@ namespace YukoClient.Properties {
             get {
                 object obj = ResourceManager.GetObject("program_icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить выбранные каналы?.
+        /// </summary>
+        internal static string RemoveSelectedChannelsCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveSelectedChannelsCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить сервер {0} из списка?.
+        /// </summary>
+        internal static string RemoveServerCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveServerCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить &quot;{0}&quot; из списка?.
+        /// </summary>
+        internal static string RemoveUrlCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveUrlCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to txt.
+        /// </summary>
+        internal static string TextFile_Ext {
+            get {
+                return ResourceManager.GetString("TextFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текстовый докуент|*.txt.
+        /// </summary>
+        internal static string TextFile_Filter {
+            get {
+                return ResourceManager.GetString("TextFile.Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Все каналы будут удалены, вы действительно хотите продолжить?.
+        /// </summary>
+        internal static string UpdateChannelListCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("UpdateChannelListCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Перезаписать данные текущих серверов? Внимание! Это приведет к потере списка правил и ссылок..
+        /// </summary>
+        internal static string UpdateServerCollectionCommand_OverwriteServers {
+            get {
+                return ResourceManager.GetString("UpdateServerCollectionCommand.OverwriteServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to yukoscript.
+        /// </summary>
+        internal static string YukoScriptFile_Ext {
+            get {
+                return ResourceManager.GetString("YukoScriptFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yuko Script|*.yukoscript.
+        /// </summary>
+        internal static string YukoScriptFile_Filter {
+            get {
+                return ResourceManager.GetString("YukoScriptFile.Filter", resourceCulture);
             }
         }
     }

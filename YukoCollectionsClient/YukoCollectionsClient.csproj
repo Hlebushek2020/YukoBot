@@ -60,16 +60,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+        <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
-    </Reference>
-    <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
+      <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+          <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -105,19 +99,19 @@
     </Compile>
     <Compile Include="Models\MessageCollection.cs" />
     <Compile Include="Models\MessageCollectionItem.cs" />
-    <Compile Include="Models\Progresses\Download.cs" />
-    <Compile Include="Models\Progresses\DownloadAll.cs" />
-    <Compile Include="Models\Progresses\ExportMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ExportUrls.cs" />
-    <Compile Include="Models\Progresses\GetUrlsFromMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ImportMessageCollection.cs" />
-    <Compile Include="Models\Progresses\ImportUrls.cs" />
-    <Compile Include="Models\Progresses\UpdateMessageCollections.cs" />
+      <Compile Include="Models\Operations\Download.cs"/>
+      <Compile Include="Models\Operations\DownloadAll.cs"/>
+      <Compile Include="Models\Operations\ExportMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ExportUrls.cs"/>
+      <Compile Include="Models\Operations\GetUrlsFromMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ImportMessageCollection.cs"/>
+      <Compile Include="Models\Operations\ImportUrls.cs"/>
+      <Compile Include="Models\Operations\UpdateMessageCollections.cs"/>
     <Compile Include="Models\Storage.cs" />
     <Compile Include="Models\Web\Providers\UrlsProvider.cs" />
     <Compile Include="Models\Web\Requests\UrlsRequest.cs" />
     <Compile Include="Models\Web\Responses\MessageCollectionsResponse.cs" />
-    <Compile Include="Models\Web\WebClient.cs" />
+      <Compile Include="Models\Web\YukoWebClient.cs"/>
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">

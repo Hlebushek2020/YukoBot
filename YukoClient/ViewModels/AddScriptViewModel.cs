@@ -1,33 +1,33 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using YukoClient.Enums;
 using YukoClient.Models;
+using YukoClientBase.MVVM;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 
 namespace YukoClient.ViewModels
 {
     public class AddScriptViewModel : BindableBase
     {
-        private ScriptMode _selectedMode;
+        private DisplayScriptMode _selectedMode;
 
         #region Propirties
         public string Title => App.Name;
         public Server Server { get; set; }
         public Channel SelectedChannel { get; set; }
 
-        public ObservableCollection<ScriptMode> Modes =>
-            new ObservableCollection<ScriptMode>
+        public ObservableCollection<DisplayScriptMode> Modes =>
+            new ObservableCollection<DisplayScriptMode>
             {
-                new ScriptMode(Enums.ScriptMode.One),
-                new ScriptMode(Enums.ScriptMode.After),
-                new ScriptMode(Enums.ScriptMode.Before),
-                new ScriptMode(Enums.ScriptMode.End),
-                new ScriptMode(Enums.ScriptMode.All)
+                new DisplayScriptMode(ScriptMode.One),
+                new DisplayScriptMode(ScriptMode.After),
+                new DisplayScriptMode(ScriptMode.Before),
+                new DisplayScriptMode(ScriptMode.End),
+                new DisplayScriptMode(ScriptMode.All)
             };
 
-        public ScriptMode SelectedMode
+        public DisplayScriptMode SelectedMode
         {
             get => _selectedMode;
             set
@@ -50,7 +50,7 @@ namespace YukoClient.ViewModels
                 if (_selectedMode == null)
                     return true;
 
-                return _selectedMode.Mode != Enums.ScriptMode.All && _selectedMode.Mode != Enums.ScriptMode.End;
+                return _selectedMode.Mode != ScriptMode.All && _selectedMode.Mode != ScriptMode.End;
             }
         }
 
@@ -63,7 +63,7 @@ namespace YukoClient.ViewModels
                 if (_selectedMode == null)
                     return true;
 
-                return _selectedMode.Mode != Enums.ScriptMode.All && _selectedMode.Mode != Enums.ScriptMode.One;
+                return _selectedMode.Mode != ScriptMode.All && _selectedMode.Mode != ScriptMode.One;
             }
         }
 

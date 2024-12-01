@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Prism.Commands;
-using Prism.Mvvm;
 using YukoClient.Models;
+using YukoClientBase.MVVM;
 
 namespace YukoClient.ViewModels
 {

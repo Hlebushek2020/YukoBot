@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Newtonsoft.Json;
-using Prism.Mvvm;
 using YukoClientBase.Interfaces;
 using YukoClientBase.Models;
+using YukoClientBase.MVVM;
 
 namespace YukoCollectionsClient.Models
 {
