@@ -1,10 +1,9 @@
-﻿using YukoClient.Models.Web.Errors;
-using YukoClient.Models.Web.Providers;
+﻿using YukoClient.Models.Web.Providers;
 using YukoClient.Models.Web.Requests;
 using YukoClient.Models.Web.Responses;
 using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models.Web;
-using YukoClientBase.Models.Web.Responses;
 
 namespace YukoClient.Models.Web
 {
@@ -38,19 +37,21 @@ namespace YukoClient.Models.Web
             return Request<ServersResponse>(null, RequestType.GetServers);
         }
 
-        public ExecuteScriptProvider ExecuteScripts(
-            ulong serverId,
-            int scriptCount,
-            out Response<ExecuteScriptErrorJson> response)
+        public ExecuteScriptProvider ExecuteScripts(ulong serverId, int scriptCount)
         {
-            ExecuteScriptProvider esp = new ExecuteScriptProvider(Token, serverId, scriptCount, out response);
+            try
+            {
+                return new ExecuteScriptProvider(Token, serverId, scriptCount);
+            }
+            catch (ClientCodeException ex)
+            {
+                if (ex.ClientErrorCode != ClientErrorCodes.TokenHasExpired)
+                    throw;
 
-            if (response.Error.Code != ClientErrorCodes.TokenHasExpired)
-                return esp;
+                RefreshToken();
 
-            RefreshToken();
-
-            return new ExecuteScriptProvider(Token, serverId, scriptCount, out response);
+                return new ExecuteScriptProvider(Token, serverId, scriptCount);
+            }
         }
     }
 }

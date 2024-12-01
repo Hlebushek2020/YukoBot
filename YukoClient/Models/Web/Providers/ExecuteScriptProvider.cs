@@ -7,6 +7,7 @@ using YukoClient.Exceptions;
 using YukoClient.Models.Web.Errors;
 using YukoClient.Models.Web.Requests;
 using YukoClientBase.Enums;
+using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
 using YukoClientBase.Models.Web.Responses;
@@ -24,11 +25,7 @@ namespace YukoClient.Models.Web.Providers
         private readonly BinaryReader _clientReader;
         private readonly BinaryWriter _clientWriter;
 
-        public ExecuteScriptProvider(
-            string token,
-            ulong serverId,
-            int scriptsCount,
-            out Response<ExecuteScriptErrorJson> response)
+        public ExecuteScriptProvider(string token, ulong serverId, int scriptsCount)
         {
             _countScripts = scriptsCount;
             _client = new TcpClient
@@ -39,12 +36,18 @@ namespace YukoClient.Models.Web.Providers
             NetworkStream networkStream = _client.GetStream();
             _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
+
             // request
             _clientWriter.Write((int)RequestType.ExecuteScripts);
             _clientWriter.Write(token);
             _clientWriter.Write(new ServerRequest { Id = serverId }.ToString());
+
             // response
-            response = JsonConvert.DeserializeObject<Response<ExecuteScriptErrorJson>>(_clientReader.ReadString());
+            Response<ExecuteScriptErrorJson> response =
+                JsonConvert.DeserializeObject<Response<ExecuteScriptErrorJson>>(_clientReader.ReadString());
+
+            if (response.Error != null)
+                throw new ClientCodeException(response.Error.Code, response.Error.Reason);
         }
 
         public void ExecuteScript(Script script)
