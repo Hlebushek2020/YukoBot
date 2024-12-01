@@ -136,7 +136,25 @@
     <data name="JsonFile.Filter" xml:space="preserve">
     <value>JavaScript Object Notation|*.json</value>
   </data>
-    <data name="ImportMessageCollectionCommand.ClearUrls" xml:space="preserve">
+    <data name="ImportMessageCollectionCommand.ClearItems" xml:space="preserve">
     <value>Очистить список элементов коллекции перед добавлением?</value>
+  </data>
+    <data name="GetUrlsFromMessageCollectionCommand.ClearUrls" xml:space="preserve">
+    <value>Очистить список ссылок перед добавлением?</value>
+  </data>
+    <data name="RemoveUrlCommand.Confirmation" xml:space="preserve">
+    <value>Удалить "{0}" из списка?</value>
+  </data>
+    <data name="ClearUrlsCommand.Confirmation" xml:space="preserve">
+    <value>Очистить список ссылок?</value>
+  </data>
+    <data name="TextFile.Ext" xml:space="preserve">
+    <value>txt</value>
+  </data>
+    <data name="TextFile.Filter" xml:space="preserve">
+    <value>Текстовый докуент|*.txt</value>
+  </data>
+    <data name="ImportUrlsCommand.ClearUrls" xml:space="preserve">
+    <value>Очистить список ссылок перед добавлением?</value>
   </data>
 </root>

@@ -60,6 +60,15 @@ namespace YukoCollectionsClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок?.
+        /// </summary>
+        internal static string ClearUrlsCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("ClearUrlsCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Очищать список ссылок коллекции перед добавлением?.
         /// </summary>
         internal static string DownloadAllCollectionsCommand_ClearUrls {
@@ -69,11 +78,29 @@ namespace YukoCollectionsClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок перед добавлением?.
+        /// </summary>
+        internal static string GetUrlsFromMessageCollectionCommand_ClearUrls {
+            get {
+                return ResourceManager.GetString("GetUrlsFromMessageCollectionCommand.ClearUrls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Очистить список элементов коллекции перед добавлением?.
         /// </summary>
-        internal static string ImportMessageCollectionCommand_ClearUrls {
+        internal static string ImportMessageCollectionCommand_ClearItems {
             get {
-                return ResourceManager.GetString("ImportMessageCollectionCommand.ClearUrls", resourceCulture);
+                return ResourceManager.GetString("ImportMessageCollectionCommand.ClearItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Очистить список ссылок перед добавлением?.
+        /// </summary>
+        internal static string ImportUrlsCommand_ClearUrls {
+            get {
+                return ResourceManager.GetString("ImportUrlsCommand.ClearUrls", resourceCulture);
             }
         }
         
@@ -111,6 +138,33 @@ namespace YukoCollectionsClient.Properties {
         internal static string RemoveMessageCollectionItemCommand_Confirmation {
             get {
                 return ResourceManager.GetString("RemoveMessageCollectionItemCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить &quot;{0}&quot; из списка?.
+        /// </summary>
+        internal static string RemoveUrlCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveUrlCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to txt.
+        /// </summary>
+        internal static string TextFile_Ext {
+            get {
+                return ResourceManager.GetString("TextFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текстовый докуент|*.txt.
+        /// </summary>
+        internal static string TextFile_Filter {
+            get {
+                return ResourceManager.GetString("TextFile.Filter", resourceCulture);
             }
         }
         

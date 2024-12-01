@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using YukoClientBase.Args;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
+using YukoClientBase.Models.Operations;
 using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web;
@@ -12,7 +13,7 @@ using YukoCollectionsClient.Models.Web.Providers;
 
 namespace YukoCollectionsClient.Models.Operations
 {
-    public class GetUrlsFromMessageCollection
+    public class GetUrlsFromMessageCollection : IOperation
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly MessageCollection _messageCollection;
