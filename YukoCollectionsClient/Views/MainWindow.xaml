@@ -68,7 +68,7 @@
                 <!-- PROGRESS ITEMS -->
             </Grid>
             <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5,0,10,0" BorderThickness="0" Padding="2"
-                    Style="{StaticResource IconButtonStyle}" Command="{Binding AppSettingsCommand}"
+                    Command="{Binding AppSettingsCommand}"
                     VerticalAlignment="Center" Height="34" Width="34">
                 <Image Source="/YukoClientBase;component/Resources/settings-48.png" />
             </Button>
@@ -88,11 +88,11 @@
                 <TextBox Grid.Row="0" Margin="0,0,0,5" TextWrapping="NoWrap" VerticalAlignment="Top"
                          Text="{Binding SearchCollections, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Height="22" VerticalAlignment="Top" Margin="0,0,0,5">
-                    <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Обновить"
+                    <Button ToolTip="Обновить"
                             Command="{Binding UpdateMessageCollectionsCommand}">
                         <Image Source="/YukoClientBase;component/Resources/menu-refresh-32.png" />
                     </Button>
-                    <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать"
+                    <Button ToolTip="Скачать"
                             Command="{Binding DownloadAllCollectionsCommand}">
                         <Image Source="/YukoClientBase;component/Resources/menu-download-32.png" />
                     </Button>
@@ -119,19 +119,19 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить"
+                        <Button ToolTip="Удалить"
                                 Command="{Binding RemoveMessageCollectionItemCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список"
+                        <Button ToolTip="Экспортировать список"
                                 Command="{Binding ExportMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список"
+                        <Button ToolTip="Импортировать список"
                                 Command="{Binding ImportMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Получить ссылки"
+                        <Button ToolTip="Получить ссылки"
                                 Command="{Binding GetUrlsFromMessageCollectionCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-start-32.png" />
                         </Button>
@@ -153,23 +153,23 @@
                               VerticalAlignment="Center" />
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Top">
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Удалить"
+                        <Button ToolTip="Удалить"
                                 Command="{Binding RemoveUrlCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-delete-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Очистить"
+                        <Button ToolTip="Очистить"
                                 Command="{Binding ClearUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-clear-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Экспортировать список"
+                        <Button ToolTip="Экспортировать список"
                                 Command="{Binding ExportUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-export-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Импортировать список"
+                        <Button ToolTip="Импортировать список"
                                 Command="{Binding ImportUrlsCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-import-32.png" />
                         </Button>
-                        <Button Style="{StaticResource MenuIconButtonStyle}" ToolTip="Скачать"
+                        <Button ToolTip="Скачать"
                                 Command="{Binding DownloadFilesCommand}">
                             <Image Source="/YukoClientBase;component/Resources/menu-download-32.png" />
                         </Button>
