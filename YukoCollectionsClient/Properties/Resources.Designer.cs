@@ -69,6 +69,24 @@ namespace YukoCollectionsClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to json.
+        /// </summary>
+        internal static string JsonFile_Ext {
+            get {
+                return ResourceManager.GetString("JsonFile.Ext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JavaScript Object Notation|*.json.
+        /// </summary>
+        internal static string JsonFile_Filter {
+            get {
+                return ResourceManager.GetString("JsonFile.Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon program_icon {

@@ -130,4 +130,10 @@
     <data name="RemoveMessageCollectionItemCommand.Confirmation" xml:space="preserve">
     <value>Удалить сообщение {0} из списка?</value>
   </data>
+    <data name="JsonFile.Ext" xml:space="preserve">
+    <value>json</value>
+  </data>
+    <data name="JsonFile.Filter" xml:space="preserve">
+    <value>JavaScript Object Notation|*.json</value>
+  </data>
 </root>

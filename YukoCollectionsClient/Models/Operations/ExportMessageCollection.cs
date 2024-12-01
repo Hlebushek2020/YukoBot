@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YukoClientBase.Args;
+using YukoClientBase.Models.Operations;
 
 namespace YukoCollectionsClient.Models.Operations
 {
-    public class ExportMessageCollection
+    public class ExportMessageCollection : IOperation
     {
         private readonly ICollection<MessageCollectionItem> _messageCollectionItems;
         private readonly string _fileName;

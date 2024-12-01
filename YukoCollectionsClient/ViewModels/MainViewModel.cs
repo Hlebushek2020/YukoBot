@@ -219,15 +219,17 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.DefaultExt = "json";
-                        saveFileDialog.Filter = "JavaScript Object Notation|*.json";
+                        saveFileDialog.DefaultExt = Resources.JsonFile_Ext;
+                        saveFileDialog.Filter = Resources.JsonFile_Filter;
 
                         if (saveFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new ExportMessageCollection(_selectedMessageCollection.Items,
-                                saveFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ExportMessageCollection(
+                                    _selectedMessageCollection.Items,
+                                    saveFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 }, () => _selectedMessageCollection != null && _selectedMessageCollection.Items.Count > 0);
