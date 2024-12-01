@@ -91,7 +91,7 @@
     <Compile Include="Models\Web\Responses\RefreshTokenResponse.cs" />
     <Compile Include="Models\Web\Responses\Response.cs" />
     <Compile Include="Models\Web\Responses\UrlsResponse.cs" />
-    <Compile Include="Models\Web\WebClientBase.cs" />
+      <Compile Include="Models\Web\YukoWebClientBase.cs"/>
       <Compile Include="MVVM\BindableBase.cs"/>
       <Compile Include="MVVM\DelegateCommand.cs"/>
       <Compile Include="MVVM\DelegateCommandBase.cs"/>

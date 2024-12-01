@@ -23,14 +23,14 @@ namespace YukoClient.ViewModels
                     BitmapCacheOption.OnDemand);
 
                 BitmapFrame bitmapFrame = decoder.Frames.Where(f => f.Width <= 256)
-                                              .OrderByDescending(f => f.Width).FirstOrDefault() ??
-                                          decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
+                        .OrderByDescending(f => f.Width).FirstOrDefault() ??
+                    decoder.Frames.OrderBy(f => f.Width).FirstOrDefault();
 
                 return new ImageBrush { Stretch = Stretch.Uniform, ImageSource = bitmapFrame };
             }
         }
         #endregion
 
-        public AuthorizationViewModel() : base(Storage.Current, WebClient.Current) { }
+        public AuthorizationViewModel() : base(Storage.Current, YukoWebClient.Current) { }
     }
 }

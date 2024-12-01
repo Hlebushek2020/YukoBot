@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Windows.Threading;
+using System.Threading.Tasks;
+using YukoClientBase.Args;
 
 namespace YukoCollectionsClient.Models.Operations
 {
@@ -18,20 +20,22 @@ namespace YukoCollectionsClient.Models.Operations
             _fileName = fileName;
         }
 
-        public override void Run(Dispatcher dispatcher, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
-            dispatcher.Invoke(() => State = "Чтение данных");
+            progress.Report(new ProgressReportArgs { IsIndeterminate = true, Text = "Чтение данных" });
             string json = File.ReadAllText(_fileName, Encoding.UTF8);
-            dispatcher.Invoke(() => State = "Обработка");
+            progress.Report(new ProgressReportArgs { Text = "Чтение Обработка" });
             List<MessageCollectionItem> items = JsonConvert.DeserializeObject<List<MessageCollectionItem>>(json);
-            dispatcher.Invoke(() => State = "Добавление");
+            progress.Report(new ProgressReportArgs { Text = "Добавление" });
             foreach (MessageCollectionItem item in items)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (!_messageCollectionItems.Contains(item))
-                {
                     _messageCollectionItems.Add(item);
-                }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

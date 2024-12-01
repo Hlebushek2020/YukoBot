@@ -33,15 +33,14 @@ namespace YukoClient.Models.Web.Providers
             _countScripts = scriptsCount;
             _client = new TcpClient
             {
-                SendTimeout = WebClientBase.SendTimeout,
-                ReceiveTimeout = WebClientBase.ReceiveTimeout
+                SendTimeout = YukoWebClientBase.SendTimeout, ReceiveTimeout = YukoWebClientBase.ReceiveTimeout
             };
             _client.Connect(Settings.Current.Host, Settings.Current.Port);
             NetworkStream networkStream = _client.GetStream();
             _clientReader = new BinaryReader(networkStream, Encoding.UTF8, true);
             _clientWriter = new BinaryWriter(networkStream, Encoding.UTF8, true);
             // request
-            _clientWriter.Write((int) RequestType.ExecuteScripts);
+            _clientWriter.Write((int)RequestType.ExecuteScripts);
             _clientWriter.Write(token);
             _clientWriter.Write(new ServerRequest { Id = serverId }.ToString());
             // response

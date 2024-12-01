@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Newtonsoft.Json;
 using YukoClientBase.Enums;
 using YukoClientBase.Models;
 using YukoClientBase.Models.Web;
@@ -24,8 +24,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
         {
             _client = new TcpClient
             {
-                SendTimeout = WebClientBase.SendTimeout,
-                ReceiveTimeout = WebClientBase.ReceiveTimeout
+                SendTimeout = YukoWebClientBase.SendTimeout, ReceiveTimeout = YukoWebClientBase.ReceiveTimeout
             };
             _client.Connect(Settings.Current.Host, Settings.Current.Port);
             NetworkStream networkStream = _client.GetStream();
@@ -35,11 +34,7 @@ namespace YukoCollectionsClient.Models.Web.Providers
             _clientWriter.Write((int)RequestType.GetUrls);
             _clientWriter.Write(token);
             _clientWriter.Write(
-                new UrlsRequest
-                {
-                    Items = messageCollection.Items,
-                    Id = messageCollection.Id
-                }.ToString());
+                new UrlsRequest { Items = messageCollection.Items, Id = messageCollection.Id }.ToString());
             // response
             response = JsonConvert.DeserializeObject<Response<BaseErrorJson>>(_clientReader.ReadString());
         }

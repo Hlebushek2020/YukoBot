@@ -21,7 +21,7 @@ namespace YukoClient.Models.Operations
         {
             progress.Report(new ProgressReportArgs { Text = "Получение данных о сервере" });
 
-            ServerResponse serverResponse = WebClient.Current.GetServer(_server.Id);
+            ServerResponse serverResponse = YukoWebClient.Current.GetServer(_server.Id);
 
             if (serverResponse.Error != null && serverResponse.Error.Code == ClientErrorCodes.GuildNotFound)
                 throw new Exception(

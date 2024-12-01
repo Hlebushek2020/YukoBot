@@ -56,7 +56,7 @@ namespace YukoClientBase.ViewModels
 
         public event FullscreenEventHandler FullscreenEvent;
 
-        protected AuthorizationViewModelBase(IUser store, WebClientBase webClient)
+        protected AuthorizationViewModelBase(IUser store, YukoWebClientBase webClient)
         {
             FullscreenCommand = new DelegateCommand(() => FullscreenEvent?.Invoke());
             LoginCommand = new DelegateCommand(() =>

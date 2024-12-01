@@ -41,7 +41,7 @@ namespace YukoCollectionsClient
             AuthorizationWindow authorization = new AuthorizationWindow(new AuthorizationViewModel());
             authorization.ShowDialog();
 
-            if (!WebClient.Current.TokenAvailability)
+            if (!YukoWebClient.Current.TokenAvailability)
                 Shutdown();
             else
             {

@@ -27,7 +27,7 @@ namespace YukoClient.Models.Operations
         public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Подключение" });
-            using (ExecuteScriptProvider provider = WebClient.Current.ExecuteScripts(
+            using (ExecuteScriptProvider provider = YukoWebClient.Current.ExecuteScripts(
                        _server.Id, _server.Scripts.Count, out Response<ExecuteScriptErrorJson> response))
             {
                 if (response.Error != null)

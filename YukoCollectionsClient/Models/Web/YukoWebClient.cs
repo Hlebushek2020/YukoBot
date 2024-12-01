@@ -7,10 +7,10 @@ using YukoCollectionsClient.Models.Web.Responses;
 
 namespace YukoCollectionsClient.Models.Web
 {
-    public class WebClient : WebClientBase
+    public class YukoWebClient : YukoWebClientBase
     {
         #region Instance
-        public static WebClient Current { get; } = new WebClient();
+        public static YukoWebClient Current { get; } = new YukoWebClient();
         #endregion
 
         public MessageCollectionsResponse GetMessageCollections() =>

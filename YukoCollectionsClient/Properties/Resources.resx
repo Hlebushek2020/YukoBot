@@ -121,4 +121,13 @@
   <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\program-icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+    <data name="UpdateMessageCollectionsCommand.Overwrite" xml:space="preserve">
+    <value>Перезаписать данные текущих коллекций? Это приведет к потере списка ссылок.</value>
+  </data>
+    <data name="DownloadAllCollectionsCommand.ClearUrls" xml:space="preserve">
+    <value>Очищать список ссылок коллекции перед добавлением?</value>
+  </data>
+    <data name="RemoveMessageCollectionItemCommand.Confirmation" xml:space="preserve">
+    <value>Удалить сообщение {0} из списка?</value>
+  </data>
 </root>

@@ -6,9 +6,11 @@ using System.Windows.Data;
 using System.Windows.Media;
 using YukoClientBase.Interfaces;
 using YukoClientBase.MVVM;
+using YukoClientBase.ViewModels;
 using YukoClientBase.Views;
 using YukoCollectionsClient.Models;
-using YukoCollectionsClient.Models.Progresses;
+using YukoCollectionsClient.Models.Operations;
+using YukoCollectionsClient.Properties;
 using MessageBox = YukoClientBase.Dialogs.MessageBox;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
@@ -129,9 +131,10 @@ namespace YukoCollectionsClient.ViewModels
             WindowLoadedCommand = new DelegateCommand(
                 () =>
                 {
-                    OperationProgressWindow progress =
-                        new OperationProgressWindow(Title, new UpdateMessageCollections(true));
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title, new UpdateMessageCollections(true), false));
                     progress.ShowDialog();
+
                     CollectionViewSource.GetDefaultView(MessageCollections).Filter = MessageCollectionsFilter;
                 });
 
@@ -148,15 +151,19 @@ namespace YukoCollectionsClient.ViewModels
                 () =>
                 {
                     MessageBoxResult messageResult = MessageBox.Show(
-                        "Перезаписать данные текущих коллекций (быстрее)? Внимание! Это приведет к потере списка ссылок.",
-                        App.Name, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                        Resources.UpdateMessageCollectionsCommand_Overwrite,
+                        App.Name,
+                        MessageBoxButton.YesNoCancel,
+                        MessageBoxImage.Warning);
 
                     if (messageResult == MessageBoxResult.Cancel)
                         return;
 
                     bool overrideMessageCollections = messageResult == MessageBoxResult.Yes;
-                    OperationProgressWindow progress =
-                        new OperationProgressWindow(Title, new UpdateMessageCollections(overrideMessageCollections));
+
+                    OperationProgressWindow progress = new OperationProgressWindow(
+                        new OperationProgressViewModel(Title,
+                            new UpdateMessageCollections(overrideMessageCollections)));
                     progress.ShowDialog();
 
                     if (overrideMessageCollections)
@@ -175,11 +182,17 @@ namespace YukoCollectionsClient.ViewModels
                             return;
 
                         MessageBoxResult messageBoxResult = MessageBox.Show(
-                            "Очищать список ссылок коллекции перед добавлением?", App.Name, MessageBoxButton.YesNo,
+                            Resources.DownloadAllCollectionsCommand_ClearUrls,
+                            App.Name,
+                            MessageBoxButton.YesNo,
                             MessageBoxImage.Question);
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new DownloadAll(MessageCollections, folderBrowserDialog.SelectedPath,
-                                messageBoxResult == MessageBoxResult.Yes));
+
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new DownloadAll(
+                                    MessageCollections,
+                                    folderBrowserDialog.SelectedPath,
+                                    messageBoxResult == MessageBoxResult.Yes)));
                         progressWindow.ShowDialog();
                     }
                 },
@@ -190,8 +203,12 @@ namespace YukoCollectionsClient.ViewModels
                 () =>
                 {
                     if (MessageBox.Show(
-                            $"Удалить сообщение {SelectedMessageCollectionItem.MessageId} из списка?", App.Name,
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            string.Format(
+                                Resources.RemoveMessageCollectionItemCommand_Confirmation,
+                                SelectedMessageCollectionItem.MessageId),
+                            App.Name,
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         _selectedMessageCollection.Items.Remove(SelectedMessageCollectionItem);
                     }

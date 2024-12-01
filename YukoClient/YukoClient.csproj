@@ -165,7 +165,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Web\WebClient.cs" />
+      <Compile Include="Models\Web\YukoWebClient.cs"/>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

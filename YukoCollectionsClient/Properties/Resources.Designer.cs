@@ -60,12 +60,39 @@ namespace YukoCollectionsClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очищать список ссылок коллекции перед добавлением?.
+        /// </summary>
+        internal static string DownloadAllCollectionsCommand_ClearUrls {
+            get {
+                return ResourceManager.GetString("DownloadAllCollectionsCommand.ClearUrls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon program_icon {
             get {
                 object obj = ResourceManager.GetObject("program_icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить сообщение {0} из списка?.
+        /// </summary>
+        internal static string RemoveMessageCollectionItemCommand_Confirmation {
+            get {
+                return ResourceManager.GetString("RemoveMessageCollectionItemCommand.Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Перезаписать данные текущих коллекций? Это приведет к потере списка ссылок..
+        /// </summary>
+        internal static string UpdateMessageCollectionsCommand_Overwrite {
+            get {
+                return ResourceManager.GetString("UpdateMessageCollectionsCommand.Overwrite", resourceCulture);
             }
         }
     }

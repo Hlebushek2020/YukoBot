@@ -25,7 +25,7 @@ namespace YukoClient.Models.Operations
         {
             progress.Report(new ProgressReportArgs { Text = "Получение данных о серверах" });
 
-            ServersResponse response = WebClient.Current.GetServers();
+            ServersResponse response = YukoWebClient.Current.GetServers();
 
             if (response.Error != null)
                 throw new ClientCodeException(response.Error.Code);

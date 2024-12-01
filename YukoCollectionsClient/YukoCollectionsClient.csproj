@@ -117,7 +117,7 @@
     <Compile Include="Models\Web\Providers\UrlsProvider.cs" />
     <Compile Include="Models\Web\Requests\UrlsRequest.cs" />
     <Compile Include="Models\Web\Responses\MessageCollectionsResponse.cs" />
-    <Compile Include="Models\Web\WebClient.cs" />
+      <Compile Include="Models\Web\YukoWebClient.cs"/>
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\AuthorizationViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">

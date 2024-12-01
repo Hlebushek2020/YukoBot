@@ -8,6 +8,7 @@ using YukoClientBase.Args;
 using YukoClientBase.Enums;
 using YukoClientBase.Exceptions;
 using YukoClientBase.Models;
+using YukoClientBase.Models.Operations;
 using YukoClientBase.Models.Web.Errors;
 using YukoClientBase.Models.Web.Responses;
 using YukoCollectionsClient.Models.Web.Providers;
@@ -15,7 +16,7 @@ using YWeb = YukoCollectionsClient.Models.Web;
 
 namespace YukoCollectionsClient.Models.Operations
 {
-    public class DownloadAll
+    public class DownloadAll : IOperation
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly ICollection<MessageCollection> _messageCollections;
@@ -43,7 +44,7 @@ namespace YukoCollectionsClient.Models.Operations
 
                 progress.Report(new ProgressReportArgs { Text = "Подключение" });
 
-                using (UrlsProvider provider = YWeb.WebClient.Current.GetUrls(
+                using (UrlsProvider provider = YWeb.YukoWebClient.Current.GetUrls(
                            collection, out Response<BaseErrorJson> response))
                 {
                     if (response.Error != null)

@@ -29,7 +29,7 @@ namespace YukoClient.Models.Operations
             else
             {
                 progress.Report(new ProgressReportArgs { Text = "Получение данных" });
-                ServersResponse response = WebClient.Current.GetServers();
+                ServersResponse response = YukoWebClient.Current.GetServers();
 
                 if (response.Error != null)
                     throw new ClientCodeException(response.Error.Code);

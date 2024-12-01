@@ -13,7 +13,7 @@ using YukoClientBase.Views;
 
 namespace YukoClientBase.Models.Web
 {
-    public class WebClientBase
+    public abstract class YukoWebClientBase
     {
         public const int SendTimeout = 30000;
         public const int ReceiveTimeout = 30000;
