@@ -136,4 +136,7 @@
     <data name="JsonFile.Filter" xml:space="preserve">
     <value>JavaScript Object Notation|*.json</value>
   </data>
+    <data name="ImportMessageCollectionCommand.ClearUrls" xml:space="preserve">
+    <value>Очистить список элементов коллекции перед добавлением?</value>
+  </data>
 </root>

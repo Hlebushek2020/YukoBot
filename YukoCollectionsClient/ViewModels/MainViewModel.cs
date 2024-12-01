@@ -238,22 +238,29 @@ namespace YukoCollectionsClient.ViewModels
                 {
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        openFileDialog.DefaultExt = "json";
-                        openFileDialog.Filter = "JavaScript Object Notation|*.json";
+                        openFileDialog.DefaultExt = Resources.JsonFile_Ext;
+                        openFileDialog.Filter = Resources.JsonFile_Filter;
+
                         if (openFileDialog.ShowDialog() != DialogResult.OK)
                             return;
 
                         if (_selectedMessageCollection.Items.Count > 0)
                         {
-                            if (MessageBox.Show("Очистить список правил перед добавлением?", App.Name,
-                                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            if (MessageBox.Show(
+                                    Resources.ImportMessageCollectionCommand_ClearUrls,
+                                    App.Name,
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 _selectedMessageCollection.Items.Clear();
                             }
                         }
 
-                        OperationProgressWindow progressWindow = new OperationProgressWindow(Title,
-                            new ImportMessageCollection(_selectedMessageCollection.Items, openFileDialog.FileName));
+                        OperationProgressWindow progressWindow = new OperationProgressWindow(
+                            new OperationProgressViewModel(Title,
+                                new ImportMessageCollection(
+                                    _selectedMessageCollection.Items,
+                                    openFileDialog.FileName)));
                         progressWindow.ShowDialog();
                     }
                 },

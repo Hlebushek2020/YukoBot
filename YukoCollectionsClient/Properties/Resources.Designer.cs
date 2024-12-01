@@ -69,6 +69,15 @@ namespace YukoCollectionsClient.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очистить список элементов коллекции перед добавлением?.
+        /// </summary>
+        internal static string ImportMessageCollectionCommand_ClearUrls {
+            get {
+                return ResourceManager.GetString("ImportMessageCollectionCommand.ClearUrls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to json.
         /// </summary>
         internal static string JsonFile_Ext {

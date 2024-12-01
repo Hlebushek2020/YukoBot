@@ -17,7 +17,7 @@ namespace YukoCollectionsClient.Models
 
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -27,7 +27,7 @@ namespace YukoCollectionsClient.Models
 
         public ObservableCollection<MessageCollectionItem> Items
         {
-            get { return _items; }
+            get => _items;
             set
             {
                 _items = value;
@@ -37,7 +37,7 @@ namespace YukoCollectionsClient.Models
 
         public ObservableCollection<string> Urls
         {
-            get { return _urls; }
+            get => _urls;
             set
             {
                 _urls = value;
@@ -47,9 +47,7 @@ namespace YukoCollectionsClient.Models
         #endregion
 
         public bool Equals(MessageCollection other) => other != null && Id.Equals(other.Id);
-
         public override bool Equals(object obj) => Equals(obj as MessageCollection);
-
         public override int GetHashCode() => Id.GetHashCode();
     }
 }
