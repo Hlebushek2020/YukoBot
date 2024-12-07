@@ -39,7 +39,7 @@
                         CornerRadius="20"
                         Background="{Binding Path=Logo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Border BorderThickness="4"
-                        BorderBrush="{DynamicResource LogoBorder}"
+                        BorderBrush="{DynamicResource YcLogoBorder}"
                         Height="132"
                         Width="132"
                         CornerRadius="20" />
@@ -92,12 +92,14 @@
         </StackPanel>
 
         <Button HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
                 Margin="0,0,10,10"
                 BorderThickness="0"
                 Padding="2"
                 Height="34"
                 Width="34"
-                Command="{Binding SettingsCommand}" VerticalAlignment="Bottom">
+                Style="{DynamicResource YcMenuIconButtonStyle}"
+                Command="{Binding SettingsCommand}">
             <Image Source="pack://application:,,,/YukoClientBase;component/Resources/settings-48.png" />
         </Button>
 

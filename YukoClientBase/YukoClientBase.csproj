@@ -153,6 +153,10 @@
       <Resource Include="Resources\Styles\Controls\Button.xaml">
           <Generator>MSBuild:Compile</Generator>
       </Resource>
+      <Resource Include="Resources\Styles\Additionally.xaml">
+          <Generator>MSBuild:Compile</Generator>
+          <SubType>Designer</SubType>
+      </Resource>
     <Page Include="Views\AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,9 +206,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="Resources\Styles\Controls\TextBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
-    <Resource Include="Resources\Styles\UIStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="Resources\Styles\Themes\Dark.xaml">
