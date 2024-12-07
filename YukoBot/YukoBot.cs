@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.CommandsNext.Exceptions;
@@ -13,6 +7,12 @@ using DSharpPlus.EventArgs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 using YukoBot.Commands;
 using YukoBot.Commands.Exceptions;
 using YukoBot.Exceptions;
@@ -236,6 +236,8 @@ namespace YukoBot
 
                         while (!processToken.IsCancellationRequested)
                         {
+                            _logger.LogTrace("Iteration TcpListener.Pending");
+
                             if (_tcpListener.Pending())
                             {
                                 YukoClient yukoClient =

@@ -58,8 +58,8 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
         <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
         <Setter Property="BorderThickness" Value="0,0,0,0" />
-        <Setter Property="Padding" Value="7,3" />
-        <Setter Property="Margin" Value="4,2" />
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="Margin" Value="1,1" />
         <Setter Property="MinHeight" Value="24" />
         <Setter Property="Template">
             <Setter.Value>

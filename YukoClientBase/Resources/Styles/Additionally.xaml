@@ -28,7 +28,7 @@
             </Trigger>
 
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Opacity" Value="0.4" />
+                <Setter Property="Opacity" Value="0.2" />
             </Trigger>
 
         </Style.Triggers>
