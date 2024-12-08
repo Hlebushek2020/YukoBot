@@ -11,22 +11,25 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}"
-           TargetType="ScrollViewer">
+    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="ScrollViewer">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
                     <Grid Background="{TemplateBinding Background}">
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <DockPanel Grid.Column="0" Grid.Row="0" Margin="{TemplateBinding Padding}">
+                        <DockPanel Grid.Column="0" Grid.Row="0"
+                                   Margin="{TemplateBinding Padding}">
+
                             <ScrollViewer DockPanel.Dock="Top"
                                           HorizontalScrollBarVisibility="Hidden"
                                           VerticalScrollBarVisibility="Hidden"
@@ -166,70 +169,56 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewStyleKey}"
-           TargetType="{x:Type ListView}">
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource BorderAlt}" />
-        <Setter Property="BorderThickness"
-                Value="0,0,0,0" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource ContentForeground}" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                Value="Auto" />
-        <Setter Property="ScrollViewer.CanContentScroll"
-                Value="true" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
+    <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="{x:Type ListView}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListView}">
+
                     <Border Name="Bd"
+                            SnapsToDevicePixels="True"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="true">
+                            Background="{TemplateBinding Background}">
                         <ScrollViewer Style="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
                                       Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
+
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsGrouping" Value="true">
-                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                        <Trigger Property="IsGrouping" Value="True">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
                         </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter
-                                Property="Opacity"
-                                Value="0.5" />
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}"
-           TargetType="{x:Type ListViewItem}">
-        <Setter Property="FocusVisualStyle"
-                Value="{StaticResource ListViewItemFocusVisual}" />
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource BorderAlt}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource ContentForeground}" />
-        <Setter Property="BorderThickness"
-                Value="0,0,0,0" />
+    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" TargetType="{x:Type ListViewItem}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource ListViewItemFocusVisual}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="Padding" Value="4,1" />
         <Setter Property="MinHeight" Value="24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
+
                     <Border x:Name="Bd"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -244,118 +233,7 @@
                             </GridViewRowPresenter.Resources>
                         </GridViewRowPresenter>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver"
-                                 Value="true">
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundHovered}" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="{DynamicResource BorderAlt}" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource HoveredForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsSelected"
-                                 Value="true">
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource SelectedForeground}" />
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                                <Condition Property="Selector.IsSelectionActive"
-                                           Value="false" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundInactive}" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundInactive}" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource ContentForeground}" />
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                                <Condition Property="IsMouseOver"
-                                           Value="true" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource SelectedForeground}" />
-                        </MultiTrigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="Transparent" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="Transparent" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource DisabledForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground"
-                        Value="{DynamicResource HoveredForeground}" />
-            </Trigger>
-            <Trigger Property="IsSelected" Value="true">
-                <Setter Property="Foreground" Value="{DynamicResource SelectedForeground}" />
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="true" />
-                    <Condition Property="Selector.IsSelectionActive" Value="false" />
-                </MultiTrigger.Conditions>
-                <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
-            </MultiTrigger>
-            <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
 
-    <Style x:Key="WPFListViewItemStyle"
-           TargetType="{x:Type ListViewItem}">
-        <Setter Property="FocusVisualStyle"
-                Value="{StaticResource ListViewItemFocusVisual}" />
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource BorderAlt}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource ContentForeground}" />
-        <Setter Property="BorderThickness"
-                Value="0,0,0,0" />
-        <Setter Property="Padding" Value="4,1" />
-        <Setter Property="MinHeight" Value="24" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border x:Name="Bd"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="true">
-                        <GridViewRowPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <GridViewRowPresenter.Resources>
-                                <Style BasedOn="{x:Null}" TargetType="{x:Type TextBlock}" />
-                            </GridViewRowPresenter.Resources>
-                        </GridViewRowPresenter>
-                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" TargetName="Bd"
@@ -365,8 +243,7 @@
                             <Setter Property="Foreground"
                                     Value="{DynamicResource HoveredForeground}" />
                         </Trigger>
-                        <Trigger Property="IsSelected"
-                                 Value="true">
+                        <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" TargetName="Bd"
                                     Value="{DynamicResource ContentBackgroundSelected}" />
                             <Setter Property="BorderBrush" TargetName="Bd"
@@ -376,24 +253,8 @@
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                                <Condition Property="IsMouseOver"
-                                           Value="true" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="{DynamicResource ContentBackgroundSelected}" />
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource SelectedForeground}" />
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                                <Condition Property="Selector.IsSelectionActive"
-                                           Value="false" />
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter Property="Background" TargetName="Bd"
                                     Value="{DynamicResource ContentBackgroundInactive}" />
@@ -402,14 +263,122 @@
                             <Setter Property="Foreground"
                                     Value="{DynamicResource ContentForeground}" />
                         </MultiTrigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
                             <Setter Property="Background" TargetName="Bd"
-                                    Value="Transparent" />
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
                             <Setter Property="BorderBrush" TargetName="Bd"
-                                    Value="Transparent" />
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
                             <Setter Property="Foreground"
-                                    Value="{DynamicResource DisabledForeground}" />
+                                    Value="{DynamicResource SelectedForeground}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="Bd" Value="Transparent" />
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource HoveredForeground}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SelectedForeground}" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="Selector.IsSelectionActive" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+            </MultiTrigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+    <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource ListViewItemFocusVisual}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="4,1" />
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+
+                    <Border x:Name="Bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                        <GridViewRowPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <GridViewRowPresenter.Resources>
+                                <Style BasedOn="{x:Null}" TargetType="{x:Type TextBlock}" />
+                            </GridViewRowPresenter.Resources>
+                        </GridViewRowPresenter>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundHovered}" />
+                            <Setter Property="BorderBrush" TargetName="Bd"
+                                    Value="{DynamicResource BorderAlt}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource HoveredForeground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
+                            <Setter Property="BorderBrush" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource SelectedForeground}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
+                            <Setter Property="BorderBrush" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundSelected}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource SelectedForeground}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundInactive}" />
+                            <Setter Property="BorderBrush" TargetName="Bd"
+                                    Value="{DynamicResource ContentBackgroundInactive}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource ContentForeground}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="Bd" Value="Transparent" />
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -417,25 +386,20 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="GridView.ColumnCollection" Value="{x:Null}">
-                <Setter Property="FocusVisualStyle"
-                        Value="{StaticResource ListViewItemFocusVisual}" />
-                <Setter Property="Background"
-                        Value="Transparent" />
-                <Setter Property="BorderBrush"
-                        Value="{DynamicResource BorderAlt}" />
-                <Setter Property="Foreground"
-                        Value="{DynamicResource ContentForeground}" />
-                <Setter Property="BorderThickness"
-                        Value="0" />
-                <Setter Property="Padding"
-                        Value="7,1" />
-                <Setter Property="Margin"
-                        Value="4,2" />
+                <Setter Property="FocusVisualStyle" Value="{StaticResource ListViewItemFocusVisual}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
+                <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+                <Setter Property="BorderThickness" Value="0,0,0,0" />
+                <Setter Property="Padding" Value="7,1" />
+                <Setter Property="Margin" Value="4,2" />
                 <Setter Property="MinHeight" Value="24" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListViewItem}">
+
                             <Grid>
+
                                 <Border x:Name="SelectionIndicator"
                                         HorizontalAlignment="Left"
                                         CornerRadius="1.5"
@@ -460,7 +424,9 @@
                                         </ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </Border>
+
                             </Grid>
+
                             <ControlTemplate.Triggers>
                                 <EventTrigger SourceName="Bd" RoutedEvent="Border.MouseDown">
                                     <BeginStoryboard>
@@ -490,7 +456,7 @@
                                     <Setter Property="BorderBrush" TargetName="Bd"
                                             Value="{DynamicResource BorderAlt}" />
                                 </Trigger>
-                                <Trigger Property="IsSelected" Value="true">
+                                <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" TargetName="Bd"
                                             Value="{DynamicResource ContentBackgroundSelected}" />
                                     <Setter Property="BorderBrush" TargetName="Bd"
@@ -499,15 +465,15 @@
                                 </Trigger>
                                 <MultiTrigger>
                                     <MultiTrigger.Conditions>
-                                        <Condition Property="IsSelected" Value="true" />
-                                        <Condition Property="Selector.IsSelectionActive" Value="false" />
+                                        <Condition Property="IsSelected" Value="True" />
+                                        <Condition Property="Selector.IsSelectionActive" Value="False" />
                                     </MultiTrigger.Conditions>
                                     <Setter Property="Background" TargetName="Bd"
                                             Value="{DynamicResource ContentBackgroundInactive}" />
                                     <Setter Property="BorderBrush" TargetName="Bd"
                                             Value="{DynamicResource ContentBackgroundInactive}" />
                                 </MultiTrigger>
-                                <Trigger Property="IsEnabled" Value="false">
+                                <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Background" TargetName="Bd" Value="Transparent" />
                                     <Setter Property="BorderBrush" TargetName="Bd" Value="Transparent" />
                                 </Trigger>
@@ -517,46 +483,38 @@
                 </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground"
-                        Value="{DynamicResource HoveredForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource HoveredForeground}" />
             </Trigger>
-            <Trigger Property="IsSelected" Value="true">
+            <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource SelectedForeground}" />
             </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="true" />
-                    <Condition Property="Selector.IsSelectionActive" Value="false" />
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="Selector.IsSelectionActive" Value="False" />
                 </MultiTrigger.Conditions>
                 <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
             </MultiTrigger>
-            <Trigger Property="IsEnabled" Value="false">
+            <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
 
-    <Style x:Key="WPFListViewStyle"
-           TargetType="{x:Type ListView}">
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource BorderAlt}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource ContentForeground}" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                Value="Auto" />
-        <Setter Property="ScrollViewer.CanContentScroll"
-                Value="true" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
+    <Style x:Key="ListViewStyle" TargetType="{x:Type ListView}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAlt}" />
+        <Setter Property="BorderThickness" Value="1,1,1,1" />
+        <Setter Property="Foreground" Value="{DynamicResource ContentForeground}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListView}">
+
                     <Border Name="Bd"
                             CornerRadius="4,4,4,4"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -570,22 +528,20 @@
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="View" Value="{x:Null}">
                             <Setter TargetName="scrollviewer" Property="Style"
                                     Value="{DynamicResource ScrollViewerStyle}" />
                         </Trigger>
-                        <Trigger Property="IsGrouping"
-                                 Value="true">
+                        <Trigger Property="IsGrouping" Value="True">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
                         </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter
-                                Property="Opacity"
-                                Value="0.5" />
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -593,10 +549,10 @@
 
     <Style x:Key="{x:Type ListViewItem}"
            TargetType="{x:Type ListViewItem}"
-           BasedOn="{StaticResource WPFListViewItemStyle}" />
+           BasedOn="{StaticResource ListViewItemStyle}" />
 
     <Style x:Key="{x:Type ListView}"
            TargetType="{x:Type ListView}"
-           BasedOn="{StaticResource WPFListViewStyle}" />
+           BasedOn="{StaticResource ListViewStyle}" />
 
 </ResourceDictionary>
