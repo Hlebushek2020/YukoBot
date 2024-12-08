@@ -94,7 +94,6 @@
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Margin="0,0,10,10"
-                BorderThickness="0"
                 Padding="2"
                 Height="34"
                 Width="34"

@@ -17,6 +17,7 @@
            BasedOn="{StaticResource {x:Type Button}}">
 
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="Padding" Value="2,2,2,2" />
@@ -29,6 +30,18 @@
 
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Opacity" Value="0.2" />
+            </Trigger>
+
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundOpacity1}" />
+            </Trigger>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundOpacity1}" />
+            </Trigger>
+
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundOpacity2}" />
             </Trigger>
 
         </Style.Triggers>
