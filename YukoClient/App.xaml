@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/ListView.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Controls/GridSplitter.xaml" />
                 <ResourceDictionary Source="/YukoClientBase;component/Resources/Styles/Additionally.xaml" />
+                <ResourceDictionary Source="/YukoClientBase;component/Resources/Icons.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
