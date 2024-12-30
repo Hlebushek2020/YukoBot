@@ -19,7 +19,10 @@ namespace YukoCollectionsClient.Models.Operations
             _overrideMessageCollections = overrideMessageCollections;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { IsIndeterminate = true, Text = "Получение данных" });
             MessageCollectionsResponse response = YukoWebClient.Current.GetMessageCollections();
@@ -62,8 +65,6 @@ namespace YukoCollectionsClient.Models.Operations
                     }
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -20,7 +20,10 @@ namespace YukoCollectionsClient.Models.Operations
             _fileName = fileName;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Подготовка к экспорту ссылок" });
             using (StreamWriter streamWriter = new StreamWriter(_fileName, false, Encoding.UTF8))
@@ -40,8 +43,6 @@ namespace YukoCollectionsClient.Models.Operations
                     progress.Report(new ProgressReportArgs { Value = counter });
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

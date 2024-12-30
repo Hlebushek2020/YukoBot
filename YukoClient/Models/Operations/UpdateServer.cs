@@ -17,7 +17,10 @@ namespace YukoClient.Models.Operations
 
         public UpdateServer(Server server) { _server = server; }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress)
         {
             progress.Report(new ProgressReportArgs { Text = "Получение данных о сервере" });
 
@@ -34,8 +37,6 @@ namespace YukoClient.Models.Operations
                 _server.IconUri = serverResponse.IconUri;
 
             _server.Channels = new ObservableCollection<Channel>(serverResponse.Channels);
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -22,7 +22,10 @@ namespace YukoClient.Models.Operations
             _serverId = serverId;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Подготовка к экспорту правил" });
             using (FileStream fileStream = new FileStream(_fileName, FileMode.Create, FileAccess.Write))
@@ -58,8 +61,6 @@ namespace YukoClient.Models.Operations
                     }
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

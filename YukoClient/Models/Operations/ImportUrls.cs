@@ -22,20 +22,23 @@ namespace YukoClient.Models.Operations
             _synchronizationContext = SynchronizationContext.Current;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Подготовка к импорту ссылок" });
             using (StreamReader streamReader = new StreamReader(_fileName, Encoding.UTF8))
             {
                 while (!streamReader.EndOfStream)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     string url = streamReader.ReadLine();
                     progress.Report(new ProgressReportArgs { Text = $"Добавление {url}" });
                     _synchronizationContext.Send(state => _urls.Add(url), null);
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

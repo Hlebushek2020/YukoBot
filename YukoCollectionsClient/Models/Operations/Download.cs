@@ -20,7 +20,10 @@ namespace YukoCollectionsClient.Models.Operations
             _folder = folder;
         }
 
-        public async Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(async () => await DownloadAsync(progress, cancellationToken), cancellationToken);
+
+        private async Task DownloadAsync(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             HashSet<string> filesTemp = new HashSet<string>();
 

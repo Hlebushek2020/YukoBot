@@ -22,7 +22,10 @@ namespace YukoClient.Models.Operations
             _synchronizationContext = SynchronizationContext.Current;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Подключение" });
             using (ExecuteScriptProvider provider =
@@ -75,8 +78,6 @@ namespace YukoClient.Models.Operations
                     } while (urlsResponse.Next);
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

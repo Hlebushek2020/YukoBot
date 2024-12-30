@@ -21,7 +21,10 @@ namespace YukoCollectionsClient.Models.Operations
             _fileName = fileName;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { IsIndeterminate = true, Text = "Чтение данных" });
             string json = File.ReadAllText(_fileName, Encoding.UTF8);
@@ -35,8 +38,6 @@ namespace YukoCollectionsClient.Models.Operations
                 if (!_messageCollectionItems.Contains(item))
                     _messageCollectionItems.Add(item);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

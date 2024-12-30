@@ -21,7 +21,10 @@ namespace YukoCollectionsClient.Models.Operations
             _fileName = fileName;
         }
 
-        public async Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress)
         {
             progress.Report(new ProgressReportArgs { IsIndeterminate = true, Text = "Подготовка" });
             using (StreamWriter streamWriter = new StreamWriter(_fileName, false, Encoding.UTF8))
@@ -29,7 +32,7 @@ namespace YukoCollectionsClient.Models.Operations
                 progress.Report(new ProgressReportArgs { Text = "Обработка" });
                 string json = JsonConvert.SerializeObject(_messageCollectionItems);
                 progress.Report(new ProgressReportArgs { Text = "Запись" });
-                await streamWriter.WriteAsync(json);
+                streamWriter.Write(json);
             }
         }
     }

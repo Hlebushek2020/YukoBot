@@ -21,7 +21,10 @@ namespace YukoClient.Models.Operations
             _synchronizationContext = SynchronizationContext.Current;
         }
 
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress, cancellationToken), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             progress.Report(new ProgressReportArgs { Text = "Получение данных о серверах" });
 
@@ -72,8 +75,6 @@ namespace YukoClient.Models.Operations
             }
 
             Storage.Current.Save();
-
-            return Task.CompletedTask;
         }
     }
 }

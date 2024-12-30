@@ -16,7 +16,10 @@ namespace YukoClient.Models.Operations
 {
     public class StorageInitialization : IOperation
     {
-        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(() => Operation(progress), cancellationToken);
+
+        private void Operation(IProgress<ProgressReportArgs> progress)
         {
             progress.Report(new ProgressReportArgs { Text = "Поиск сохраненных данных" });
             string serversCacheFilePath = Path.Combine(Settings.ProgramResourceFolder, Settings.ServersCacheFile);
@@ -36,8 +39,6 @@ namespace YukoClient.Models.Operations
 
                 Storage.Current.Servers = new ObservableCollection<Server>(response.Servers);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

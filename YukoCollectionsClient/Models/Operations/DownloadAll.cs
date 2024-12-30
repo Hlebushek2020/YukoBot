@@ -29,7 +29,10 @@ namespace YukoCollectionsClient.Models.Operations
             _folder = folder;
         }
 
-        public async Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
+        public Task Run(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken) =>
+            Task.Run(async () => await DownloadAllAsync(progress, cancellationToken), cancellationToken);
+
+        private async Task DownloadAllAsync(IProgress<ProgressReportArgs> progress, CancellationToken cancellationToken)
         {
             foreach (MessageCollection collection in _messageCollections)
             {
@@ -57,9 +60,9 @@ namespace YukoCollectionsClient.Models.Operations
                         MessageCollectionItem mcItem = collection.Items
                             .First(item => item.MessageId == urlsResponse.MessageId);
                         mcItem.IsChannelNotFound = urlsResponse.Error != null &&
-                            urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
+                                                   urlsResponse.Error.Code == ClientErrorCodes.ChannelNotFound;
                         mcItem.IsMessageNotFound = urlsResponse.Error != null &&
-                            urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
+                                                   urlsResponse.Error.Code == ClientErrorCodes.MessageNotFound;
                     } while (urlsResponse.Next && !cancellationToken.IsCancellationRequested);
                 }
 
