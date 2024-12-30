@@ -3,10 +3,12 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Entities;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,90 +21,107 @@ namespace YukoBot.Commands
 {
     public class UserCommandModule : CommandModule
     {
-        private static string BotDescription { get; } =
-            $"Привет, для того что бы узнать больше информации обо мне выполни команду `{Settings.BotPrefix} info`.";
+        private readonly YukoDbContext _yukoDbContext;
+        private readonly IYukoSettings _yukoSettings;
+        private readonly ILogger<UserCommandModule> _logger;
 
-        public UserCommandModule() : base(Categories.User)
+        private string BotDescription { get; }
+
+        public UserCommandModule(
+            YukoDbContext yukoDbContext,
+            IYukoSettings yukoSettings,
+            IYukoBot yukoBot,
+            ILogger<UserCommandModule> logger)
+            : base(yukoBot, Categories.User, null)
         {
+            _yukoDbContext = yukoDbContext;
+            _yukoSettings = yukoSettings;
+            _logger = logger;
+
+            BotDescription = string.Format(Resources.Bot_Description, _yukoSettings.BotPrefix);
         }
 
         [Command("register")]
         [Aliases("reg")]
-        [Description(
-            "Зарегистрироваться и получить пароль и логин от своей учетной записи или сбросить текущий пароль.")]
+        [Description("UserCommand.Register")]
         public async Task Register(CommandContext ctx)
         {
-            YukoDbContext dbCtx = new YukoDbContext();
-            DbUser dbUser = dbCtx.Users.Find(ctx.User.Id);
+            DbUser dbUser = await _yukoDbContext.Users.FindAsync(ctx.User.Id);
             bool isRegister = false;
             if (dbUser == null)
             {
                 isRegister = true;
-                dbUser = new DbUser
-                {
-                    Id = ctx.User.Id,
-                    Nikname = ctx.User.Username + "#" + ctx.User.Discriminator
-                };
-                dbCtx.Users.Add(dbUser);
+                dbUser = new DbUser { Id = ctx.User.Id, Username = ctx.User.Username, Registered = DateTime.Now };
+                _yukoDbContext.Users.Add(dbUser);
             }
 
             string password = "";
             Random random = new Random();
             while (password.Length != 10)
-            {
                 password += (char)random.Next(33, 127);
-            }
 
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
-                foreach (byte code in hashBytes)
-                {
-                    hashBuilder.Append(code.ToString("X2"));
-                }
-                dbUser.Password = hashBuilder.ToString();
-            }
-
-            await dbCtx.SaveChangesAsync();
+            byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            StringBuilder hashBuilder = new StringBuilder(hashBytes.Length / 2);
+            foreach (byte code in hashBytes)
+                hashBuilder.Append(code.ToString("X2"));
+            dbUser.Password = hashBuilder.ToString();
 
             DiscordDmChannel userChat = await ctx.Member.CreateDmChannelAsync();
+
+            dbUser.DmChannelId = userChat.Id;
+
+            await _yukoDbContext.SaveChangesAsync();
+
             DiscordEmbedBuilder discordEmbedDm = new DiscordEmbedBuilder()
-                .WithHappyTitle(isRegister ? "Регистрация прошла успешно!" : "Пароль сменен!")
+                .WithHappyTitle(
+                    isRegister
+                        ? Resources.UserCommand_Register_DmTitle_Register
+                        : Resources.UserCommand_Register_DmTitle_PasswordChange)
                 .WithColor(Constants.SuccessColor)
-                .AddField("Логин", $"Используй **{dbUser.Nikname}** или **{dbUser.Id}**")
-                .AddField(isRegister ? "Пароль" : "Новый пароль", password);
+                .AddField(
+                    Resources.UserCommand_Register_FieldDmTitle_Login,
+                    string.Format(Resources.UserCommand_Register_FieldDmDescription_Login, dbUser.Username, dbUser.Id))
+                .AddField(
+                    isRegister
+                        ? Resources.UserCommand_Register_FieldDmTitle_Password
+                        : Resources.UserCommand_Register_FieldDmTitle_NewPassword,
+                    password);
             DiscordMessage userMessage = await userChat.SendMessageAsync(discordEmbedDm);
             await userMessage.CreateReactionAsync(
                 DiscordEmoji.FromName(ctx.Client, Constants.DeleteMessageEmoji, false));
 
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(ctx.Member.DisplayName,
+                .WithHappyMessage(
+                    ctx.Member.DisplayName,
                     isRegister
-                        ? "Регистрация прошла успешно! Пароль и логин от учетной записи отправлены в ЛС."
-                        : "Новый пароль от учетной записи отправлен в ЛС.");
+                        ? Resources.UserCommand_Register_Description_Register
+                        : Resources.UserCommand_Register_Description_PasswordChange);
             await ctx.RespondAsync(discordEmbed);
         }
 
         [Command("help")]
-        [Description(
-            "Показать список команд и категорий, если для команды не указан аргумент. Если в качестве аргумента указана категория - показывает список комманд этой категории с их описанием, если указана команда - показывает ее полное описание.")]
-        public async Task Help(CommandContext ctx,
-            [Description("Категория или команда")]
+        [Description("UserCommand.Help")]
+        public async Task Help(
+            CommandContext ctx,
+            [Description("CommandArg.CategoryOrCommand")]
             string categoryOrCommand = "")
         {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
             if (!string.IsNullOrWhiteSpace(categoryOrCommand))
             {
-                if (CheckHelpCategoryCommand(categoryOrCommand))
+                if (TryGetRegisteredCategory(categoryOrCommand, out Category category))
                 {
                     IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
-                        .Where(x => ((x.Module as SingletonCommandModule).Instance as CommandModule).Category
-                                    .HelpCommand.Equals(categoryOrCommand) &&
-                                    !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
+                        .Where(
+                            x =>
+                            {
+                                BaseCommandModule baseCommandModule = (x.Module as SingletonCommandModule)?.Instance;
+                                Category commandCategory = (baseCommandModule as CommandModule)?.Category;
 
-                    List<string[]> commandOfDescription = new List<string[]>();
+                                return category.Equals(commandCategory) && !x.IsHidden &&
+                                       !x.RunChecksAsync(ctx, true).Result.Any();
+                            });
+
+                    SortedDictionary<string, string> descriptionByCommand = new SortedDictionary<string, string>();
 
                     foreach (Command command in commands)
                     {
@@ -112,23 +131,21 @@ namespace YukoBot.Commands
 
                         string fieldTitle = $"{command.Name}{aliases}";
 
-                        commandOfDescription.Add(new string[] { fieldTitle, command.Description });
+                        descriptionByCommand.Add(fieldTitle, command.GetLocalizedDescription());
                     }
 
                     DiscordEmbedBuilder embed;
 
-                    Category category = GetCategoryByHelpCommand(categoryOrCommand);
-
-                    if (commandOfDescription.Count > 0)
+                    if (descriptionByCommand.Count > 0)
                     {
                         embed = new DiscordEmbedBuilder()
-                            .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
-                            .WithFooter(versionString)
+                            .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
+                            .WithFooter($"v{Program.Version}")
                             .AddField(category.Name, new string('=', category.Name.Length));
 
-                        foreach (string[] item in commandOfDescription)
+                        foreach (KeyValuePair<string, string> item in descriptionByCommand)
                         {
-                            embed.AddField(item[0], item[1]);
+                            embed.AddField(item.Key, item.Value);
                         }
                     }
                     else
@@ -150,52 +167,51 @@ namespace YukoBot.Commands
                     if (failedChecks.Any())
                         throw new ChecksFailedException(command, ctx, failedChecks);
 
-                    StringBuilder descriptionBuilder = new StringBuilder();
-
                     bool countOverloads = command.Overloads.Count > 1;
+
+                    string resOptionsSection = Resources.UserCommand_Help_OptionsSection;
+                    string resArgumentsSection = Resources.UserCommand_Help_ArgumentsSection;
+                    string resOptionalArgument = Resources.UserCommand_Help_OptionalArgument;
+
+                    StringBuilder descriptionBuilder = new StringBuilder();
+                    descriptionBuilder.AppendLine(command.GetLocalizedDescription());
+
+                    if (command.Aliases?.Count != 0)
+                    {
+                        descriptionBuilder.AppendLine()
+                            .AppendLine(Resources.UserCommand_Help_AliasesSection)
+                            .AppendLine(string.Join(", ", command.Aliases));
+                    }
 
                     for (int i = 0; i < command.Overloads.Count; i++)
                     {
                         CommandOverload commandOverload = command.Overloads[i];
 
                         if (countOverloads)
-                        {
-                            descriptionBuilder.AppendLine($"**__Вариант {i + 1}__**");
-                        }
+                            descriptionBuilder.AppendLine().AppendFormat(resOptionsSection, i + 1).AppendLine();
 
-                        descriptionBuilder
-                            .AppendLine(
-                                $"```\n{Settings.BotPrefix} {command.Name} {string.Join(' ', commandOverload.Arguments.Select(x => $"[{x.Name}]").ToList())}```{command.Description}")
-                            .AppendLine();
-
-                        if (command.Aliases?.Count != 0)
-                        {
-                            descriptionBuilder.AppendLine("**Алиасы:**");
-                            foreach (string alias in command.Aliases)
-                            {
-                                descriptionBuilder.Append($"{alias} ");
-                            }
-                            descriptionBuilder.AppendLine().AppendLine();
-                        }
+                        descriptionBuilder.AppendLine(
+                            $"```{_yukoSettings.BotPrefix}{command.Name} {string.Join(
+                                ' ',
+                                commandOverload.Arguments.Select(x => $"[{x.Name}]"))}```");
 
                         if (commandOverload.Arguments.Count != 0)
                         {
-                            descriptionBuilder.AppendLine("**Аргументы:**");
+                            descriptionBuilder.AppendLine(resArgumentsSection);
                             foreach (CommandArgument argument in commandOverload.Arguments)
                             {
                                 string defaultValue = (argument.DefaultValue != null)
-                                    ? $" (Необязательно, по умолчанию: {argument.DefaultValue})"
+                                    ? string.Format(resOptionalArgument, argument.DefaultValue)
                                     : string.Empty;
                                 descriptionBuilder.AppendLine(
-                                    $"`{argument.Name}`: {argument.Description}{defaultValue}");
+                                    $"`{argument.Name}`: {argument.GetLocalizedDescription()}{defaultValue}");
                             }
-                            descriptionBuilder.AppendLine();
                         }
                     }
 
                     DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
                         .WithHappyMessage($"{command.Name} |", descriptionBuilder.ToString())
-                        .WithFooter(versionString);
+                        .WithFooter($"v{Program.Version}");
 
                     await ctx.RespondAsync(embed);
                 }
@@ -205,38 +221,40 @@ namespace YukoBot.Commands
                 IEnumerable<Command> commands = ctx.CommandsNext.RegisteredCommands.Values.Distinct()
                     .Where(x => !x.IsHidden && !x.RunChecksAsync(ctx, true).Result.Any());
 
-                Dictionary<string, List<string>> sortedCommands = new Dictionary<string, List<string>>();
+                Dictionary<string, SortedSet<string>> sortedCommandsByCategory =
+                    new Dictionary<string, SortedSet<string>>();
 
                 foreach (Command command in commands)
                 {
-                    CommandModule yukoModule = (command.Module as SingletonCommandModule).Instance as CommandModule;
+                    CommandModule yukoModule = (command.Module as SingletonCommandModule)?.Instance as CommandModule;
 
-                    string categoryName = yukoModule.Category.Name;
+                    string categoryName = yukoModule?.Category.Name;
 
-                    if (string.IsNullOrEmpty(categoryName))
-                        continue;
+                    if (!string.IsNullOrEmpty(categoryName))
+                    {
+                        if (!sortedCommandsByCategory.ContainsKey(categoryName))
+                            sortedCommandsByCategory.Add(categoryName, new SortedSet<string>());
 
-                    if (!sortedCommands.ContainsKey(categoryName))
-                        sortedCommands.Add(categoryName, new List<string>());
+                        string aliases = string.Empty;
+                        if (command.Aliases.Count > 0)
+                            aliases = $" ({string.Join(' ', command.Aliases)})";
 
-                    string aliases = string.Empty;
-                    if (command.Aliases.Count > 0)
-                        aliases = $" ({string.Join(' ', command.Aliases)})";
-
-                    sortedCommands[categoryName].Add($"`{command.Name}{aliases}`");
+                        sortedCommandsByCategory[categoryName].Add($"`{command.Name}{aliases}`");
+                    }
                 }
 
                 DiscordEmbedBuilder embed = new DiscordEmbedBuilder()
-                    .WithHappyMessage($"{Settings.BotPrefix} |", BotDescription)
-                    .WithFooter(versionString);
+                    .WithHappyMessage($"{_yukoSettings.BotPrefix} |", BotDescription)
+                    .WithFooter($"v{Program.Version}");
 
                 foreach (Category mInfo in GetCategories())
                 {
                     string categoryName = mInfo.Name;
-                    string fieldName = $"{categoryName} (help {mInfo.HelpCommand})";
-                    embed.AddField(fieldName,
-                        sortedCommands.ContainsKey(categoryName)
-                            ? string.Join(' ', sortedCommands[categoryName])
+                    string fieldName = $"{categoryName} ({_yukoSettings.BotPrefix}help {mInfo.HelpCommand})";
+                    embed.AddField(
+                        fieldName,
+                        sortedCommandsByCategory.TryGetValue(categoryName, out SortedSet<string> sortedCommands)
+                            ? string.Join("; ", sortedCommands)
                             : mInfo.AccessError);
                 }
 
@@ -245,31 +263,69 @@ namespace YukoBot.Commands
         }
 
         [Command("info")]
-        [Description("Информация о боте и его возможностях.")]
+        [Description("UserCommand.Info")]
         public async Task Info(CommandContext ctx)
         {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            string versionString = $"v{version.Major}.{version.Minor}.{version.Build}";
-
             DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
-                .WithHappyMessage(Settings.BotPrefix + " | Info",
-                    "Привет, я Юко. Бот созданный для быстрого скачивания картинок с каналов серверов (гильдий) " +
-                    "дискорда. Так же я могу составлять коллекции из сообщений с картинками (или ссылками на картинки) " +
-                    "для последующего скачивания этих коллекций.")
-                .AddField("Управление коллекциями",
-                    "Данный функционал доступен только зарегистрированным пользователям. Для просмотра всех доступных " +
-                    "команд управления коллекциями воспользуйся командой `" + Settings.BotPrefix + " help " +
-                    Categories.CollectionManagement.HelpCommand + "`.")
-                .AddField("Премиум доступ",
-                    "Премиум доступ позволяет заранее сохранять необходимые данные (при добавлении сообщения в коллекцию) " +
-                    "для скачивания вложений из сообщения. Это в разы уменьшает время получения ссылок клиентом для " +
-                    "скачивания вложений. На данный момент выдается моим хозяином.")
-                .AddField("Ссылки",
-                    "[GitHub](https://github.com/Hlebushek2020/YukoBot) | [Discord](https://discord.gg/a2EZmbaxT9)")
+                .WithHappyMessage($"{_yukoSettings.BotPrefix} | Info", Resources.UserCommand_Info_EmbedDescription)
+                .AddField(
+                    Resources.UserCommand_Info_FieldCollectionManagement_Title,
+                    string.Format(
+                        Resources.UserCommand_Info_FieldCollectionManagement_Description,
+                        _yukoSettings.BotPrefix,
+                        Categories.CollectionManagement.HelpCommand))
+                .AddField(
+                    Resources.UserCommand_Info_FieldPremiumAccess_Title,
+                    Resources.UserCommand_Info_FieldPremiumAccess_Description)
+                .AddField(
+                    Resources.UserCommand_Info_FieldLinks_Title,
+                    "[GitHub](s://github.com/Hlebushek2020/YukoBot) | [Discord](s://discord.gg/a2EZmbaxT9)")
                 .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl, 50, 50)
-                .WithFooter(versionString);
+                .WithFooter($"v{Program.Version}");
 
             await ctx.RespondAsync(discordEmbed);
+        }
+
+        [Command("avatar")]
+        [Aliases("ava")]
+        [Description("UserCommand.Avatar")]
+        public async Task Avatar(
+            CommandContext ctx,
+            [Description("CommandArg.Member")] DiscordMember member)
+        {
+            DbUser user = await _yukoDbContext.Users.FindAsync(ctx.Member.Id);
+            bool isUseMessage = user != null && user.HasPremiumAccess;
+            if (isUseMessage)
+            {
+                try
+                {
+                    using HttpClient client = new HttpClient();
+                    Stream fileStream = await client.GetStreamAsync(member.AvatarUrl);
+                    string fileName = Path.GetFileName(member.AvatarUrl) ?? Guid.NewGuid().ToString();
+                    if (fileName.Contains('?'))
+                        fileName = fileName.Remove(fileName.IndexOf('?'));
+
+                    DiscordMessageBuilder discordMessage = new DiscordMessageBuilder()
+                        .AddFile(fileName, fileStream);
+
+                    await ctx.RespondAsync(discordMessage);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Failed to download attachment. Exception: {ex.Message}.");
+                    isUseMessage = false;
+                }
+            }
+
+            if (!isUseMessage)
+            {
+                DiscordEmbedBuilder discordEmbed = new DiscordEmbedBuilder()
+                    .WithHappyTitle(ctx.Member.DisplayName)
+                    .WithColor(Constants.SuccessColor)
+                    .WithImageUrl(member.AvatarUrl);
+
+                await ctx.RespondAsync(discordEmbed);
+            }
         }
     }
 }

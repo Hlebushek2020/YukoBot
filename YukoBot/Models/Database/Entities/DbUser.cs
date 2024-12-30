@@ -20,12 +20,12 @@ namespace YukoBot.Models.Database.Entities
         public ulong Id { get; set; }
 
         /// <summary>
-        /// Username with discriminator. Required field.
+        /// Username. Required field.
         /// </summary>
         [Required]
         [MaxLength(64)]
-        [Column("nikname")]
-        public string Nikname { get; set; }
+        [Column("nickname")]
+        public string Username { get; set; }
 
         /// <summary>
         /// Hash of the user's password. Required field.
@@ -35,20 +35,22 @@ namespace YukoBot.Models.Database.Entities
         [Column("password")]
         public string Password { get; set; }
 
-        /*
         /// <summary>
-        /// Token. Used to identify the user after logging in to the application.
+        /// Date of registration. Required field.
         /// </summary>
-        [MaxLength(36)]
-        [Column("token")]
-        public string Token { get; set; }
-        */
+        [Required]
+        [Column("registered")]
+        public DateTime Registered { get; set; }
+
+        [Required]
+        [Column("dm_channel_id")]
+        public ulong DmChannelId { get; set; }
 
         /// <summary>
         /// The time and date of the last login to the application. Default value: null.
         /// </summary>
-        [Column("login_time")]
-        public DateTime? LoginTime { get; set; }
+        [Column("last_login")]
+        public DateTime? LastLogin { get; set; }
 
         /// <summary>
         /// Sending optional messages to private messages with the following commands: add, start, end. Default value: true.
@@ -58,18 +60,29 @@ namespace YukoBot.Models.Database.Entities
         public bool InfoMessages { get; set; } = true;
 
         /// <summary>
-        /// Indicates whether the user has premium access or not. Isn't column.
-        /// </summary>
-        [NotMapped]
-        public bool HasPremiumAccess
-        {
-            get => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
-        }
-
-        /// <summary>
         /// Expiration date of premium access. Default value: null.
         /// </summary>
         [Column("premium_access_expires")]
         public DateTime? PremiumAccessExpires { get; set; }
+
+        /// <summary>
+        /// Two-factor authentication. Default value: true.
+        /// </summary>
+        [Required]
+        [Column("two_factor_authentication")]
+        public bool TwoFactorAuthentication { get; set; } = true;
+
+        /// <summary>
+        /// Token hash to update the access token.
+        /// </summary>
+        [Column("refresh_token")]
+        [MaxLength(64)]
+        public string RefreshToken { get; set; }
+
+        /// <summary>
+        /// Indicates whether the user has premium access or not. Isn't column.
+        /// </summary>
+        [NotMapped]
+        public bool HasPremiumAccess => PremiumAccessExpires.HasValue && DateTime.Now <= PremiumAccessExpires.Value;
     }
 }

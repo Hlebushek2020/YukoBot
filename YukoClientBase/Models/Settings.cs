@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Sergey.UI.Extension.Themes;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -10,64 +8,104 @@ namespace YukoClientBase.Models
     public class Settings
     {
         public const string YukoClientMutexName = "YukoClientMutex";
+        public const string FakePassword = "FakePassword";
         public const string ServersCacheFile = "servers.json";
 
+        #region Static members
+        [JsonIgnore]
+        public static string ProgramResourceFolder { get; }
+
+        private static readonly string _settingsFilePath;
+        private static readonly string _loginFilePath;
+
+        static Settings()
+        {
+            ProgramResourceFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "SergeyGovorunov",
+                "YukoClient(DFLC)");
+
+            _settingsFilePath = Path.Combine(ProgramResourceFolder, "settings.json");
+            _loginFilePath = Path.Combine(ProgramResourceFolder, ".login");
+        }
+        #endregion
+
         #region Instance
-        private static Settings settings;
+        private static Settings _settings;
 
         [JsonIgnore]
         public static Settings Current
         {
             get
             {
-                if (settings != null)
-                {
-                    return settings;
-                }
-                string settingsFile = Path.Combine(ProgramResourceFolder, "settings.json");
-                if (File.Exists(settingsFile))
-                {
-                    settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsFile, Encoding.UTF8));
-                }
-                else
-                {
-                    settings = new Settings();
-                }
-                return settings;
+                if (_settings != null)
+                    return _settings;
+
+                _settings = File.Exists(_settingsFilePath)
+                    ? JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_settingsFilePath, Encoding.UTF8))
+                    : new Settings();
+
+                return _settings;
             }
         }
         #endregion
 
-        [JsonIgnore]
-        public static string ProgramResourceFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SergeyGovorunov", "YukoClient(DFLC)");
+        public Themes Theme { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public int MaxDownloadThreads { get; set; }
 
-        public Theme Theme { get; set; } = Theme.Light;
-        public string Host { get; set; } = "127.0.0.1";
-        public int Port { get; set; } = 10000;
-        public int MaxDownloadThreads { get; set; } = 4;
+        private Settings()
+        {
+            Theme = Themes.Light;
+            Host = "127.0.0.1";
+            Port = 10000;
+            MaxDownloadThreads = 4;
+        }
 
         public void Save()
         {
             Directory.CreateDirectory(ProgramResourceFolder);
-            using (StreamWriter streamWriter = new StreamWriter(Path.Combine(ProgramResourceFolder, "settings.json"), false, Encoding.UTF8))
-            {
+            using (StreamWriter streamWriter = new StreamWriter(_settingsFilePath, false, Encoding.UTF8))
                 streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
-            }
         }
 
-        public static bool Availability()
-        {
-            return File.Exists(Path.Combine(ProgramResourceFolder, "settings.json"));
-        }
+        public static bool Availability() => File.Exists(_settingsFilePath);
 
-        public static List<int> GetListAllowedNumberDownloadThreads()
+        #region Protected Data
+        public static void LoadLoginData(out string login, out byte[] protectedData)
         {
-            List<int> result = new List<int>();
-            for (int number = 1; number <= 15; number++)
+            login = null;
+            protectedData = null;
+
+            if (!File.Exists(_loginFilePath))
+                return;
+
+            using (BinaryReader binaryReader = new BinaryReader(
+                       new FileStream(_loginFilePath, FileMode.Open), Encoding.UTF8, false))
             {
-                result.Add(number);
+                login = binaryReader.ReadString();
+                int count = binaryReader.ReadInt32();
+                protectedData = binaryReader.ReadBytes(count);
             }
-            return result;
         }
+
+        public static void SaveLoginData(string login, byte[] protectedData)
+        {
+            using (BinaryWriter binaryWriter = new BinaryWriter(
+                       new FileStream(_loginFilePath, FileMode.Create), Encoding.UTF8, false))
+            {
+                binaryWriter.Write(login);
+                binaryWriter.Write(protectedData.Length);
+                binaryWriter.Write(protectedData);
+            }
+        }
+
+        public static void DeleteLoginData()
+        {
+            if (File.Exists(_loginFilePath))
+                File.Delete(_loginFilePath);
+        }
+        #endregion
     }
 }

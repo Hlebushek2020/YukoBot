@@ -1,0 +1,91 @@
+﻿<Window x:Class="YukoClientBase.Views.MessageBoxWindow"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:YukoClientBase.ViewModels"
+        xmlns:converters="clr-namespace:YukoClientBase.ValueConverters"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:MessageBoxViewModel}}"
+        Title="{Binding Path=Caption, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        MaxHeight="{Binding Path=MaxHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Style="{DynamicResource WindowStyle}"
+        FontSize="14"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        SnapsToDevicePixels="True"
+        Topmost="True">
+
+    <Window.Resources>
+        <converters:VisibilityValueConverter x:Key="VisibilityConverter" />
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Image Grid.Column="0" Grid.Row="0"
+               Margin="10,10,10,10"
+               SnapsToDevicePixels="True"
+               Height="64" Width="64"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Left"
+               Visibility="{Binding Path=ShowImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
+               Source="{Binding Path=Image, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Column="1" Grid.Row="0"
+                   Margin="10,10,10,10"
+                   MaxWidth="550"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Text="{Binding Path=Text, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+              VerticalAlignment="Bottom">
+
+            <StackPanel Margin="6,10,10,10"
+                        Height="30"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Orientation="Horizontal">
+
+                <Button Margin="4,0,0,0"
+                        Width="80" Content="OK"
+                        IsDefault="True"
+                        Visibility="{Binding Path=OkButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
+                        Command="{Binding Path=ButtonCommand}"
+                        CommandParameter="{x:Static MessageBoxResult.OK}" />
+                <Button Margin="4,0,0,0"
+                        Width="80" Content="Да"
+                        IsDefault="True"
+                        Visibility="{Binding Path=YesButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
+                        Command="{Binding Path=ButtonCommand}"
+                        CommandParameter="{x:Static MessageBoxResult.Yes}" />
+                <Button Margin="4,0,0,0"
+                        Width="80" Content="Нет"
+                        Visibility="{Binding Path=NoButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
+                        Command="{Binding Path=ButtonCommand}"
+                        CommandParameter="{x:Static MessageBoxResult.No}" />
+                <Button Margin="4,0,0,0"
+                        Width="80" Content="Отмена"
+                        IsCancel="True"
+                        Visibility="{Binding Path=CancelButtonEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource VisibilityConverter}}"
+                        Command="{Binding Path=ButtonCommand}"
+                        CommandParameter="{x:Static MessageBoxResult.Cancel}" />
+
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
+
+</Window>
